@@ -1,0 +1,25 @@
+{
+  "name": "lei_samuel",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "todo"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Lei & Samuel",
+  "workspaces": [
+    "packages/*"
+  ],
+  "prettier": {
+    "arrowParens": "avoid",
+    "endOfLine": "lf",
+    "printWidth": 80,
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all",
+    "useTabs": false
+  }
+}
