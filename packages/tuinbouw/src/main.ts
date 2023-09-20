@@ -12,6 +12,7 @@ const app = createApp(App)
 const { restoreUser } = useFirebase()
 
 ;(async () => {
+  // Restore user session before mounting the app
   await restoreUser()
 
   app.use(router)

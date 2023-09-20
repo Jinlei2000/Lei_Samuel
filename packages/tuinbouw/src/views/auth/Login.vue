@@ -90,6 +90,7 @@
 <script lang="ts">
 import { ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
+import router from '@/router'
 
 export default {
   setup() {
@@ -106,6 +107,13 @@ export default {
       login(LoginCredentials.value.email, LoginCredentials.value.password).then(
         () => {
           console.log('login success')
+
+          // TODO: redirect to role based dashboard
+          
+
+          // test redirect to admin/dashboard
+          router.push('/admin/dashboard')
+
         },
       )
     }
