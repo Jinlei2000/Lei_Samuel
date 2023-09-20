@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import useFirebase from '@/composables/useFirebase'
 
 import '@unocss/reset/tailwind.css'
 import 'virtual:uno.css'
@@ -8,6 +9,11 @@ import router from './router'
 
 const app = createApp(App)
 
-app.use(router)
+const { restoreUser } = useFirebase()
 
-app.mount('#app')
+;(async () => {
+  await restoreUser()
+
+  app.use(router)
+  app.mount('#app')
+})()
