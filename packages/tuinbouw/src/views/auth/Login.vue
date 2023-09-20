@@ -81,6 +81,7 @@ export default {
       login(LoginCredentials.value.email, LoginCredentials.value.password).then(
         () => {
           console.log('login success')
+          
         },
       )
     }
