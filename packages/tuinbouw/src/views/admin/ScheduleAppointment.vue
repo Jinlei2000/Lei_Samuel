@@ -3,7 +3,7 @@
     <h1
       class="text-transparent text-3xl font-extrabold md:text-5xl lg:text-6xl bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
     >
-      Profile
+      ScheduleAppointment
     </h1>
   </div>
 </template>
