@@ -135,6 +135,7 @@ const router = createRouter({
   ],
 })
 
+// check if route requires auth 
 router.beforeEach(async (to, from, next) => {
   const { firebaseUser } = useFirebase()
 
