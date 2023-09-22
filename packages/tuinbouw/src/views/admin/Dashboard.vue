@@ -11,11 +11,19 @@
         <span class="font-semibold">{{ UserCredentials.email }}</span>
       </p>
       <button
-        class="mt-4 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
+        class="block my-4 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
         @click="handleLogout"
       >
         logout
       </button>
+
+      <!-- make a list of buttons go to the right page -->
+      <Router-link
+        v-for="b in listButtons"
+        class="mt-4 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
+        :to="`/admin/${b.toLowerCase()}`"
+        >{{ b }}</Router-link
+      >
     </div>
   </div>
 </template>
@@ -27,6 +35,13 @@ import { ref } from 'vue'
 
 export default {
   setup() {
+    const listButtons = ref([
+      'Appointments',
+      'Clients',
+      'Employees',
+      'Profile',
+      'schedule-appointment',
+    ])
     const { firebaseUser, logout } = useFirebase()
 
     const handleLogout = async () => {
@@ -47,6 +62,7 @@ export default {
     return {
       UserCredentials,
       handleLogout,
+      listButtons,
     }
   },
 }
