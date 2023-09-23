@@ -11,7 +11,7 @@ const router = createRouter({
 
     {
       path: '/auth',
-      component: () => import('../components/wrapper/Auth.vue'),
+      component: () => import('../components/wrapper/AuthWrapper.vue'),
       children: [
         {
           path: 'login',
@@ -31,7 +31,7 @@ const router = createRouter({
 
     {
       path: '/employee',
-      component: () => import('../components/wrapper/Employee.vue'),
+      component: () => import('../components/wrapper/EmployeeWrapper.vue'),
       meta: { shouldBeAuthenticated: true },
       // role: ['employee'],
       children: [
@@ -56,7 +56,7 @@ const router = createRouter({
 
     {
       path: '/admin',
-      component: () => import('../components/wrapper/Admin.vue'),
+      component: () => import('../components/wrapper/AdminWrapper.vue'),
       meta: { shouldBeAuthenticated: true },
       // role: ['admin'],
       children: [
@@ -101,7 +101,7 @@ const router = createRouter({
 
     {
       path: '/client',
-      component: () => import('../components/wrapper/Client.vue'),
+      component: () => import('../components/wrapper/ClientWrapper.vue'),
       meta: { shouldBeAuthenticated: true },
       // role: ['client'],
       children: [
@@ -135,19 +135,17 @@ const router = createRouter({
   ],
 })
 
-// check if route requires auth 
+// check if route requires auth
 router.beforeEach(async (to, from, next) => {
   const { firebaseUser } = useFirebase()
-
+  // Redirect to login page if not logged in and trying to access a restricted page
   if (to.meta.shouldBeAuthenticated && !firebaseUser.value) {
-    console.log('HACKER')
     next({ path: '/auth/login' })
   }
   // Prevent logged in users from accessing login and register pages
-  // if (to.meta.preventLoggedIn && firebaseUser.value) {
-  //   next({ path: '/' })
-  // }
-  else {
+  if (to.meta.preventLoggedIn && firebaseUser.value) {
+    next({ path: '/admin/dashboard' })
+  } else {
     next()
   }
 })

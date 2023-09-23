@@ -20,10 +20,13 @@
             Log in to your account
           </h1>
           <form @submit.prevent="handleLogin" class="space-y-4 md:space-y-6">
-            <!-- <div v-if="error">
-              <p class="text-red-600">{{ error.message }}</p>
-            </div>
-             -->
+            <InputField
+              label="Email"
+              type="email"
+              placeholder="john@example.com"
+              :value="loginCredentials.email"
+              :error="errorMessages.email"
+            />
             <div>
               <label
                 for="email"
@@ -33,13 +36,16 @@
               <input
                 class="border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
-                required="true"
                 type="email"
                 name="email"
                 id="email"
-                v-model="LoginCredentials.email"
+                v-model="loginCredentials.email"
               />
             </div>
+            <div v-if="errorMessages.email">
+              <p class="text-red-600">{{ errorMessages.email }}</p>
+            </div>
+
             <div>
               <label
                 for="password"
@@ -52,15 +58,18 @@
                 id="password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                required="true"
-                v-model="LoginCredentials.password"
+                v-model="loginCredentials.password"
               />
+            </div>
+            <div v-if="errorMessages.password">
+              <p class="text-red-600">{{ errorMessages.password }}</p>
             </div>
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
                 class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >Forgot password?</RouterLink>
+                >Forgot password?</RouterLink
+              >
             </div>
             <button
               type="submit"
@@ -79,9 +88,6 @@
             </p>
           </form>
         </div>
-        <div class="bg-white dark:bg-slate-800 px-3 py-1"></div>
-        <!-- to -->
-        <div class="bg-white px-3 py-1 dark:bg-slate-800"></div>
       </div>
     </div>
   </section>
@@ -91,38 +97,51 @@
 import { ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
+import InputField from '@/components/generic/InputField.vue'
 
 export default {
   setup() {
     // Composables
-    const { login, firebaseUser } = useFirebase()
-
+    const { login } = useFirebase()
     // Logic
-    const LoginCredentials = ref({
+    const loginCredentials = ref({
       email: '',
       password: '',
     })
-
-    const handleLogin = () => {
-      login(LoginCredentials.value.email, LoginCredentials.value.password).then(
-        () => {
+    const errorMessages = ref({
+      email: '',
+      password: '',
+    })
+    const validateForm = (): boolean => {
+      errorMessages.value.email = loginCredentials.value.email
+        ? ''
+        : 'Email is required'
+      errorMessages.value.password = loginCredentials.value.password
+        ? ''
+        : 'Password is required'
+      return !errorMessages.value.email && !errorMessages.value.password
+    }
+    const handleLogin = (): void => {
+      if (!validateForm()) return
+      login(loginCredentials.value.email, loginCredentials.value.password)
+        .then(() => {
           console.log('login success')
-
           // TODO: redirect to role based dashboard
-          
-
           // test redirect to admin/dashboard
           router.push('/admin/dashboard')
-
-        },
-      )
+        })
+        .catch(error => {
+          console.log(error)
+          errorMessages.value.email = "Email doesn't exist"
+          errorMessages.value.password = 'Password is incorrect'
+        })
     }
-
     return {
-      LoginCredentials,
-
+      loginCredentials,
+      errorMessages,
       handleLogin,
     }
   },
+  components: { InputField },
 }
 </script>
