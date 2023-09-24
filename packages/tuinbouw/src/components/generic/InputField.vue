@@ -63,11 +63,7 @@ export default {
     const inputType = ref('password')
 
     const toggle = () => {
-      if (inputType.value === 'password') {
-        inputType.value = 'text'
-      } else {
-        inputType.value = 'password'
-      }
+      inputType.value = inputType.value === 'password' ? 'text' : 'password'
     }
 
     return {
