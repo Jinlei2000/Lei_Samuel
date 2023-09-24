@@ -24,10 +24,17 @@
               label="Email"
               type="email"
               placeholder="john@example.com"
-              :value="loginCredentials.email"
               :error="errorMessages.email"
+              v-model="loginCredentials.email"
             />
-            <div>
+            <InputField
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              :error="errorMessages.password"
+              v-model="loginCredentials.password"
+            />
+            <!-- <div>
               <label
                 for="email"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -42,10 +49,9 @@
                 v-model="loginCredentials.email"
               />
             </div>
-            <div v-if="errorMessages.email">
-              <p class="text-red-600">{{ errorMessages.email }}</p>
-            </div>
-
+            <span v-if="errorMessages.email" class="text-red-600">{{
+              errorMessages.email
+            }}</span>
             <div>
               <label
                 for="password"
@@ -61,9 +67,9 @@
                 v-model="loginCredentials.password"
               />
             </div>
-            <div v-if="errorMessages.password">
-              <p class="text-red-600">{{ errorMessages.password }}</p>
-            </div>
+            <span v-if="errorMessages.password" class="text-red-600">{{
+              errorMessages.password
+            }}</span> -->
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
@@ -112,15 +118,17 @@ export default {
       email: '',
       password: '',
     })
-    const validateForm = (): boolean => {
-      errorMessages.value.email = loginCredentials.value.email
-        ? ''
-        : 'Email is required'
-      errorMessages.value.password = loginCredentials.value.password
-        ? ''
-        : 'Password is required'
-      return !errorMessages.value.email && !errorMessages.value.password
+
+    const validateForm = () => {
+      errorMessages.value.email = ''
+      errorMessages.value.password = ''
+      const { email, password } = loginCredentials.value
+      errorMessages.value.email = email ? '' : 'Email is required'
+      errorMessages.value.password = password ? '' : 'Password is required'
+
+      return email && password
     }
+
     const handleLogin = (): void => {
       if (!validateForm()) return
       login(loginCredentials.value.email, loginCredentials.value.password)
