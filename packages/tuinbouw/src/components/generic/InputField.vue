@@ -17,6 +17,7 @@
         :value="modelValue"
       />
       <button
+        type="button"
         class="absolute inset-y-0 right-0 flex items-center px-3"
         v-if="props.type === 'password'"
         @click="toggle"
@@ -63,7 +64,7 @@ export default {
     const inputType = ref('password')
 
     const toggle = () => {
-      inputType.value = inputType.value === 'password' ? 'text' : 'password'
+      // inputType.value = inputType.value === 'password' ? 'text' : 'password'
     }
 
     return {
