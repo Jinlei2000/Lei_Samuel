@@ -19,6 +19,9 @@
           >
             Create an account
           </h1>
+          <span v-if="errorMessages.general" class="text-red-600">{{
+            errorMessages.general
+          }}</span>
           <form @submit.prevent="handleRegister" class="space-y-4 md:space-y-6">
             <InputField
               label="First name"
@@ -35,37 +38,47 @@
               v-model="registerCredentials.lastName"
             />
 
-            <!-- make radio buttons to choose role employee or customer -->
-
-            <div class="flex">
-              <div class="flex items-center mr-4">
-                <input
-                  id="inline-radio"
-                  type="radio"
-                  value=""
-                  name="inline-radio-group"
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  for="inline-radio"
-                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >Employee</label
-                >
+            <div>
+              <p
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Choose your role
+              </p>
+              <div class="flex">
+                <div class="flex items-center mr-4">
+                  <input
+                    id="radio"
+                    type="radio"
+                    value="employee"
+                    name="radios"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700"
+                    v-model="registerCredentials.role"
+                  />
+                  <label
+                    for="radio"
+                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Employee</label
+                  >
+                </div>
+                <div class="flex items-center mr-4">
+                  <input
+                    id="radio-2"
+                    type="radio"
+                    value="customer"
+                    name="radios"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700"
+                    v-model="registerCredentials.role"
+                  />
+                  <label
+                    for="radio-2"
+                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Customer</label
+                  >
+                </div>
               </div>
-              <div class="flex items-center mr-4">
-                <input
-                  id="inline-2-radio"
-                  type="radio"
-                  value=""
-                  name="inline-radio-group"
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                />
-                <label
-                  for="inline-2-radio"
-                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >Customer</label
-                >
-              </div>
+              <span v-if="errorMessages.role" class="text-red-600">{{
+                errorMessages.role
+              }}</span>
             </div>
 
             <InputField
@@ -109,34 +122,90 @@ import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import { ref } from 'vue'
 import InputField from '@/components/generic/form/InputField.vue'
+import { object, string } from 'yup'
 
 export default {
   setup() {
     // Composables
     const { register } = useFirebase()
 
-    // Logic
+    // Data
     const registerCredentials = ref({
       email: '',
       password: '',
       firstName: '',
       lastName: '',
+      role: '',
     })
-    const errorMessages = ref({
+    const errorMessages = ref<{ [key: string]: string }>({
       email: '',
       password: '',
       firstName: '',
       lastName: '',
+      role: '',
+      general: '',
     })
 
-    const handleRegister = async () => {
-      await register(
-        registerCredentials.value.email,
-        registerCredentials.value.password,
-      )
+    // Validation schema
+    const registerSchema = object({
+      email: string().required('email is required'),
+      password: string()
+        .required('password is required')
+        .min(6, "Password can't be shorter than 6 characters"),
+      firstName: string().required('first name is required'),
+      lastName: string().required('last name is required'),
+      role: string<'employee' | 'customer'>().required('role is required'),
+    })
 
-      console.log('Registered')
-      router.push('/auth/login')
+    // Reset error messages to empty strings
+    const resetErrorMessages = () => {
+      errorMessages.value = {
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        role: '',
+        general: '',
+      }
+    }
+
+    // Handle validation errors
+    const handleValidationErrors = (err: any) => {
+      // console.log(err)
+      err.inner.forEach((e: { path: string; message: string }) => {
+        errorMessages.value[e.path] = e.message
+      })
+      // console.log(errorMessages.value)
+    }
+
+    // Validate and register
+    const handleRegister = async () => {
+      resetErrorMessages()
+
+      // Validate login credentials with yup
+      registerSchema
+        .validate(registerCredentials.value, {
+          abortEarly: false,
+        })
+        .then(() => {
+          console.log('validation success')
+          register(
+            registerCredentials.value.email,
+            registerCredentials.value.password,
+          )
+            .then(() => {
+              console.log('register success')
+              router.push('/auth/login')
+            })
+            .catch(error => {
+              console.log(error.message)
+              // TODO: handle error messages better
+              errorMessages.value.general = error.message
+            })
+        })
+        .catch(err => {
+          handleValidationErrors(err)
+        })
     }
 
     return {
