@@ -20,38 +20,68 @@
             Create an account
           </h1>
           <form @submit.prevent="handleRegister" class="space-y-4 md:space-y-6">
-            <div>
-              <label
-                for="email"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Your email</label
-              >
-              <input
-                type="email"
-                name="email"
-                id="email"
-                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="name@company.com"
-                required="true"
-                v-model="RegisterCredentials.email"
-              />
+            <InputField
+              label="First name"
+              type="text"
+              placeholder="John"
+              :error="errorMessages.firstName"
+              v-model="registerCredentials.firstName"
+            />
+            <InputField
+              label="Last name"
+              type="text"
+              placeholder="Doe"
+              :error="errorMessages.lastName"
+              v-model="registerCredentials.lastName"
+            />
+
+            <!-- make radio buttons to choose role employee or customer -->
+
+            <div class="flex">
+              <div class="flex items-center mr-4">
+                <input
+                  id="inline-radio"
+                  type="radio"
+                  value=""
+                  name="inline-radio-group"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  for="inline-radio"
+                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >Employee</label
+                >
+              </div>
+              <div class="flex items-center mr-4">
+                <input
+                  id="inline-2-radio"
+                  type="radio"
+                  value=""
+                  name="inline-radio-group"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  for="inline-2-radio"
+                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >Customer</label
+                >
+              </div>
             </div>
-            <div>
-              <label
-                for="password"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Password</label
-              >
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="••••••••"
-                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                required="true"
-                v-model="RegisterCredentials.password"
-              />
-            </div>
+
+            <InputField
+              label="Email"
+              type="email"
+              placeholder="john@example.com"
+              :error="errorMessages.email"
+              v-model="registerCredentials.email"
+            />
+            <InputField
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              :error="errorMessages.password"
+              v-model="registerCredentials.password"
+            />
 
             <button
               type="submit"
@@ -78,6 +108,7 @@
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import { ref } from 'vue'
+import InputField from '@/components/generic/form/InputField.vue'
 
 export default {
   setup() {
@@ -85,16 +116,23 @@ export default {
     const { register } = useFirebase()
 
     // Logic
-    const RegisterCredentials = ref({
+    const registerCredentials = ref({
       email: '',
       password: '',
-      // TODO: Add extra fields (name)
+      firstName: '',
+      lastName: '',
+    })
+    const errorMessages = ref({
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
     })
 
     const handleRegister = async () => {
       await register(
-        RegisterCredentials.value.email,
-        RegisterCredentials.value.password,
+        registerCredentials.value.email,
+        registerCredentials.value.password,
       )
 
       console.log('Registered')
@@ -102,9 +140,11 @@ export default {
     }
 
     return {
-      RegisterCredentials,
+      registerCredentials,
       handleRegister,
+      errorMessages,
     }
   },
+  components: { InputField },
 }
 </script>

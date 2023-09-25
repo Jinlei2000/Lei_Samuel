@@ -67,7 +67,7 @@
 import { ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
-import InputField from '@/components/generic/InputField.vue'
+import InputField from '@/components/generic/form/InputField.vue'
 
 export default {
   setup() {
