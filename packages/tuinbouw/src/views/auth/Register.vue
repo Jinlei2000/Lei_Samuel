@@ -35,7 +35,6 @@
               v-model="registerCredentials.lastName"
             />
 
-            <!-- make radio buttons to choose role employee or customer -->
             <div>
               <p
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -143,6 +142,7 @@ export default {
       role: '',
     })
 
+    // Validation schema
     const loginSchema = object({
       email: string().required('email is required'),
       password: string()
@@ -153,6 +153,7 @@ export default {
       role: string<'employee' | 'customer'>().required('role is required'),
     })
 
+    // Reset error messages to empty strings
     const resetErrorMessages = () => {
       errorMessages.value = {
         email: '',
@@ -163,6 +164,7 @@ export default {
       }
     }
 
+    // Handle validation errors
     const handleValidationErrors = (err: any) => {
       // console.log(err)
       err.inner.forEach((e: { path: string; message: string }) => {
@@ -171,10 +173,12 @@ export default {
       // console.log(errorMessages.value)
     }
 
+    // Validate and register
     const handleRegister = async () => {
       resetErrorMessages()
 
       try {
+        // Validate login credentials with yup
         await loginSchema.validate(registerCredentials.value, {
           abortEarly: false,
         })
