@@ -126,7 +126,7 @@ export default {
     // Composables
     const { register } = useFirebase()
 
-    // Logic
+    // Data
     const registerCredentials = ref({
       email: '',
       password: '',
@@ -143,7 +143,7 @@ export default {
     })
 
     // Validation schema
-    const loginSchema = object({
+    const registerSchema = object({
       email: string().required('email is required'),
       password: string()
         .required('password is required')
@@ -179,7 +179,7 @@ export default {
 
       try {
         // Validate login credentials with yup
-        await loginSchema.validate(registerCredentials.value, {
+        await registerSchema.validate(registerCredentials.value, {
           abortEarly: false,
         })
 

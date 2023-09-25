@@ -19,6 +19,9 @@
           >
             Log in to your account
           </h1>
+          <span v-if="errorMessages.general" class="text-red-600">{{
+            errorMessages.general
+          }}</span>
           <form @submit.prevent="handleLogin" class="space-y-4 md:space-y-6">
             <InputField
               label="Email"
@@ -68,46 +71,72 @@ import { ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import InputField from '@/components/generic/form/InputField.vue'
+import { object, string } from 'yup'
 
 export default {
   setup() {
     // Composables
     const { login } = useFirebase()
-    // Logic
+    // Data
     const loginCredentials = ref({
       email: '',
       password: '',
     })
-    const errorMessages = ref({
+    const errorMessages = ref<{ [key: string]: string }>({
       email: '',
       password: '',
     })
 
-    const validateForm = () => {
-      errorMessages.value.email = ''
-      errorMessages.value.password = ''
-      const { email, password } = loginCredentials.value
-      errorMessages.value.email = email ? '' : 'Email is required'
-      errorMessages.value.password = password ? '' : 'Password is required'
+    // Validation schema
+    const loginSchema = object({
+      email: string().required('email is required'),
+      password: string().required('password is required'),
+    })
 
-      return email && password
+    // Reset error messages to empty strings
+    const resetErrorMessages = () => {
+      errorMessages.value = {
+        email: '',
+        password: '',
+        general: '',
+      }
     }
 
-    const handleLogin = (): void => {
-      if (!validateForm()) return
-      login(loginCredentials.value.email, loginCredentials.value.password)
+    // Handle validation errors
+    const handleValidationErrors = (err: any) => {
+      // console.log(err)
+      err.inner.forEach((e: any) => {
+        errorMessages.value[e.path] = e.message
+      })
+    }
+
+    // Validate and login
+    const handleLogin = async () => {
+      resetErrorMessages()
+
+      // Validate login credentials with yup
+      await loginSchema
+        .validate(loginCredentials.value, {
+          abortEarly: false,
+        })
         .then(() => {
-          console.log('login success')
-          // TODO: redirect to role based dashboard
-          // test redirect to admin/dashboard
-          router.push('/admin/dashboard')
+          console.log('validation success')
+          login(loginCredentials.value.email, loginCredentials.value.password)
+            .then(() => {
+              console.log('login success')
+              // TODO: redirect to role based dashboard
+              router.push('/admin/dashboard')
+            })
+            .catch(error => {
+              console.log(error)
+              errorMessages.value.general = 'Email or password is incorrect'
+            })
         })
-        .catch(error => {
-          console.log(error)
-          errorMessages.value.email = "Email doesn't exist"
-          errorMessages.value.password = 'Password is incorrect'
+        .catch(err => {
+          handleValidationErrors(err)
         })
     }
+
     return {
       loginCredentials,
       errorMessages,
