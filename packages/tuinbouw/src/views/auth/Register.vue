@@ -19,6 +19,9 @@
           >
             Create an account
           </h1>
+          <span v-if="errorMessages.general" class="text-red-600">{{
+            errorMessages.general
+          }}</span>
           <form @submit.prevent="handleRegister" class="space-y-4 md:space-y-6">
             <InputField
               label="First name"
@@ -140,6 +143,7 @@ export default {
       firstName: '',
       lastName: '',
       role: '',
+      general: '',
     })
 
     // Validation schema
@@ -161,6 +165,7 @@ export default {
         firstName: '',
         lastName: '',
         role: '',
+        general: '',
       }
     }
 
@@ -177,21 +182,30 @@ export default {
     const handleRegister = async () => {
       resetErrorMessages()
 
-      try {
-        // Validate login credentials with yup
-        await registerSchema.validate(registerCredentials.value, {
+      // Validate login credentials with yup
+      registerSchema
+        .validate(registerCredentials.value, {
           abortEarly: false,
         })
-
-        await register(
-          registerCredentials.value.email,
-          registerCredentials.value.password,
-        )
-
-        router.push('/auth/login')
-      } catch (err) {
-        handleValidationErrors(err)
-      }
+        .then(() => {
+          console.log('validation success')
+          register(
+            registerCredentials.value.email,
+            registerCredentials.value.password,
+          )
+            .then(() => {
+              console.log('register success')
+              router.push('/auth/login')
+            })
+            .catch(error => {
+              console.log(error.message)
+              // TODO: handle error messages better
+              errorMessages.value.general = error.message
+            })
+        })
+        .catch(err => {
+          handleValidationErrors(err)
+        })
     }
 
     return {

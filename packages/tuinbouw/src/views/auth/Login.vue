@@ -85,6 +85,7 @@ export default {
     const errorMessages = ref<{ [key: string]: string }>({
       email: '',
       password: '',
+      general: '',
     })
 
     // Validation schema
@@ -111,11 +112,11 @@ export default {
     }
 
     // Validate and login
-    const handleLogin = async () => {
+    const handleLogin = () => {
       resetErrorMessages()
 
       // Validate login credentials with yup
-      await loginSchema
+      loginSchema
         .validate(loginCredentials.value, {
           abortEarly: false,
         })
@@ -128,8 +129,8 @@ export default {
               router.push('/admin/dashboard')
             })
             .catch(error => {
-              console.log(error)
-              errorMessages.value.general = 'Email or password is incorrect'
+              console.log(error.message)
+              errorMessages.value.general = error.message
             })
         })
         .catch(err => {
