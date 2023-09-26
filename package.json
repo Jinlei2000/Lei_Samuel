@@ -2,7 +2,7 @@
   "name": "lei_samuel",
   "version": "0.0.0",
   "scripts": {
-    "dev": "todo"
+    "dev": "npm run dev -w tuinbouw"
   },
   "repository": {
     "type": "git",
