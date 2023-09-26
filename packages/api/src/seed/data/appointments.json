@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Appointment 1",
+    "date": "2023-09-27T00:00:00.000Z",
+    "location": "Room A",
+    "description": "Test appointment 1"
+  },
+  {
+    "name": "Appointment 2",
+    "date": "2023-09-28T00:00:00.000Z",
+    "location": "Room B",
+    "description": "Test appointment 2"
+  },
+  {
+    "name": "Appointment 3",
+    "date": "2023-09-29T00:00:00.000Z",
+    "location": "Room C",
+    "description": "Test appointment 3"
+  },
+  {
+    "name": "Appointment 4",
+    "date": "2023-09-30T00:00:00.000Z",
+    "location": "Room D",
+    "description": "Test appointment 4"
+  }
+]

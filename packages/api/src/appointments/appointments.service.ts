@@ -16,6 +16,7 @@ export class AppointmentsService {
     const a = new Appointment()
     a.name = createAppointmentInput.name
     a.date = createAppointmentInput.date
+    a.location = createAppointmentInput.location
 
     return this.appointmentRepository.save(a)
   }
@@ -34,5 +35,15 @@ export class AppointmentsService {
 
   remove(id: number) {
     return `This action removes a #${id} appointment`
+  }
+
+  //logica for seeding
+
+  saveAll(appointments: Appointment[]) {
+    return this.appointmentRepository.save(appointments)
+  }
+
+  truncate() {
+    return this.appointmentRepository.clear()
   }
 }

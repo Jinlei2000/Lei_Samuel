@@ -15,4 +15,8 @@ export class Appointment {
   @Column() // Database link - Typeorm
   @Field(() => Date) // GraphQL
   date: Date
+
+  @Column() // Database link - Typeorm
+  @Field() // GraphQL
+  location: string
 }
