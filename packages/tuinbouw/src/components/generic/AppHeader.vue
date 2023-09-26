@@ -36,11 +36,11 @@
           </li>
           <li>
             <button
-              class="bg-[#1A281D] rounded-full flex justify-center items-center py-3 px-6 text-white"
+              class="bg-[#1A281D] rounded-full flex justify-center gap-[16px] items-center py-[16px] pl-[16px] pr-[32px] text-white"
             >
-              <span>
+              <span class="bg-white rounded-full">
                 <!-- lucide icon -->
-                <Plus class="h-6 w-6" />
+                <Plus class="h-6 w-6" color="black" />
               </span>
               Afspraak
             </button>
