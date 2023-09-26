@@ -3,10 +3,16 @@ import { AppointmentsService } from './appointments.service'
 import { Appointment } from './entities/appointment.entity'
 import { CreateAppointmentInput } from './dto/create-appointment.input'
 import { UpdateAppointmentInput } from './dto/update-appointment.input'
+import { Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Resolver(() => Appointment)
 export class AppointmentsResolver {
-  constructor(private readonly appointmentsService: AppointmentsService) {}
+  constructor(
+    private readonly appointmentsService: AppointmentsService,
+    @InjectRepository(Appointment)
+    private readonly appointmentRepository: Repository<Appointment>,
+  ) {}
 
   @Mutation(() => Appointment)
   createAppointment(
@@ -18,18 +24,7 @@ export class AppointmentsResolver {
 
   @Query(() => [Appointment], { name: 'appointments' })
   findAll() {
-    return [
-      {
-        id: '1',
-        name: 'Appointment 1',
-        date: new Date(),
-        location: 'Room A',
-        description: 'Test appointment',
-        active: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ]
+    return this.appointmentRepository.find()
   }
 
   @Query(() => Appointment, { name: 'appointment' })
