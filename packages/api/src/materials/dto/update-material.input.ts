@@ -7,7 +7,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  isMongoId,
 } from 'class-validator'
 
 @InputType()

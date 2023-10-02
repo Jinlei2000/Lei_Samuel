@@ -9,22 +9,22 @@ import {
 
 @InputType() // graphql
 export class CreateMaterialInput {
-  @IsString()
-  @IsNotEmpty()
+  @IsString() //validation
+  @IsNotEmpty() //validation
   @Field() // graphql
   name: string
 
-  @IsBoolean()
-  @IsOptional()
+  @IsBoolean() //validation
+  @IsOptional() //validation
   @Field({ defaultValue: true }) // graphql
   isAvailable: boolean
 
-  @IsString()
-  @IsOptional()
+  @IsString() //validation
+  @IsOptional() //validation
   @Field({ nullable: true }) // graphql
   personId: string
 
-  @IsInt()
+  @IsInt() //validation
   @Field() // graphql
   serialNumber: number
 }
