@@ -56,7 +56,9 @@ export class DatabaseSeedCommand {
     describe: 'Delete all data from appointments, materials... tables',
   })
   async deleteAll() {
+    console.info('🔪 Start deleting all data')
     await this.deleteAppointments()
     await this.deleteMaterials()
+    console.info('🪶 Removed all data')
   }
 }

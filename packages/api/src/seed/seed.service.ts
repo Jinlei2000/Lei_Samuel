@@ -42,7 +42,7 @@ export class SeedService {
       m.isAvailable = material.isAvailable
       // TODO: How to add personId here? Make a User.
       m.personId = '4423846543213256'
-      m.isDefect = false
+      m.isDefect = material.isDefect
       m.serialNumber = material.serialNumber
 
       theMaterials.push(m)
