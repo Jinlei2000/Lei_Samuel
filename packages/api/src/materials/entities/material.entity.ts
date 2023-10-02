@@ -24,7 +24,7 @@ export class Material {
   isAvailable: boolean
 
   @Column() // Database link - Typeorm
-  @Field() // GraphQL type
+  @Field({ nullable: true }) // GraphQL type
   personId: string
 
   @Column() // Database link - Typeorm

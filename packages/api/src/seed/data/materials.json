@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Hoe",
+        "isAvailable": true,
+        "serialNumber": 123456789,
+        "isDefect": false
+    },
+    {
+        "name": "Fork",
+        "isAvailable": false,
+        "serialNumber": 123456789,
+        "isDefect": false
+    },
+    {
+        "name": "Spade",
+        "isAvailable": false,
+        "serialNumber": 123456789,
+        "isDefect": true
+    }
+]

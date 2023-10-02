@@ -53,4 +53,13 @@ export class MaterialsService {
     // return null if the material was successfully deleted
     return null
   }
+
+  // Seeding functions
+  saveAll(materials: Material[]) {
+    return this.materialRepository.save(materials)
+  }
+
+  truncate() {
+    return this.materialRepository.clear()
+  }
 }
