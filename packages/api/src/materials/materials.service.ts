@@ -13,7 +13,23 @@ export class MaterialsService {
     private readonly materialRepository: Repository<Material>,
   ) {}
 
-  create(createMaterialInput: CreateMaterialInput) {
+  findAll(): Promise<Material[]> {
+    return this.materialRepository.find()
+  }
+
+  findAllByPersonId(personId: string): Promise<Material[]> {
+    return this.materialRepository.find(
+      // @ts-ignore
+      { personId: personId },
+    )
+  }
+
+  findOne(id: string): Promise<Material> {
+    // @ts-ignore
+    return this.materialRepository.findOne({ _id: new ObjectId(id) })
+  }
+
+  create(createMaterialInput: CreateMaterialInput): Promise<Material> {
     const m = new Material()
     m.name = createMaterialInput.name
     m.isAvailable = createMaterialInput.isAvailable
@@ -24,16 +40,10 @@ export class MaterialsService {
     return this.materialRepository.save(m)
   }
 
-  findAll() {
-    return this.materialRepository.find()
-  }
-
-  findOne(id: string) {
-    // @ts-ignore
-    return this.materialRepository.findOne({ _id: new ObjectId(id) })
-  }
-
-  async update(id: ObjectId, updateMaterialInput: UpdateMaterialInput) {
+  async update(
+    id: ObjectId,
+    updateMaterialInput: UpdateMaterialInput,
+  ): Promise<Material> {
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateMaterialInput
 
@@ -44,7 +54,7 @@ export class MaterialsService {
   }
 
   // TODO: What to return here? if delete was successful, return null?
-  async remove(id: string) {
+  async remove(id: string): Promise<null> {
     const result = await this.materialRepository.delete({
       // @ts-ignore
       _id: new ObjectId(id),
@@ -55,11 +65,11 @@ export class MaterialsService {
   }
 
   // Seeding functions
-  saveAll(materials: Material[]) {
+  saveAll(materials: Material[]): Promise<Material[]> {
     return this.materialRepository.save(materials)
   }
 
-  truncate() {
+  truncate(): Promise<void> {
     return this.materialRepository.clear()
   }
 }

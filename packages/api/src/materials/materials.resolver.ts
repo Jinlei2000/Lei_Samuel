@@ -8,22 +8,30 @@ import { UpdateMaterialInput } from './dto/update-material.input'
 export class MaterialsResolver {
   constructor(private readonly materialsService: MaterialsService) {}
 
-  @Mutation(() => Material)
-  createMaterial(
-    @Args('createMaterialInput') createMaterialInput: CreateMaterialInput,
-  ) {
-    return this.materialsService.create(createMaterialInput)
-  }
-
   @Query(() => [Material], { name: 'materials' })
   findAll() {
     return this.materialsService.findAll()
+  }
+
+  // find all materials with the same personId
+  @Query(() => [Material], { name: 'materialsByPersonId', nullable: true })
+  findAllByPersonId(
+    @Args('personId', { type: () => String }) personId: string,
+  ): Promise<Material[]> {
+    return this.materialsService.findAllByPersonId(personId)
   }
 
   //nullable: true, because we want to return null if no material is found
   @Query(() => Material, { name: 'material', nullable: true })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.findOne(id)
+  }
+
+  @Mutation(() => Material, { name: 'createMaterial' })
+  createMaterial(
+    @Args('createMaterialInput') createMaterialInput: CreateMaterialInput,
+  ) {
+    return this.materialsService.create(createMaterialInput)
   }
 
   @Mutation(() => Material, { name: 'updateMaterial' })
