@@ -6,6 +6,7 @@ import { SeedService } from './seed.service'
 export class DatabaseSeedCommand {
   constructor(private readonly seedService: SeedService) {}
 
+  //#region Appointments
   @Command({
     command: 'seed:database:appointments',
     describe: 'Seed the database with appointments',
@@ -20,9 +21,44 @@ export class DatabaseSeedCommand {
     command: 'seed:reset:appointments',
     describe: 'Delete all data from the appointments table',
   })
-  async delete() {
+  async deleteAppointments() {
     console.info('🔪 Start deleting appointments')
     await this.seedService.deleteAllAppointments()
     console.info('🪶 Removed appointments')
+  }
+  //#endregion
+
+  //#region Materials
+  @Command({
+    command: 'seed:database:materials',
+    describe: 'Seed the database with materials',
+  })
+  async seedMaterials() {
+    console.info('🪺 Start seeding of materials')
+    const materials = await this.seedService.addMaterialsFromJson()
+    console.info(`🐣 ${materials.length} Materials are added`)
+  }
+
+  @Command({
+    command: 'seed:reset:materials',
+    describe: 'Delete all data from the materials table',
+  })
+  async deleteMaterials() {
+    console.info('🔪 Start deleting materials')
+    await this.seedService.deleteAllMaterials()
+    console.info('🪶 Removed materials')
+  }
+  //#endregion
+
+  // Delete all data from appointments, materials... tables
+  @Command({
+    command: 'seed:reset',
+    describe: 'Delete all data from appointments, materials... tables',
+  })
+  async deleteAll() {
+    console.info('🔪 Start deleting all data')
+    await this.deleteAppointments()
+    await this.deleteMaterials()
+    console.info('🪶 Removed all data')
   }
 }
