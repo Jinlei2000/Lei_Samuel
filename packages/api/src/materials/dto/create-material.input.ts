@@ -1,7 +1,16 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql'
 
-@InputType()
+@InputType() // graphql
 export class CreateMaterialInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field() // graphql
+  name: string
+
+  @Field({ defaultValue: true }) // graphql
+  isAvailable: boolean
+
+  @Field({ nullable: true }) // graphql
+  personId: string
+
+  @Field() // graphql
+  serialNumber: number
 }

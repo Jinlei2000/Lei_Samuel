@@ -20,8 +20,9 @@ export class MaterialsResolver {
     return this.materialsService.findAll()
   }
 
-  @Query(() => Material, { name: 'material' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  //nullable: true, because we want to return null if no material is found
+  @Query(() => Material, { name: 'material', nullable: true })
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.findOne(id)
   }
 

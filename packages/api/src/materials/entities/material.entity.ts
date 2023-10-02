@@ -3,16 +3,17 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ObjectId,
   ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm'
 
 @Entity() // Database link - Typeorm
-@ObjectType()
+@ObjectType({ description: 'material' }) // GraphQL type
 export class Material {
   @ObjectIdColumn() // Database link - Typeorm
   @Field(() => ID) // GraphQL type
-  id: string
+  id: ObjectId
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
@@ -32,7 +33,7 @@ export class Material {
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
-  serialNumber: string
+  serialNumber: number
 
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field() // GraphQL type
