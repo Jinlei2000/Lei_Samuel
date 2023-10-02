@@ -47,8 +47,7 @@ export class MaterialsService {
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateMaterialInput
 
-    // @ts-ignore
-    await this.materialRepository.update({ _id: new ObjectId(id) }, updatedData)
+    await this.materialRepository.update(id, updatedData)
 
     return this.findOne(id.toString())
   }
