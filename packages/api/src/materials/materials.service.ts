@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { CreateMaterialInput } from './dto/create-material.input';
-import { UpdateMaterialInput } from './dto/update-material.input';
+import { Injectable } from '@nestjs/common'
+import { CreateMaterialInput } from './dto/create-material.input'
+import { UpdateMaterialInput } from './dto/update-material.input'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { Material } from './entities/material.entity'
 
 @Injectable()
 export class MaterialsService {
+  constructor(
+    @InjectRepository(Material)
+    private readonly materialRepository: Repository<Material>,
+  ) {}
+
   create(createMaterialInput: CreateMaterialInput) {
-    return 'This action adds a new material';
+    throw new Error('Method not implemented.')
   }
 
   findAll() {
-    return `This action returns all materials`;
+    return this.materialRepository.find()
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} material`;
+    throw new Error('Method not implemented.')
   }
 
   update(id: number, updateMaterialInput: UpdateMaterialInput) {
-    return `This action updates a #${id} material`;
+    throw new Error('Method not implemented.')
   }
 
   remove(id: number) {
-    return `This action removes a #${id} material`;
+    throw new Error('Method not implemented.')
   }
 }

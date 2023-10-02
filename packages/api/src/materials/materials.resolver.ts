@@ -17,7 +17,7 @@ export class MaterialsResolver {
 
   @Query(() => [Material], { name: 'materials' })
   findAll() {
-    return this.materialsService.findAll();
+    return this.materialsService.findAll()
   }
 
   @Query(() => Material, { name: 'material' })
