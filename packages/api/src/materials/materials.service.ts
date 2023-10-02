@@ -54,10 +54,7 @@ export class MaterialsService {
 
   // TODO: What to return here? if delete was successful, return null?
   async remove(id: string): Promise<null> {
-    const result = await this.materialRepository.delete({
-      // @ts-ignore
-      _id: new ObjectId(id),
-    })
+    const result = await this.materialRepository.delete(id)
 
     // return null if the material was successfully deleted
     return null
