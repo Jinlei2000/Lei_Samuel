@@ -26,7 +26,7 @@ export class MaterialsResolver {
     return this.materialsService.findOne(id)
   }
 
-  @Mutation(() => Material)
+  @Mutation(() => Material, { name: 'updateMaterial' })
   updateMaterial(
     @Args('updateMaterialInput') updateMaterialInput: UpdateMaterialInput,
   ) {

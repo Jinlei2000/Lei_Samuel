@@ -33,8 +33,14 @@ export class MaterialsService {
     return this.materialRepository.findOne({ _id: new ObjectId(id) })
   }
 
-  update(id: number, updateMaterialInput: UpdateMaterialInput) {
-    throw new Error('Method not implemented.')
+  async update(id: ObjectId, updateMaterialInput: UpdateMaterialInput) {
+    // remove id and make a new variable with the rest of the data
+    const { id: _, ...updatedData } = updateMaterialInput
+
+    // @ts-ignore
+    await this.materialRepository.update({ _id: new ObjectId(id) }, updatedData)
+
+    return this.findOne(id.toString())
   }
 
   remove(id: number) {
