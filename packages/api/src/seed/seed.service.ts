@@ -40,8 +40,8 @@ export class SeedService {
       const m = new Material()
       m.name = material.name
       m.isAvailable = material.isAvailable
-      // TODO: How to add personId here?
-      // m.personId = material.personId
+      // TODO: How to add personId here? Make a User.
+      m.personId = '4423846543213256'
       m.isDefect = false
       m.serialNumber = material.serialNumber
 
