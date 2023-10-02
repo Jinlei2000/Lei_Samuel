@@ -43,7 +43,8 @@ export class MaterialsService {
     return this.findOne(id.toString())
   }
 
-  remove(id: number) {
-    throw new Error('Method not implemented.')
+  remove(id: string) {
+    // @ts-ignore
+    return this.materialRepository.delete({ _id: new ObjectId(id) })
   }
 }

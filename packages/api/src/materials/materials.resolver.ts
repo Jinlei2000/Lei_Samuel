@@ -36,8 +36,12 @@ export class MaterialsResolver {
     )
   }
 
-  @Mutation(() => Material)
-  removeMaterial(@Args('id', { type: () => Int }) id: number) {
-    return this.materialsService.remove(id)
+  // TODO: What to return here? if delete was successful, return null?
+  @Mutation(() => Material, { name: 'removeMaterial', nullable: true })
+  async removeMaterial(@Args('id', { type: () => String }) id: string) {
+    await this.materialsService.remove(id)
+
+    // return null if the material was successfully deleted
+    return null
   }
 }
