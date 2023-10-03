@@ -25,9 +25,18 @@ export class MaterialsService {
     )
   }
 
-  findOne(id: string): Promise<Material> {
+  async findOne(id: string): Promise<Material | GraphQLError> {
+    const material = await this.materialRepository.findOne({
+      // @ts-ignore
+      _id: new ObjectId(id),
+    })
+
+    if (!material) {
+      throw new GraphQLError('Material not found!')
+    }
+
     // @ts-ignore
-    return this.materialRepository.findOne({ _id: new ObjectId(id) })
+    return material
   }
 
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
@@ -44,7 +53,7 @@ export class MaterialsService {
   async update(
     id: ObjectId,
     updateMaterialInput: UpdateMaterialInput,
-  ): Promise<Material> {
+  ): Promise<Material | GraphQLError> {
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateMaterialInput
 
@@ -53,12 +62,8 @@ export class MaterialsService {
     return this.findOne(id.toString())
   }
 
-  // TODO: What to return here? if delete was successful, return null?
   async remove(id: string): Promise<string | GraphQLError> {
-    const materialFounded = await this.findOne(id)
-    if (!materialFounded) {
-      return new GraphQLError('Material dont exist!')
-    }
+    await this.findOne(id)
 
     await this.materialRepository.delete(id)
 
