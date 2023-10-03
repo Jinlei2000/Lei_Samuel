@@ -25,7 +25,7 @@ export class Material {
 
   @Column() // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
-  personId: string
+  personId?: string
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
@@ -36,10 +36,10 @@ export class Material {
   serialNumber: number
 
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
-  @Field() // GraphQL type
-  createdAt: Date
+  @Field({ nullable: true }) // GraphQL type
+  createdAt?: Date
 
   @UpdateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
-  @Field() // GraphQL type
-  updatedAt: Date
+  @Field({ nullable: true }) // GraphQL type
+  updatedAt?: Date
 }

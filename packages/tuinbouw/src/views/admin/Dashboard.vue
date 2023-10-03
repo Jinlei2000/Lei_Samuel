@@ -59,6 +59,11 @@ export default {
       UserCredentials.value.email = firebaseUser.value.email
     }
 
+    // Create brearer token
+    firebaseUser.value?.getIdToken().then(token => {
+      console.log(`{"Authorization": "Bearer ${token}"}`)
+    })
+
     return {
       UserCredentials,
       handleLogout,
