@@ -50,7 +50,7 @@ export class MaterialsResolver {
     )
   }
 
-  @Mutation(() => Material, { name: 'removeMaterial', nullable: true })
+  @Mutation(() => String, { name: 'removeMaterial', nullable: true })
   removeMaterial(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.remove(id)
   }

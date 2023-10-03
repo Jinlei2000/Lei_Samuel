@@ -54,17 +54,16 @@ export class MaterialsService {
   }
 
   // TODO: What to return here? if delete was successful, return null?
-  remove(id: string): Promise<string> {
-    const materialFounded = this.findOne(id)
-    console.log('materialFounded', materialFounded)
+  async remove(id: string): Promise<string | GraphQLError> {
+    const materialFounded = await this.findOne(id)
     if (!materialFounded) {
-      new GraphQLError('Material dont exist!')
+      return new GraphQLError('Material dont exist!')
     }
 
-    // this.materialRepository.delete(id)
+    await this.materialRepository.delete(id)
 
     // return id if delete was successful
-    return Promise.resolve(id)
+    return id
   }
 
   // Seeding functions
