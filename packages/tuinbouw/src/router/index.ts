@@ -96,6 +96,14 @@ const router = createRouter({
           path: 'clients/:id',
           component: () => import('../views/admin/Client.vue'),
         },
+        {
+          path: 'materials',
+          component: () => import('../views/admin/Materials.vue'),
+        },
+        // {
+        //   path: 'materials/:id',
+        //   component: () => import('../views/admin/Material.vue'),
+        // },
       ],
     },
 
