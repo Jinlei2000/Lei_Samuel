@@ -13,15 +13,31 @@
   </Container>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import Container from '@/components/wrapper/Container.vue'
 
 import { useQuery } from '@vue/apollo-composable'
 import { GET_MATERIALS } from '@/graphql/material.query'
 
-const {
-  result: materials,
-  loading: materialsLoading,
-  error: materialsError,
-} = useQuery(GET_MATERIALS)
+// import Material from '@/interfaces/material'
+
+export default {
+  components: {
+    Container,
+  },
+
+  setup() {
+    const {
+      result: materials,
+      loading: materialsLoading,
+      error: materialsError,
+    } = useQuery(GET_MATERIALS)
+
+    return {
+      materials: materials,
+      materialsLoading,
+      materialsError,
+    }
+  },
+}
 </script>

@@ -9,7 +9,7 @@
 import { provide } from 'vue'
 import { DefaultApolloClient } from '@vue/apollo-composable'
 
-import { useGraphql } from './composables/useGraphql'
+import useGraphql from './composables/useGraphql'
 
 export default {
   components: {
@@ -17,11 +17,13 @@ export default {
   },
 
   setup() {
-    const { apolloClient } = useApollo()
+    const { apolloClient } = useGraphql()
+
+    provide(DefaultApolloClient, apolloClient)
+
+    return {}
   },
 }
-
-provide(DefaultApolloClient, apolloClient)
 // import type AppHeaderVue from '../components/generic/AppHeader.vue'
 import AppHeader from './components/generic/AppHeader.vue'
 </script>
