@@ -3,13 +3,19 @@ import { MaterialsService } from './materials.service'
 import { Material } from './entities/material.entity'
 import { CreateMaterialInput } from './dto/create-material.input'
 import { UpdateMaterialInput } from './dto/update-material.input'
+import { UseGuards } from '@nestjs/common'
+import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
+import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
+import { UserRecord } from 'firebase-admin/auth'
 
 @Resolver(() => Material)
 export class MaterialsResolver {
   constructor(private readonly materialsService: MaterialsService) {}
 
+  @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
-  findAll() {
+  findAll(@FirebaseUser() currentUser: UserRecord) {
+    console.log('currentUser', currentUser)
     return this.materialsService.findAll()
   }
 

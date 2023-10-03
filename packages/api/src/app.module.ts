@@ -5,11 +5,15 @@ import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { AppointmentsModule } from './appointments/appointments.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { SeedModule } from './seed/seed.module';
-import { MaterialsModule } from './materials/materials.module';
+import { SeedModule } from './seed/seed.module'
+import { MaterialsModule } from './materials/materials.module'
+import { AuthenticationModule } from './authentication/authentication.module'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
+    ConfigModule.forRoot({}),
+
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
@@ -29,6 +33,8 @@ import { MaterialsModule } from './materials/materials.module';
     SeedModule,
 
     MaterialsModule,
+
+    AuthenticationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
