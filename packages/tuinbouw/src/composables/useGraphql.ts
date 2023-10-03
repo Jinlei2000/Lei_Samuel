@@ -6,7 +6,7 @@ import {
 
 export default () => {
   const httpLink = createHttpLink({
-    uri: 'http://[::1]:8008/graphql',
+    uri: 'http://[::1]:3000/graphql',
   })
 
   const apolloClient = new ApolloClient({

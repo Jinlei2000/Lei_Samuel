@@ -36,7 +36,7 @@ export default {
     console.log(materials)
 
     return {
-      materials: materials,
+      materials,
       materialsLoading,
       materialsError,
     }
