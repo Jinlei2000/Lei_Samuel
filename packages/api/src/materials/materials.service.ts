@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Material } from './entities/material.entity'
 import { ObjectId } from 'mongodb'
+import { GraphQLError } from 'graphql'
 
 @Injectable()
 export class MaterialsService {
@@ -53,11 +54,17 @@ export class MaterialsService {
   }
 
   // TODO: What to return here? if delete was successful, return null?
-  async remove(id: string): Promise<null> {
-    const result = await this.materialRepository.delete(id)
+  remove(id: string): Promise<string> {
+    const materialFounded = this.findOne(id)
+    console.log('materialFounded', materialFounded)
+    if (!materialFounded) {
+      new GraphQLError('Material dont exist!')
+    }
 
-    // return null if the material was successfully deleted
-    return null
+    // this.materialRepository.delete(id)
+
+    // return id if delete was successful
+    return Promise.resolve(id)
   }
 
   // Seeding functions
