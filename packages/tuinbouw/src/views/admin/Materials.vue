@@ -1,12 +1,12 @@
 <template>
   <Container>
     <h1>Materials</h1>
-    <div v-if="materialsError">{{ materialsError }}</div>
-
     <div v-if="materialsLoading">Loading...</div>
 
+    <div v-if="materialsError">{{ materialsError }}</div>
+
     <div v-else>
-      <div v-for="material of materials.getMaterials" :key="material.id">
+      <div v-for="material of materials.materials" :key="material.id">
         <p>{{ material.name }}</p>
       </div>
     </div>
@@ -32,6 +32,8 @@ export default {
       loading: materialsLoading,
       error: materialsError,
     } = useQuery(GET_MATERIALS)
+
+    console.log(materials)
 
     return {
       materials: materials,
