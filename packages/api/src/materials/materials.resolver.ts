@@ -12,10 +12,10 @@ import { UserRecord } from 'firebase-admin/auth'
 export class MaterialsResolver {
   constructor(private readonly materialsService: MaterialsService) {}
 
-  // @UseGuards(FirebaseGuard)
+  @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
-  findAll() { // @FirebaseUser() currentUser: UserRecord
-    // console.log('currentUser', currentUser)
+  findAll(@FirebaseUser() currentUser: UserRecord) {
+    console.log('currentUser', currentUser)
     return this.materialsService.findAll()
   }
 

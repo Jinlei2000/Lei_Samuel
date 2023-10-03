@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const GET_MATERIALS = gql`
-  query materials {
+  query {
     materials {
       id
       name
