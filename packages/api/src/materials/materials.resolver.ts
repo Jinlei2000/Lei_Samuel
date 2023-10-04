@@ -8,6 +8,7 @@ import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 import { UserRecord } from 'firebase-admin/auth'
 import { GraphQLError } from 'graphql'
+import { OrderByInput } from './dto/order.input'
 
 @Resolver(() => Material)
 export class MaterialsResolver {
@@ -26,9 +27,10 @@ export class MaterialsResolver {
     @Args('personId', { type: () => String }) personId: string,
     @Args('filters', { type: () => [String], nullable: true })
     filters?: Array<string>,
-    @Args('orderBy', { type: () => String, nullable: true }) orderBy?: string,
-  ): Promise<Material[] > {
-    return this.materialsService.findAllByPersonId(personId, filters, orderBy)
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ): Promise<Material[]> {
+    return this.materialsService.findAllByPersonId(personId, filters, order)
   }
 
   //nullable: true, because we want to return null if no material is found
