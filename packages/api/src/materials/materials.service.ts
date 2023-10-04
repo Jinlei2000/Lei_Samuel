@@ -23,35 +23,39 @@ export class MaterialsService {
     filters?: Array<string>,
     orderBy?: string,
   ): Promise<Material[]> {
-    // const where = {
-    //   isAvailable: filters?.includes('A')
-    //     ? true
-    //     : filters?.includes('NA')
-    //     ? false
-    //     : undefined,
-    //   isDefect: filters?.includes('D') ? true : undefined,
-    // }
-
-    // const materials = await this.materialRepository.find({
-    //   // @ts-ignore
-    //   personId: personId,
-    //   where: where,
-
-    // })
-
-    const filterMap = {
-      A: { isAvailable: true },
-      NA: { isAvailable: false },
-      D: { isDefect: true },
+    let where: { [key: string]: string | boolean } = {
+      personId: personId,
     }
 
-    const where = filters?.reduce((acc, filter) => {
-      return { ...acc, ...filterMap[filter] }
-    }, {})
+    if (!filters.every(filter => ['A', 'NA', 'D', 'ND'].includes(filter))) {
+      throw new GraphQLError(
+        `Invalid filter in filters = [${filters}]! Supported filters are: A = Available, NA = Not Available, D = Defect, ND = Not Defect`,
+      )
+    }
+
+    if (filters?.includes('A') && filters?.includes('NA')) {
+      throw new GraphQLError(
+        'Cannot filter for A and NA at the same time! A = Available, NA = Not Available',
+      )
+    }
+    if (filters?.includes('A')) {
+      where.isAvailable = true
+    } else if (filters?.includes('NA')) {
+      where.isAvailable = false
+    }
+
+    if (filters?.includes('D') && filters?.includes('ND')) {
+      throw new GraphQLError(
+        'Cannot filter for D and ND at the same time! D = Defect, ND = Not Defect',
+      )
+    }
+    if (filters?.includes('D')) {
+      where.isDefect = true
+    } else if (filters?.includes('ND')) {
+      where.isDefect = false
+    }
 
     const materials = await this.materialRepository.find({
-      // @ts-ignore
-      personId,
       where,
     })
 
@@ -95,7 +99,7 @@ export class MaterialsService {
     return this.findOne(id.toString())
   }
 
-  async remove(id: string): Promise<string | GraphQLError> {
+  async remove(id: string): Promise<string> {
     await this.findOne(id)
 
     await this.materialRepository.delete(id)

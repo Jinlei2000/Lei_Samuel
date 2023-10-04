@@ -7,6 +7,7 @@ import { UseGuards } from '@nestjs/common'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 import { UserRecord } from 'firebase-admin/auth'
+import { GraphQLError } from 'graphql'
 
 @Resolver(() => Material)
 export class MaterialsResolver {
@@ -26,7 +27,7 @@ export class MaterialsResolver {
     @Args('filters', { type: () => [String], nullable: true })
     filters?: Array<string>,
     @Args('orderBy', { type: () => String, nullable: true }) orderBy?: string,
-  ): Promise<Material[]> {
+  ): Promise<Material[] > {
     return this.materialsService.findAllByPersonId(personId, filters, orderBy)
   }
 
