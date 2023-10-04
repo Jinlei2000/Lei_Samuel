@@ -30,11 +30,13 @@
 
 <script lang="ts">
 import useFirebase from '@/composables/useFirebase'
+import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
 import { ref } from 'vue'
 
 export default {
   setup() {
+    const { locale, setLocale } = useLanguage()
     const listButtons = ref([
       'Appointments',
       'Clients',
