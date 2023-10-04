@@ -14,14 +14,14 @@ export class MaterialsResolver {
 
   @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
-  findAll(@FirebaseUser() currentUser: UserRecord) {
+  getAll(@FirebaseUser() currentUser: UserRecord) {
     console.log('currentUser', currentUser)
     return this.materialsService.findAll()
   }
 
   // find all materials with the same personId
   @Query(() => [Material], { name: 'materialsByPersonId', nullable: true })
-  findAllByPersonId(
+  getAllByPersonId(
     @Args('personId', { type: () => String }) personId: string,
   ): Promise<Material[]> {
     return this.materialsService.findAllByPersonId(personId)
@@ -29,7 +29,7 @@ export class MaterialsResolver {
 
   //nullable: true, because we want to return null if no material is found
   @Query(() => Material, { name: 'material', nullable: true })
-  findOne(@Args('id', { type: () => String }) id: string) {
+  getOneById(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.findOne(id)
   }
 
@@ -50,8 +50,8 @@ export class MaterialsResolver {
     )
   }
 
-  @Mutation(() => Material, { name: 'removeMaterial', nullable: true })
-  removeMaterial(@Args('id', { type: () => String }) id: string) {
+  @Mutation(() => String, { name: 'removeMaterial', nullable: true,})
+  async removeMaterial(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.remove(id)
   }
 }
