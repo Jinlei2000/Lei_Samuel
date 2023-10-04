@@ -18,11 +18,46 @@ export class MaterialsService {
     return this.materialRepository.find()
   }
 
-  findAllByPersonId(personId: string): Promise<Material[]> {
-    return this.materialRepository.find(
+  async findAllByPersonId(
+    personId: string,
+    filters?: Array<string>,
+    orderBy?: string,
+  ): Promise<Material[]> {
+    // let materialList = []
+
+    // for (const filter of filters) {
+    //   let result = []
+    //   if (filter === 'A') {
+    //     result = materials.filter(material => material.isAvailable)
+    //   }
+    //   if (filter === 'NA') {
+    //     result = materials.filter(material => !material.isAvailable)
+    //   }
+    //   if (filter === 'D') {
+    //     result = materials.filter(material => material.isDefect)
+    //   }
+
+    //   materialList.push(result)
+    // }
+
+    // console.log('materialList', materialList)
+
+    const where = {
+      isAvailable: filters?.includes('A')
+        ? true
+        : filters?.includes('NA')
+        ? false
+        : undefined,
+      isDefect: filters?.includes('D') ? true : undefined,
+    }
+
+    const materials = await this.materialRepository.find({
       // @ts-ignore
-      { personId: personId },
-    )
+      personId: personId,
+      where: where,
+    })
+
+    return materials
   }
 
   async findOne(id: string): Promise<Material | GraphQLError> {

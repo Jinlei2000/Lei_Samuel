@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { MaterialsService } from './materials.service'
 import { Material } from './entities/material.entity'
 import { CreateMaterialInput } from './dto/create-material.input'
@@ -14,22 +14,25 @@ export class MaterialsResolver {
 
   @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
-  getAll(@FirebaseUser() currentUser: UserRecord) {
+  findAll(@FirebaseUser() currentUser: UserRecord) {
     console.log('currentUser', currentUser)
     return this.materialsService.findAll()
   }
 
   // find all materials with the same personId
   @Query(() => [Material], { name: 'materialsByPersonId', nullable: true })
-  getAllByPersonId(
+  findAllByPersonId(
     @Args('personId', { type: () => String }) personId: string,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('orderBy', { type: () => String, nullable: true }) orderBy?: string,
   ): Promise<Material[]> {
-    return this.materialsService.findAllByPersonId(personId)
+    return this.materialsService.findAllByPersonId(personId, filters, orderBy)
   }
 
   //nullable: true, because we want to return null if no material is found
   @Query(() => Material, { name: 'material', nullable: true })
-  getOneById(@Args('id', { type: () => String }) id: string) {
+  findOneById(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.findOne(id)
   }
 
@@ -50,7 +53,7 @@ export class MaterialsResolver {
     )
   }
 
-  @Mutation(() => String, { name: 'removeMaterial', nullable: true,})
+  @Mutation(() => String, { name: 'removeMaterial', nullable: true })
   async removeMaterial(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.remove(id)
   }
