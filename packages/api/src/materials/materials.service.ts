@@ -23,38 +23,36 @@ export class MaterialsService {
     filters?: Array<string>,
     orderBy?: string,
   ): Promise<Material[]> {
-    // let materialList = []
-
-    // for (const filter of filters) {
-    //   let result = []
-    //   if (filter === 'A') {
-    //     result = materials.filter(material => material.isAvailable)
-    //   }
-    //   if (filter === 'NA') {
-    //     result = materials.filter(material => !material.isAvailable)
-    //   }
-    //   if (filter === 'D') {
-    //     result = materials.filter(material => material.isDefect)
-    //   }
-
-    //   materialList.push(result)
+    // const where = {
+    //   isAvailable: filters?.includes('A')
+    //     ? true
+    //     : filters?.includes('NA')
+    //     ? false
+    //     : undefined,
+    //   isDefect: filters?.includes('D') ? true : undefined,
     // }
 
-    // console.log('materialList', materialList)
+    // const materials = await this.materialRepository.find({
+    //   // @ts-ignore
+    //   personId: personId,
+    //   where: where,
 
-    const where = {
-      isAvailable: filters?.includes('A')
-        ? true
-        : filters?.includes('NA')
-        ? false
-        : undefined,
-      isDefect: filters?.includes('D') ? true : undefined,
+    // })
+
+    const filterMap = {
+      A: { isAvailable: true },
+      NA: { isAvailable: false },
+      D: { isDefect: true },
     }
+
+    const where = filters?.reduce((acc, filter) => {
+      return { ...acc, ...filterMap[filter] }
+    }, {})
 
     const materials = await this.materialRepository.find({
       // @ts-ignore
-      personId: personId,
-      where: where,
+      personId,
+      where,
     })
 
     return materials
