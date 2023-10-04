@@ -2,7 +2,7 @@
   "name": "lei_samuel",
   "version": "0.0.0",
   "scripts": {
-    "dev:tuinbouw": "npm run dev -w tuinbouw",
+    "dev": "npm run dev -w tuinbouw",
     "dev:api": "npm run dev -w api"
   },
   "repository": {
