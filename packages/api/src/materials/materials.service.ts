@@ -7,6 +7,7 @@ import { Material } from './entities/material.entity'
 import { ObjectId } from 'mongodb'
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from './dto/order.input'
+import { filterMaterials, orderMaterials } from '../helpers/materialsFunctions'
 
 @Injectable()
 export class MaterialsService {
@@ -30,7 +31,7 @@ export class MaterialsService {
 
     // where object for query
     const whereQuery: { [key: string]: string | boolean } = {}
-    const filtersList = ['A', 'NA', 'D', 'ND'] 
+    const filtersList = ['A', 'NA', 'D', 'ND']
 
     // order object for query
     const { field, direction } = order || {
