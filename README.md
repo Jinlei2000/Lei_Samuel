@@ -4,13 +4,18 @@ Short description of the project.
 
 ## Technologies
 
-- [Vue.js](https://vuejs.org/)
-- [UnoCSS](https://tailwindcss.com/)
-- [TypeScript](https://www.typescriptlang.org/)
+- [Vue.js](https://vuejs.org/) for frontend
+- [UnoCSS](https://tailwindcss.com/) for styling
+- [TypeScript](https://www.typescriptlang.org/) for frontend
 
 - [Firebase](https://firebase.google.com/) for authentication
-- [MongoDB](https://www.mongodb.com/) for database
 
-- [yup]() for validation
+- [yup]() for validation frontend
 
 - [Figma](https://www.figma.com/) for design
+
+- [NestJS](https://nestjs.com/) for backend
+- [TypeORM](https://typeorm.io/) for database connection
+- [MongoDB](https://www.mongodb.com/) for database
+- [GraphQL](https://graphql.org/) for API
+- [Firebase-admin](https://firebase.google.com/docs/admin/setup) for authentication
