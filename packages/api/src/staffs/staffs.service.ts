@@ -71,7 +71,7 @@ export class StaffsService {
     s.firstname = createStaffInput.firstname.toLowerCase()
     s.lastname = createStaffInput.lastname.toLowerCase()
     s.fullname = `${createStaffInput.firstname.toLowerCase()} ${createStaffInput.lastname.toLowerCase()}`
-    s.locationIds = createStaffInput.locationIds
+    s.locationId = createStaffInput.locationId
     s.email = createStaffInput.email
     s.telephone = createStaffInput.telephone
     s.availability = true
