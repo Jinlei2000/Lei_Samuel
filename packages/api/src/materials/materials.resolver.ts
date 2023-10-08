@@ -16,9 +16,15 @@ export class MaterialsResolver {
 
   @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
-  findAll(@FirebaseUser() currentUser: UserRecord) {
-    console.log('currentUser', currentUser)
-    return this.materialsService.findAll()
+  findAll(
+    @FirebaseUser() currentUser: UserRecord,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    // console.log('currentUser', currentUser)
+    return this.materialsService.findAll(filters, order)
   }
 
   // find all materials with the same personId
