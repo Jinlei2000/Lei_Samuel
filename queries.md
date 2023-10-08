@@ -14,6 +14,7 @@
     - [staffs(filters: , order: { field, direction })](#staffsfilters--order--field-direction-)
     - [staff(id)](#staffid)
     - [staffsBySearchString(searchString)](#staffsbysearchstringsearchstring)
+    - [staffUpgradeToAdmin(id)](#staffupgradetoadminid)
     - [createStaff](#createstaff)
     - [updateStaff](#updatestaff)
     - [removeStaff](#removestaff)
@@ -241,6 +242,33 @@ staffsBySearchString(searchString: String)
 ```graphql
 query {
   staffsBySearchString(searchString: "x") {
+    id
+    uid
+    firstname
+    lastname
+    fullname
+    url
+    locationId
+    email
+    telephone
+    availability
+    absentCount
+    isAdmin
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### staffUpgradeToAdmin(id)
+
+staffUpgradeToAdmin(id: String)
+
+can be used only by admin user to upgrade staff to admin
+
+```graphql
+mutation {
+  staffUpgradeToAdmin(id: "6522bd1cfabcb1f1d63dd63a") {
     id
     uid
     firstname
