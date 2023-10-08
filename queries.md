@@ -23,7 +23,6 @@
 Most of queries and mutations require authorization. To authorize you need to pass `Authorization` header with `Bearer` token.
 
 ## Materials
-
 ### materials(filters: , order: { field, direction })
 
 materials(filters: [String], order: { field: String, direction: String })
@@ -187,10 +186,19 @@ mutation {
 ```
 
 ## Staffs
-
 ### staffs(filters: , order: { field, direction })
 
 staffs(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+
+- `A` - admin
+- `E` - employee
+
+Order can be:
+
+- field = all fields from material model
+- direction = `ASC` or `DESC`
 
 ```graphql	
 query {
