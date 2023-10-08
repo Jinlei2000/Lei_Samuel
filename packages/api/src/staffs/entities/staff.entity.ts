@@ -29,8 +29,8 @@ export class Staff {
   uid: string
 
   @Column() // Database link - Typeorm
-  @Field(() => [Location], { nullable: true }) // GraphQL type
-  address?: Location[]
+  @Field({ nullable: true }) // GraphQL type
+  address?: [string]
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
