@@ -30,8 +30,8 @@ export class Staff {
 
   // TODO: make a new database for locations
   @Column() // Database link - Typeorm
-  @Field(() => [String], { nullable: true }) // GraphQL type
-  locationIds?: string[]
+  @Field(() => String, { nullable: true }) // GraphQL type
+  locationId?: string
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type

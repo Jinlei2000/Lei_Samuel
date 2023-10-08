@@ -17,8 +17,8 @@ export class UpdateStaffInput extends PartialType(CreateStaffInput) {
   @Field({ nullable: true }) // graphql
   url?: string
 
-  @Field(() => [String], { nullable: true }) // graphql
-  locationIds?: string[]
+  @Field(() => String, { nullable: true }) // graphql
+  locationId?: string
 
   @IsEmail() // validation
   @Field({ nullable: true }) // graphql
