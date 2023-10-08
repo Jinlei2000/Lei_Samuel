@@ -12,6 +12,7 @@ import {
   orderStaffs,
   sendMailToStaff,
 } from 'src/helpers/staffsFunctions'
+import { UserRecord } from 'firebase-admin/auth'
 
 @Injectable()
 export class StaffsService {
@@ -46,10 +47,10 @@ export class StaffsService {
     return staff
   }
 
-  findByEmail(email: string): Promise<Staff> {
+  findByUid(uid: string): Promise<Staff> {
     const staff = this.staffRepository.findOne({
       // @ts-ignore
-      email: email,
+      uid: uid,
     })
 
     if (!staff) {
@@ -70,6 +71,22 @@ export class StaffsService {
     return staffs
   }
 
+  async upgradeToAdmin(id: string, currentUser: UserRecord): Promise<Staff> {
+    const employee = await this.findOne(id)
+
+    // check if the user is an admin
+    const admin = await this.findByUid(currentUser.uid)
+
+    console.log('admin', admin)
+    if (!admin.isAdmin) {
+      throw new GraphQLError('You are not an admin!')
+    }
+
+    await this.staffRepository.update(id, { isAdmin: true })
+
+    return employee
+  }
+
   create(createStaffInput: CreateStaffInput): Promise<Staff> {
     const s = new Staff()
     s.firstname = createStaffInput.firstname.toLowerCase()
@@ -88,20 +105,11 @@ export class StaffsService {
     return this.staffRepository.save(s)
   }
 
-  async incrementAbsencesCount(staffId: string): Promise<void> {
-    const staff = await this.findOne(staffId)
-
-    this.staffRepository.update(
-      { id: new ObjectId(staffId) },
-      { absentCount: staff.absentCount + 1 },
-    )
-  }
-
   async update(
     id: ObjectId,
     updateStaffInput: UpdateStaffInput,
   ): Promise<Staff> {
-    await this.findOne(id.toString())
+    const staff = await this.findOne(id.toString())
 
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateStaffInput
@@ -118,6 +126,15 @@ export class StaffsService {
 
     // return id if delete was successful
     return id
+  }
+
+  async incrementAbsencesCount(staffId: string): Promise<void> {
+    const staff = await this.findOne(staffId)
+
+    this.staffRepository.update(
+      { id: new ObjectId(staffId) },
+      { absentCount: staff.absentCount + 1 },
+    )
   }
 
   // Seeding functions

@@ -5,6 +5,10 @@ import { CreateStaffInput } from './dto/create-staff.input'
 import { UpdateStaffInput } from './dto/update-staff.input'
 import { OrderByInput } from 'src/interfaces/order.input'
 import { string } from 'yargs'
+import { UseGuards } from '@nestjs/common'
+import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
+import { UserRecord } from 'firebase-admin/auth'
+import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 
 @Resolver(() => Staff)
 export class StaffsResolver {
@@ -30,6 +34,15 @@ export class StaffsResolver {
   @Query(() => [Staff], { name: 'staffsBySearchString', nullable: true })
   findStaffsBySearchString(@Args('searchString') searchString: string) {
     return this.staffsService.findStaffsBySearchString(searchString)
+  }
+
+  @UseGuards(FirebaseGuard)
+  @Query(() => Staff, { name: 'staffUpgradeToAdmin' })
+  upgradeToAdmin(
+    @FirebaseUser() currentUser: UserRecord,
+    @Args('id', { type: () => String }) id: string,
+  ) {
+    return this.staffsService.upgradeToAdmin(id, currentUser)
   }
 
   @Mutation(() => Staff)

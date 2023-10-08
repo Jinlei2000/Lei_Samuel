@@ -17,6 +17,9 @@ export class UpdateStaffInput extends PartialType(CreateStaffInput) {
   @Field({ nullable: true }) // graphql
   url?: string
 
+  @Field({ nullable: true }) // graphql
+  uid?: string
+
   @Field(() => String, { nullable: true }) // graphql
   locationId?: string
 
@@ -30,7 +33,4 @@ export class UpdateStaffInput extends PartialType(CreateStaffInput) {
 
   @Field({ nullable: true }) // graphql
   availability?: boolean
-
-  @Field({ nullable: true }) // GraphQL type
-  isAdmin?: boolean
 }
