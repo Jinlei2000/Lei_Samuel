@@ -1,11 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql'
-import {
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { IsNotEmpty, IsOptional } from 'class-validator'
 
 @InputType() // graphql
 export class CreateMaterialInput {
