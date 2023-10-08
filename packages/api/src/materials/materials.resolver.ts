@@ -14,6 +14,8 @@ import { OrderByInput } from './dto/order.input'
 export class MaterialsResolver {
   constructor(private readonly materialsService: MaterialsService) {}
 
+  // TODO: Use FirebaseGuard everywhere you need to check if the user is authenticated
+
   @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
   findAll(
