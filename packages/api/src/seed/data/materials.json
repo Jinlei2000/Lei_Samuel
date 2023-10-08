@@ -16,5 +16,347 @@
         "isAvailable": false,
         "serialNumber": 123456789,
         "isDefect": true
+    },
+    {
+        "name": "Pruner",
+        "isAvailable": true,
+        "serialNumber": 123456792,
+        "isDefect": false
+    },
+    {
+        "name": "Lawn Mower",
+        "isAvailable": true,
+        "serialNumber": 123456793,
+        "isDefect": false
+    },
+    {
+        "name": "Wheelbarrow",
+        "isAvailable": true,
+        "serialNumber": 123456794,
+        "isDefect": false
+    },
+    {
+        "name": "Watering Can",
+        "isAvailable": true,
+        "serialNumber": 123456795,
+        "isDefect": false
+    },
+    {
+        "name": "Rake",
+        "isAvailable": true,
+        "serialNumber": 123456796,
+        "isDefect": false
+    },
+    {
+        "name": "Gardening Gloves",
+        "isAvailable": true,
+        "serialNumber": 123456797,
+        "isDefect": false
+    },
+    {
+        "name": "Trowel",
+        "isAvailable": true,
+        "serialNumber": 123456798,
+        "isDefect": false
+    },
+    {
+        "name": "Hedge Trimmer",
+        "isAvailable": true,
+        "serialNumber": 123456799,
+        "isDefect": false
+    },
+    {
+        "name": "Seed Spreader",
+        "isAvailable": true,
+        "serialNumber": 123456800,
+        "isDefect": false
+    },
+    {
+        "name": "Mulching Shears",
+        "isAvailable": true,
+        "serialNumber": 123456801,
+        "isDefect": false
+    },
+    {
+        "name": "Compost Bin",
+        "isAvailable": true,
+        "serialNumber": 123456802,
+        "isDefect": false
+    },
+    {
+        "name": "Garden Cart",
+        "isAvailable": true,
+        "serialNumber": 123456803,
+        "isDefect": false
+    },
+    {
+        "name": "Soil Moisture Meter",
+        "isAvailable": true,
+        "serialNumber": 123456804,
+        "isDefect": false
+    },
+    {
+        "name": "Leaf Blower",
+        "isAvailable": true,
+        "serialNumber": 123456805,
+        "isDefect": false
+    },
+    {
+        "name": "Sun Hat",
+        "isAvailable": true,
+        "serialNumber": 123456806,
+        "isDefect": false
+    },
+    {
+        "name": "Knee Pads",
+        "isAvailable": true,
+        "serialNumber": 123456807,
+        "isDefect": false
+    },
+    {
+        "name": "Garden Sprayer",
+        "isAvailable": true,
+        "serialNumber": 123456808,
+        "isDefect": false
+    },
+    {
+        "name": "Hoe",
+        "isAvailable": true,
+        "serialNumber": 123456789,
+        "isDefect": false
+    },
+    {
+        "name": "Fork",
+        "isAvailable": false,
+        "serialNumber": 123456789,
+        "isDefect": false
+    },
+    {
+        "name": "Spade",
+        "isAvailable": false,
+        "serialNumber": 123456789,
+        "isDefect": true
+    },
+    {
+        "name": "Pruner",
+        "isAvailable": true,
+        "serialNumber": 123456792,
+        "isDefect": false
+    },
+    {
+        "name": "Lawn Mower",
+        "isAvailable": true,
+        "serialNumber": 123456793,
+        "isDefect": false
+    },
+    {
+        "name": "Wheelbarrow",
+        "isAvailable": true,
+        "serialNumber": 123456794,
+        "isDefect": false
+    },
+    {
+        "name": "Watering Can",
+        "isAvailable": true,
+        "serialNumber": 123456795,
+        "isDefect": false
+    },
+    {
+        "name": "Rake",
+        "isAvailable": true,
+        "serialNumber": 123456796,
+        "isDefect": false
+    },
+    {
+        "name": "Gardening Gloves",
+        "isAvailable": true,
+        "serialNumber": 123456797,
+        "isDefect": false
+    },
+    {
+        "name": "Trowel",
+        "isAvailable": true,
+        "serialNumber": 123456798,
+        "isDefect": false
+    },
+    {
+        "name": "Hedge Trimmer",
+        "isAvailable": true,
+        "serialNumber": 123456799,
+        "isDefect": false
+    },
+    {
+        "name": "Seed Spreader",
+        "isAvailable": true,
+        "serialNumber": 123456800,
+        "isDefect": false
+    },
+    {
+        "name": "Mulching Shears",
+        "isAvailable": true,
+        "serialNumber": 123456801,
+        "isDefect": false
+    },
+    {
+        "name": "Compost Bin",
+        "isAvailable": true,
+        "serialNumber": 123456802,
+        "isDefect": false
+    },
+    {
+        "name": "Garden Cart",
+        "isAvailable": true,
+        "serialNumber": 123456803,
+        "isDefect": false
+    },
+    {
+        "name": "Soil Moisture Meter",
+        "isAvailable": true,
+        "serialNumber": 123456804,
+        "isDefect": false
+    },
+    {
+        "name": "Leaf Blower",
+        "isAvailable": true,
+        "serialNumber": 123456805,
+        "isDefect": false
+    },
+    {
+        "name": "Sun Hat",
+        "isAvailable": true,
+        "serialNumber": 123456806,
+        "isDefect": false
+    },
+    {
+        "name": "Knee Pads",
+        "isAvailable": true,
+        "serialNumber": 123456807,
+        "isDefect": false
+    },
+    {
+        "name": "Garden Sprayer",
+        "isAvailable": true,
+        "serialNumber": 123456808,
+        "isDefect": false
+    },
+    {
+        "name": "Hoe",
+        "isAvailable": true,
+        "serialNumber": 123456789,
+        "isDefect": false
+    },
+    {
+        "name": "Fork",
+        "isAvailable": false,
+        "serialNumber": 123456789,
+        "isDefect": false
+    },
+    {
+        "name": "Spade",
+        "isAvailable": false,
+        "serialNumber": 123456789,
+        "isDefect": true
+    },
+    {
+        "name": "Pruner",
+        "isAvailable": true,
+        "serialNumber": 123456792,
+        "isDefect": false
+    },
+    {
+        "name": "Lawn Mower",
+        "isAvailable": true,
+        "serialNumber": 123456793,
+        "isDefect": false
+    },
+    {
+        "name": "Wheelbarrow",
+        "isAvailable": true,
+        "serialNumber": 123456794,
+        "isDefect": false
+    },
+    {
+        "name": "Watering Can",
+        "isAvailable": true,
+        "serialNumber": 123456795,
+        "isDefect": false
+    },
+    {
+        "name": "Rake",
+        "isAvailable": true,
+        "serialNumber": 123456796,
+        "isDefect": false
+    },
+    {
+        "name": "Gardening Gloves",
+        "isAvailable": true,
+        "serialNumber": 123456797,
+        "isDefect": false
+    },
+    {
+        "name": "Trowel",
+        "isAvailable": true,
+        "serialNumber": 123456798,
+        "isDefect": false
+    },
+    {
+        "name": "Hedge Trimmer",
+        "isAvailable": true,
+        "serialNumber": 123456799,
+        "isDefect": false
+    },
+    {
+        "name": "Seed Spreader",
+        "isAvailable": true,
+        "serialNumber": 123456800,
+        "isDefect": false
+    },
+    {
+        "name": "Mulching Shears",
+        "isAvailable": true,
+        "serialNumber": 123456801,
+        "isDefect": false
+    },
+    {
+        "name": "Compost Bin",
+        "isAvailable": true,
+        "serialNumber": 123456802,
+        "isDefect": false
+    },
+    {
+        "name": "Garden Cart",
+        "isAvailable": true,
+        "serialNumber": 123456803,
+        "isDefect": false
+    },
+    {
+        "name": "Soil Moisture Meter",
+        "isAvailable": true,
+        "serialNumber": 123456804,
+        "isDefect": false
+    },
+    {
+        "name": "Leaf Blower",
+        "isAvailable": true,
+        "serialNumber": 123456805,
+        "isDefect": false
+    },
+    {
+        "name": "Sun Hat",
+        "isAvailable": true,
+        "serialNumber": 123456806,
+        "isDefect": false
+    },
+    {
+        "name": "Knee Pads",
+        "isAvailable": true,
+        "serialNumber": 123456807,
+        "isDefect": false
+    },
+    {
+        "name": "Garden Sprayer",
+        "isAvailable": true,
+        "serialNumber": 123456808,
+        "isDefect": false
     }
 ]

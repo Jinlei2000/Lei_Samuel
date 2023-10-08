@@ -45,7 +45,7 @@ export class SeedService {
       m.name = material.name.toLowerCase()
       m.isAvailable = material.isAvailable
       // TODO: How to add personId here? Make a User.
-      m.personId = '333'
+      // m.personId = '333'
       m.isDefect = material.isDefect
       m.serialNumber = material.serialNumber
 
@@ -63,23 +63,52 @@ export class SeedService {
   //#region Staffs
   async addStaffsFromJson(): Promise<Staff[]> {
     let theStaffs: any[] = []
-    for (let staff of staffs) {
-      const s = new Staff()
-      s.firstname = staff.firstname.toLowerCase()
-      s.lastname = staff.lastname.toLowerCase()
-      s.fullname = `${staff.firstname.toLowerCase()} ${staff.lastname.toLowerCase()}`
-      s.email = staff.email
-      s.absentCount = 0
-      s.availability = true
-      s.isAdmin = staff.isAdmin ? staff.isAdmin : false
-      s.uid = staff.uid
-      //TODO: How to add locationId here? Make a Location.
-      // s.locationId = staff.locationId
+    let result: Staff[] = []
+    try {
+      for (let staff of staffs) {
+        const s = new Staff()
+        s.firstname = staff.firstname.toLowerCase()
+        s.lastname = staff.lastname.toLowerCase()
+        s.fullname = `${staff.firstname.toLowerCase()} ${staff.lastname.toLowerCase()}`
+        s.email = staff.email
+        s.absentCount = 0
+        s.availability = true
+        s.isAdmin = staff.isAdmin ? staff.isAdmin : false
+        s.uid = staff.uid
+        //TODO: How to add locationId here? Make a Location.
+        // s.locationId = staff.locationId
 
-      theStaffs.push(s)
+        theStaffs.push(s)
+      }
+      result = await this.staffsService.saveAll(theStaffs)
+    } catch (error) {
+      console.log(error)
+      throw error
     }
 
-    return this.staffsService.saveAll(theStaffs)
+    try {
+      // Add some random materials to staff that is not admin
+      const getAllNonAdminStaffs = await this.staffsService.findAll(['E'])
+      for (let s of getAllNonAdminStaffs) {
+        const materials = await this.materialsService.findAll(['A'])
+        // random max 5 materials
+        const randomMaterials = materials
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 5)
+        for (let m of randomMaterials) {
+          await this.materialsService.update(m.id, {
+            // @ts-ignore
+            personId: s.id,
+            isAvailable: false,
+          })
+        }
+      }
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+
+    return result
   }
 
   async deleteAllStaffs(): Promise<void> {
