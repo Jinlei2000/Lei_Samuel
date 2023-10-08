@@ -71,6 +71,19 @@ export class StaffsService {
     return staffs
   }
 
+  findByEmail(email: string): Promise<Staff> {
+    const staff = this.staffRepository.findOne({
+      // @ts-ignore
+      email: email,
+    })
+
+    if (!staff) {
+      throw new GraphQLError('Staff not found!')
+    }
+
+    return staff
+  }
+
   async upgradeToAdmin(id: string, currentUser: UserRecord): Promise<Staff> {
     const employee = await this.findOne(id)
 
@@ -88,6 +101,12 @@ export class StaffsService {
   }
 
   create(createStaffInput: CreateStaffInput): Promise<Staff> {
+    // check if the email is already in use
+    const staff = this.findByEmail(createStaffInput.email)
+    if (staff) {
+      throw new GraphQLError('Email already in use!')
+    }
+
     const s = new Staff()
     s.firstname = createStaffInput.firstname.toLowerCase()
     s.lastname = createStaffInput.lastname.toLowerCase()
