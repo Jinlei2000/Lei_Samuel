@@ -32,5 +32,5 @@ export class UpdateStaffInput extends PartialType(CreateStaffInput) {
   availability?: boolean
 
   @Field({ nullable: true }) // GraphQL type
-  staffType?: string
+  isAdmin?: boolean
 }

@@ -51,7 +51,7 @@ export class Staff {
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
-  staffType: string
+  isAdmin: boolean
 
   @Column({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type

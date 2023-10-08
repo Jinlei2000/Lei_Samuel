@@ -8,7 +8,7 @@ import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 import { UserRecord } from 'firebase-admin/auth'
 import { GraphQLError } from 'graphql'
-import { OrderByInput } from './dto/order.input'
+import { OrderByInput } from '../interfaces/order.input'
 
 @Resolver(() => Material)
 export class MaterialsResolver {
