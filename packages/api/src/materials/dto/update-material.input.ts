@@ -8,6 +8,8 @@ export class UpdateMaterialInput extends PartialType(CreateMaterialInput) {
   @Field(() => ID) // GraphQL type
   id: ObjectId
 
+  // TODO: add ? to all fields
+
   @IsOptional()
   @Field({ nullable: true }) // GraphQL type
   name: string
@@ -24,7 +26,7 @@ export class UpdateMaterialInput extends PartialType(CreateMaterialInput) {
   @Field({ nullable: true }) // GraphQL type
   isDefect: boolean
 
-  // TODO: add validation for isDefect
+  // TODO: add validation for serialNumber
   @IsOptional()
   @Field({ nullable: true }) // GraphQL type
   serialNumber: number

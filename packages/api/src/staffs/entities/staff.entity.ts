@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql'
+import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { ObjectIdColumn, ObjectId, Column, Entity } from 'typeorm'
 
 @Entity() // Database link - Typeorm
@@ -28,9 +28,10 @@ export class Staff {
   @Field() // GraphQL type
   uid: string
 
+  // TODO: make a new database for locations
   @Column() // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
-  address?: [string]
+  locationIds?: string[]
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
@@ -41,15 +42,15 @@ export class Staff {
   telephone?: string
 
   @Column() // Database link - Typeorm
-  @Field({ defaultValue: true }) // GraphQL type
+  @Field() // GraphQL type
   availability: boolean
 
   @Column() // Database link - Typeorm
-  @Field({ defaultValue: 0 }) // GraphQL type
+  @Field() // GraphQL type
   absentCount: number
 
   @Column() // Database link - Typeorm
-  @Field({ defaultValue: 'employee' }) // GraphQL type
+  @Field() // GraphQL type
   staffType: string
 
   @Column({ type: 'timestamp', nullable: true }) // Database link - Typeorm
