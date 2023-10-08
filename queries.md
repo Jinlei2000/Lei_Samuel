@@ -318,6 +318,7 @@ mutation {
   }
 }
 ```
+
 ### removeStaff
 
 ```graphql
