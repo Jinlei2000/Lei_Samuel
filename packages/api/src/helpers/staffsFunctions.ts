@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from 'src/interfaces/order.input'
+import { Staff } from 'src/staffs/entities/staff.entity'
 
 export const filterStaffs = (
   filters: Array<string>,
@@ -76,4 +77,9 @@ export const orderStaffs = (order: OrderByInput): { [key: string]: string } => {
   }
 
   return orderQuery
+}
+
+// send a mail to staff to make a account
+export const sendMailToStaff = async (staff: Staff): Promise<void> => {
+  console.log('sending mail to new staff')
 }

@@ -7,7 +7,11 @@ import { Repository } from 'typeorm'
 import { ObjectId } from 'mongodb'
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from 'src/interfaces/order.input'
-import { filterStaffs, orderStaffs } from 'src/helpers/staffsFunctions'
+import {
+  filterStaffs,
+  orderStaffs,
+  sendMailToStaff,
+} from 'src/helpers/staffsFunctions'
 
 @Injectable()
 export class StaffsService {
@@ -79,13 +83,14 @@ export class StaffsService {
     s.isAdmin = false
 
     // TODO: send email to staff with a link to make a account (make a function for this)
+    sendMailToStaff(s)
 
     return this.staffRepository.save(s)
   }
 
   async incrementAbsencesCount(staffId: string): Promise<void> {
     const staff = await this.findOne(staffId)
-    
+
     this.staffRepository.update(
       { id: new ObjectId(staffId) },
       { absentCount: staff.absentCount + 1 },
