@@ -1,12 +1,15 @@
 # Graphql Queries
 
-1. [Materials](#materials)
-   - [materials](#materials-1)
-   - [material](#materialid-string)
-   - [materialsByPersonId](#materialsByPersonIdpersonId-string-filters-liststring-order--field-string-direction-string-)
-   - [createMaterial](#creatematerial)
-   - [updateMaterial](#updatematerial)
-   - [removeMaterial](#removematerial)
+- [Graphql Queries](#graphql-queries)
+  - [Authorization](#authorization)
+  - [Materials](#materials)
+    - [materials(filters: , order: { field, direction })](#materialsfilters--order--field-direction-)
+    - [material(id)](#materialid)
+    - [materialsByPersonId(personId, filters: , order: { field, direction })](#materialsbypersonidpersonid-filters--order--field-direction-)
+    - [materialsBySearchString(searchString)](#materialsbysearchstringsearchstring)
+    - [createMaterial](#creatematerial)
+    - [updateMaterial](#updatematerial)
+    - [removeMaterial](#removematerial)
 
 ## Authorization
 
@@ -14,7 +17,21 @@ Most of queries and mutations require authorization. To authorize you need to pa
 
 ## Materials
 
-### materials
+### materials(filters: , order: { field, direction })
+
+materials(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+
+- `A` - available
+- `NA` - not available
+- `D` - defect
+- `ND` - not defect
+
+Order can be:
+
+- field = all fields from material model
+- direction = `ASC` or `DESC`
 
 ```graphql
 query {
@@ -31,7 +48,9 @@ query {
 }
 ```
 
-### material(id: String)
+### material(id)
+
+material(id: String)
 
 ```graphql
 query {
@@ -48,7 +67,9 @@ query {
 }
 ```
 
-### materialsByPersonId(personId: String, filters: List<String>, order: { field: String, direction: String })
+### materialsByPersonId(personId, filters: , order: { field, direction })
+
+materialsByPersonId(personId: String, filters: [String], order: { field: String, direction: String })
 
 Filters can be:
 
@@ -80,6 +101,26 @@ query {
   }
 }
 ```
+
+### materialsBySearchString(searchString)
+
+materialsBySearchString(searchString: String)
+
+```graphql
+query {
+  materialsBySearchString(searchString: "hoe") {
+    id
+    name
+    isAvailable
+    personId
+    isDefect
+    serialNumber
+    createdAt
+    updatedAt
+  }
+}
+```
+
 
 ### createMaterial
 

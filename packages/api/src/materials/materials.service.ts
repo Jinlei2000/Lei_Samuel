@@ -69,6 +69,17 @@ export class MaterialsService {
     return material
   }
 
+  findMaterialsBySearchString(searchString: string): Promise<Material[]> {
+    searchString = searchString.toLowerCase()
+
+    const materials = this.materialRepository.find({
+      // @ts-ignore
+      name: { $regex: new RegExp(searchString, 'i') },
+    })
+
+    return materials
+  }
+
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()

@@ -45,6 +45,11 @@ export class MaterialsResolver {
     return this.materialsService.findOne(id)
   }
 
+  @Query(() => [Material], { name: 'materialsBySearchString', nullable: true })
+  findMaterialsBySearchString(@Args('searchString') searchString: string) {
+    return this.materialsService.findMaterialsBySearchString(searchString)
+  }
+
   @Mutation(() => Material, { name: 'createMaterial' })
   createMaterial(
     @Args('createMaterialInput') createMaterialInput: CreateMaterialInput,
