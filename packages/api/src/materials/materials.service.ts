@@ -6,6 +6,8 @@ import { Repository } from 'typeorm'
 import { Material } from './entities/material.entity'
 import { ObjectId } from 'mongodb'
 import { GraphQLError } from 'graphql'
+import { OrderByInput } from './dto/order.input'
+import { filterMaterials, orderMaterials } from '../helpers/materialsFunctions'
 
 @Injectable()
 export class MaterialsService {
@@ -14,15 +16,43 @@ export class MaterialsService {
     private readonly materialRepository: Repository<Material>,
   ) {}
 
-  findAll(): Promise<Material[]> {
-    return this.materialRepository.find()
+  findAll(filters?: Array<string>, order?: OrderByInput): Promise<Material[]> {
+    // filter and order materials
+    const whereQuery = filterMaterials(filters)
+    const orderQuery = orderMaterials(order)
+
+    const materials = this.materialRepository.find({
+      where: {
+        ...whereQuery,
+      },
+      order: {
+        ...orderQuery,
+      },
+    })
+
+    return materials
   }
 
-  findAllByPersonId(personId: string): Promise<Material[]> {
-    return this.materialRepository.find(
-      // @ts-ignore
-      { personId: personId },
-    )
+  async findAllByPersonId(
+    personId: string,
+    filters?: Array<string>,
+    order?: OrderByInput,
+  ): Promise<Material[]> {
+    // filter and order materials
+    const whereQuery = filterMaterials(filters)
+    const orderQuery = orderMaterials(order)
+
+    const materials = await this.materialRepository.find({
+      where: {
+        personId: personId,
+        ...whereQuery,
+      },
+      order: {
+        ...orderQuery,
+      },
+    })
+
+    return materials
   }
 
   async findOne(id: string): Promise<Material | GraphQLError> {
@@ -39,9 +69,20 @@ export class MaterialsService {
     return material
   }
 
+  findMaterialsBySearchString(searchString: string): Promise<Material[]> {
+    searchString = searchString.toLowerCase()
+
+    const materials = this.materialRepository.find({
+      // @ts-ignore
+      name: { $regex: new RegExp(searchString, 'i') },
+    })
+
+    return materials
+  }
+
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
     const m = new Material()
-    m.name = createMaterialInput.name
+    m.name = createMaterialInput.name.toLowerCase()
     m.isAvailable = createMaterialInput.isAvailable
     m.personId = createMaterialInput.personId
     m.isDefect = false
@@ -62,7 +103,7 @@ export class MaterialsService {
     return this.findOne(id.toString())
   }
 
-  async remove(id: string): Promise<string | GraphQLError> {
+  async remove(id: string): Promise<string> {
     await this.findOne(id)
 
     await this.materialRepository.delete(id)

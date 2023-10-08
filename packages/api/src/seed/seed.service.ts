@@ -38,10 +38,10 @@ export class SeedService {
     let theMaterials: Material[] = []
     for (let material of materials) {
       const m = new Material()
-      m.name = material.name
+      m.name = material.name.toLowerCase()
       m.isAvailable = material.isAvailable
       // TODO: How to add personId here? Make a User.
-      m.personId = '4423846543213256'
+      m.personId = '333'
       m.isDefect = material.isDefect
       m.serialNumber = material.serialNumber
 

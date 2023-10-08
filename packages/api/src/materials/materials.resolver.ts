@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { MaterialsService } from './materials.service'
 import { Material } from './entities/material.entity'
 import { CreateMaterialInput } from './dto/create-material.input'
@@ -7,30 +7,49 @@ import { UseGuards } from '@nestjs/common'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 import { UserRecord } from 'firebase-admin/auth'
+import { GraphQLError } from 'graphql'
+import { OrderByInput } from './dto/order.input'
 
 @Resolver(() => Material)
 export class MaterialsResolver {
   constructor(private readonly materialsService: MaterialsService) {}
 
+  // TODO: Use FirebaseGuard everywhere you need to check if the user is authenticated
+
   @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
-  getAll(@FirebaseUser() currentUser: UserRecord) {
-    console.log('currentUser', currentUser)
-    return this.materialsService.findAll()
+  findAll(
+    @FirebaseUser() currentUser: UserRecord,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    // console.log('currentUser', currentUser)
+    return this.materialsService.findAll(filters, order)
   }
 
   // find all materials with the same personId
   @Query(() => [Material], { name: 'materialsByPersonId', nullable: true })
-  getAllByPersonId(
+  findAllByPersonId(
     @Args('personId', { type: () => String }) personId: string,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
   ): Promise<Material[]> {
-    return this.materialsService.findAllByPersonId(personId)
+    return this.materialsService.findAllByPersonId(personId, filters, order)
   }
 
   //nullable: true, because we want to return null if no material is found
   @Query(() => Material, { name: 'material', nullable: true })
-  getOneById(@Args('id', { type: () => String }) id: string) {
+  findOneById(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.findOne(id)
+  }
+
+  @Query(() => [Material], { name: 'materialsBySearchString', nullable: true })
+  findMaterialsBySearchString(@Args('searchString') searchString: string) {
+    return this.materialsService.findMaterialsBySearchString(searchString)
   }
 
   @Mutation(() => Material, { name: 'createMaterial' })
@@ -50,7 +69,7 @@ export class MaterialsResolver {
     )
   }
 
-  @Mutation(() => String, { name: 'removeMaterial', nullable: true,})
+  @Mutation(() => String, { name: 'removeMaterial', nullable: true })
   async removeMaterial(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.remove(id)
   }
