@@ -25,7 +25,7 @@ export class Material {
 
   @Column() // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
-  personId?: string
+  personId?: string //TODO: change to objectId
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
