@@ -29,7 +29,7 @@ export class StaffsService {
     return staffs
   }
 
-  async findOne(id: string): Promise<Staff | GraphQLError> {
+  async findOne(id: string): Promise<Staff> {
     const staff = await this.staffRepository.findOne({
       // @ts-ignore
       _id: new ObjectId(id),
@@ -83,10 +83,19 @@ export class StaffsService {
     return this.staffRepository.save(s)
   }
 
+  async incrementAbsencesCount(staffId: string): Promise<void> {
+    const staff = await this.findOne(staffId)
+    
+    this.staffRepository.update(
+      { id: new ObjectId(staffId) },
+      { absentCount: staff.absentCount + 1 },
+    )
+  }
+
   async update(
     id: ObjectId,
     updateStaffInput: UpdateStaffInput,
-  ): Promise<Staff | GraphQLError> {
+  ): Promise<Staff> {
     await this.findOne(id.toString())
 
     // remove id and make a new variable with the rest of the data

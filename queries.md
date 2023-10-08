@@ -209,7 +209,7 @@ query {
     lastname
     fullname
     url
-    locationIds
+    locationId
     email
     telephone
     availability
@@ -247,7 +247,7 @@ query {
     lastname
     fullname
     url
-    locationIds
+    locationId
     email
     telephone
     availability
@@ -277,7 +277,7 @@ mutation {
     lastname
     fullname
     url
-    locationIds
+    locationId
     email
     telephone
     availability
@@ -307,7 +307,7 @@ mutation {
     lastname
     fullname
     url
-    locationIds
+    locationId
     email
     telephone
     availability
