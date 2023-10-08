@@ -1,5 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { IsNotEmpty, IsOptional } from 'class-validator'
+import { ObjectId } from 'typeorm'
 
 @InputType() // graphql
 export class CreateMaterialInput {
@@ -13,7 +14,7 @@ export class CreateMaterialInput {
 
   @IsOptional() //validation
   @Field({ nullable: true }) // graphql
-  personId: string
+  personId?: string
 
   // TODO: add validation for isDefect
   @Field() // graphql

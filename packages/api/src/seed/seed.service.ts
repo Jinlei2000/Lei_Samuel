@@ -9,6 +9,7 @@ import { Staff } from 'src/staffs/entities/staff.entity'
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
 import * as staffs from './data/staffs.json'
+import { ObjectId } from 'typeorm'
 
 @Injectable()
 export class SeedService {
@@ -97,9 +98,9 @@ export class SeedService {
           .slice(0, 5)
         for (let m of randomMaterials) {
           await this.materialsService.update(m.id, {
-            // @ts-ignore
-            personId: s.id,
+            personId: String(s.id),
             isAvailable: false,
+            ...m,
           })
         }
       }
