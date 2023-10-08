@@ -25,12 +25,12 @@ export class Staff {
   url?: string
 
   @Column() // Database link - Typeorm
-  @Field() // GraphQL type
-  uid: string
+  @Field({ nullable: true }) // GraphQL type
+  uid?: string
 
   // TODO: make a new database for locations
   @Column() // Database link - Typeorm
-  @Field({ nullable: true }) // GraphQL type
+  @Field(() => [String], { nullable: true }) // GraphQL type
   locationIds?: string[]
 
   @Column() // Database link - Typeorm

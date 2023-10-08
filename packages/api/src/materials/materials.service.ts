@@ -65,7 +65,6 @@ export class MaterialsService {
       throw new GraphQLError('Material not found!')
     }
 
-    // @ts-ignore
     return material
   }
 

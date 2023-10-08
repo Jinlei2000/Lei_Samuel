@@ -10,6 +10,13 @@
     - [createMaterial](#creatematerial)
     - [updateMaterial](#updatematerial)
     - [removeMaterial](#removematerial)
+  - [Staffs](#staffs)
+    - [staffs(filters: , order: { field, direction })](#staffsfilters--order--field-direction-)
+    - [staff(id)](#staffid)
+    - [staffsBySearchString(searchString)](#staffsbysearchstringsearchstring)
+    - [createStaff](#createstaff)
+    - [updateStaff](#updatestaff)
+    - [removeStaff](#removestaff)
 
 ## Authorization
 
@@ -176,5 +183,137 @@ mutation {
 ```graphql
 mutation {
   removeMaterial(id: "651d55ade0e77efb23fdfe53")
+}
+```
+
+## Staffs
+
+### staffs(filters: , order: { field, direction })
+
+staffs(filters: [String], order: { field: String, direction: String })
+
+```graphql	
+query {
+  staffs {
+    id
+    uid
+    firstname
+    lastname
+    fullname
+    url
+    locationIds
+    email
+    telephone
+    availability
+    absentCount
+    isAdmin
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### staff(id)
+
+staff(id: String)
+
+```graphql
+query {
+  staff(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+  }
+}
+```
+
+
+### staffsBySearchString(searchString)
+
+staffsBySearchString(searchString: String)
+
+```graphql
+query {
+  staffsBySearchString(searchString: "x") {
+    id
+    uid
+    firstname
+    lastname
+    fullname
+    url
+    locationIds
+    email
+    telephone
+    availability
+    absentCount
+    isAdmin
+    createdAt
+    updatedAt
+  }
+}
+```
+
+
+### createStaff
+
+```graphql
+mutation {
+  createStaff(
+    createStaffInput: {
+      firstname: "x"
+      lastname: "xx"
+      email: "x@x.x"
+    }
+  ) {
+    id
+    uid
+    firstname
+    lastname
+    fullname
+    url
+    locationIds
+    email
+    telephone
+    availability
+    absentCount
+    isAdmin
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateStaff
+
+```graphql
+mutation {
+  updateStaff(
+    updateStaffInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      firstname: "x"
+      lastname: "xx"
+      email: "x@x.x"
+    }
+  ) {
+    id
+    uid
+    firstname
+    lastname
+    fullname
+    url
+    locationIds
+    email
+    telephone
+    availability
+    absentCount
+    isAdmin
+    createdAt
+    updatedAt
+  }
+}
+```
+### removeStaff
+
+```graphql
+mutation {
+  removeStaff(id: "6522bd1cfabcb1f1d63dd63a")
 }
 ```

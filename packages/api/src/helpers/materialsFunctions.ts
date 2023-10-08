@@ -6,6 +6,10 @@ export const filterMaterials = (
 ): { [key: string]: string | boolean } => {
   //   console.log(filters)
 
+  if (!filters) {
+    return {}
+  }
+
   filters = filters?.map(filter => filter.toUpperCase())
 
   // where object for query
@@ -54,15 +58,15 @@ export const filterMaterials = (
 export const orderMaterials = (
   order: OrderByInput,
 ): { [key: string]: string } => {
-  //   console.log(order)
+  // console.log(order)
+  if (!order) {
+    return { createdAt: 'ASC' }
+  }
 
   order.direction = order.direction.toUpperCase()
 
   // order object for query
-  const { field, direction } = order || {
-    field: 'createdAt',
-    direction: 'ASC',
-  }
+  const { field, direction } = order
   const orderQuery = { [field]: direction }
   const orderFieldsList = ['name', 'createdAt', 'updatedAt']
   const orderDirectionsList = ['ASC', 'DESC']

@@ -4,6 +4,7 @@ import { Staff } from './entities/staff.entity'
 import { CreateStaffInput } from './dto/create-staff.input'
 import { UpdateStaffInput } from './dto/update-staff.input'
 import { OrderByInput } from 'src/interfaces/order.input'
+import { string } from 'yargs'
 
 @Resolver(() => Staff)
 export class StaffsResolver {
@@ -27,7 +28,7 @@ export class StaffsResolver {
   }
 
   @Query(() => [Staff], { name: 'staffsBySearchString', nullable: true })
-  findStafsssBySearchString(@Args('searchString') searchString: string) {
+  findStaffsBySearchString(@Args('searchString') searchString: string) {
     return this.staffsService.findStaffsBySearchString(searchString)
   }
 
@@ -41,7 +42,7 @@ export class StaffsResolver {
     return this.staffsService.update(updateStaffInput.id, updateStaffInput)
   }
 
-  @Mutation(() => Staff)
+  @Mutation(() => String)
   removeStaff(@Args('id', { type: () => String }) id: string) {
     return this.staffsService.remove(id)
   }
