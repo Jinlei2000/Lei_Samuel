@@ -11,11 +11,9 @@ import {
 
 @InputType()
 export class UpdateMaterialInput extends PartialType(CreateMaterialInput) {
-  @IsNotEmpty()
   @Field(() => ID) // GraphQL type
   id: ObjectId
 
-  @IsString()
   @IsNotEmpty()
   @IsOptional()
   @Field({ nullable: true }) // GraphQL type
@@ -26,18 +24,16 @@ export class UpdateMaterialInput extends PartialType(CreateMaterialInput) {
   @Field({ nullable: true }) // GraphQL type
   isAvailable: boolean
 
-  @IsString()
   @IsNotEmpty()
   @IsOptional()
   @Field({ nullable: true }) // GraphQL type
   personId: string
 
-  @IsBoolean()
   @IsOptional()
   @Field({ nullable: true }) // GraphQL type
   isDefect: boolean
 
-  @IsInt()
+  // TODO: add validation for isDefect
   @IsOptional()
   @Field({ nullable: true }) // GraphQL type
   serialNumber: number
