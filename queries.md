@@ -18,6 +18,11 @@
     - [createStaff](#createstaff)
     - [updateStaff](#updatestaff)
     - [removeStaff](#removestaff)
+  - [Locations](#locations)
+    - [locations](#locations-1)
+    - [location(id)](#locationid)
+    - [createLocation](#createlocation)
+    - [updateLocation](#updatelocation)
 
 ## Authorization
 
@@ -352,5 +357,70 @@ mutation {
 ```graphql
 mutation {
   removeStaff(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+## Locations
+
+### locations
+
+```graphql
+query {
+  locations {
+    id
+    address
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### location(id)
+
+location(id: String)
+
+```graphql
+query {
+  location(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    address
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createLocation
+
+```graphql
+mutation {
+  createLocation(
+    createLocationInput: {
+      address: "x"
+    }
+  ) {
+    id
+    address
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateLocation
+
+```graphql
+mutation {
+  updateLocation(
+    updateLocationInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      address: "x"
+    }
+  ) {
+    id
+    address
+    createdAt
+    updatedAt
+  }
 }
 ```
