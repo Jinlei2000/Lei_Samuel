@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateLocationInput } from './dto/create-location.input';
-import { UpdateLocationInput } from './dto/update-location.input';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common'
+import { CreateLocationInput } from './dto/create-location.input'
+import { UpdateLocationInput } from './dto/update-location.input'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { GraphQLError } from 'graphql'
+import { ObjectId } from 'mongodb'
+import { Location } from './entities/location.entity'
 
 @Injectable()
 export class LocationsService {
@@ -11,23 +14,50 @@ export class LocationsService {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
-  findAll() {
-    return `This action returns all locations`
+  findAll(): Promise<Location[]> {
+    return this.locationRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} location`
+  async findOne(id: string): Promise<Location | GraphQLError> {
+    const location = await this.locationRepository.findOne({
+      // @ts-ignore
+      _id: new ObjectId(id),
+    })
+
+    if (!location) {
+      throw new GraphQLError('Location not found!')
+    }
+
+    return location
   }
 
-  create(createLocationInput: CreateLocationInput) {
-    return 'This action adds a new location'
+  create(createLocationInput: CreateLocationInput): Promise<Location> {
+    const l = new Location()
+    l.address = createLocationInput.address
+
+    return this.locationRepository.save(l)
   }
 
-  update(id: number, updateLocationInput: UpdateLocationInput) {
-    return `This action updates a #${id} location`
+  async update(
+    id: ObjectId,
+    updateLocationInput: UpdateLocationInput,
+  ): Promise<Location | GraphQLError> {
+    await this.findOne(id.toString())
+
+    // remove id and make a new variable with the rest of the data
+    const { id: _, ...updatedData } = updateLocationInput
+
+    await this.locationRepository.update(id, updatedData)
+
+    return this.findOne(id.toString())
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} location`
+  async remove(id: string): Promise<string> {
+    await this.findOne(id)
+
+    await this.locationRepository.delete(id)
+
+    // return id if delete was successful
+    return id
   }
 }

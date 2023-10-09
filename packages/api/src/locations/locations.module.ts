@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { Location } from './entities/location.entity'
 import { LocationsService } from './locations.service'
 import { LocationsResolver } from './locations.resolver'
 import { TypeOrmModule } from '@nestjs/typeorm'
