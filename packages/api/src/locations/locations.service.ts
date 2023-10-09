@@ -62,6 +62,7 @@ export class LocationsService {
   }
 
   // Seeding functions
+  // TODO: Remove unused saveAll function
   saveAll(locations: Location[]): Promise<Location[]> {
     return this.locationRepository.save(locations)
   }

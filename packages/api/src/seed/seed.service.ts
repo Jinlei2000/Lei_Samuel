@@ -5,11 +5,12 @@ import { MaterialsService } from 'src/materials/materials.service'
 import { Material } from 'src/materials/entities/material.entity'
 import { StaffsService } from 'src/staffs/staffs.service'
 import { Staff } from 'src/staffs/entities/staff.entity'
+import { LocationsService } from 'src/locations/locations.service'
+import { Location } from 'src/locations/entities/location.entity'
 
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
 import * as staffs from './data/staffs.json'
-import { ObjectId } from 'typeorm'
 
 @Injectable()
 export class SeedService {
@@ -17,6 +18,7 @@ export class SeedService {
     private appointmentsService: AppointmentsService,
     private materialsService: MaterialsService,
     private staffsService: StaffsService,
+    private locationsService: LocationsService,
   ) {}
 
   //#region Appointments
@@ -76,8 +78,10 @@ export class SeedService {
         s.availability = true
         s.isAdmin = staff.isAdmin ? staff.isAdmin : false
         s.uid = staff.uid
+
         //TODO: How to add locationId here? Make a Location.
-        // s.locationId = staff.locationId
+        const newLocation = await this.locationsService.create(staff.location)
+        s.locationId = newLocation.id.toString()
 
         theStaffs.push(s)
       }
@@ -114,6 +118,12 @@ export class SeedService {
 
   async deleteAllStaffs(): Promise<void> {
     return this.staffsService.truncate()
+  }
+  //#endregion
+
+  //#region Locations
+  async deleteAllLocations(): Promise<void> {
+    return this.locationsService.truncate()
   }
   //#endregion
 }
