@@ -8,7 +8,7 @@ import { ObjectId } from 'mongodb'
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from '../interfaces/order.input'
 // TODO
-// import { filterDefects, orderDefects } from '../helpers/defectsFunctions'
+import { filterDefects } from '../helpers/defectsFunctions'
 
 @Injectable()
 export class DefectsService {
