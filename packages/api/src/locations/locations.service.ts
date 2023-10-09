@@ -60,4 +60,13 @@ export class LocationsService {
     // return id if delete was successful
     return id
   }
+
+  // Seeding functions
+  saveAll(locations: Location[]): Promise<Location[]> {
+    return this.locationRepository.save(locations)
+  }
+
+  truncate(): Promise<void> {
+    return this.locationRepository.clear()
+  }
 }
