@@ -6,7 +6,7 @@ import { Repository } from 'typeorm'
 import { Material } from './entities/material.entity'
 import { ObjectId } from 'mongodb'
 import { GraphQLError } from 'graphql'
-import { OrderByInput } from './dto/order.input'
+import { OrderByInput } from '../interfaces/order.input'
 import { filterMaterials, orderMaterials } from '../helpers/materialsFunctions'
 
 @Injectable()
@@ -65,7 +65,6 @@ export class MaterialsService {
       throw new GraphQLError('Material not found!')
     }
 
-    // @ts-ignore
     return material
   }
 
@@ -95,6 +94,8 @@ export class MaterialsService {
     id: ObjectId,
     updateMaterialInput: UpdateMaterialInput,
   ): Promise<Material | GraphQLError> {
+    await this.findOne(id.toString())
+
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateMaterialInput
 

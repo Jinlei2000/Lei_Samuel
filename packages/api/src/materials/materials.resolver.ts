@@ -8,7 +8,7 @@ import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 import { UserRecord } from 'firebase-admin/auth'
 import { GraphQLError } from 'graphql'
-import { OrderByInput } from './dto/order.input'
+import { OrderByInput } from '../interfaces/order.input'
 
 @Resolver(() => Material)
 export class MaterialsResolver {
@@ -16,10 +16,10 @@ export class MaterialsResolver {
 
   // TODO: Use FirebaseGuard everywhere you need to check if the user is authenticated
 
-  @UseGuards(FirebaseGuard)
+  // @UseGuards(FirebaseGuard)
   @Query(() => [Material], { name: 'materials' })
   findAll(
-    @FirebaseUser() currentUser: UserRecord,
+    // @FirebaseUser() currentUser: UserRecord,
     @Args('filters', { type: () => [String], nullable: true })
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })

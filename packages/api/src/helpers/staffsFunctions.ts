@@ -1,7 +1,8 @@
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from 'src/interfaces/order.input'
+import { Staff } from 'src/staffs/entities/staff.entity'
 
-export const filterMaterials = (
+export const filterStaffs = (
   filters: Array<string>,
 ): { [key: string]: string | boolean } => {
   //   console.log(filters)
@@ -14,51 +15,31 @@ export const filterMaterials = (
 
   // where object for query
   const whereQuery: { [key: string]: string | boolean } = {}
-  const filtersList = ['A', 'NA', 'D', 'ND']
+  const filtersList = ['A', 'E']
 
   // check if filters are valid
   if (filters) {
-    // check if all filters are valid (A, NA, D, ND)
+    // check if all filters are valid (A, E)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
-        `Invalid filter in filters = [${filters}]! Supported filters are: A = Available, NA = Not Available, D = Defect, ND = Not Defect`,
-      )
-    }
-
-    // available and not available cannot be used at the same time
-    if (filters?.includes('A') && filters?.includes('NA')) {
-      throw new GraphQLError(
-        'Cannot filter for A and NA at the same time! A = Available, NA = Not Available',
-      )
-    }
-
-    // defect and not defect cannot be used at the same time
-    if (filters?.includes('D') && filters?.includes('ND')) {
-      throw new GraphQLError(
-        'Cannot filter for D and ND at the same time! D = Defect, ND = Not Defect',
+        `Invalid filter in filters = [${filters}]! Supported filters are: A = Admin, E = Employee`,
       )
     }
 
     // set whereQuery depending on filters
     if (filters?.includes('A')) {
-      whereQuery.isAvailable = true
-    } else if (filters?.includes('NA')) {
-      whereQuery.isAvailable = false
-    }
-    if (filters?.includes('D')) {
-      whereQuery.isDefect = true
-    } else if (filters?.includes('ND')) {
-      whereQuery.isDefect = false
+      whereQuery.isAdmin = true
+    } else if (filters?.includes('E')) {
+      whereQuery.isAdmin = false
     }
   }
 
   return whereQuery
 }
 
-export const orderMaterials = (
-  order: OrderByInput,
-): { [key: string]: string } => {
-  // console.log(order)
+export const orderStaffs = (order: OrderByInput): { [key: string]: string } => {
+  //   console.log(order)
+
   if (!order) {
     return { createdAt: 'ASC' }
   }
@@ -68,7 +49,15 @@ export const orderMaterials = (
   // order object for query
   const { field, direction } = order
   const orderQuery = { [field]: direction }
-  const orderFieldsList = ['name', 'createdAt', 'updatedAt']
+  const orderFieldsList = [
+    'firstname',
+    'lastname',
+    'fullname',
+    'createdAt',
+    'updatedAt',
+    'availability',
+    'absentCount',
+  ]
   const orderDirectionsList = ['ASC', 'DESC']
 
   // check if order is valid
@@ -88,4 +77,9 @@ export const orderMaterials = (
   }
 
   return orderQuery
+}
+
+// send a mail to staff to make a account
+export const sendMailToStaff = async (staff: Staff): Promise<void> => {
+  console.log('sending mail to new staff')
 }
