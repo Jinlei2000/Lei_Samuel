@@ -1,7 +1,14 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, ID } from '@nestjs/graphql'
+import { Column, Entity, ObjectId, ObjectIdColumn } from 'typeorm'
 
-@ObjectType()
+@Entity() // Database link - Typeorm
+@ObjectType({ description: 'location' }) // GraphQL type
 export class Location {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @ObjectIdColumn() // Database link - Typeorm
+  @Field(() => ID) // GraphQL type
+  id: ObjectId
+
+  @Column() // Database link - Typeorm
+  @Field() // GraphQL type
+  address: string
 }
