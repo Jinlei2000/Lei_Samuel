@@ -47,10 +47,11 @@ export class DefectsResolver {
     return this.defectsService.findOne(id)
   }
 
-  @Query(() => [Defect], { name: 'defectsBySearchString', nullable: true })
-  findDefectsBySearchString(@Args('searchString') searchString: string) {
-    return this.defectsService.findDefectsBySearchString(searchString)
-  }
+  // TODO: findDefectsBySearchString
+  //   @Query(() => [Defect], { name: 'defectsBySearchString', nullable: true })
+  //   findDefectsBySearchString(@Args('searchString') searchString: string) {
+  //     return this.defectsService.findDefectsBySearchString(searchString)
+  //   }
 
   @Mutation(() => Defect, { name: 'createDefect' })
   createDefect(
@@ -63,10 +64,7 @@ export class DefectsResolver {
   updateDefect(
     @Args('updateDefectInput') updateDefectInput: UpdateDefectInput,
   ) {
-    return this.defectsService.update(
-      updateDefectInput.id,
-      updateDefectInput,
-    )
+    return this.defectsService.update(updateDefectInput.id, updateDefectInput)
   }
 
   @Mutation(() => String, { name: 'removeDefect', nullable: true })

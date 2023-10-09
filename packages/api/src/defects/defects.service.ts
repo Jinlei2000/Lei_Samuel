@@ -20,15 +20,15 @@ export class DefectsService {
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<Defect[]> {
     // filter and order defects
     const whereQuery = filterDefects(filters)
-    const orderQuery = orderDefects(order)
+    // const orderQuery = orderDefects(order)
 
     const defects = this.defectRepository.find({
       where: {
         ...whereQuery,
       },
-      order: {
-        ...orderQuery,
-      },
+      // order: {
+      //   ...orderQuery,
+      // },
     })
 
     return defects
@@ -41,16 +41,16 @@ export class DefectsService {
   ): Promise<Defect[]> {
     // filter and order defects
     const whereQuery = filterDefects(filters)
-    const orderQuery = orderDefects(order)
+    // const orderQuery = orderDefects(order)
 
     const defects = await this.defectRepository.find({
       where: {
         personId: personId,
         ...whereQuery,
       },
-      order: {
-        ...orderQuery,
-      },
+      // order: {
+      //   ...orderQuery,
+      // },
     })
 
     return defects
@@ -69,20 +69,21 @@ export class DefectsService {
     return defect
   }
 
-  findDefectsBySearchString(searchString: string): Promise<Defect[]> {
-    searchString = searchString.toLowerCase()
+  // TODO - search by material name
+  // findDefectsBySearchString(searchString: string): Promise<Defect[]> {
+  //   searchString = searchString.toLowerCase()
 
-    const defects = this.defectRepository.find({
-      // @ts-ignore
-      name: { $regex: new RegExp(searchString, 'i') },
-    })
+  //   const defects = this.defectRepository.find({
+  //     // @ts-ignore
+  //     name: { $regex: new RegExp(searchString, 'i') },
+  //   })
 
-    return defects
-  }
+  //   return defects
+  // }
 
   create(createDefectInput: CreateDefectInput): Promise<Defect> {
     const m = new Defect()
-    m.description = createDefectInput.name
+    m.description = createDefectInput.description
     m.status = createDefectInput.status
     m.personId = createDefectInput.personId
     m.material = createDefectInput.material
