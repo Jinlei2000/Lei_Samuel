@@ -5,13 +5,10 @@
     >
       Dashboard
     </h1>
+    <AppointmentCard />
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  setup() {
-    return {}
-  },
-}
+<script setup lang="ts">
+import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 </script>
