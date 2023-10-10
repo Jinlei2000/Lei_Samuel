@@ -10,6 +10,8 @@ import { provide } from 'vue'
 import { DefaultApolloClient } from '@vue/apollo-composable'
 
 import useGraphql from './composables/useGraphql'
+import { useI18n } from 'vue-i18n'
+import useLanguage from './composables/useLanguage'
 
 export default {
   components: {
@@ -18,8 +20,12 @@ export default {
 
   setup() {
     const { apolloClient } = useGraphql()
+    const { setLocale } = useLanguage()
+    const { locale } = useI18n()
 
     provide(DefaultApolloClient, apolloClient)
+
+    setLocale(locale.value)
 
     return {}
   },

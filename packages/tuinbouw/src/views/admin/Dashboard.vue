@@ -18,7 +18,7 @@
       </button>
 
       <p class="text-lg">
-        {{ $t('navigation.user') }}
+        {{ $t('account.welcome') }}
       </p>
 
       <label class="block" for="language">Select Language</label>
@@ -55,6 +55,7 @@ import router from '@/router'
 import { ref } from 'vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useLanguage from '@/composables/useLanguage'
+import { useI18n } from 'vue-i18n'
 
 export default {
   setup() {
@@ -66,7 +67,8 @@ export default {
       'schedule-appointment',
     ])
     const { firebaseUser, logout } = useFirebase()
-    const { setLocale, locale } = useLanguage()
+    const { setLocale } = useLanguage()
+    const { locale } = useI18n()
 
     const handleLogout = async () => {
       await logout()
