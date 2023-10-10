@@ -14,7 +14,11 @@ export class LocationsService {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
-  findAll(uid: string): Promise<Location[]> {
+  findAll(): Promise<Location[]> {
+    return this.locationRepository.find()
+  }
+
+  findAllByUid(uid: string): Promise<Location[]> {
     return this.locationRepository.find({
       where: { uid: uid },
     })

@@ -14,9 +14,9 @@ export class LocationsResolver {
 
   @UseGuards(FirebaseGuard)
   @Query(() => [Location], { name: 'locations' })
-  findAll(@FirebaseUser() currentUser: UserRecord) {
+  findAllByUid(@FirebaseUser() currentUser: UserRecord) {
     console.log(currentUser.uid)
-    return this.locationsService.findAll(currentUser.uid)
+    return this.locationsService.findAllByUid(currentUser.uid)
   }
 
   @Query(() => Location, { name: 'location' })
