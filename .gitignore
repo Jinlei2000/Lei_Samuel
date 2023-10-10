@@ -1,3 +1,6 @@
 **/node_modules/
 
 .env
+**/credentials.json
+**/translations.json
+**/token.json
