@@ -4,6 +4,7 @@ import { Location } from './entities/location.entity'
 import { CreateLocationInput } from './dto/create-location.input'
 import { UpdateLocationInput } from './dto/update-location.input'
 import { UseGuards } from '@nestjs/common'
+import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 import { UserRecord } from 'firebase-admin/auth'
 
@@ -11,9 +12,11 @@ import { UserRecord } from 'firebase-admin/auth'
 export class LocationsResolver {
   constructor(private readonly locationsService: LocationsService) {}
 
+  @UseGuards(FirebaseGuard)
   @Query(() => [Location], { name: 'locations' })
-  findAll() {
-    return this.locationsService.findAll()
+  findAll(@FirebaseUser() currentUser: UserRecord) {
+    console.log(currentUser.uid)
+    return this.locationsService.findAll(currentUser.uid)
   }
 
   @Query(() => Location, { name: 'location' })
@@ -21,13 +24,13 @@ export class LocationsResolver {
     return this.locationsService.findOne(id)
   }
 
-  @UseGuards(FirebaseUser)
+  @UseGuards(FirebaseGuard)
   @Mutation(() => Location)
   createLocation(
     @FirebaseUser() currentUser: UserRecord,
     @Args('createLocationInput') createLocationInput: CreateLocationInput,
   ) {
-    return this.locationsService.create(createLocationInput, currentUser)
+    return this.locationsService.create(createLocationInput, currentUser.uid)
   }
 
   @Mutation(() => Location)

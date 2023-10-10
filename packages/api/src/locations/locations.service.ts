@@ -6,8 +6,6 @@ import { Repository } from 'typeorm'
 import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { Location } from './entities/location.entity'
-import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
-import { UserRecord } from 'firebase-admin/auth'
 
 @Injectable()
 export class LocationsService {
@@ -16,8 +14,10 @@ export class LocationsService {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
-  findAll(): Promise<Location[]> {
-    return this.locationRepository.find()
+  findAll(uid: string): Promise<Location[]> {
+    return this.locationRepository.find({
+      where: { uid: uid },
+    })
   }
 
   async findOne(id: string): Promise<Location | GraphQLError> {
@@ -35,11 +35,11 @@ export class LocationsService {
 
   create(
     createLocationInput: CreateLocationInput,
-    currentUser: UserRecord,
+    uid: string,
   ): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
-    l.uid = currentUser.uid
+    l.uid = uid
 
     return this.locationRepository.save(l)
   }

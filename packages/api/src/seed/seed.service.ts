@@ -80,7 +80,12 @@ export class SeedService {
         s.uid = staff.uid
 
         //TODO: How to add locationId here? Make a Location.
-        const newLocation = await this.locationsService.create(staff.location)
+        const newLocation = await this.locationsService.create(
+          {
+            address: staff.location.address,
+          },
+          staff.uid,
+        )
         s.locationId = newLocation.id.toString()
 
         theStaffs.push(s)
