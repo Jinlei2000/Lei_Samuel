@@ -20,7 +20,7 @@
           </li>
           <li>
             <RouterLink
-              class="py-2 rounded-md focus:outline-none focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:opacity-40"
+              class="py-2 rounded-md focus:outline-none text-primary focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:opacity-40"
               active-class="opacity-30"
               to="/tuin"
               >Mijn tuin</RouterLink
