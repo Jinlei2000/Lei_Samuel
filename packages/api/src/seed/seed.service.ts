@@ -13,14 +13,14 @@ import * as materials from './data/materials.json'
 import * as staffs from './data/staffs.json'
 // import * as defects from './data/defects.json'
 
+// TODO: seed users
 @Injectable()
 export class SeedService {
   constructor(
     private appointmentsService: AppointmentsService,
-    private materialsService: MaterialsService,
-    // private staffsService: StaffsService,
-    // private defectsService: DefectsService,
-  ) {}
+    private materialsService: MaterialsService, // private staffsService: StaffsService,
+  ) // private defectsService: DefectsService,
+  {}
 
   //#region Appointments
   async addAppointmentsFromJson(): Promise<Appointment[]> {
