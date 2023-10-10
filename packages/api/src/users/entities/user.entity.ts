@@ -42,9 +42,10 @@ export class User {
   @Field({ nullable: true }) // GraphQL type
   url?: string
 
+  //TODO: use resolve field for this
   @Column() // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
-  locationId?: string[] //TODO: use resolve field for this
+  locationId?: string
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
@@ -68,7 +69,7 @@ export class User {
 
   // STAFF ONLY
   @Column() // Database link - Typeorm
-  @Field() // GraphQL type
+  @Field({defaultValue: 0}) // GraphQL type
   absentCount: number
 
   // CLIENT ONLY

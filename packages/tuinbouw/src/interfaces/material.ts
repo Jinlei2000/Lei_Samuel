@@ -1,3 +1,4 @@
+// TODO: change name of this file to material.interface.ts
 export interface Material {
   id: string
   name: string

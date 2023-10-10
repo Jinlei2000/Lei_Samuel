@@ -38,49 +38,6 @@
               v-model="registerCredentials.lastName"
             />
 
-            <div>
-              <p
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Choose your role
-              </p>
-              <div class="flex">
-                <div class="flex items-center mr-4">
-                  <input
-                    id="radio"
-                    type="radio"
-                    value="employee"
-                    name="radios"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700"
-                    v-model="registerCredentials.role"
-                  />
-                  <label
-                    for="radio"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Employee</label
-                  >
-                </div>
-                <div class="flex items-center mr-4">
-                  <input
-                    id="radio-2"
-                    type="radio"
-                    value="customer"
-                    name="radios"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700"
-                    v-model="registerCredentials.role"
-                  />
-                  <label
-                    for="radio-2"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Customer</label
-                  >
-                </div>
-              </div>
-              <span v-if="errorMessages.role" class="text-red-600">{{
-                errorMessages.role
-              }}</span>
-            </div>
-
             <InputField
               label="Email"
               type="email"
@@ -118,16 +75,24 @@
 </template>
 
 <script lang="ts">
-import useFirebase from '@/composables/useFirebase'
-import router from '@/router'
 import { ref } from 'vue'
-import InputField from '@/components/generic/form/InputField.vue'
+
+import { ADD_CLIENT } from '@/graphql/user.mutation'
 import { object, string } from 'yup'
+import { useI18n } from 'vue-i18n'
+import { useMutation } from '@vue/apollo-composable'
+import InputField from '@/components/generic/form/InputField.vue'
+import router from '@/router'
+import type { CustomUser } from '@/interfaces/custom.user.interface'
+import useCustomUser from '@/composables/useCustomUser'
+import useFirebase from '@/composables/useFirebase'
 
 export default {
   setup() {
     // Composables
     const { register } = useFirebase()
+    const { customUser } = useCustomUser()
+    const { locale } = useI18n()
 
     // Data
     const registerCredentials = ref({
@@ -135,16 +100,20 @@ export default {
       password: '',
       firstName: '',
       lastName: '',
-      role: '',
     })
     const errorMessages = ref<{ [key: string]: string }>({
       email: '',
       password: '',
       firstName: '',
       lastName: '',
-      role: '',
       general: '',
     })
+
+    const {
+      mutate: addClient,
+      loading: addClientLoading,
+      onDone: clientCreated,
+    } = useMutation<CustomUser>(ADD_CLIENT)
 
     // Validation schema
     const registerSchema = object({
@@ -154,7 +123,6 @@ export default {
         .min(6, "Password can't be shorter than 6 characters"),
       firstName: string().required('first name is required'),
       lastName: string().required('last name is required'),
-      role: string<'employee' | 'customer'>().required('role is required'),
     })
 
     // Reset error messages to empty strings
@@ -164,7 +132,6 @@ export default {
         password: '',
         firstName: '',
         lastName: '',
-        role: '',
         general: '',
       }
     }
@@ -193,9 +160,24 @@ export default {
             registerCredentials.value.email,
             registerCredentials.value.password,
           )
-            .then(() => {
-              console.log('register success')
-              router.push('/auth/login')
+            .then(async () => {
+              // Add user to database
+              await addClient({
+                createClientInput: {
+                  firstname: registerCredentials.value.firstName,
+                  lastname: registerCredentials.value.lastName,
+                  email: registerCredentials.value.email,
+                  // add the user's locale language to the database
+                  locale: locale.value,
+                },
+              }).then(result => {
+                if (!result?.data)
+                  throw new Error('Custom user creation failed.')
+
+                customUser.value = result.data
+
+                console.log('register success')
+              })
             })
             .catch(error => {
               console.log(error.message)

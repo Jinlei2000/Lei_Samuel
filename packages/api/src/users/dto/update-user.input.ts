@@ -20,7 +20,7 @@ export class UpdateUserInput {
   uid?: string
 
   @Field({ nullable: true }) // graphql
-  locationId?: string[]
+  locationId?: string
 
   @IsOptional() // validation
   @IsEmail() // validation
