@@ -2,53 +2,50 @@
   <Container class="py-12"
     ><header class="flex items-center justify-between">
       <RouterLink
-        class="flex items-center space-x-4 hover:opacity-30 focus:outline-none focus-visible:ring-4 ring-blue-400 rounded-lg"
+        class="w-1/6 flex items-center space-x-4 focus:outline-none focus-visible:ring-4 ring-blue-400 hover:scale-105 transition-all rounded-lg"
         to="/"
       >
-        <Logo class="h-10" />
+        <Logo />
       </RouterLink>
-
       <nav>
-        <ul class="flex items-center space-x-12">
+        <ul class="flex items-center justify-center">
           <li>
             <RouterLink
-              class="py-1 focus:outline-none focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:text-green-400 hover:border-green-400"
-              active-class="border-b-1 border-black"
+              class="rounded-full text-primary-green py-3 px-6 hover:text-gray-200 hover:bg-primary-green"
+              active-class="text-gray-200! bg-primary-green"
               to="dashboard"
-              >Home</RouterLink
+              >Dashboard</RouterLink
             >
           </li>
           <li>
             <RouterLink
-              class="py-2 rounded-md focus:outline-none focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:opacity-40"
-              active-class="opacity-30"
+              class="rounded-full text-primary-green py-3 px-6 hover:text-gray-200 hover:bg-primary-green"
+              active-class="text-gray-200! bg-primary-green"
               to="/tuin"
-              >Mijn tuin</RouterLink
+              >Materials</RouterLink
             >
           </li>
-          <li>
-            <RouterLink
-              class="py-2 rounded-md focus:outline-none focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:opacity-40"
-              active-class="opacity-30"
-              to="/profile"
-              >Profile</RouterLink
-            >
-          </li>
-          <li>
+          <!-- <li>
             <button
               class="bg-[#1A281D] rounded-full flex justify-center gap-[16px] items-center py-[16px] pl-[16px] pr-[32px] text-white"
             >
               <span class="bg-white rounded-full">
-                <!-- lucide icon -->
                 <Plus class="h-6 w-6" color="black" />
               </span>
               Afspraak
             </button>
-          </li>
+          </li> -->
         </ul>
       </nav>
-    </header></Container
-  >
+      <div class="w-1/6 flex justify-end">
+        <RouterLink class="rounded-full" to="/profile">
+          <img
+            class="rounded-full w-12 h-12 hover:scale-105 transition-all"
+            src="https://i.pravatar.cc/300"
+            alt="Profile picture"
+        /></RouterLink>
+      </div></header
+  ></Container>
 </template>
 
 <script setup lang="ts">
