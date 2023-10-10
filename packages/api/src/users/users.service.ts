@@ -30,6 +30,7 @@ export class UsersService {
     return users
   }
 
+  // TODO: create own error, but than or roles guard dont work
   findOneByUid(uid: string): Promise<User> {
     return this.userRepository.findOneByOrFail({ uid })
   }
@@ -129,7 +130,10 @@ export class UsersService {
   }
 
   //#region Client
-  async createClient(createClientInput: CreateClientInput): Promise<User> {
+  async createClient(
+    currentUserUid: string,
+    createClientInput: CreateClientInput,
+  ): Promise<User> {
     // Check if user already exists with email
     const user = await this.userRepository.findOneBy({
       email: createClientInput.email,
@@ -137,8 +141,7 @@ export class UsersService {
     if (user) throw new GraphQLError('User already exists')
 
     const s = new User()
-    // TODO: How to empty uid?
-    // s.uid = uid
+    s.uid = currentUserUid
     s.locale = createClientInput.locale ?? 'en'
     s.role = Role.CLIENT
     s.firstname = createClientInput.firstname.toLowerCase()

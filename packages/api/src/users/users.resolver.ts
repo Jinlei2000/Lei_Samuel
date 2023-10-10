@@ -28,6 +28,12 @@ export class UsersResolver {
     return this.usersService.findAll(filters, order)
   }
 
+  // @UseGuards(FirebaseGuard)
+  @Query(() => User, { name: 'userByUid' })
+  findOneByUid(@Args('uid', { type: () => String }) uid: string) {
+    return this.usersService.findOneByUid(uid)
+  }
+
   @UseGuards(FirebaseGuard)
   @Query(() => User, { name: 'user' })
   findOne(@Args('id', { type: () => String }) id: string) {
@@ -88,16 +94,13 @@ export class UsersResolver {
 
   //#region Client
   // FIXME: WHY WE USE HERE FIREBASEGUARD? USER IS NOT LOGGED IN YET?
-  // @UseGuards(FirebaseGuard) 
+  @UseGuards(FirebaseGuard)
   @Mutation(() => User, { name: 'createClient' })
   createClient(
     @Args('createClientInput') createClientInput: CreateClientInput,
-    // @FirebaseUser() currentUser: UserRecord,
+    @FirebaseUser() currentUser: UserRecord,
   ) {
-    return this.usersService.createClient(
-      // currentUser.uid,
-      createClientInput,
-    )
+    return this.usersService.createClient(currentUser.uid, createClientInput)
   }
   //#endregion
 }

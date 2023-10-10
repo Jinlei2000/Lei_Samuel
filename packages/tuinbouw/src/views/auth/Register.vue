@@ -177,6 +177,7 @@ export default {
                 customUser.value = result.data
 
                 console.log('register success')
+                router.push('/auth/login')
               })
             })
             .catch(error => {
