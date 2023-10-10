@@ -1,13 +1,10 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { ObjectIdColumn, ObjectId, Column, Entity } from 'typeorm'
+import { User } from 'src/authentication/users/user.entity'
+import { Column, Entity } from 'typeorm'
 
 @Entity() // Database link - Typeorm
 @ObjectType({ description: 'staff' }) // GraphQL type
-export class Staff {
-  @ObjectIdColumn() // Database link - Typeorm
-  @Field(() => ID) // GraphQL type
-  id: ObjectId
-
+export class Staff extends User {
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
   firstname: string
@@ -23,10 +20,6 @@ export class Staff {
   @Column() // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
   url?: string
-
-  @Column() // Database link - Typeorm
-  @Field({ nullable: true }) // GraphQL type
-  uid?: string
 
   // TODO: make a new database for locations
   @Column() // Database link - Typeorm
@@ -52,12 +45,4 @@ export class Staff {
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
   isAdmin: boolean
-
-  @Column({ type: 'timestamp', nullable: true }) // Database link - Typeorm
-  @Field({ nullable: true }) // GraphQL type
-  createdAt?: Date
-
-  @Column({ type: 'timestamp', nullable: true }) // Database link - Typeorm
-  @Field({ nullable: true }) // GraphQL type
-  updatedAt?: Date
 }
