@@ -17,6 +17,10 @@ export class Location {
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
+  uid: string
+
+  @Column() // Database link - Typeorm
+  @Field() // GraphQL type
   address: string
 
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm

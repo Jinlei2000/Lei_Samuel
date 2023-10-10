@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UseGuards } from '@nestjs/common'
 import { CreateLocationInput } from './dto/create-location.input'
 import { UpdateLocationInput } from './dto/update-location.input'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -6,6 +6,8 @@ import { Repository } from 'typeorm'
 import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { Location } from './entities/location.entity'
+import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
+import { UserRecord } from 'firebase-admin/auth'
 
 @Injectable()
 export class LocationsService {
@@ -31,9 +33,13 @@ export class LocationsService {
     return location
   }
 
-  create(createLocationInput: CreateLocationInput): Promise<Location> {
+  create(
+    createLocationInput: CreateLocationInput,
+    currentUser: UserRecord,
+  ): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
+    l.uid = currentUser.uid
 
     return this.locationRepository.save(l)
   }
