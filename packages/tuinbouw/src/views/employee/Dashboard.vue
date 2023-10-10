@@ -5,11 +5,15 @@
     >
       Dashboard
     </h1>
-    <AppointmentCard
-      title="Mr. Johnsson"
-      description="Dit is een afspraak voor het snoeien van een berk."
-      type="inspection"
-    />
+    <div class="grid grid-cols-4 mx-32">
+      <div class="col-start-1 col-span-1">
+        <AppointmentCard
+          title="Mr. Johnsson"
+          description="Dit is een afspraak voor het snoeien van een berk."
+          type="inspection"
+        />
+      </div>
+    </div>
   </div>
 </template>
 

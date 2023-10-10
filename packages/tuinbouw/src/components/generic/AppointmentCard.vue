@@ -16,7 +16,7 @@
     ></div>
     <h2 class="text-xl mb-1">{{ props.title }}</h2>
     <div class="flex gap-3 items-end justify-between">
-      <p class="text-base">
+      <p class="text-base overflow-hidden">
         {{ props.description }}
       </p>
       <button
@@ -39,6 +39,4 @@ const props = defineProps({
   description: String,
   type: String,
 })
-
-console.log(props.type)
 </script>
