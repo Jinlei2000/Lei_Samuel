@@ -1,0 +1,77 @@
+[
+  {
+    "id": "defect1",
+    "personId": "person1",
+    "description": "This is the first defect",
+    "material": {
+      "id": "613ab3bedf6a65a6c87728d8",
+      "name": "Hoe",
+      "isAvailable": true,
+      "serialNumber": 123456789,
+      "isDefect": false
+    },
+    "status": "defect",
+    "createdAt": "2022-03-01T08:00:00.000Z",
+    "updatedAt": "2022-03-03T15:45:00.000Z"
+  },
+  {
+    "id": "defect2",
+    "personId": "person2",
+    "description": "This is the second defect",
+    "material": {
+      "id": "613ab3bedf6a65a6c87728d8",
+      "name": "Fork",
+      "isAvailable": false,
+      "serialNumber": 123456789,
+      "isDefect": false
+    },
+    "status": "repaired",
+    "createdAt": "2022-04-03T14:30:00.000Z",
+    "updatedAt": "2022-04-04T16:20:00.000Z"
+  },
+  {
+    "id": "defect3",
+    "personId": "person3",
+    "description": "This is the third defect",
+    "material": {
+      "id": "613ab3bedf6a65a6c87728d8",
+      "name": "Spade",
+      "isAvailable": false,
+      "serialNumber": 123456789,
+      "isDefect": true
+    },
+    "status": "discarded",
+    "createdAt": "2022-05-03T11:30:00.000Z",
+    "updatedAt": "2022-05-05T10:10:00.000Z"
+  },
+  {
+    "id": "defect4",
+    "personId": "person4",
+    "description": "This is the fourth defect",
+    "material": {
+      "id": "613ab3bedf6a65a6c87728d8",
+      "name": "Pruner",
+      "isAvailable": true,
+      "serialNumber": 123456792,
+      "isDefect": false
+    },
+    "status": "defect",
+    "createdAt": "2022-06-03T13:15:00.000Z",
+    "updatedAt": "2022-06-05T12:45:00.000Z"
+  },
+  {
+    "id": "defect5",
+    "personId": "person5",
+    "description": "This is the fifth defect",
+    "material": {
+      "id": "613ab3bedf6a65a6c87728d8",
+      "name": "Lawn Mower",
+      "isAvailable": true,
+      "serialNumber": 123456793,
+      "isDefect": false
+    },
+    "status": "repaired",
+    "createdAt": "2022-07-03T16:30:00.000Z",
+    "updatedAt": "2022-07-06T14:50:00.000Z"
+  }
+]

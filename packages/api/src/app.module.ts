@@ -9,7 +9,8 @@ import { SeedModule } from './seed/seed.module'
 import { MaterialsModule } from './materials/materials.module'
 import { AuthenticationModule } from './authentication/authentication.module'
 import { ConfigModule } from '@nestjs/config'
-import { StaffsModule } from './staffs/staffs.module';
+import { StaffsModule } from './staffs/staffs.module'
+import { DefectsModule } from './defects/defects.module'
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { StaffsModule } from './staffs/staffs.module';
 
     StaffsModule,
 
+    DefectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
