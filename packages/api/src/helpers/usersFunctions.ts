@@ -1,8 +1,7 @@
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from 'src/interfaces/order.input'
-import { User } from 'src/users/entities/user.entity'
 
-export const filterStaffs = (
+export const filterUsers = (
   filters: Array<string>,
 ): { [key: string]: string | boolean } => {
   //   console.log(filters)
@@ -15,29 +14,31 @@ export const filterStaffs = (
 
   // where object for query
   const whereQuery: { [key: string]: string | boolean } = {}
-  const filtersList = ['A', 'E']
+  const filtersList = ['A', 'E', 'C']
 
   // check if filters are valid
   if (filters) {
     // check if all filters are valid (A, E)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
-        `Invalid filter in filters = [${filters}]! Supported filters are: A = Admin, E = Employee`,
+        `Invalid filter in filters = [${filters}]! Supported filters are: A = Admin, E = Employee, C = Client`,
       )
     }
 
     // set whereQuery depending on filters
     if (filters?.includes('A')) {
-      whereQuery.isAdmin = true
+      whereQuery.role = 'ADMIN'
     } else if (filters?.includes('E')) {
-      whereQuery.isAdmin = false
+      whereQuery.role = 'EMPLOYEE'
+    } else if (filters?.includes('C')) {
+      whereQuery.role = 'CLIENT'
     }
   }
 
   return whereQuery
 }
 
-export const orderStaffs = (order: OrderByInput): { [key: string]: string } => {
+export const orderUsers = (order: OrderByInput): { [key: string]: string } => {
   //   console.log(order)
 
   if (!order) {
@@ -50,13 +51,18 @@ export const orderStaffs = (order: OrderByInput): { [key: string]: string } => {
   const { field, direction } = order
   const orderQuery = { [field]: direction }
   const orderFieldsList = [
+    'locale',
+    'role',
     'firstname',
     'lastname',
     'fullname',
-    'createdAt',
-    'updatedAt',
+    'locationId', //TODO: maybe remove
+    'email',
+    'telephone',
     'availability',
     'absentCount',
+    'createdAt',
+    'updatedAt',
   ]
   const orderDirectionsList = ['ASC', 'DESC']
 
@@ -77,9 +83,4 @@ export const orderStaffs = (order: OrderByInput): { [key: string]: string } => {
   }
 
   return orderQuery
-}
-
-// send a mail to staff to make a account
-export const sendMailToStaff = async (staff: User): Promise<void> => {
-  console.log('sending mail to new staff')
 }
