@@ -12,18 +12,18 @@
         <ul class="flex items-center space-x-12">
           <li>
             <RouterLink
-              class="py-1 focus:outline-none focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:text-green-400 hover:border-green-400"
-              active-class="border-b-1 border-black"
+              class="rounded-full text-primary py-3 px-6 hover:text-gray-200 hover:bg-primary-green"
+              active-class="text-gray-200 bg-primary-green"
               to="dashboard"
-              >Home</RouterLink
+              >Dashboard</RouterLink
             >
           </li>
           <li>
             <RouterLink
-              class="py-2 rounded-md focus:outline-none text-primary focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:opacity-40"
+              class="py-2 rounded-full focus:outline-none text-primary focus-visible:ring-4 ring-blue-400 font-semibold tracking-wide hover:opacity-40"
               active-class="opacity-30"
               to="/tuin"
-              >Mijn tuin</RouterLink
+              >Materials</RouterLink
             >
           </li>
           <li>
