@@ -5,10 +5,13 @@ import { MaterialsService } from 'src/materials/materials.service'
 import { Material } from 'src/materials/entities/material.entity'
 import { StaffsService } from 'src/staffs/staffs.service'
 import { Staff } from 'src/staffs/entities/staff.entity'
+import { Defect } from 'src/defects/entities/defect.entity'
+import { DefectsService } from 'src/defects/defects.service'
 
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
 import * as staffs from './data/staffs.json'
+import * as defects from './data/defects.json'
 import { ObjectId } from 'typeorm'
 
 @Injectable()
@@ -17,6 +20,7 @@ export class SeedService {
     private appointmentsService: AppointmentsService,
     private materialsService: MaterialsService,
     private staffsService: StaffsService,
+    private defectsService: DefectsService,
   ) {}
 
   //#region Appointments
@@ -58,6 +62,28 @@ export class SeedService {
 
   async deleteAllMaterials(): Promise<void> {
     return this.materialsService.truncate()
+  }
+  //#endregion
+
+  //#region Defects
+  async addDefectsFromJson(): Promise<Defect[]> {
+    let theDefects: Defect[] = []
+    for (let defect of defects) {
+      const m = new Defect()
+      m.description = defect.description
+      m.status = defect.status
+      m.personId = defect.personId
+      // @ts-ignore
+      m.material = defect.material
+
+      theDefects.push(m)
+    }
+
+    return this.defectsService.saveAll(theDefects)
+  }
+
+  async deleteAllDefects(): Promise<void> {
+    return this.defectsService.truncate()
   }
   //#endregion
 
