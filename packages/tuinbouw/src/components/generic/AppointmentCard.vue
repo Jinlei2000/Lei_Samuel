@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-gray-200 rounded-2xl max-h-32 w-[420px] p-3 pl-6 relative overflow-hidden"
+    class="bg-gray-200 rounded-2xl max-h-32 w-full p-3 pl-6 relative overflow-hidden"
   >
     <div
       class="w-1 h-full absolute left-0 top-0"
@@ -15,7 +15,7 @@
       "
     ></div>
     <h2 class="text-xl mb-1">{{ props.title }}</h2>
-    <div class="flex gap-3 items-end">
+    <div class="flex gap-3 items-end justify-between">
       <p class="text-base">
         {{ props.description }}
       </p>
