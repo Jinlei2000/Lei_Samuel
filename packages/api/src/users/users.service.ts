@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { FirebaseGuard } from 'src/authentication/guards/firebase.guard';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
+
+  @UseGuards(FirebaseGuard)
   create(createUserInput: CreateUserInput) {
     return new Error('This action adds a new user');
   }
