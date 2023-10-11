@@ -3,24 +3,19 @@ import { AppointmentsService } from 'src/appointments/appointments.service'
 import { Appointment } from 'src/appointments/entities/appointment.entity'
 import { MaterialsService } from 'src/materials/materials.service'
 import { Material } from 'src/materials/entities/material.entity'
-import { StaffsService } from 'src/staffs/staffs.service'
-import { Staff } from 'src/staffs/entities/staff.entity'
-import { Defect } from 'src/defects/entities/defect.entity'
-import { DefectsService } from 'src/defects/defects.service'
+import { UsersService } from 'src/users/users.service'
+import { Role, User } from 'src/users/entities/user.entity'
 
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
-import * as staffs from './data/staffs.json'
-import * as defects from './data/defects.json'
-import { ObjectId } from 'typeorm'
+import * as users from './data/users.json'
 
 @Injectable()
 export class SeedService {
   constructor(
     private appointmentsService: AppointmentsService,
     private materialsService: MaterialsService,
-    private staffsService: StaffsService,
-    private defectsService: DefectsService,
+    private usersService: UsersService,
   ) {}
 
   //#region Appointments
@@ -65,81 +60,86 @@ export class SeedService {
   }
   //#endregion
 
-  //#region Defects
-  async addDefectsFromJson(): Promise<Defect[]> {
-    let theDefects: Defect[] = []
-    for (let defect of defects) {
-      const m = new Defect()
-      m.description = defect.description
-      m.status = defect.status
-      m.personId = defect.personId
-      // @ts-ignore
-      m.material = defect.material
+  //#region Users
+  async addUsersFromJson(): Promise<User[]> {
+    let theUsers: User[] = []
+    for (let user of users) {
+      const u = new User()
+      u.firstname = user.firstname.toLowerCase()
+      u.lastname = user.lastname.toLowerCase()
+      u.fullname = `${user.firstname.toLowerCase()} ${user.lastname.toLowerCase()}`
+      u.email = user.email
+      u.role = user.role as Role
+      u.uid = user.uid
+      u.locale = user.locale
+      u.availability = true
 
-      theDefects.push(m)
+      theUsers.push(u)
     }
 
-    return this.defectsService.saveAll(theDefects)
+    //TODO: Add some random materials to staff
+
+    return this.usersService.saveAll(theUsers)
   }
 
-  async deleteAllDefects(): Promise<void> {
-    return this.defectsService.truncate()
+  async deleteAllUsers(): Promise<void> {
+    return this.usersService.truncate()
   }
   //#endregion
 
   //#region Staffs
-  async addStaffsFromJson(): Promise<Staff[]> {
-    let theStaffs: any[] = []
-    let result: Staff[] = []
-    try {
-      for (let staff of staffs) {
-        const s = new Staff()
-        s.firstname = staff.firstname.toLowerCase()
-        s.lastname = staff.lastname.toLowerCase()
-        s.fullname = `${staff.firstname.toLowerCase()} ${staff.lastname.toLowerCase()}`
-        s.email = staff.email
-        s.absentCount = 0
-        s.availability = true
-        s.isAdmin = staff.isAdmin ? staff.isAdmin : false
-        s.uid = staff.uid
-        //TODO: How to add locationId here? Make a Location.
-        // s.locationId = staff.locationId
+  // async addStaffsFromJson(): Promise<Staff[]> {
+  //   let theStaffs: any[] = []
+  //   let result: Staff[] = []
+  //   try {
+  //     for (let staff of staffs) {
+  //       const s = new Staff()
+  //       s.firstname = staff.firstname.toLowerCase()
+  //       s.lastname = staff.lastname.toLowerCase()
+  //       s.fullname = `${staff.firstname.toLowerCase()} ${staff.lastname.toLowerCase()}`
+  //       s.email = staff.email
+  //       s.absentCount = 0
+  //       s.availability = true
+  //       s.isAdmin = staff.isAdmin ? staff.isAdmin : false
+  //       s.uid = staff.uid
+  //       //TODO: How to add locationId here? Make a Location.
+  //       // s.locationId = staff.locationId
 
-        theStaffs.push(s)
-      }
-      result = await this.staffsService.saveAll(theStaffs)
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
+  //       theStaffs.push(s)
+  //     }
+  //     result = await this.staffsService.saveAll(theStaffs)
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw error
+  //   }
 
-    try {
-      // Add some random materials to staff that is not admin
-      const getAllNonAdminStaffs = await this.staffsService.findAll(['E'])
-      for (let s of getAllNonAdminStaffs) {
-        const materials = await this.materialsService.findAll(['A'])
-        // random max 5 materials
-        const randomMaterials = materials
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 5)
-        for (let m of randomMaterials) {
-          await this.materialsService.update(m.id, {
-            personId: String(s.id),
-            isAvailable: false,
-            ...m,
-          })
-        }
-      }
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
+  //   try {
+  //     // Add some random materials to staff that is not admin
+  //     const getAllNonAdminStaffs = await this.staffsService.findAll(['E'])
+  //     for (let s of getAllNonAdminStaffs) {
+  //       const materials = await this.materialsService.findAll(['A'])
+  //       // random max 5 materials
+  //       const randomMaterials = materials
+  //         .sort(() => 0.5 - Math.random())
+  //         .slice(0, 5)
+  //       for (let m of randomMaterials) {
+  //         await this.materialsService.update(m.id, {
+  //           personId: String(s.id),
+  //           isAvailable: false,
+  //           ...m,
+  //         })
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw error
+  //   }
 
-    return result
-  }
+  //   return result
+  // }
 
-  async deleteAllStaffs(): Promise<void> {
-    return this.staffsService.truncate()
-  }
+  // async deleteAllStaffs(): Promise<void> {
+  //   return this.staffsService.truncate()
+  // }
   //#endregion
 }

@@ -1,5 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { IsNotEmpty, IsOptional } from 'class-validator'
+import { CreateMaterialInput } from 'src/materials/dto/create-material.input'
 import { Material } from 'src/materials/entities/material.entity'
 import { ObjectId } from 'typeorm'
 
@@ -10,7 +11,7 @@ export class CreateDefectInput {
   description: string
 
   @IsNotEmpty() //validation
-  @Field(() => Material) // graphql
+  @Field(() => CreateMaterialInput) // graphql
   material: Material
 
   @IsNotEmpty() //validation

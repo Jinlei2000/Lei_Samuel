@@ -10,14 +10,16 @@
     - [createMaterial](#creatematerial)
     - [updateMaterial](#updatematerial)
     - [removeMaterial](#removematerial)
-  - [Staffs](#staffs)
-    - [staffs(filters: , order: { field, direction })](#staffsfilters--order--field-direction-)
-    - [staff(id)](#staffid)
-    - [staffsBySearchString(searchString)](#staffsbysearchstringsearchstring)
-    - [staffUpgradeToAdmin(id)](#staffupgradetoadminid)
+  - [Users](#users)
+    - [users(filters: , order: { field, direction })](#usersfilters--order--field-direction-)
+    - [user(id)](#userid)
+    - [userByUid(uid)](#userbyuiduid)
+    - [usersBySearchString(searchString)](#usersbysearchstringsearchstring)
+    - [userUpgradeToAdmin(id)](#userupgradetoadminid)
+    - [updateUser](#updateuser)
+    - [removeUser](#removeuser)
     - [createStaff](#createstaff)
-    - [updateStaff](#updatestaff)
-    - [removeStaff](#removestaff)
+    - [createClient](#createclient)
 
 ## Authorization
 
@@ -186,15 +188,16 @@ mutation {
 }
 ```
 
-## Staffs
-### staffs(filters: , order: { field, direction })
+## Users
+### users(filters: , order: { field, direction })
 
-staffs(filters: [String], order: { field: String, direction: String })
+users(filters: [String], order: { field: String, direction: String })
 
 Filters can be:
 
 - `A` - admin
 - `E` - employee
+- `C` - client
 
 Order can be:
 
@@ -203,9 +206,11 @@ Order can be:
 
 ```graphql	
 query {
-  staffs {
+  users {
     id
     uid
+    locale
+    role
     firstname
     lastname
     fullname
@@ -214,36 +219,27 @@ query {
     email
     telephone
     availability
-    absentCount
-    isAdmin
     createdAt
     updatedAt
+    absentCount
+    invoiceOption
+    company
+    btwNumber
   }
 }
 ```
 
-### staff(id)
+### user(id)
 
-staff(id: String)
-
-```graphql
-query {
-  staff(id: "6522bd1cfabcb1f1d63dd63a") {
-    id
-  }
-}
-```
-
-
-### staffsBySearchString(searchString)
-
-staffsBySearchString(searchString: String)
+user(id: String)
 
 ```graphql
 query {
-  staffsBySearchString(searchString: "x") {
+  user(id: "6522bd1cfabcb1f1d63dd63a") {
     id
     uid
+    locale
+    role
     firstname
     lastname
     fullname
@@ -252,25 +248,87 @@ query {
     email
     telephone
     availability
-    absentCount
-    isAdmin
     createdAt
     updatedAt
+    absentCount
+   invoiceOption
+    company
+    btwNumber
   }
 }
 ```
 
-### staffUpgradeToAdmin(id)
+### userByUid(uid)
 
-staffUpgradeToAdmin(id: String)
+userByUid(uid: String)
+
+```graphql
+query {
+  userByUid(uid: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    uid
+    locale
+    role
+    firstname
+    lastname
+    fullname
+    url
+    locationId
+    email
+    telephone
+    availability
+    createdAt
+    updatedAt
+    absentCount
+   invoiceOption
+    company
+    btwNumber
+  }
+}
+```
+
+### usersBySearchString(searchString)
+
+usersBySearchString(searchString: String)
+
+```graphql
+query {
+  usersBySearchString(searchString: "x") {
+    id
+    uid
+    locale
+    role
+    firstname
+    lastname
+    fullname
+    url
+    locationId
+    email
+    telephone
+    availability
+    createdAt
+    updatedAt
+    absentCount
+   invoiceOption
+    company
+    btwNumber
+  }
+}
+```
+
+### userUpgradeToAdmin(id)
+
+userUpgradeToAdmin(id: String)
 
 can be used only by admin user to upgrade staff to admin
 
 ```graphql
-mutation {
-  staffUpgradeToAdmin(id: "6522bd1cfabcb1f1d63dd63a") {
+query {
+  userUpgradeToAdmin(id: "6522bd1cfabcb1f1d63dd63a") {
     id
     uid
+    locale
+    role
     firstname
     lastname
     fullname
@@ -279,16 +337,71 @@ mutation {
     email
     telephone
     availability
-    absentCount
-    isAdmin
     createdAt
     updatedAt
+    absentCount
+    invoiceOption
+    company
+    btwNumber
   }
 }
 ```
 
+### updateUser
+
+```graphql
+mutation {
+  updateUser(
+    updateUserInput: {
+      id: "xx"
+      lastname: "xx"
+      firstname: "xx"
+      url: "xx"
+      uid: "xx"
+      locationId: "xx"
+      email: "xx"
+      telephone: "xx"
+      availability: true
+      // STAFF ONLY
+      absentCount: number
+      // CLIENT ONLY
+      invoiceOption: "xx" 
+      company: true
+      btwNumber: "xx"
+    }
+  ) {
+    id
+    uid
+    locale
+    role
+    firstname
+    lastname
+    fullname
+    url
+    locationId
+    email
+    telephone
+    availability
+    createdAt
+    updatedAt
+    absentCount
+    invoiceOption
+    company
+    btwNumber
+  }
+}
+```
+### removeUser
+
+```graphql
+mutation {
+  removeUser(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
 
 ### createStaff
+
+only admin user can create new staff employee
 
 ```graphql
 mutation {
@@ -297,6 +410,9 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
+      locationId: "xx"
+      telephone: "xx"
+      locale: "en"
     }
   ) {
     id
@@ -317,16 +433,16 @@ mutation {
 }
 ```
 
-### updateStaff
+### createClient
 
 ```graphql
 mutation {
-  updateStaff(
-    updateStaffInput: {
-      id: "6522bd1cfabcb1f1d63dd63a"
+  createClient(
+    createClientInput: {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
+      locale: "en"
     }
   ) {
     id
@@ -343,14 +459,10 @@ mutation {
     isAdmin
     createdAt
     updatedAt
+    invoiceOption
+    company
+    btwNumber
   }
 }
-```
 
-### removeStaff
-
-```graphql
-mutation {
-  removeStaff(id: "6522bd1cfabcb1f1d63dd63a")
-}
 ```

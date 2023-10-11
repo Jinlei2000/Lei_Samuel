@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { CreateMaterialInput } from 'src/materials/dto/create-material.input'
 import { Material } from 'src/materials/entities/material.entity'
 import {
   Column,
@@ -25,7 +26,7 @@ export class Defect {
   @Field() // GraphQL type
   description: string
 
-  @Column(() => Material) // Database link - Typeorm
+  @Column() // Database link - Typeorm
   @Field(() => Material) // GraphQL type
   material: Material
 
