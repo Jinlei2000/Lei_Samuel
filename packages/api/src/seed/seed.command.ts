@@ -50,15 +50,38 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
-  // Delete all data from appointments, materials, staffs... tables
+  //#region Users
+  @Command({
+    command: 'seed:database:users',
+    describe: 'Seed the database with users',
+  })
+  async seedUsers() {
+    console.info('🪺 Start seeding of users')
+    const users = await this.seedService.addUsersFromJson()
+    console.info(`🐣 ${users.length} Users are added`)
+  }
+
+  @Command({
+    command: 'seed:reset:users',
+    describe: 'Delete all data from the users table',
+  })
+  async deleteUsers() {
+    console.info('🔪 Start deleting users')
+    await this.seedService.deleteAllUsers()
+    console.info('🪶 Removed users')
+  }
+  //#endregion
+
+  // Delete all data from appointments, materials, users... tables
   @Command({
     command: 'seed:reset',
-    describe: 'Delete all data from appointments, materials, staffs... tables',
+    describe: 'Delete all data from appointments, materials, users... tables',
   })
   async deleteAll() {
     console.info('🔪 Start deleting all data')
     await this.deleteAppointments()
     await this.deleteMaterials()
+    await this.deleteUsers()
     console.info('🪶 Removed all data')
   }
 }

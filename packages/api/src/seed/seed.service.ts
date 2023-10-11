@@ -4,7 +4,7 @@ import { Appointment } from 'src/appointments/entities/appointment.entity'
 import { MaterialsService } from 'src/materials/materials.service'
 import { Material } from 'src/materials/entities/material.entity'
 import { UsersService } from 'src/users/users.service'
-import { User } from 'src/users/entities/user.entity'
+import { Role, User } from 'src/users/entities/user.entity'
 
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
@@ -70,11 +70,19 @@ export class SeedService {
       u.lastname = user.lastname.toLowerCase()
       u.fullname = `${user.firstname.toLowerCase()} ${user.lastname.toLowerCase()}`
       u.email = user.email
-      // u.role = user.role
+      u.role = user.role as Role
       u.uid = user.uid
+      u.locale = user.locale
+      u.availability = true
+
+      theUsers.push(u)
     }
 
-    return []
+    return this.usersService.saveAll(theUsers)
+  }
+
+  async deleteAllUsers(): Promise<void> {
+    return this.usersService.truncate()
   }
   //#endregion
 
