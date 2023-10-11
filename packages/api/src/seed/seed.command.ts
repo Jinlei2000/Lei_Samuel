@@ -83,10 +83,11 @@ export class DatabaseSeedCommand {
     console.info('🪶 Removed locations')
   }
   //#endregion
-  // Delete all data from appointments, materials, users... tables
+  // Delete all data from appointments, materials, users, locations... tables
   @Command({
     command: 'seed:reset',
-    describe: 'Delete all data from appointments, materials, users... tables',
+    describe:
+      'Delete all data from appointments, materials, users, locations... tables',
   })
   async deleteAll() {
     console.info('🔪 Start deleting all data')

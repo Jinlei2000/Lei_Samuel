@@ -80,6 +80,8 @@ export class SeedService {
       theUsers.push(u)
     }
 
+    //TODO: Add some locations to users
+
     //TODO: Add some random materials to staff
 
     return this.usersService.saveAll(theUsers)
@@ -88,6 +90,12 @@ export class SeedService {
   async deleteAllUsers(): Promise<void> {
     return this.usersService.truncate()
   }
+  //#endregion
+  async deleteAllLocations(): Promise<void> {
+    return this.locationsService.truncate()
+  }
+  //#region Locations
+
   //#endregion
 
   //#region Staffs
