@@ -3,6 +3,7 @@ import { CreateDefectInput } from './create-defect.input'
 import { InputType, Field, PartialType, ID } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 import { Material } from 'src/materials/entities/material.entity'
+import { CreateMaterialInput } from 'src/materials/dto/create-material.input'
 
 @InputType()
 export class UpdateDefectInput extends PartialType(CreateDefectInput) {
@@ -14,7 +15,7 @@ export class UpdateDefectInput extends PartialType(CreateDefectInput) {
   description?: string
 
   @IsOptional() //validation
-  @Field(() => Material) // graphql
+  @Field(() => CreateMaterialInput) // graphql
   material?: Material
 
   @IsOptional()
@@ -22,6 +23,6 @@ export class UpdateDefectInput extends PartialType(CreateDefectInput) {
   personId?: string
 
   @IsOptional() //validation
-  @Field({ nullable: true}) // graphql
+  @Field({ nullable: true }) // graphql
   status?: string
 }
