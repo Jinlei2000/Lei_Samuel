@@ -17,6 +17,7 @@ const restoreCustomUser = async () => {
     const { onResult } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     })
+    console.log('testtttttttttt', firebaseUser.value?.uid)
     onResult(result => {
       if (result.data) {
         console.log(result)

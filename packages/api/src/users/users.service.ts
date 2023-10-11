@@ -35,6 +35,14 @@ export class UsersService {
     return this.userRepository.findOneByOrFail({ uid })
   }
 
+  async findOneByUid2(uid: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ uid })
+
+    if (!user) throw new GraphQLError('User not found')
+
+    return user
+  }
+
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       //@ts-ignore
