@@ -3,18 +3,20 @@ import { AppointmentsService } from 'src/appointments/appointments.service'
 import { Appointment } from 'src/appointments/entities/appointment.entity'
 import { MaterialsService } from 'src/materials/materials.service'
 import { Material } from 'src/materials/entities/material.entity'
+import { UsersService } from 'src/users/users.service'
+import { User } from 'src/users/entities/user.entity'
 
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
-import * as staffs from './data/staffs.json'
+import * as users from './data/users.json'
 
 // TODO: seed users
 @Injectable()
 export class SeedService {
   constructor(
     private appointmentsService: AppointmentsService,
-    private materialsService: MaterialsService, // private staffsService: StaffsService,
-    // private defectsService: DefectsService,
+    private materialsService: MaterialsService,
+    private usersService: UsersService,
   ) {}
 
   //#region Appointments
@@ -56,6 +58,23 @@ export class SeedService {
 
   async deleteAllMaterials(): Promise<void> {
     return this.materialsService.truncate()
+  }
+  //#endregion
+
+  //#region Users
+  async addUsersFromJson(): Promise<User[]> {
+    let theUsers: User[] = []
+    for (let user of users) {
+      const u = new User()
+      u.firstname = user.firstname.toLowerCase()
+      u.lastname = user.lastname.toLowerCase()
+      u.fullname = `${user.firstname.toLowerCase()} ${user.lastname.toLowerCase()}`
+      u.email = user.email
+      // u.role = user.role
+      u.uid = user.uid
+    }
+
+    return []
   }
   //#endregion
 
