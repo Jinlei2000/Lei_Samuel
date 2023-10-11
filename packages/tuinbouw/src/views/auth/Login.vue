@@ -74,6 +74,7 @@ import InputField from '@/components/generic/form/InputField.vue'
 import { object, string } from 'yup'
 
 export default {
+  // TODO: load CustomUser in when login
   setup() {
     // Composables
     const { login } = useFirebase()
