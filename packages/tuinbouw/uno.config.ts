@@ -4,8 +4,9 @@ export default defineConfig({
   theme: {
     colors: {
       'primary-green': '#6D9271',
-      'primary-orange': '#F2A154',
-      'primary-black': '#212C22',
+      'primary-orange': '#EF7158',
+      'primary-blue': '#6F81C3',
+      black: '#212C22',
       gray: {
         100: '#FAFAFA',
         200: '#F2F2F2',
