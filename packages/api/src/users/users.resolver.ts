@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { UsersService } from './users.service'
 import { Role, User } from './entities/user.entity'
 import { UseGuards } from '@nestjs/common'
@@ -31,7 +31,7 @@ export class UsersResolver {
   @UseGuards(FirebaseGuard)
   @Query(() => User, { name: 'userByUid' })
   findOneByUid(@Args('uid', { type: () => String }) uid: string) {
-    return this.usersService.findOneByUid2(uid)
+    return this.usersService.findOneByUid(uid)
   }
 
   @UseGuards(FirebaseGuard)
@@ -80,20 +80,15 @@ export class UsersResolver {
     return this.usersService.removeUser(currentUser.uid, id)
   }
 
-  //#region Staff
+  // Staff
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => User, { name: 'createStaff' })
-  createStaff(
-    @Args('createStaffInput') createStaffInput: CreateStaffInput,
-    @FirebaseUser() currentUser: UserRecord,
-  ) {
-    return this.usersService.createStaff(currentUser.uid, createStaffInput)
+  createStaff(@Args('createStaffInput') createStaffInput: CreateStaffInput) {
+    return this.usersService.createStaff(createStaffInput)
   }
-  //#endregion
 
-  //#region Client
-  // FIXME: WHY WE USE HERE FIREBASEGUARD? USER IS NOT LOGGED IN YET?
+  // Client
   @UseGuards(FirebaseGuard)
   @Mutation(() => User, { name: 'createClient' })
   createClient(
@@ -102,5 +97,4 @@ export class UsersResolver {
   ) {
     return this.usersService.createClient(currentUser.uid, createClientInput)
   }
-  //#endregion
 }

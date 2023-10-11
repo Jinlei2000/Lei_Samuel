@@ -35,14 +35,6 @@ export class UsersService {
     return this.userRepository.findOneByOrFail({ uid })
   }
 
-  async findOneByUid2(uid: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ uid })
-
-    if (!user) throw new GraphQLError('User not found')
-
-    return user
-  }
-
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       //@ts-ignore
@@ -106,10 +98,7 @@ export class UsersService {
   }
 
   // CREATESTAFF: Admin can only create employees
-  async createStaff(
-    uid: string, // TODO: Remove uid maybe?
-    createStaffInput: CreateStaffInput,
-  ): Promise<User> {
+  async createStaff(createStaffInput: CreateStaffInput): Promise<User> {
     // Check if user already exists with email
     const user = await this.userRepository.findOneBy({
       email: createStaffInput.email,
@@ -117,8 +106,6 @@ export class UsersService {
     if (user) throw new GraphQLError('User already exists')
 
     const s = new User()
-    // TODO: How to empty uid?
-    // s.uid = uid
     s.locale = createStaffInput.locale ?? 'en'
     s.role = Role.EMPLOYEE
     s.firstname = createStaffInput.firstname.toLowerCase()
@@ -137,7 +124,7 @@ export class UsersService {
     return newUser
   }
 
-  //#region Client
+  // CREATECLIENT
   async createClient(
     currentUserUid: string,
     createClientInput: CreateClientInput,
@@ -160,13 +147,10 @@ export class UsersService {
 
     const newUser = this.userRepository.save(s)
 
-    // TODO: Send email to new employee
-
     return newUser
   }
 
-  //#endregion
-
+  // Absences
   async incrementAbsencesCount(staffId: string): Promise<void> {
     const user = await this.findOne(staffId)
 

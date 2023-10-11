@@ -10,7 +10,6 @@ import * as appointments from './data/appointments.json' // set  "resolveJsonMod
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
 
-// TODO: seed users
 @Injectable()
 export class SeedService {
   constructor(
@@ -77,6 +76,8 @@ export class SeedService {
 
       theUsers.push(u)
     }
+
+    //TODO: Add some random materials to staff
 
     return this.usersService.saveAll(theUsers)
   }
