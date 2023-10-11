@@ -4,65 +4,63 @@
         "lastname": "Vanhaecke",
         "email": "samuelvanhaecke30@gmail.com",
         "uid": "mFIC6ZoPCRVjhf9AqNBHb9Zzxkk2",
-        "isAdmin": true,
-        "location": {
-            "address": "Koningin Astridlaan 1, 8200 Brugge"
-        }
+        "locale": "en",
+        "role": "ADMIN"
     },
     {
         "firstname": "Lei",
         "lastname": "Jin",
         "email": "jinleix3@hotmail.com",
         "uid": "oBO5HvpzMZMT7QCfIAhGS5M8jPV2",
-        "isAdmin": true,
-        "location": {
-            "address": "Astridlaan 1, 8500 Kortrijk"
-        }
+        "locale": "en",
+        "role": "ADMIN"
     },
     {
         "firstname": "Martijn",
         "lastname": "Loth",
         "email": "docent@howest.be",
         "uid": "4M9iJ9CMi0TEWGR4ldXac93auVN2",
-        "isAdmin": true,
-        "location": {
-            "address": "F. de Merodestraat 18, 8200 Brugge"
-        }
+        "locale": "en",
+        "role": "ADMIN"
+    },
+    {
+        "firstname": "Lei",
+        "lastname": "Jin",
+        "email": "lei.jin@student.howest.be",
+        "uid": "BS4wHFiycKfXYABdBKRFCS3SbyE3",
+        "locale": "en",
+        "role": "EMPLOYEE"
     },
     {
         "firstname": "John",
         "lastname": "Doe",
         "email": "john.doe@gmail.com",
         "uid": "bEk4f8zWwSYAQykpfxTgXnmrcRG2",
-        "location": {
-            "address": "Coupure 1, 9000 Gent"
-        }
+        "locale": "en",
+        "role": "EMPLOYEE"
     },
     {
         "firstname": "Jane",
         "lastname": "Smith",
         "email": "jane.smith@gmail.com",
         "uid": "GLRvH7xu7ufJ4bUrJjwxQje8rez2",
-        "location": {
-            "address": "Quinten Matsijslaan 1, 9000 Gent"
-        }
+        "locale": "en",
+        "role": "CLIENT"
     },
     {
         "firstname": "Mike",
         "lastname": "Johnson",
         "email": "mike.johnson@gmail.com",
         "uid": "cMaKJFPuRiTYb33KFxi5RHWFqj93",
-        "location": {
-            "address": "Ezelstraat 1, 8000 Brugge"
-        }
+        "locale": "en",
+        "role": "CLIENT"
     },
     {
         "firstname": "Emily",
         "lastname": "Williams",
         "email": "emily.williams@gmail.com",
         "uid": "CNihqseWkQN603GCHOLU2G8hrsh2",
-        "location": {
-            "address": "Hoogstraat 1, 8000 Brugge"
-        }
+        "locale": "en",
+        "role": "CLIENT"
     }
 ]

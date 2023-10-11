@@ -17,6 +17,27 @@
         logout
       </button>
 
+      <p class="text-lg">
+        {{ $t('account.welcome') }}
+      </p>
+
+      <label class="block" for="language">Select Language</label>
+      <select
+        class="block mb-3"
+        name="language"
+        id="language"
+        @change="setLanguage"
+      >
+        <option
+          v-for="(value, key) in SUPPORTED_LOCALES"
+          :key="key"
+          :value="key"
+          @change="setLanguage"
+        >
+          {{ value }}
+        </option>
+      </select>
+
       <!-- make a list of buttons go to the right page -->
       <Router-link
         v-for="b in listButtons"
@@ -32,6 +53,9 @@
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import { ref } from 'vue'
+import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
+import useLanguage from '@/composables/useLanguage'
+import { useI18n } from 'vue-i18n'
 
 export default {
   setup() {
@@ -43,6 +67,8 @@ export default {
       'schedule-appointment',
     ])
     const { firebaseUser, logout } = useFirebase()
+    const { setLocale } = useLanguage()
+    const { locale } = useI18n()
 
     const handleLogout = async () => {
       await logout()
@@ -64,10 +90,19 @@ export default {
       console.log(`{"Authorization": "Bearer ${token}"}`)
     })
 
+    const setLanguage = (e: Event) => {
+      const target = e.target as HTMLSelectElement
+      setLocale(target.value)
+      console.log(target.value)
+    }
+
     return {
       UserCredentials,
       handleLogout,
       listButtons,
+      setLanguage,
+      SUPPORTED_LOCALES,
+      locale,
     }
   },
 }

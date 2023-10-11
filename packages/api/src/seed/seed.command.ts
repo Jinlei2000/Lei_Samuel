@@ -50,25 +50,25 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
-  //#region Staffs
+  //#region Users
   @Command({
-    command: 'seed:database:staffs',
-    describe: 'Seed the database with staffs',
+    command: 'seed:database:users',
+    describe: 'Seed the database with users',
   })
-  async seedStaffs() {
-    console.info('🪺 Start seeding of staffs')
-    const staffs = await this.seedService.addStaffsFromJson()
-    console.info(`🐣 ${staffs.length} Staffs are added`)
+  async seedUsers() {
+    console.info('🪺 Start seeding of users')
+    const users = await this.seedService.addUsersFromJson()
+    console.info(`🐣 ${users.length} Users are added`)
   }
 
   @Command({
-    command: 'seed:reset:staffs',
-    describe: 'Delete all data from the staffs table',
+    command: 'seed:reset:users',
+    describe: 'Delete all data from the users table',
   })
-  async deleteStaffs() {
-    console.info('🔪 Start deleting staffs')
-    await this.seedService.deleteAllStaffs()
-    console.info('🪶 Removed staffs')
+  async deleteUsers() {
+    console.info('🔪 Start deleting users')
+    await this.seedService.deleteAllUsers()
+    console.info('🪶 Removed users')
   }
   //#endregion
 
@@ -83,17 +83,16 @@ export class DatabaseSeedCommand {
     console.info('🪶 Removed locations')
   }
   //#endregion
-
-  // Delete all data from appointments, materials, staffs... tables
+  // Delete all data from appointments, materials, users... tables
   @Command({
     command: 'seed:reset',
-    describe: 'Delete all data from appointments, materials, staffs... tables',
+    describe: 'Delete all data from appointments, materials, users... tables',
   })
   async deleteAll() {
     console.info('🔪 Start deleting all data')
     await this.deleteAppointments()
     await this.deleteMaterials()
-    await this.deleteStaffs()
+    await this.deleteUsers()
     await this.deleteLocations()
     console.info('🪶 Removed all data')
   }
