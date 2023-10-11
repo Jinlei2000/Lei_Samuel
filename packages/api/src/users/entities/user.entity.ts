@@ -8,7 +8,7 @@ export enum Role {
 }
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: 'User' })
 export class User {
   @ObjectIdColumn()
   @Field(() => ID)
@@ -19,7 +19,7 @@ export class User {
   uid?: string
 
   @Column()
-  @Field({ nullable: true })
+  @Field({ description: 'Language code', nullable: true })
   locale?: string
 
   @Column()
@@ -39,7 +39,7 @@ export class User {
   fullname: string
 
   @Column() // Database link - Typeorm
-  @Field({ nullable: true }) // GraphQL type
+  @Field({ nullable: true, description: 'Profile picture url' }) // GraphQL type
   url?: string
 
   //TODO: use resolve field for this
@@ -56,7 +56,7 @@ export class User {
   telephone?: string
 
   @Column() // Database link - Typeorm
-  @Field() // GraphQL type
+  @Field({ description: 'Is the user available for appointments?' }) // GraphQL type
   availability: boolean
 
   @Column({ type: 'timestamp', nullable: true }) // Database link - Typeorm
@@ -69,19 +69,22 @@ export class User {
 
   // STAFF ONLY
   @Column() // Database link - Typeorm
-  @Field({defaultValue: 0}) // GraphQL type
+  @Field({
+    defaultValue: 0,
+    description: 'Number of times the user was absent',
+  }) // GraphQL type
   absentCount: number
 
   // CLIENT ONLY
   @Column() // Database link - Typeorm
-  @Field({ defaultValue: 'post' }) // GraphQL type
-  InvoiceOption: string // post or email
+  @Field({ defaultValue: 'post', description: 'Invoice option mail or post' }) // GraphQL type
+  invoiceOption: string // post or email
 
   @Column() // Database link - Typeorm
   @Field({ defaultValue: false }) // GraphQL type
-  Company: boolean
+  company: boolean
 
   @Column() // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
-  BtwNumber?: string
+  btwNumber?: string
 }

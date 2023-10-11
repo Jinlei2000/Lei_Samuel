@@ -222,9 +222,9 @@ query {
     createdAt
     updatedAt
     absentCount
-    InvoiceOption
-    Company
-    BtwNumber
+    invoiceOption
+    company
+    btwNumber
   }
 }
 ```
@@ -251,9 +251,9 @@ query {
     createdAt
     updatedAt
     absentCount
-    InvoiceOption
-    Company
-    BtwNumber
+   invoiceOption
+    company
+    btwNumber
   }
 }
 ```
@@ -280,9 +280,9 @@ query {
     createdAt
     updatedAt
     absentCount
-    InvoiceOption
-    Company
-    BtwNumber
+   invoiceOption
+    company
+    btwNumber
   }
 }
 ```
@@ -309,9 +309,9 @@ query {
     createdAt
     updatedAt
     absentCount
-    InvoiceOption
-    Company
-    BtwNumber
+   invoiceOption
+    company
+    btwNumber
   }
 }
 ```
@@ -340,9 +340,9 @@ query {
     createdAt
     updatedAt
     absentCount
-    InvoiceOption
-    Company
-    BtwNumber
+    invoiceOption
+    company
+    btwNumber
   }
 }
 ```
@@ -365,9 +365,9 @@ mutation {
       // STAFF ONLY
       absentCount: number
       // CLIENT ONLY
-      InvoiceOption: "xx" 
-      Company: true
-      BtwNumber: "xx"
+      invoiceOption: "xx" 
+      company: true
+      btwNumber: "xx"
     }
   ) {
     id
@@ -385,9 +385,9 @@ mutation {
     createdAt
     updatedAt
     absentCount
-    InvoiceOption
-    Company
-    BtwNumber
+    invoiceOption
+    company
+    btwNumber
   }
 }
 ```
@@ -459,9 +459,9 @@ mutation {
     isAdmin
     createdAt
     updatedAt
-    InvoiceOption
-    Company
-    BtwNumber
+    invoiceOption
+    company
+    btwNumber
   }
 }
 

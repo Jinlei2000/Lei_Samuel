@@ -18,9 +18,9 @@ export const GET_USER_BY_UID = gql`
       createdAt
       updatedAt
       absentCount
-      InvoiceOption
-      Company
-      BtwNumber
+      invoiceOption
+      company
+      btwNumber
     }
   }
 `

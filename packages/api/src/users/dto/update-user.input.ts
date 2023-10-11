@@ -41,11 +41,11 @@ export class UpdateUserInput {
 
   // CLIENT ONLY
   @Field({ nullable: true }) // GraphQL type
-  InvoiceOption?: string // post or email
+  invoiceOption?: string // post or email
 
   @Field({ nullable: true }) // GraphQL type
-  Company?: boolean
+  company?: boolean
 
   @Field({ nullable: true }) // GraphQL type
-  BtwNumber?: string
+  btwNumber?: string
 }
