@@ -9,6 +9,7 @@ import { filterUsers, orderUsers } from 'src/helpers/usersFunctions'
 import { ObjectId } from 'mongodb'
 import { UpdateUserInput } from './dto/update-user.input'
 import { CreateClientInput } from './dto/create-client.input'
+import { LocationsService } from 'src/locations/locations.service'
 
 @Injectable()
 export class UsersService {
@@ -84,6 +85,7 @@ export class UsersService {
   }
 
   async removeUser(currentUserUid: string, id: string) {
+    // TODO: delete all locations of user
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
 

@@ -22,7 +22,7 @@
     - [createClient](#createclient)
   - [Locations](#locations)
     - [locations](#locations-1)
-    - [locationsByPersonId(personId)](#locationsbypersonidpersonid)
+    - [locationsByUid(uid)](#locationsbyuiduid)
     - [location(id)](#locationid)
     - [createLocation](#createlocation)
     - [updateLocation](#updatelocation)
@@ -221,7 +221,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -250,14 +256,20 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
     createdAt
     updatedAt
     absentCount
-   invoiceOption
+    invoiceOption
     company
     btwNumber
   }
@@ -279,7 +291,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -308,7 +326,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -339,7 +363,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -364,7 +394,7 @@ mutation {
       firstname: "xx"
       url: "xx"
       uid: "xx"
-      locationId: "xx"
+      locationIds: ["xx"]
       email: "xx"
       telephone: "xx"
       availability: true
@@ -384,7 +414,13 @@ mutation {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -427,7 +463,13 @@ mutation {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -457,7 +499,13 @@ mutation {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -481,6 +529,7 @@ mutation {
 query {
   locations {
     id
+    uid
     address
     createdAt
     updatedAt
@@ -488,16 +537,16 @@ query {
 }
 ```
 
-### locationsByPersonId(personId)
+### locationsByUid(uid)
 
-locationsByPersonId(personId: String)
+locationsByUid(uid: String)
 
 ```graphql
 query {
-  locationsByPersonId(personId: "6522bd1cfabcb1f1d63dd63a") {
+  locationsByUid(uid: "6522bd1cfabcb1f1d63dd63a") {
     id
+    uid
     address
-    personId
     createdAt
     updatedAt
   }
@@ -512,8 +561,8 @@ location(id: String)
 query {
   location(id: "6522bd1cfabcb1f1d63dd63a") {
     id
+    uid
     address
-    personId
     createdAt
     updatedAt
   }
@@ -527,11 +576,12 @@ mutation {
   createLocation(
     createLocationInput: {
       address: "x"
-      personId: "xx"
+      uid: "xx"
     }
   ) {
     id
     address
+    uid
     createdAt
     updatedAt
   }
@@ -549,9 +599,17 @@ mutation {
     }
   ) {
     id
+    uid
     address
     createdAt
     updatedAt
   }
+}
+
+### removeLocation
+
+```graphql
+mutation {
+  removeLocation(id: "6522bd1cfabcb1f1d63dd63a")
 }
 ```

@@ -6,14 +6,17 @@ import { Repository } from 'typeorm'
 import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { Location } from './entities/location.entity'
+import { UsersService } from 'src/users/users.service'
 
 @Injectable()
 export class LocationsService {
   constructor(
     @InjectRepository(Location)
     private readonly locationRepository: Repository<Location>,
+    private readonly usersService: UsersService,
   ) {}
 
+  // TODO: filter and order locations
   findAll(): Promise<Location[]> {
     return this.locationRepository.find()
   }
@@ -39,12 +42,22 @@ export class LocationsService {
     return location
   }
 
-  create(createLocationInput: CreateLocationInput): Promise<Location> {
+  async create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
     l.uid = createLocationInput.uid
 
-    return this.locationRepository.save(l)
+    const newLoc = await this.locationRepository.save(l)
+
+    // update user with new location
+    const user = await this.usersService.findOneByUid(l.uid)
+    const ids = user.locationIds.map(id => id.toString())
+    await this.usersService.updateUser(user.uid, user.id, {
+      id: user.id,
+      locationIds: [...ids, newLoc.id.toString()],
+    })
+
+    return newLoc
   }
 
   async update(
