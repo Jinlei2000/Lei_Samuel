@@ -14,8 +14,8 @@ import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 @Resolver(() => Location)
 export class LocationsResolver {
   constructor(
-    private readonly locationsService: LocationsService
-    ) {}
+    private readonly locationsService: LocationsService,
+  ) {}
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
@@ -62,4 +62,7 @@ export class LocationsResolver {
   removeLocation(@Args('id', { type: () => String }) id: string) {
     return this.locationsService.remove(id)
   }
+
+  //TODO: Resolve fields gebruiken voor personId
+  // Can later show all locations of users in the frontend
 }

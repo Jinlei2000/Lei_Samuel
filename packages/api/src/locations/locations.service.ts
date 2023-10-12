@@ -14,9 +14,6 @@ export class LocationsService {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
-  //TODO: Resolve fields gebruiken voor personId
-  // Can later show all locations of users in the frontend
-
   findAll(): Promise<Location[]> {
     return this.locationRepository.find()
   }

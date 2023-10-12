@@ -180,7 +180,6 @@ export class UsersService {
   // }
 
   // Resolver fields
-  
 
   // Seeding functions
   saveAll(users: User[]): Promise<User[]> {

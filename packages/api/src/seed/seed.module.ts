@@ -9,10 +9,10 @@ import { UsersModule } from 'src/users/users.module'
 
 @Module({
   imports: [
+    UsersModule,
+    LocationsModule,
     AppointmentsModule,
     MaterialsModule,
-    LocationsModule,
-    UsersModule,
     CommandModule,
   ],
   providers: [DatabaseSeedCommand, SeedService],
