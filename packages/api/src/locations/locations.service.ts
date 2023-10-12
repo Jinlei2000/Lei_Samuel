@@ -8,7 +8,7 @@ import { ObjectId } from 'mongodb'
 import { Location } from './entities/location.entity'
 import { UsersService } from 'src/users/users.service'
 import { OrderByInput } from 'src/interfaces/order.input'
-import { orderUsers } from 'src/helpers/usersFunctions'
+import { orderLocations } from 'src/helpers/locationsFunctions'
 
 @Injectable()
 export class LocationsService {
@@ -21,7 +21,7 @@ export class LocationsService {
   ) {}
 
   findAll(order?: OrderByInput): Promise<Location[]> {
-    const orderQuery = orderUsers(order)
+    const orderQuery = orderLocations(order)
 
     return this.locationRepository.find({
       order: orderQuery,
