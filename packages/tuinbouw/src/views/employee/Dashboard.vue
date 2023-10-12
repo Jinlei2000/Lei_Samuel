@@ -65,7 +65,6 @@ const days = [
 ]
 
 const myDate = ref(new Date())
-// datedisplay is (dd/mm) and day of the week
 const dateDisplay = ref('Today')
 
 // nextday function
@@ -83,13 +82,6 @@ function prevDay() {
 
 // @ts-ignore
 watch(myDate, () => {
-  // set dateDisplay to (dd/mm) and day of the week
-
-  // if myday is today set to today
-  // if myday is tomorrow set to tomorrow
-  // if myday is yesterday set to yesterday
-  // if myday is further then tomorrow set date (dd/mm) and day of the week
-  // if myday is further then yesterday set day of the week
   switch (myDate.value.getDate()) {
     case new Date().getDate():
       dateDisplay.value = 'Today'
