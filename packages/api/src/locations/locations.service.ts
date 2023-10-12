@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { CreateLocationInput } from './dto/create-location.input'
 import { UpdateLocationInput } from './dto/update-location.input'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -13,6 +13,8 @@ export class LocationsService {
   constructor(
     @InjectRepository(Location)
     private readonly locationRepository: Repository<Location>,
+    // use forwardRef to avoid circular dependency
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
   ) {}
 
@@ -25,6 +27,10 @@ export class LocationsService {
     const locations = this.locationRepository.find({
       where: { uid: uid },
     })
+
+    if (!locations) {
+      throw new GraphQLError('Locations not found!')
+    }
 
     return locations
   }
@@ -84,7 +90,16 @@ export class LocationsService {
     return id
   }
 
-  // TODO: delete all locations
+  // Delete all locations of user
+  async removeAllByUid(uid: string): Promise<string[]> {
+    const locations = await this.findAllByUid(uid)
+
+    const ids = locations.map(location => location.id.toString())
+
+    await this.locationRepository.delete(ids)
+
+    return ids
+  }
 
   // Seeding functions
   save(location: Location): Promise<Location> {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { CreateStaffInput } from './dto/create-staff.input'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -16,7 +16,11 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+    // use forwardRef to avoid circular dependency
+    @Inject(forwardRef(() => LocationsService))
+    private readonly locationsService: LocationsService,
+  )
+  {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
     // filter and order users
@@ -95,6 +99,9 @@ export class UsersService {
       throw new GraphQLError('You are not allowed to delete someone else')
 
     await this.userRepository.delete(id)
+
+    // delete all locations of user
+    // await this.locationsService.removeAllByUid(user.uid)
 
     // return id if delete was successful
     return id
