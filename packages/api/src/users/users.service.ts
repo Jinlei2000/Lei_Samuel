@@ -31,7 +31,7 @@ export class UsersService {
   }
 
   // TODO: create own error, but than or roles guard dont work
-  findOneByUid(uid: string): Promise<User> {
+  async findOneByUid(uid: string): Promise<User> {
     return this.userRepository.findOneByOrFail({ uid })
   }
 
@@ -159,6 +159,28 @@ export class UsersService {
       { absentCount: user.absentCount + 1 },
     )
   }
+
+  // Make a function
+  // Check that user is not trying to do something to someone else if not admin
+  // async checkUserPermissions(
+  //   currentUserUid: string,
+  //   id: string,
+  // ): Promise<void> {
+  //   const user = await this.userRepository.findOne({
+  //     // @ts-ignore
+  //     _id: new ObjectId(id),
+  //   })
+  //   const currentUser = await this.userRepository.findOneBy({
+  //     uid: currentUserUid,
+  //   })
+
+  //   // Check that user is not trying to something to someone else if not admin
+  //   if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
+  //     throw new GraphQLError('You are not allowed')
+  // }
+
+  // Resolver fields
+  
 
   // Seeding functions
   saveAll(users: User[]): Promise<User[]> {

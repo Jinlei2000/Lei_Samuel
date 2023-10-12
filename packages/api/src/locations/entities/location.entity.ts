@@ -17,7 +17,7 @@ export class Location {
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
-  uid: string
+  personId: string
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type

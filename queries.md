@@ -22,6 +22,7 @@
     - [createClient](#createclient)
   - [Locations](#locations)
     - [locations](#locations-1)
+    - [locationsByPersonId(personId)](#locationsbypersonidpersonid)
     - [location(id)](#locationid)
     - [createLocation](#createlocation)
     - [updateLocation](#updatelocation)
@@ -487,6 +488,22 @@ query {
 }
 ```
 
+### locationsByPersonId(personId)
+
+locationsByPersonId(personId: String)
+
+```graphql
+query {
+  locationsByPersonId(personId: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    address
+    personId
+    createdAt
+    updatedAt
+  }
+}
+```
+
 ### location(id)
 
 location(id: String)
@@ -496,6 +513,7 @@ query {
   location(id: "6522bd1cfabcb1f1d63dd63a") {
     id
     address
+    personId
     createdAt
     updatedAt
   }
@@ -509,6 +527,7 @@ mutation {
   createLocation(
     createLocationInput: {
       address: "x"
+      personId: "xx"
     }
   ) {
     id

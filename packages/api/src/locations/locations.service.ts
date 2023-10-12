@@ -1,4 +1,4 @@
-import { Injectable, UseGuards } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateLocationInput } from './dto/create-location.input'
 import { UpdateLocationInput } from './dto/update-location.input'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -14,17 +14,22 @@ export class LocationsService {
     private readonly locationRepository: Repository<Location>,
   ) {}
 
+  //TODO: Resolve fields gebruiken voor personId
+  // Can later show all locations of users in the frontend
+
   findAll(): Promise<Location[]> {
     return this.locationRepository.find()
   }
 
-  findAllByUid(uid: string): Promise<Location[]> {
-    return this.locationRepository.find({
-      where: { uid: uid },
+  findAllByPersonId(personId: string): Promise<Location[]> {
+    const locations = this.locationRepository.find({
+      where: { personId: personId },
     })
+
+    return locations
   }
 
-  async findOne(id: string): Promise<Location | GraphQLError> {
+  async findOne(id: string): Promise<Location> {
     const location = await this.locationRepository.findOne({
       // @ts-ignore
       _id: new ObjectId(id),
@@ -37,13 +42,10 @@ export class LocationsService {
     return location
   }
 
-  create(
-    createLocationInput: CreateLocationInput,
-    uid: string,
-  ): Promise<Location> {
+  create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
-    l.uid = uid
+    l.personId = createLocationInput.personId
 
     return this.locationRepository.save(l)
   }
@@ -51,7 +53,7 @@ export class LocationsService {
   async update(
     id: ObjectId,
     updateLocationInput: UpdateLocationInput,
-  ): Promise<Location | GraphQLError> {
+  ): Promise<Location> {
     await this.findOne(id.toString())
 
     // remove id and make a new variable with the rest of the data
