@@ -84,6 +84,7 @@ export class UsersService {
     return this.findOne(id.toString())
   }
 
+  // TODO: delete all locations of user
   async removeUser(currentUserUid: string, id: string) {
     // TODO: delete all locations of user
     const user = await this.findOne(id)

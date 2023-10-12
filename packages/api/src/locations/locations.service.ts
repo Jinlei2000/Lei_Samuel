@@ -49,7 +49,7 @@ export class LocationsService {
 
     const newLoc = await this.locationRepository.save(l)
 
-    // update user with new location
+    // update user with new locationIds
     const user = await this.usersService.findOneByUid(l.uid)
     const ids = user.locationIds.map(id => id.toString())
     await this.usersService.updateUser(user.uid, user.id, {
@@ -74,6 +74,7 @@ export class LocationsService {
     return this.findOne(id.toString())
   }
 
+  // TODO: update user locationIds
   async remove(id: string): Promise<string> {
     await this.findOne(id)
 
@@ -82,6 +83,8 @@ export class LocationsService {
     // return id if delete was successful
     return id
   }
+
+  // TODO: delete all locations
 
   // Seeding functions
   save(location: Location): Promise<Location> {
