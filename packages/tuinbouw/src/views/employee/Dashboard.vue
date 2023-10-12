@@ -25,7 +25,7 @@
         </div>
 
         <div
-          class="bg-gray-500 p-1 flex justify-between items-center rounded-2xl"
+          class="bg-gray-500 p-1 flex justify-between items-center rounded-2xl mb-3"
         >
           <button
             class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
