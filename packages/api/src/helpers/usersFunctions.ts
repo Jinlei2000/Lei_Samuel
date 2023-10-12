@@ -33,6 +33,7 @@ export const filterUsers = (
     } else if (filters?.includes('C')) {
       whereQuery.role = 'CLIENT'
     }
+    // TODO: add availability filter
   }
 
   return whereQuery
@@ -51,15 +52,11 @@ export const orderUsers = (order: OrderByInput): { [key: string]: string } => {
   const { field, direction } = order
   const orderQuery = { [field]: direction }
   const orderFieldsList = [
-    'locale',
-    'role',
     'firstname',
     'lastname',
     'fullname',
-    'locationId', //TODO: maybe remove
     'email',
     'telephone',
-    'availability',
     'absentCount',
     'createdAt',
     'updatedAt',

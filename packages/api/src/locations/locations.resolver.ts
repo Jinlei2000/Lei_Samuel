@@ -10,25 +10,27 @@ import { Role } from 'src/users/entities/user.entity'
 import { RolesGuard } from 'src/users/guards/roles.guard'
 import { UserRecord } from 'firebase-admin/auth'
 import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
+import { OrderByInput } from 'src/interfaces/order.input'
 
 @Resolver(() => Location)
 export class LocationsResolver {
-  constructor(
-    private readonly locationsService: LocationsService,
-  ) {}
+  constructor(private readonly locationsService: LocationsService) {}
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Location], { name: 'locations' })
-  findAll() {
-    return this.locationsService.findAll()
+  findAll(
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    return this.locationsService.findAll(order)
   }
+
+  // TODO: search by address
 
   @UseGuards(FirebaseGuard)
   @Query(() => [Location], { name: 'locationsByUid' })
-  findAllByUid(
-    @Args('uid', { type: () => String }) uid: string,
-  ) {
+  findAllByUid(@Args('uid', { type: () => String }) uid: string) {
     return this.locationsService.findAllByUid(uid)
   }
 

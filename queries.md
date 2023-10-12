@@ -21,7 +21,7 @@
     - [createStaff](#createstaff)
     - [createClient](#createclient)
   - [Locations](#locations)
-    - [locations](#locations-1)
+    - [locations(order: { field, direction })](#locationsorder--field-direction-)
     - [locationsByUid(uid)](#locationsbyuiduid)
     - [location(id)](#locationid)
     - [createLocation](#createlocation)
@@ -473,7 +473,6 @@ mutation {
     telephone
     availability
     absentCount
-    isAdmin
     createdAt
     updatedAt
   }
@@ -509,7 +508,6 @@ mutation {
     telephone
     availability
     absentCount
-    isAdmin
     createdAt
     updatedAt
     invoiceOption
@@ -522,7 +520,14 @@ mutation {
 
 ## Locations
 
-### locations
+### locations(order: { field, direction })
+
+locations(order: { field: String, direction: String })
+
+Order can be:
+
+- field = all fields from material model
+- direction = `ASC` or `DESC`
 
 ```graphql
 query {

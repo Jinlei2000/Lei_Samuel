@@ -7,6 +7,8 @@ import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { Location } from './entities/location.entity'
 import { UsersService } from 'src/users/users.service'
+import { OrderByInput } from 'src/interfaces/order.input'
+import { orderUsers } from 'src/helpers/usersFunctions'
 
 @Injectable()
 export class LocationsService {
@@ -18,9 +20,12 @@ export class LocationsService {
     private readonly usersService: UsersService,
   ) {}
 
-  // TODO: filter and order locations
-  findAll(): Promise<Location[]> {
-    return this.locationRepository.find()
+  findAll(order?: OrderByInput): Promise<Location[]> {
+    const orderQuery = orderUsers(order)
+
+    return this.locationRepository.find({
+      order: orderQuery,
+    })
   }
 
   findAllByUid(uid: string): Promise<Location[]> {
