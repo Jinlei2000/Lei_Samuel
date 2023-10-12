@@ -63,12 +63,17 @@
         <h2 class="mb-3 text-2xl">Weather</h2>
         <div class="bg-gray-200 rounded-2xl px-5 py-3">test</div>
       </div>
+      <div class="col-span-1 col-start-4">
+        <h2 class="mb-3 text-2xl">Tools for the day</h2>
+        <ChecklistItem />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
+import ChecklistItem from '@/components/generic/ChecklistItem.vue'
 import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 
