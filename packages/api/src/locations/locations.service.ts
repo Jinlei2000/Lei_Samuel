@@ -48,6 +48,7 @@ export class LocationsService {
     return location
   }
 
+  // Create location and update user with new locationId
   async create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
@@ -80,11 +81,21 @@ export class LocationsService {
     return this.findOne(id.toString())
   }
 
-  // TODO: update user locationIds
+  // Delete location and remove id from user locationIds
   async remove(id: string): Promise<string> {
-    await this.findOne(id)
+    const location = await this.findOne(id)
 
     await this.locationRepository.delete(id)
+
+    // update user locationIds with new array
+    const user = await this.usersService.findOneByUid(location.uid)
+    const ids = user.locationIds.map(id => id.toString())
+    // remove the removed location id from the array
+    const newIds = ids.filter(id => id !== location.id.toString())
+    await this.usersService.updateUser(user.uid, user.id, {
+      id: user.id,
+      locationIds: newIds,
+    })
 
     // return id if delete was successful
     return id

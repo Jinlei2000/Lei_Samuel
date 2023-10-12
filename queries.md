@@ -452,7 +452,6 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      locationId: "xx"
       telephone: "xx"
       locale: "en"
     }
