@@ -18,9 +18,9 @@ export class LocationsService {
     return this.locationRepository.find()
   }
 
-  findAllByPersonId(personId: string): Promise<Location[]> {
+  findAllByUid(uid: string): Promise<Location[]> {
     const locations = this.locationRepository.find({
-      where: { personId: personId },
+      where: { uid: uid },
     })
 
     return locations
@@ -42,7 +42,7 @@ export class LocationsService {
   create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
-    l.personId = createLocationInput.personId
+    l.uid = createLocationInput.uid
 
     return this.locationRepository.save(l)
   }
@@ -71,9 +71,8 @@ export class LocationsService {
   }
 
   // Seeding functions
-  // TODO: Remove unused saveAll function
-  saveAll(locations: Location[]): Promise<Location[]> {
-    return this.locationRepository.save(locations)
+  save(location: Location): Promise<Location> {
+    return this.locationRepository.save(location)
   }
 
   truncate(): Promise<void> {

@@ -1,3 +1,5 @@
+import type { Location } from './location.interface'
+
 export enum Role {
   ADMIN = 'ADMIN',
   EMPLOYEE = 'EMPLOYEE',
@@ -14,7 +16,7 @@ export interface CustomUser {
   lastname: string
   fullname: string
   url?: string
-  locationId?: string[] //TODO: change this later locationId: string
+  locations?: Location[]
   email: string
   telephone?: string
   availability: boolean
@@ -23,7 +25,7 @@ export interface CustomUser {
   // STAFF ONLY
   absentCount: number
   // CLIENT ONLY
-  InvoiceOption: string // post or email
-  Company: boolean
-  BtwNumber?: string
+  invoiceOption: string // post or email
+  company: boolean
+  btwNumber?: string
 }

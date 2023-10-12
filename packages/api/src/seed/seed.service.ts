@@ -11,6 +11,7 @@ import { Role, User } from 'src/users/entities/user.entity'
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
+import { ObjectId } from 'typeorm'
 
 @Injectable()
 export class SeedService {
@@ -76,15 +77,30 @@ export class SeedService {
       u.uid = user.uid
       u.locale = user.locale
       u.availability = true
+      u.locationIds = []
+
+      // Add some locations to users
+      if (user.locations) {
+        let theLocationIds: ObjectId[] = []
+        for (let location of user.locations) {
+          const l = new Location()
+          l.address = location.address
+          l.uid = user.uid
+
+          const newLoc = await this.locationsService.save(l)
+          theLocationIds.push(newLoc.id)
+        }
+        u.locationIds = theLocationIds
+      }
 
       theUsers.push(u)
     }
 
-    //TODO: Add some locations to users
-
     //TODO: Add some random materials to staff
 
-    return this.usersService.saveAll(theUsers)
+    const newUsers = await this.usersService.saveAll(theUsers)
+
+    return newUsers
   }
 
   async deleteAllUsers(): Promise<void> {

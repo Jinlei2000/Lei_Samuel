@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const ADD_CLIENT = gql`
-  mutation createClient($createClientInput: CreateClientInput!) {
-    createClient(createClientInput: $createClientInput) {
+  query userByUid($uid: String!) {
+    userByUid(uid: $uid) {
       id
       uid
       locale
@@ -11,16 +11,22 @@ export const ADD_CLIENT = gql`
       lastname
       fullname
       url
-      locationId
+      locations {
+        id
+        uid
+        address
+        createdAt
+        updatedAt
+      }
       email
       telephone
       availability
       createdAt
       updatedAt
       absentCount
-      InvoiceOption
-      Company
-      BtwNumber
+      invoiceOption
+      company
+      btwNumber
     }
   }
 `

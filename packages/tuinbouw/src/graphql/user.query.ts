@@ -11,7 +11,13 @@ export const GET_USER_BY_UID = gql`
       lastname
       fullname
       url
-      locationId
+      locations {
+        id
+        uid
+        address
+        createdAt
+        updatedAt
+      }
       email
       telephone
       availability

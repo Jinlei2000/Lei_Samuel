@@ -111,7 +111,7 @@ export class UsersService {
     s.firstname = createStaffInput.firstname.toLowerCase()
     s.lastname = createStaffInput.lastname.toLowerCase()
     s.fullname = `${createStaffInput.firstname.toLowerCase()} ${createStaffInput.lastname.toLowerCase()}`
-    s.locationId = createStaffInput.locationId
+    s.locationIds = [new ObjectId(createStaffInput.locationId)]
     s.email = createStaffInput.email
     s.telephone = createStaffInput.telephone
     s.availability = true
@@ -178,8 +178,6 @@ export class UsersService {
   //   if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
   //     throw new GraphQLError('You are not allowed')
   // }
-
-  // Resolver fields
 
   // Seeding functions
   saveAll(users: User[]): Promise<User[]> {

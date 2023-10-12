@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { UsersService } from './users.service'
 import { Role, User } from './entities/user.entity'
 import { UseGuards } from '@nestjs/common'
@@ -11,10 +18,15 @@ import { CreateStaffInput } from './dto/create-staff.input'
 import { OrderByInput } from 'src/interfaces/order.input'
 import { UpdateUserInput } from './dto/update-user.input'
 import { CreateClientInput } from './dto/create-client.input'
+import { LocationsService } from 'src/locations/locations.service'
+import { Location } from 'src/locations/entities/location.entity'
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly locationService: LocationsService,
+  ) {}
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
@@ -96,5 +108,11 @@ export class UsersResolver {
     @FirebaseUser() currentUser: UserRecord,
   ) {
     return this.usersService.createClient(currentUser.uid, createClientInput)
+  }
+
+  // Resolve fields
+  @ResolveField()
+  locations(@Parent() u: User): Promise<Location[]> {
+    return this.locationService.findAllByUid(u.uid)
   }
 }
