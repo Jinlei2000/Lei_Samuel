@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { CreateStaffInput } from './dto/create-staff.input'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -9,13 +9,18 @@ import { filterUsers, orderUsers } from 'src/helpers/usersFunctions'
 import { ObjectId } from 'mongodb'
 import { UpdateUserInput } from './dto/update-user.input'
 import { CreateClientInput } from './dto/create-client.input'
+import { LocationsService } from 'src/locations/locations.service'
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+    // use forwardRef to avoid circular dependency
+    @Inject(forwardRef(() => LocationsService))
+    private readonly locationsService: LocationsService,
+  )
+  {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
     // filter and order users
@@ -31,7 +36,7 @@ export class UsersService {
   }
 
   // TODO: create own error, but than or roles guard dont work
-  findOneByUid(uid: string): Promise<User> {
+  async findOneByUid(uid: string): Promise<User> {
     return this.userRepository.findOneByOrFail({ uid })
   }
 
@@ -83,6 +88,7 @@ export class UsersService {
     return this.findOne(id.toString())
   }
 
+  // Delete user and all locations of user
   async removeUser(currentUserUid: string, id: string) {
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
@@ -92,6 +98,9 @@ export class UsersService {
       throw new GraphQLError('You are not allowed to delete someone else')
 
     await this.userRepository.delete(id)
+
+    // delete all locations of user
+    await this.locationsService.removeAllByUid(user.uid)
 
     // return id if delete was successful
     return id
@@ -111,7 +120,6 @@ export class UsersService {
     s.firstname = createStaffInput.firstname.toLowerCase()
     s.lastname = createStaffInput.lastname.toLowerCase()
     s.fullname = `${createStaffInput.firstname.toLowerCase()} ${createStaffInput.lastname.toLowerCase()}`
-    s.locationId = createStaffInput.locationId
     s.email = createStaffInput.email
     s.telephone = createStaffInput.telephone
     s.availability = true
@@ -159,6 +167,25 @@ export class UsersService {
       { absentCount: user.absentCount + 1 },
     )
   }
+
+  // Make a function
+  // Check that user is not trying to do something to someone else if not admin
+  // async checkUserPermissions(
+  //   currentUserUid: string,
+  //   id: string,
+  // ): Promise<void> {
+  //   const user = await this.userRepository.findOne({
+  //     // @ts-ignore
+  //     _id: new ObjectId(id),
+  //   })
+  //   const currentUser = await this.userRepository.findOneBy({
+  //     uid: currentUserUid,
+  //   })
+
+  //   // Check that user is not trying to something to someone else if not admin
+  //   if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
+  //     throw new GraphQLError('You are not allowed')
+  // }
 
   // Seeding functions
   saveAll(users: User[]): Promise<User[]> {

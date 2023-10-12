@@ -19,8 +19,8 @@ export class UpdateUserInput {
   @Field({ nullable: true }) // graphql
   uid?: string
 
-  @Field({ nullable: true }) // graphql
-  locationId?: string
+  @Field(() => [String], { nullable: true }) // graphql
+  locationIds?: string[]
 
   @IsOptional() // validation
   @IsEmail() // validation

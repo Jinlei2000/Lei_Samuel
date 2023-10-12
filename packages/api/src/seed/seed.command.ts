@@ -72,16 +72,29 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
-  // Delete all data from appointments, materials, users... tables
+  //#region Locations
+  @Command({
+    command: 'seed:reset:locations',
+    describe: 'Delete all data from the locations table',
+  })
+  async deleteLocations() {
+    console.info('🔪 Start deleting locations')
+    await this.seedService.deleteAllLocations()
+    console.info('🪶 Removed locations')
+  }
+  //#endregion
+  // Delete all data from appointments, materials, users, locations... tables
   @Command({
     command: 'seed:reset',
-    describe: 'Delete all data from appointments, materials, users... tables',
+    describe:
+      'Delete all data from appointments, materials, users, locations... tables',
   })
   async deleteAll() {
     console.info('🔪 Start deleting all data')
     await this.deleteAppointments()
     await this.deleteMaterials()
     await this.deleteUsers()
+    await this.deleteLocations()
     console.info('🪶 Removed all data')
   }
 }

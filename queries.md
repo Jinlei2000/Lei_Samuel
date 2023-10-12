@@ -20,6 +20,12 @@
     - [removeUser](#removeuser)
     - [createStaff](#createstaff)
     - [createClient](#createclient)
+  - [Locations](#locations)
+    - [locations(order: { field, direction })](#locationsorder--field-direction-)
+    - [locationsByUid(uid)](#locationsbyuiduid)
+    - [location(id)](#locationid)
+    - [createLocation](#createlocation)
+    - [updateLocation](#updatelocation)
 
 ## Authorization
 
@@ -215,7 +221,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -244,14 +256,20 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
     createdAt
     updatedAt
     absentCount
-   invoiceOption
+    invoiceOption
     company
     btwNumber
   }
@@ -273,7 +291,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -302,7 +326,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -333,7 +363,13 @@ query {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -358,7 +394,7 @@ mutation {
       firstname: "xx"
       url: "xx"
       uid: "xx"
-      locationId: "xx"
+      locationIds: ["xx"]
       email: "xx"
       telephone: "xx"
       availability: true
@@ -378,7 +414,13 @@ mutation {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
@@ -410,7 +452,6 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      locationId: "xx"
       telephone: "xx"
       locale: "en"
     }
@@ -421,12 +462,17 @@ mutation {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
     absentCount
-    isAdmin
     createdAt
     updatedAt
   }
@@ -451,12 +497,17 @@ mutation {
     lastname
     fullname
     url
-    locationId
+    locations {
+      id
+      uid
+      address
+      createdAt
+      updatedAt
+    }
     email
     telephone
     availability
     absentCount
-    isAdmin
     createdAt
     updatedAt
     invoiceOption
@@ -465,4 +516,104 @@ mutation {
   }
 }
 
+```
+
+## Locations
+
+### locations(order: { field, direction })
+
+locations(order: { field: String, direction: String })
+
+Order can be:
+
+- field = all fields from material model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  locations {
+    id
+    uid
+    address
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### locationsByUid(uid)
+
+locationsByUid(uid: String)
+
+```graphql
+query {
+  locationsByUid(uid: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    uid
+    address
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### location(id)
+
+location(id: String)
+
+```graphql
+query {
+  location(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    uid
+    address
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createLocation
+
+```graphql
+mutation {
+  createLocation(
+    createLocationInput: {
+      address: "x"
+      uid: "xx"
+    }
+  ) {
+    id
+    address
+    uid
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateLocation
+
+```graphql
+mutation {
+  updateLocation(
+    updateLocationInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      address: "x"
+    }
+  ) {
+    id
+    uid
+    address
+    createdAt
+    updatedAt
+  }
+}
+
+### removeLocation
+
+```graphql
+mutation {
+  removeLocation(id: "6522bd1cfabcb1f1d63dd63a")
+}
 ```

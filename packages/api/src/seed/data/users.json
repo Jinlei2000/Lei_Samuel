@@ -5,7 +5,12 @@
         "email": "samuelvanhaecke30@gmail.com",
         "uid": "mFIC6ZoPCRVjhf9AqNBHb9Zzxkk2",
         "locale": "en",
-        "role": "ADMIN"
+        "role": "ADMIN",
+        "locations": [
+            {
+                "address": "Marksesteenweg 58, 8500 Kortrijk"
+            }
+        ]
     },
     {
         "firstname": "Lei",
@@ -13,7 +18,12 @@
         "email": "jinleix3@hotmail.com",
         "uid": "oBO5HvpzMZMT7QCfIAhGS5M8jPV2",
         "locale": "en",
-        "role": "ADMIN"
+        "role": "ADMIN",
+        "locations": [
+            {
+                "address": "Sint-Janslaan 5, 8500 Kortrijk"
+            }
+        ]
     },
     {
         "firstname": "Martijn",
@@ -21,7 +31,12 @@
         "email": "docent@howest.be",
         "uid": "4M9iJ9CMi0TEWGR4ldXac93auVN2",
         "locale": "en",
-        "role": "ADMIN"
+        "role": "ADMIN",
+        "locations": [
+            {
+                "address": "Snaggaardstraat 15, 8500 Kortrijk"
+            }
+        ]
     },
     {
         "firstname": "Lei",
@@ -29,7 +44,12 @@
         "email": "lei.jin@student.howest.be",
         "uid": "BS4wHFiycKfXYABdBKRFCS3SbyE3",
         "locale": "en",
-        "role": "EMPLOYEE"
+        "role": "EMPLOYEE",
+        "locations": [
+            {
+                "address": "Elfde-Julilaan 42, 8500 Kortrijk"
+            }
+        ]
     },
     {
         "firstname": "John",
@@ -37,7 +57,12 @@
         "email": "john.doe@gmail.com",
         "uid": "bEk4f8zWwSYAQykpfxTgXnmrcRG2",
         "locale": "en",
-        "role": "EMPLOYEE"
+        "role": "EMPLOYEE",
+        "locations": [
+            {
+                "address": "Pottelberg 4, 9000 Gent"
+            }
+        ]
     },
     {
         "firstname": "Jane",
@@ -45,7 +70,12 @@
         "email": "jane.smith@gmail.com",
         "uid": "GLRvH7xu7ufJ4bUrJjwxQje8rez2",
         "locale": "en",
-        "role": "CLIENT"
+        "role": "CLIENT",
+        "locations": [
+            {
+                "address": "Diksmuidsesteenweg 396, 8800 Roeselare"
+            }
+        ]
     },
     {
         "firstname": "Mike",
@@ -53,7 +83,15 @@
         "email": "mike.johnson@gmail.com",
         "uid": "cMaKJFPuRiTYb33KFxi5RHWFqj93",
         "locale": "en",
-        "role": "CLIENT"
+        "role": "CLIENT",
+        "locations": [
+            {
+                "address": "Kortrijksesteenweg 500, 9000 Gent"
+            },
+            {
+                "address": "Astridlaan 400, 8310 Brugge"
+            }
+        ]
     },
     {
         "firstname": "Emily",

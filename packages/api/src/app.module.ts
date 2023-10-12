@@ -9,6 +9,7 @@ import { SeedModule } from './seed/seed.module'
 import { MaterialsModule } from './materials/materials.module'
 import { AuthenticationModule } from './authentication/authentication.module'
 import { ConfigModule } from '@nestjs/config'
+import { LocationsModule } from './locations/locations.module'
 import { UsersModule } from './users/users.module'
 
 @Module({
@@ -29,15 +30,12 @@ import { UsersModule } from './users/users.module'
       useUnifiedTopology: true, // Disable deprecated warnings
     }),
 
-    AppointmentsModule,
-
-    SeedModule,
-
-    MaterialsModule,
-
-    AuthenticationModule,
-
     UsersModule,
+    LocationsModule,
+    AppointmentsModule,
+    MaterialsModule,
+    AuthenticationModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

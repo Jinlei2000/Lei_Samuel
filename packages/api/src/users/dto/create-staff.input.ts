@@ -9,9 +9,6 @@ export class CreateStaffInput {
   @Field() // graphql
   lastname: string
 
-  @Field( { nullable: true }) // graphql
-  locationId?: string
-
   @IsEmail() // validation
   @Field() // graphql
   email: string

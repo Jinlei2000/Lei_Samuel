@@ -16,6 +16,7 @@ npx nestjs-command seed:database:users
 ```bash
 npx nestjs-command seed:reset:materials
 npx nestjs-command seed:reset:users
+npx nestjs-command seed:reset:locations
 ```
 
 

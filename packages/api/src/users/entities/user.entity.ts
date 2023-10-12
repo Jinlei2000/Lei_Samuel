@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Column, Entity, ObjectId, ObjectIdColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, ObjectId, ObjectIdColumn, UpdateDateColumn } from 'typeorm'
+import { Location } from 'src/locations/entities/location.entity'
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -42,10 +43,11 @@ export class User {
   @Field({ nullable: true, description: 'Profile picture url' }) // GraphQL type
   url?: string
 
-  //TODO: use resolve field for this
+  // for resolve field
   @Column() // Database link - Typeorm
-  @Field({ nullable: true }) // GraphQL type
-  locationId?: string
+  locationIds?: ObjectId[]
+  @Field(() => [Location], { nullable: 'itemsAndList' }) // GraphQL type
+  locations?: Location[]
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
@@ -59,11 +61,11 @@ export class User {
   @Field({ description: 'Is the user available for appointments?' }) // GraphQL type
   availability: boolean
 
-  @Column({ type: 'timestamp', nullable: true }) // Database link - Typeorm
+  @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
   createdAt?: Date
 
-  @Column({ type: 'timestamp', nullable: true }) // Database link - Typeorm
+  @UpdateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
   updatedAt?: Date
 
