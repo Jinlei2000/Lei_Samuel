@@ -5,13 +5,13 @@
     >
       Dashboard
     </h1>
-    <div class="grid grid-cols-4 mx-32">
+    <div class="grid grid-cols-4 mx-32 gap-3">
       <div class="col-start-1 col-span-1">
         <h2 class="mb-3 text-2xl">Next Client</h2>
         <!-- for each client -->
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col" v-for="(item, index) in clients">
           <AppointmentCard
-            v-for="item in clients"
+            v-if="index === 0"
             :title="item.name"
             :description="item.description"
             :type="item.type"
@@ -39,11 +39,29 @@
             <ArrowRight @click="nextDay" class="text-white" />
           </button>
         </div>
+        <div class="flex flex-col gap-3">
+          <template v-for="(item, index) in clients">
+            <AppointmentCard
+              v-if="
+                index !== 0 &&
+                item.date.substring(0, 10) ===
+                  myDate.toISOString().substring(0, 10)
+              "
+              :title="item.name"
+              :description="item.description"
+              :type="item.type"
+            />
+          </template>
+        </div>
         <!-- <AppointmentCard
           title="Mr. Johnsson"
           description="Dit is een afspraak voor het snoeien van een berk."
           type="inspection"
         /> -->
+      </div>
+      <div class="col-span-2 col-start-2">
+        <h2 class="mb-3 text-2xl">Weather</h2>
+        <div class="bg-gray-200 rounded-2xl px-5 py-3">test</div>
       </div>
     </div>
   </div>
@@ -107,28 +125,35 @@ watch(myDate, () => {
 const clients = [
   {
     name: 'Appointment 1',
-    date: '2023-09-27T00:00:00.000Z',
+    date: '2023-10-13T00:00:00.000Z',
     location: 'Room A',
     description: '2 berken snoeien',
     type: 'repair',
   },
   {
     name: 'Appointment 2',
-    date: '2023-09-28T00:00:00.000Z',
+    date: '2023-10-13T00:00:00.000Z',
     location: 'Room B',
     description: 'Grasveld maaien',
     type: 'maintenance',
   },
   {
     name: 'Appointment 3',
-    date: '2023-09-29T00:00:00.000Z',
+    date: '2023-10-12T00:00:00.000Z',
     location: 'Room C',
     description: 'Onderhoud aan zwemvijver',
     type: 'maintenance',
   },
   {
     name: 'Appointment 4',
-    date: '2023-09-30T00:00:00.000Z',
+    date: '2023-10-13T00:00:00.000Z',
+    location: 'Room D',
+    description: 'Beplanting aanleggen',
+    type: 'inspection',
+  },
+  {
+    name: 'Appointment 5',
+    date: '2023-10-13T00:00:00.000Z',
     location: 'Room D',
     description: 'Beplanting aanleggen',
     type: 'inspection',
