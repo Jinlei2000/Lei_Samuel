@@ -116,6 +116,8 @@ export class UsersService {
     if (user) throw new GraphQLError('User already exists')
 
     const s = new User()
+    // TODO: uid? he dont have one yet
+    // s.uid = 
     s.locale = createStaffInput.locale ?? 'en'
     s.role = Role.EMPLOYEE
     s.firstname = createStaffInput.firstname.toLowerCase()
