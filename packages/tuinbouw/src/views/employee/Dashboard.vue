@@ -30,13 +30,13 @@
           <button
             class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
           >
-            <ArrowLeft class="text-white" />
+            <ArrowLeft @click="prevDay" class="text-white" />
           </button>
-          <p class="">Today</p>
+          <p class="">{{ dateDisplay }}</p>
           <button
             class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
           >
-            <ArrowRight class="text-white" />
+            <ArrowRight @click="nextDay" class="text-white" />
           </button>
         </div>
         <!-- <AppointmentCard
@@ -52,6 +52,65 @@
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-vue-next'
+import { ref, watch } from 'vue'
+
+const days = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+]
+
+const myDate = ref(new Date())
+// datedisplay is (dd/mm) and day of the week
+const dateDisplay = ref('Today')
+
+// nextday function
+function nextDay() {
+  const currentDate = myDate.value
+  const nextDay = new Date(currentDate.setDate(currentDate.getDate() + 1))
+  myDate.value = nextDay
+}
+
+function prevDay() {
+  const currentDate = myDate.value
+  const prevDay = new Date(currentDate.setDate(currentDate.getDate() - 1))
+  myDate.value = prevDay
+}
+
+// @ts-ignore
+watch(myDate, () => {
+  // set dateDisplay to (dd/mm) and day of the week
+
+  // if myday is today set to today
+  // if myday is tomorrow set to tomorrow
+  // if myday is yesterday set to yesterday
+  // if myday is further then tomorrow set date (dd/mm) and day of the week
+  // if myday is further then yesterday set day of the week
+  switch (myDate.value.getDate()) {
+    case new Date().getDate():
+      dateDisplay.value = 'Today'
+      break
+    case new Date().getDate() + 1:
+      dateDisplay.value = 'Tomorrow'
+      break
+    case new Date().getDate() - 1:
+      dateDisplay.value = 'Yesterday'
+      break
+    default:
+      dateDisplay.value =
+        days[myDate.value.getDay()] +
+        ' (' +
+        myDate.value.getDate() +
+        '/' +
+        myDate.value.getMonth() +
+        ')'
+      break
+  }
+})
 
 const clients = [
   {
