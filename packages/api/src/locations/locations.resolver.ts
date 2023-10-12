@@ -8,8 +8,6 @@ import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { AllowedRoles } from 'src/users/decorators/role.decorator'
 import { Role } from 'src/users/entities/user.entity'
 import { RolesGuard } from 'src/users/guards/roles.guard'
-import { UserRecord } from 'firebase-admin/auth'
-import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
 import { OrderByInput } from 'src/interfaces/order.input'
 
 @Resolver(() => Location)
@@ -64,7 +62,4 @@ export class LocationsResolver {
   removeLocation(@Args('id', { type: () => String }) id: string) {
     return this.locationsService.remove(id)
   }
-
-  //TODO: Resolve fields gebruiken voor personId
-  // Can later show all locations of users in the frontend
 }

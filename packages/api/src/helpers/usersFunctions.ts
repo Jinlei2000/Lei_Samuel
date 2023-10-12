@@ -33,7 +33,8 @@ export const filterUsers = (
     } else if (filters?.includes('C')) {
       whereQuery.role = 'CLIENT'
     }
-    // TODO: add availability filter
+    // TODO: add availability filter (true, false)
+    // TODO: add user with uid filter & without uid filter
   }
 
   return whereQuery

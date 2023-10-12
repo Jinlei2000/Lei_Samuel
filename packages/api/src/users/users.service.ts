@@ -88,9 +88,8 @@ export class UsersService {
     return this.findOne(id.toString())
   }
 
-  // TODO: delete all locations of user
+  // Delete user and all locations of user
   async removeUser(currentUserUid: string, id: string) {
-    // TODO: delete all locations of user
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
 
@@ -116,8 +115,6 @@ export class UsersService {
     if (user) throw new GraphQLError('User already exists')
 
     const s = new User()
-    // TODO: uid? he dont have one yet
-    // s.uid = 
     s.locale = createStaffInput.locale ?? 'en'
     s.role = Role.EMPLOYEE
     s.firstname = createStaffInput.firstname.toLowerCase()
