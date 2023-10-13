@@ -14,18 +14,43 @@ export const filterUsers = (
 
   // where object for query
   const whereQuery: { [key: string]: string | boolean } = {}
-  const filtersList = ['A', 'E', 'C']
+  const filtersList = ['A', 'E', 'C', 'AV', 'UID', 'NAV', 'NUID']
 
   // check if filters are valid
   if (filters) {
     // check if all filters are valid (A, E)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
-        `Invalid filter in filters = [${filters}]! Supported filters are: A = Admin, E = Employee, C = Client`,
+        `Invalid filter in filters = [${filters}]! Supported filters are: A = Admin, E = Employee, C = Client, AV = Available, UID = User with uid, NAV = Not available, NUID = User without uid`,
       )
     }
 
-    // set whereQuery depending on filters
+    // admin, employee and client cannot be used at the same time
+    if (
+      (filters?.includes('A') && filters?.includes('E')) ||
+      (filters?.includes('A') && filters?.includes('C')) ||
+      (filters?.includes('C') && filters?.includes('E'))
+    ) {
+      throw new GraphQLError(
+        'Cannot filter for A, E or C at the same time! A = Admin, E = Employee, C = Client',
+      )
+    }
+
+    // availability and not availability cannot be used at the same time
+    if (filters?.includes('AV') && filters?.includes('NAV')) {
+      throw new GraphQLError(
+        'Cannot filter for AV and NAV at the same time! A = Availability, NA = Not Availability',
+      )
+    }
+
+    // user with uid and user without uid cannot be used at the same time
+    if (filters?.includes('UID') && filters?.includes('NUID')) {
+      throw new GraphQLError(
+        'Cannot filter for UID and NUID at the same time! UID = User with uid, NUID = User without uid',
+      )
+    }
+
+    // role filter
     if (filters?.includes('A')) {
       whereQuery.role = 'ADMIN'
     } else if (filters?.includes('E')) {
@@ -33,8 +58,19 @@ export const filterUsers = (
     } else if (filters?.includes('C')) {
       whereQuery.role = 'CLIENT'
     }
-    // TODO: add availability filter (true, false)
-    // TODO: add user with uid filter & without uid filter
+    // availability filter
+    if (filters?.includes('AV')) {
+      whereQuery.availability = true
+    } else if (filters?.includes('NAV')) {
+      whereQuery.availability = false
+    }
+    // uid filter
+    if (filters?.includes('UID')) {
+      // @ts-ignore
+      whereQuery.uid = { $ne: null }
+    } else if (filters?.includes('NUID')) {
+      whereQuery.uid = null
+    }
   }
 
   return whereQuery
@@ -59,6 +95,7 @@ export const orderUsers = (order: OrderByInput): { [key: string]: string } => {
     'email',
     'telephone',
     'absentCount',
+    'role',
     'createdAt',
     'updatedAt',
   ]
