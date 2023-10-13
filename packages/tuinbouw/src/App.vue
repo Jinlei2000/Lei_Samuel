@@ -23,6 +23,8 @@ export default {
     const { setLocale } = useLanguage()
     const { locale } = useI18n()
 
+    // TODO: set locale from user settings in customUser
+
     provide(DefaultApolloClient, apolloClient)
 
     setLocale(locale.value)
