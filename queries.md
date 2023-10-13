@@ -204,6 +204,10 @@ Filters can be:
 - `A` - admin
 - `E` - employee
 - `C` - client
+- `AV` - availability
+- `NAV` - not availability
+- `UID` - uid
+- `NUID` - not uid
 
 Order can be:
 
