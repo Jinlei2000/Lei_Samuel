@@ -110,6 +110,14 @@ export class UsersResolver {
     return this.usersService.createClient(currentUser.uid, createClientInput)
   }
 
+  // Send email to new employee
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => String, { name: 'sendEmailToNewEmployeeById' })
+  sendEmail(@Args('id', { type: () => String }) id: string) {
+    return this.usersService.sendEmail(id)
+  }
+
   // Resolve fields
   @ResolveField()
   locations(@Parent() u: User): Promise<Location[]> {
