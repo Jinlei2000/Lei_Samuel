@@ -1,38 +1,23 @@
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from 'src/interfaces/order.input'
 
-export const filterUsers = (
-  filters: Array<string>,
-): { [key: string]: string | boolean } => {
+export const filterUsers = (filters: Array<string>): { [key: string]: any } => {
   //   console.log(filters)
 
-  if (!filters) {
-    return {}
-  }
+  if (!filters) return {}
 
   filters = filters?.map(filter => filter.toUpperCase())
 
   // where object for query
-  const whereQuery: { [key: string]: string | boolean } = {}
+  const whereQuery: { [key: string]: any } = {}
   const filtersList = ['A', 'E', 'C', 'AV', 'UID', 'NAV', 'NUID']
 
   // check if filters are valid
   if (filters) {
-    // check if all filters are valid (A, E)
+    // check if all filters are valid (A, E, C, AV, UID, NAV, NUID)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
         `Invalid filter in filters = [${filters}]! Supported filters are: A = Admin, E = Employee, C = Client, AV = Available, UID = User with uid, NAV = Not available, NUID = User without uid`,
-      )
-    }
-
-    // admin, employee and client cannot be used at the same time
-    if (
-      (filters?.includes('A') && filters?.includes('E')) ||
-      (filters?.includes('A') && filters?.includes('C')) ||
-      (filters?.includes('C') && filters?.includes('E'))
-    ) {
-      throw new GraphQLError(
-        'Cannot filter for A, E or C at the same time! A = Admin, E = Employee, C = Client',
       )
     }
 
@@ -51,26 +36,19 @@ export const filterUsers = (
     }
 
     // role filter
-    if (filters?.includes('A')) {
-      whereQuery.role = 'ADMIN'
-    } else if (filters?.includes('E')) {
-      whereQuery.role = 'EMPLOYEE'
-    } else if (filters?.includes('C')) {
-      whereQuery.role = 'CLIENT'
-    }
+    let selectRoles = []
+    if (filters?.includes('A')) selectRoles.push('ADMIN')
+    if (filters?.includes('E')) selectRoles.push('EMPLOYEE')
+    if (filters?.includes('C')) selectRoles.push('CLIENT')
+    if (selectRoles.length > 0) whereQuery.role = { $in: selectRoles }
+
     // availability filter
-    if (filters?.includes('AV')) {
-      whereQuery.availability = true
-    } else if (filters?.includes('NAV')) {
-      whereQuery.availability = false
-    }
+    if (filters?.includes('AV')) whereQuery.availability = true
+    if (filters?.includes('NAV')) whereQuery.availability = false
+
     // uid filter
-    if (filters?.includes('UID')) {
-      // @ts-ignore
-      whereQuery.uid = { $ne: null }
-    } else if (filters?.includes('NUID')) {
-      whereQuery.uid = null
-    }
+    if (filters?.includes('UID')) whereQuery.uid = { $ne: null }
+    if (filters?.includes('NUID')) whereQuery.uid = null
   }
 
   return whereQuery
