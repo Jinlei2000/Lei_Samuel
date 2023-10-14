@@ -19,3 +19,7 @@ Short description of the project.
 - [MongoDB](https://www.mongodb.com/) for database
 - [GraphQL](https://graphql.org/) for API
 - [Firebase-admin](https://firebase.google.com/docs/admin/setup) for authentication
+
+- [Nodemailer](https://nodemailer.com/about/) for sending emails
+- [Handlebars](https://handlebarsjs.com/) for templating emails
+

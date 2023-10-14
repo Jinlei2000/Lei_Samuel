@@ -5,6 +5,7 @@ import { join } from 'path'
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
 import { MailResolver } from './mail.resolver'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { UsersModule } from 'src/users/users.module'
 
 @Module({
   imports: [
@@ -12,13 +13,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
         transport: {
-          host: config.get('MAIL_HOST'),
-          port: 587,
-          secure: false,
+          service: 'hotmail',
           auth: {
             user: config.get('MAIL_USER'),
             pass: config.get('MAIL_PASSWORD'),
           },
+        },
+        defaults: {
+          from: `"No Reply" <${config.get('MAIL_USER')}>`,
         },
         template: {
           dir: join(__dirname, 'templates'),
@@ -30,6 +32,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
       }),
       inject: [ConfigService],
     }),
+    UsersModule,
   ],
   providers: [MailService, MailResolver],
   exports: [MailService],

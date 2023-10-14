@@ -4,7 +4,6 @@ import { UsersResolver } from './users.resolver'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from './entities/user.entity'
 import { LocationsModule } from 'src/locations/locations.module'
-import { MailModule } from 'src/mail/mail.module'
 
 @Module({
   providers: [UsersResolver, UsersService],
@@ -14,7 +13,6 @@ import { MailModule } from 'src/mail/mail.module'
     // Because 2 modules depend on each other
     // https://docs.nestjs.com/fundamentals/circular-dependency
     forwardRef(() => LocationsModule),
-    MailModule,
   ],
 
   exports: [UsersService],

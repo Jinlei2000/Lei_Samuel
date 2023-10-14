@@ -10,7 +10,6 @@ import { ObjectId } from 'mongodb'
 import { UpdateUserInput } from './dto/update-user.input'
 import { CreateClientInput } from './dto/create-client.input'
 import { LocationsService } from 'src/locations/locations.service'
-import { MailService } from 'src/mail/mail.service'
 
 @Injectable()
 export class UsersService {
@@ -20,7 +19,6 @@ export class UsersService {
     // use forwardRef to avoid circular dependency
     @Inject(forwardRef(() => LocationsService))
     private readonly locationsService: LocationsService,
-    private readonly mailService: MailService,
   ) {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
@@ -153,21 +151,6 @@ export class UsersService {
     const newUser = this.userRepository.save(s)
 
     return newUser
-  }
-
-  // Send email to user
-  async sendEmail(id: string): Promise<string> {
-    // console.log(user)
-    const user = await this.findOne(id)
-
-    // TODO: Send email to user
-    const token = Math.floor(1000 + Math.random() * 9000).toString();
-    console.log('start sending email')
-    await this.mailService.sendNewAccountMail(user, token)
-
-    // if (!success) throw new GraphQLError('Could not send email')
-
-    return 'Succesfully sent email to ' + user.email
   }
 
   // Absences
