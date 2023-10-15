@@ -42,6 +42,10 @@ export class Absence {
   @Field({ description: 'Total days of absence' })
   totalDays: number
 
+  @Column()
+  @Field(() => [Date], { description: 'All dates of absence' })
+  dates: Date[]
+
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
   createdAt?: Date

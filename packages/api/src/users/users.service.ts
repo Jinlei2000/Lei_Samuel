@@ -77,6 +77,14 @@ export class UsersService {
     const user = await this.findOne(id.toString())
     const currentUser = await this.findOneByUid(currentUserUid)
 
+    // Update the fullname if firstname or lastname is updated
+    if (
+      updateUserInput.firstname.toLowerCase() != user.firstname ||
+      updateUserInput.lastname.toLowerCase() != user.lastname
+    ) {
+      updateUserInput.fullname = `${updateUserInput.firstname.toLowerCase()} ${updateUserInput.lastname.toLowerCase()}`
+    }
+
     // Check that user is not trying to update someone else if not admin
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
       throw new GraphQLError('You are not allowed to update someone else')

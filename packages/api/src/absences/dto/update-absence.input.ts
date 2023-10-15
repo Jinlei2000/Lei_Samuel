@@ -18,4 +18,10 @@ export class UpdateAbsenceInput extends PartialType(CreateAbsenceInput) {
 
   @Field({ nullable: true })
   endDate?: Date
+
+  @Field(() => [Date], { nullable: true })
+  dates?: Date[]
+
+  @Field({ nullable: true })
+  totalDays?: number
 }
