@@ -12,6 +12,7 @@ import { ConfigModule } from '@nestjs/config'
 import { LocationsModule } from './locations/locations.module'
 import { UsersModule } from './users/users.module'
 import { MailModule } from './mail/mail.module';
+import { AbsencesModule } from './absences/absences.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { MailModule } from './mail/mail.module';
     AuthenticationModule,
     SeedModule,
     MailModule,
+    AbsencesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
