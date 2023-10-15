@@ -90,6 +90,8 @@ export class UsersService {
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
 
+    // TODO employee cant not delete himself
+
     // Check that user is not trying to delete someone else if not admin
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
       throw new GraphQLError('You are not allowed to delete someone else')
