@@ -90,7 +90,16 @@ export class AbsencesService {
     return id
   }
 
-  // TODO delete all absences for a user
+  // Delete all absences of user
+  async removeAllByUserId(userId: string): Promise<string[]> {
+    const absences = await this.findAllByUserId(userId)
+
+    const ids = absences.map(absences => absences.id.toString())
+
+    await this.absenceRepository.delete(ids)
+
+    return ids
+  }
 
   // Seeding functions
   saveAll(absences: Absence[]): Promise<Absence[]> {
