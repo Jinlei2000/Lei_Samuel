@@ -19,20 +19,17 @@ export class UsersService {
     // use forwardRef to avoid circular dependency
     @Inject(forwardRef(() => LocationsService))
     private readonly locationsService: LocationsService,
-  )
-  {}
+  ) {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
     // filter and order users
     const whereQuery = filterUsers(filters)
     const orderQuery = orderUsers(order)
 
-    const users = this.userRepository.find({
+    return this.userRepository.find({
       where: whereQuery,
       order: orderQuery,
     })
-
-    return users
   }
 
   // TODO: create own error, but than or roles guard dont work
@@ -125,9 +122,7 @@ export class UsersService {
     s.availability = true
     s.absentCount = 0
 
-    const newUser = this.userRepository.save(s)
-
-    // TODO: Send email to new employee
+    const newUser = await this.userRepository.save(s)
 
     return newUser
   }

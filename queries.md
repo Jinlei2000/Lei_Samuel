@@ -26,6 +26,8 @@
     - [location(id)](#locationid)
     - [createLocation](#createlocation)
     - [updateLocation](#updatelocation)
+  - [Mail](#mail)
+    - [sendEmailToNewEmployeeById(id)](#sendemailtonewemployeebyidid)
 
 ## Authorization
 
@@ -204,6 +206,10 @@ Filters can be:
 - `A` - admin
 - `E` - employee
 - `C` - client
+- `AV` - availability
+- `NAV` - not availability
+- `UID` - uid
+- `NUID` - not uid
 
 Order can be:
 
@@ -617,3 +623,17 @@ mutation {
   removeLocation(id: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
+
+## Mail
+
+### sendEmailToNewEmployeeById(id)
+
+sendEmailToNewEmployeeById(id: String)
+
+```graphql
+query {
+  sendEmailToNewEmployeeById(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+

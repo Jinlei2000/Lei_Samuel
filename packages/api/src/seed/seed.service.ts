@@ -107,38 +107,12 @@ export class SeedService {
     return this.usersService.truncate()
   }
   //#endregion
+  
+  //#region Locations
   async deleteAllLocations(): Promise<void> {
     return this.locationsService.truncate()
   }
-  //#region Locations
-
   //#endregion
-
-  //#region Staffs
-  // async addStaffsFromJson(): Promise<Staff[]> {
-  //   let theStaffs: any[] = []
-  //   let result: Staff[] = []
-  //   try {
-  //     for (let staff of staffs) {
-  //       const s = new Staff()
-  //       s.firstname = staff.firstname.toLowerCase()
-  //       s.lastname = staff.lastname.toLowerCase()
-  //       s.fullname = `${staff.firstname.toLowerCase()} ${staff.lastname.toLowerCase()}`
-  //       s.email = staff.email
-  //       s.absentCount = 0
-  //       s.availability = true
-  //       s.isAdmin = staff.isAdmin ? staff.isAdmin : false
-  //       s.uid = staff.uid
-  //       //TODO: How to add locationId here? Make a Location.
-  //       // s.locationId = staff.locationId
-
-  //       theStaffs.push(s)
-  //     }
-  //     result = await this.staffsService.saveAll(theStaffs)
-  //   } catch (error) {
-  //     console.log(error)
-  //     throw error
-  //   }
 
   //   try {
   //     // Add some random materials to staff that is not admin
@@ -164,9 +138,4 @@ export class SeedService {
 
   //   return result
   // }
-
-  // async deleteAllStaffs(): Promise<void> {
-  //   return this.staffsService.truncate()
-  // }
-  //#endregion
 }
