@@ -78,6 +78,7 @@ export class SeedService {
       u.locale = user.locale
       u.availability = true
       u.locationIds = []
+      if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = 0
 
       // Add some locations to users
       if (user.locations) {
@@ -107,7 +108,7 @@ export class SeedService {
     return this.usersService.truncate()
   }
   //#endregion
-  
+
   //#region Locations
   async deleteAllLocations(): Promise<void> {
     return this.locationsService.truncate()

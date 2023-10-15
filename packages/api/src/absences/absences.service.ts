@@ -6,12 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
+import { UsersService } from 'src/users/users.service'
 
 @Injectable()
 export class AbsencesService {
   constructor(
     @InjectRepository(Absence)
     private readonly absenceRepository: Repository<Absence>,
+    private readonly userService: UsersService,
   ) {}
 
   // TODO: add order and filter (type)
@@ -74,7 +76,12 @@ export class AbsencesService {
     a.dates.push(new Date(a.endDate))
     a.totalDays = a.dates.length
 
-    return this.absenceRepository.save(a)
+    const newAbsence = await this.absenceRepository.save(a)
+
+    // increment user absences
+    await this.userService.incrementAbsencesCount(createAbsenceInput.userId)
+
+    return newAbsence
   }
 
   async update(
