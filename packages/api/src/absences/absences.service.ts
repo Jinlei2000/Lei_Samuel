@@ -19,10 +19,10 @@ export class AbsencesService {
   }
 
   // TODO: add order and filter (type)
-  async findAllByPersonId(personId: string): Promise<Absence[]> {
+  async findAllByUserId(userId: string): Promise<Absence[]> {
     const absences = await this.absenceRepository.find({
       where: {
-        personId: personId,
+        userId: userId,
       },
     })
 

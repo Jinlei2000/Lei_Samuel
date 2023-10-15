@@ -23,8 +23,8 @@ export class AbsencesResolver {
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Absence], { name: 'absencesByPersonId' })
-  findAllByPersonId(@Args('id', { type: () => String }) id: string) {
-    return this.absencesService.findAllByPersonId(id)
+  findAllByUserId(@Args('id', { type: () => String }) id: string) {
+    return this.absencesService.findAllByUserId(id)
   }
 
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
