@@ -59,8 +59,9 @@ export class UsersService {
     return users
   }
 
-  // TODO find all users that is not a absent on a specific date (return array of users)
+  // TODO find all users that is not a absent on a specific date (return array of users) & find all users that is not scheduled on a specific date (return array of users)
   // use the absenceService to find all absent users on a specific date
+  // use the scheduleService to find all scheduled users on a specific date
 
   async upgradeToAdmin(id: string): Promise<User> {
     await this.userRepository.update(id, { role: Role.ADMIN })
@@ -157,6 +158,8 @@ export class UsersService {
 
     return newUser
   }
+
+  // TODO: make a functions start automaticly on a time & check if a user is absent today and if so, set availability to false
 
   // Absences
   async incrementAbsencesCount(staffId: string): Promise<void> {

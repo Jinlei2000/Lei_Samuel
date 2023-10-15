@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  Parent,
+  ResolveField,
+} from '@nestjs/graphql'
 import { AbsencesService } from './absences.service'
 import { Absence } from './entities/absence.entity'
 import { CreateAbsenceInput } from './dto/create-absence.input'
@@ -6,12 +14,16 @@ import { UpdateAbsenceInput } from './dto/update-absence.input'
 import { UseGuards } from '@nestjs/common'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { AllowedRoles } from 'src/users/decorators/role.decorator'
-import { Role } from 'src/users/entities/user.entity'
+import { Role, User } from 'src/users/entities/user.entity'
 import { RolesGuard } from 'src/users/guards/roles.guard'
+import { UsersService } from 'src/users/users.service'
 
 @Resolver(() => Absence)
 export class AbsencesResolver {
-  constructor(private readonly absencesService: AbsencesService) {}
+  constructor(
+    private readonly absencesService: AbsencesService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
@@ -43,7 +55,7 @@ export class AbsencesResolver {
     return this.absencesService.create(createAbsenceInput)
   }
 
-  @AllowedRoles(Role.ADMIN)
+  @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Absence)
   updateAbsence(
@@ -57,8 +69,14 @@ export class AbsencesResolver {
 
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
-  @Mutation(() => Absence)
+  @Mutation(() => String)
   removeAbsence(@Args('id', { type: () => String }) id: string) {
     return this.absencesService.remove(id)
+  }
+
+  // Resolve fields
+  @ResolveField()
+  user(@Parent() absence: Absence): Promise<User> {
+    return this.usersService.findOne(absence.userId)
   }
 }

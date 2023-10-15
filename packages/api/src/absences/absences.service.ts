@@ -5,6 +5,7 @@ import { Absence } from './entities/absence.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { GraphQLError } from 'graphql'
+import { ObjectId } from 'mongodb'
 
 @Injectable()
 export class AbsencesService {
@@ -29,25 +30,55 @@ export class AbsencesService {
     return absences
   }
 
+  // TODO: find all users that is a absent on a specific date (return array of users id's)
+  async findAllUserByDate(date: Date): Promise<Absence[]> {
+    return []
+  }
+
   async findOne(id: string): Promise<Absence> {
-    const location = await this.absenceRepository.findOne({
+    const absence = await this.absenceRepository.findOne({
       // @ts-ignore
       _id: new ObjectId(id),
     })
 
-    if (!location) {
-      throw new GraphQLError('Location not found!')
+    if (!absence) {
+      throw new GraphQLError('Absence not found!')
     }
 
-    return location
+    return absence
   }
 
-  create(createAbsenceInput: CreateAbsenceInput) {
-    return 'This action adds a new absence'
+  async create(createAbsenceInput: CreateAbsenceInput) {
+    const a = new Absence()
+    a.discription = createAbsenceInput.discription
+    a.userId = createAbsenceInput.userId
+    if (!['sick', 'vacation', 'other'].includes(createAbsenceInput.type))
+      throw new GraphQLError(
+        'Type not found! Type must be sick, vacation or other',
+      )
+    a.type = createAbsenceInput.type
+    a.startDate = createAbsenceInput.startDate
+    a.endDate = createAbsenceInput.endDate
+    a.totalDays =
+      new Date(createAbsenceInput.endDate).getDate() -
+      new Date(createAbsenceInput.startDate).getDate() +
+      1
+
+    return this.absenceRepository.save(a)
   }
 
-  update(id: number, updateAbsenceInput: UpdateAbsenceInput) {
-    return `This action updates a #${id} absence`
+  async update(
+    id: ObjectId,
+    updateAbsenceInput: UpdateAbsenceInput,
+  ): Promise<Absence> {
+    await this.findOne(id.toString())
+
+    // remove id and make a new variable with the rest of the data
+    const { id: _, ...updatedData } = updateAbsenceInput
+
+    await this.absenceRepository.update(id, updatedData)
+
+    return this.findOne(id.toString())
   }
 
   async remove(id: string): Promise<string> {
@@ -59,7 +90,14 @@ export class AbsencesService {
     return id
   }
 
-  // TODO: find all users that is a absent on a specific date (return array of users id's)
+  // TODO delete all absences for a user
 
-  // TODO resolve field for personId
+  // Seeding functions
+  saveAll(absences: Absence[]): Promise<Absence[]> {
+    return this.absenceRepository.save(absences)
+  }
+
+  truncate(): Promise<void> {
+    return this.absenceRepository.clear()
+  }
 }
