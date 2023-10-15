@@ -11,7 +11,7 @@
     - [updateMaterial](#updatematerial)
     - [removeMaterial](#removematerial)
   - [Users](#users)
-    - [users(filters: , order: { field, direction })](#usersfilters--order--field-direction-)
+    - [users(filters, order: { field, direction })](#usersfilters-order--field-direction-)
     - [user(id)](#userid)
     - [userByUid(uid)](#userbyuiduid)
     - [usersBySearchString(searchString)](#usersbysearchstringsearchstring)
@@ -28,12 +28,29 @@
     - [updateLocation](#updatelocation)
   - [Mail](#mail)
     - [sendEmailToNewEmployeeById(id)](#sendemailtonewemployeebyidid)
+  - [Absences](#absences)
 
 ## Authorization
 
 Most of queries and mutations require authorization. To authorize you need to pass `Authorization` header with `Bearer` token.
 
 ## Materials
+// TODO: personId is a resolve field
+```object
+{
+  id
+  name
+  isAvailable
+  user {
+    // everything from user
+  }
+  isDefect
+  serialNumber
+  createdAt
+  updatedAt
+}
+```
+
 ### materials(filters: , order: { field, direction })
 
 materials(filters: [String], order: { field: String, direction: String })
@@ -197,7 +214,33 @@ mutation {
 ```
 
 ## Users
-### users(filters: , order: { field, direction })
+
+```object
+{
+  id
+  uid
+  locale
+  role
+  firstname
+  lastname
+  fullname
+  url
+  locations {
+    // everthing from locations
+  }
+  email
+  telephone
+  availability
+  createdAt
+  updatedAt
+  absentCount
+  invoiceOption
+  company
+  btwNumber
+}
+```
+
+### users(filters, order: { field, direction })
 
 users(filters: [String], order: { field: String, direction: String })
 
@@ -228,11 +271,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -263,11 +302,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -298,11 +333,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -333,11 +364,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -370,11 +397,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -421,11 +444,7 @@ mutation {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -439,6 +458,7 @@ mutation {
   }
 }
 ```
+
 ### removeUser
 
 ```graphql
@@ -469,11 +489,7 @@ mutation {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -504,11 +520,7 @@ mutation {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      // everthing from locations
     }
     email
     telephone
@@ -525,6 +537,16 @@ mutation {
 ```
 
 ## Locations
+
+```object
+{
+  id
+  uid
+  address
+  createdAt
+  updatedAt
+}
+```
 
 ### locations(order: { field, direction })
 
@@ -625,7 +647,6 @@ mutation {
 ```
 
 ## Mail
-
 ### sendEmailToNewEmployeeById(id)
 
 sendEmailToNewEmployeeById(id: String)
@@ -635,5 +656,22 @@ query {
   sendEmailToNewEmployeeById(id: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
+
+## Absences
+
+```object
+{
+  id
+  user{
+    // everything from user
+  }
+  startDate
+  endDate
+  createdAt
+  updatedAt
+}
+```
+
+
 
 

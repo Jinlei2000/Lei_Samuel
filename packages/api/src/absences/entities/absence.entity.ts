@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { User } from 'src/users/entities/user.entity'
 import {
   Column,
   CreateDateColumn,
@@ -15,9 +16,11 @@ export class Absence {
   @Field(() => ID)
   id: ObjectId
 
+  // for resolve field
   @Column()
-  @Field({ description: 'person of absence' })
-  personId: string
+  userId: string
+  @Field(() => User, { description: 'person of absence' })
+  user: User
 
   @Column()
   @Field({ nullable: true })
@@ -34,6 +37,10 @@ export class Absence {
   @Column()
   @Field({ description: 'End date of absence' })
   endDate: Date
+
+  @Column()
+  @Field({ description: 'Total days of absence' })
+  totalDays: number
 
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type

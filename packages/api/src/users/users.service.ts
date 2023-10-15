@@ -59,6 +59,9 @@ export class UsersService {
     return users
   }
 
+  // TODO find all users that is not a absent on a specific date (return array of users)
+  // use the absenceService to find all absent users on a specific date
+
   async upgradeToAdmin(id: string): Promise<User> {
     await this.userRepository.update(id, { role: Role.ADMIN })
 

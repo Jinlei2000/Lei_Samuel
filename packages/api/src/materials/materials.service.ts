@@ -113,6 +113,8 @@ export class MaterialsService {
     return id
   }
 
+  // TODO resolve field of personId
+
   // Seeding functions
   saveAll(materials: Material[]): Promise<Material[]> {
     return this.materialRepository.save(materials)
