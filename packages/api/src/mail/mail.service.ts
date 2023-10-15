@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { GraphQLError } from 'graphql'
 import { User } from 'src/users/entities/user.entity'
 import { UsersService } from 'src/users/users.service'
+import { newEmployee } from './email-templates/new-employee'
 
 @Injectable()
 export class MailService {
@@ -21,20 +22,20 @@ export class MailService {
     console.log('start sending email')
 
     // TODO: change this to the frontend url
+    // TODO: how to handle the token?
     const url = `http://localhost:5173/auth/register/staff/?token=${token}`
 
     const result = await this.mailerService
       .sendMail({
         to: user.email,
         subject: 'Welcome to the team! Make your account now!',
-        // TODO: make this a template
-        // TODO: make beautiful email template
-        template: './newAccount', // `.hbs` extension is appended automatically
         context: {
           // ✏️ filling curly brackets with content
           name: user.firstname,
           url,
         },
+        // ✏️ our html template
+        html: newEmployee(user, url),
       })
       .then(() => {
         console.log('Succesfully sent email')
