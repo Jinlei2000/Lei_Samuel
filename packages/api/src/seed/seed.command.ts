@@ -83,6 +83,19 @@ export class DatabaseSeedCommand {
     console.info('🪶 Removed locations')
   }
   //#endregion
+
+  //#region Absences
+  @Command({
+    command: 'seed:reset:absences',
+    describe: 'Delete all data from the absences table',
+  })
+  async deleteAbsences() {
+    console.info('🔪 Start deleting absences')
+    await this.seedService.deleteAllAbsences()
+    console.info('🪶 Removed absences')
+  }
+  //#endregion
+
   // Delete all data from appointments, materials, users, locations... tables
   @Command({
     command: 'seed:reset',
@@ -95,6 +108,7 @@ export class DatabaseSeedCommand {
     await this.deleteMaterials()
     await this.deleteUsers()
     await this.deleteLocations()
+    await this.deleteAbsences()
     console.info('🪶 Removed all data')
   }
 }

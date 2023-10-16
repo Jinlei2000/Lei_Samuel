@@ -8,6 +8,9 @@ export class UpdateUserInput {
   id: ObjectId
 
   @Field({ nullable: true }) // graphql
+  fullname?: string
+
+  @Field({ nullable: true }) // graphql
   lastname?: string
 
   @Field({ nullable: true }) // graphql

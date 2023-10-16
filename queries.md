@@ -3,6 +3,7 @@
 - [Graphql Queries](#graphql-queries)
   - [Authorization](#authorization)
   - [Materials](#materials)
+- [TODO: personId is a resolve field](#todo-personid-is-a-resolve-field)
     - [materials(filters: , order: { field, direction })](#materialsfilters--order--field-direction-)
     - [material(id)](#materialid)
     - [materialsByPersonId(personId, filters: , order: { field, direction })](#materialsbypersonidpersonid-filters--order--field-direction-)
@@ -11,7 +12,7 @@
     - [updateMaterial](#updatematerial)
     - [removeMaterial](#removematerial)
   - [Users](#users)
-    - [users(filters: , order: { field, direction })](#usersfilters--order--field-direction-)
+    - [users(filters, order: { field, direction })](#usersfilters-order--field-direction-)
     - [user(id)](#userid)
     - [userByUid(uid)](#userbyuiduid)
     - [usersBySearchString(searchString)](#usersbysearchstringsearchstring)
@@ -28,12 +29,35 @@
     - [updateLocation](#updatelocation)
   - [Mail](#mail)
     - [sendEmailToNewEmployeeById(id)](#sendemailtonewemployeebyidid)
+  - [Absences](#absences)
+    - [absences(filters: , order: { field, direction })](#absencesfilters--order--field-direction-)
+    - [absencesByPersonId(filters: , order: { field, direction })](#absencesbypersonidfilters--order--field-direction-)
+    - [absence(id)](#absenceid)
+    - [createAbsence](#createabsence)
+    - [updateAbsence](#updateabsence)
+    - [removeAbsence](#removeabsence)
 
 ## Authorization
 
 Most of queries and mutations require authorization. To authorize you need to pass `Authorization` header with `Bearer` token.
 
 ## Materials
+# TODO: personId is a resolve field
+```object
+{
+  id
+  name
+  isAvailable
+  user {
+    # everything from user
+  }
+  isDefect
+  serialNumber
+  createdAt
+  updatedAt
+}
+```
+
 ### materials(filters: , order: { field, direction })
 
 materials(filters: [String], order: { field: String, direction: String })
@@ -147,7 +171,7 @@ mutation {
     createMaterialInput: {
       name: "Material 1"
       isAvailable: true
-      personId: "651d55ade0e77efb23fdfe53"
+      personId: "651d55ade0e77efb23fdfe53" # optional
       serialNumber: 123456789
     }
   ) {
@@ -197,7 +221,33 @@ mutation {
 ```
 
 ## Users
-### users(filters: , order: { field, direction })
+
+```object
+{
+  id
+  uid
+  locale
+  role
+  firstname
+  lastname
+  fullname
+  url
+  locations {
+    # everthing from locations
+  }
+  email
+  telephone
+  availability
+  createdAt
+  updatedAt
+  absentCount
+  invoiceOption
+  company
+  btwNumber
+}
+```
+
+### users(filters, order: { field, direction })
 
 users(filters: [String], order: { field: String, direction: String })
 
@@ -228,11 +278,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -263,11 +309,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -298,11 +340,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -333,11 +371,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -370,11 +404,7 @@ query {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -404,9 +434,9 @@ mutation {
       email: "xx"
       telephone: "xx"
       availability: true
-      // STAFF ONLY
+      # STAFF ONLY
       absentCount: number
-      // CLIENT ONLY
+      # CLIENT ONLY
       invoiceOption: "xx" 
       company: true
       btwNumber: "xx"
@@ -421,11 +451,7 @@ mutation {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -439,6 +465,7 @@ mutation {
   }
 }
 ```
+
 ### removeUser
 
 ```graphql
@@ -458,8 +485,8 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      telephone: "xx"
-      locale: "en"
+      telephone: "xx" # optional
+      locale: "en" # optional
     }
   ) {
     id
@@ -469,11 +496,7 @@ mutation {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -494,7 +517,7 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      locale: "en"
+      locale: "en" # optional
     }
   ) {
     id
@@ -504,11 +527,7 @@ mutation {
     fullname
     url
     locations {
-      id
-      uid
-      address
-      createdAt
-      updatedAt
+      # everthing from locations
     }
     email
     telephone
@@ -525,6 +544,16 @@ mutation {
 ```
 
 ## Locations
+
+```object
+{
+  id
+  uid
+  address
+  createdAt
+  updatedAt
+}
+```
 
 ### locations(order: { field, direction })
 
@@ -625,7 +654,6 @@ mutation {
 ```
 
 ## Mail
-
 ### sendEmailToNewEmployeeById(id)
 
 sendEmailToNewEmployeeById(id: String)
@@ -635,5 +663,160 @@ query {
   sendEmailToNewEmployeeById(id: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
+
+## Absences
+
+```object
+{
+  id
+  user{
+    # everything from user
+  }
+  startDate
+  endDate
+  createdAt
+  updatedAt
+}
+```
+
+start and end date are in format `YYYY-MM-DD`
+
+### absences(filters: , order: { field, direction })
+
+absences(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+- `S` - Sick
+- `V` - Vacation
+- `O` - Other
+
+Order can be:
+- field = all fields from absence model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  absences {
+    id
+    user{
+      # everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### absencesByPersonId(filters: , order: { field, direction })
+
+absencesByPersonId(personId: String, filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+- `S` - Sick
+- `V` - Vacation
+- `O` - Other
+
+Order can be:
+- field = all fields from absence model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  absencesByPersonId(personId: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    user{
+      # everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### absence(id)
+
+absence(id: String)
+
+```graphql
+query {
+  absence(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    user{
+      # everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createAbsence
+
+```graphql
+mutation {
+  createAbsence(
+    createAbsenceInput: {
+      userId: "6522bd1cfabcb1f1d63dd63a"
+      startDate: "2020-01-01" # YYYY-MM-DD
+      endDate: "2020-01-01" # YYYY-MM-DD
+      type: "S"
+      description: "x" # optional
+    }
+  ) {
+    id
+    user{
+      # everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateAbsence
+
+```graphql
+mutation {
+  updateAbsence(
+    updateAbsenceInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      userId: "6522bd1cfabcb1f1d63dd63a"
+      startDate: "2020-01-01" # YYYY-MM-DD
+      endDate: "2020-01-01" # YYYY-MM-DD
+      type: "S"
+      description: "x"
+    }
+  ) {
+    id
+    user{
+      # everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### removeAbsence
+
+```graphql
+mutation {
+  removeAbsence(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+
+
+
 
 

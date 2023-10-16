@@ -6,6 +6,7 @@ import { DatabaseSeedCommand } from './seed.command'
 import { MaterialsModule } from 'src/materials/materials.module'
 import { LocationsModule } from 'src/locations/locations.module'
 import { UsersModule } from 'src/users/users.module'
+import { AbsencesModule } from 'src/absences/absences.module'
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersModule } from 'src/users/users.module'
     LocationsModule,
     AppointmentsModule,
     MaterialsModule,
+    AbsencesModule,
     CommandModule,
   ],
   providers: [DatabaseSeedCommand, SeedService],

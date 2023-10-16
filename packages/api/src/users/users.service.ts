@@ -10,6 +10,7 @@ import { ObjectId } from 'mongodb'
 import { UpdateUserInput } from './dto/update-user.input'
 import { CreateClientInput } from './dto/create-client.input'
 import { LocationsService } from 'src/locations/locations.service'
+import { AbsencesService } from 'src/absences/absences.service'
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,8 @@ export class UsersService {
     // use forwardRef to avoid circular dependency
     @Inject(forwardRef(() => LocationsService))
     private readonly locationsService: LocationsService,
+    @Inject(forwardRef(() => AbsencesService))
+    private readonly absenceService: AbsencesService,
   ) {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
@@ -59,6 +62,25 @@ export class UsersService {
     return users
   }
 
+  // TODO find all users that is not a absent on a specific date (return array of users) & find all users that is not scheduled on a specific date (return array of users)
+  // use the absenceService to find all absent users on a specific date
+  // use the scheduleService to find all scheduled users on a specific date
+  async findAvailableUsersByDate(date: Date): Promise<User[]> {
+    const absentIds = await this.absenceService.findAllUserByDate(date)
+
+    const users = await this.userRepository.find({
+      where: {
+        // check if id is not in absentIds
+        // @ts-ignore
+        id: { $nin: absentIds }, // nin = not in
+
+        // TODO: check if user is not scheduled on date
+      },
+    })
+
+    return users
+  }
+
   async upgradeToAdmin(id: string): Promise<User> {
     await this.userRepository.update(id, { role: Role.ADMIN })
 
@@ -72,6 +94,14 @@ export class UsersService {
   ): Promise<User> {
     const user = await this.findOne(id.toString())
     const currentUser = await this.findOneByUid(currentUserUid)
+
+    // Update the fullname if firstname or lastname is updated
+    if (
+      updateUserInput.firstname.toLowerCase() != user.firstname ||
+      updateUserInput.lastname.toLowerCase() != user.lastname
+    ) {
+      updateUserInput.fullname = `${updateUserInput.firstname.toLowerCase()} ${updateUserInput.lastname.toLowerCase()}`
+    }
 
     // Check that user is not trying to update someone else if not admin
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
@@ -89,6 +119,8 @@ export class UsersService {
   async removeUser(currentUserUid: string, id: string) {
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
+
+    // TODO employee cant not delete himself
 
     // Check that user is not trying to delete someone else if not admin
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
@@ -152,6 +184,8 @@ export class UsersService {
 
     return newUser
   }
+
+  // TODO: make a functions start automaticly on a time & check if a user is absent today and if so, set availability to false
 
   // Absences
   async incrementAbsencesCount(staffId: string): Promise<void> {
