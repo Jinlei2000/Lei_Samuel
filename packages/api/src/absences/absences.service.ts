@@ -68,7 +68,27 @@ export class AbsencesService {
         'Type not found! Type must be sick, vacation or other',
       )
 
-    // TODO check if user allready has an absence on the same date
+    // check if user allready has an absence on the same date
+    const absences = await this.absenceRepository.find({
+      where: {
+        // check if date is between start and end date of absence
+        // @ts-ignore
+        $or: [
+          {
+            startDate: { $lte: createAbsenceInput.startDate },
+            endDate: { $gte: createAbsenceInput.startDate },
+          },
+          {
+            startDate: { $lte: createAbsenceInput.endDate },
+            endDate: { $gte: createAbsenceInput.endDate },
+          },
+        ],
+
+        userId: createAbsenceInput.userId,
+      },
+    })
+    if (absences.length > 0)
+      throw new GraphQLError('User already has an absence on the same date!')
 
     const a = new Absence()
     a.discription = createAbsenceInput.discription
@@ -76,6 +96,13 @@ export class AbsencesService {
     a.type = createAbsenceInput.type
     a.startDate = createAbsenceInput.startDate
     a.endDate = createAbsenceInput.endDate
+
+    // calculate total days
+    const startDate = new Date(a.startDate)
+    const endDate = new Date(a.endDate)
+    const totalDays =
+      Math.round((endDate.getTime() - startDate.getTime()) / 86400000) + 1
+    a.totalDays = totalDays
 
     const newAbsence = await this.absenceRepository.save(a)
 
@@ -89,10 +116,46 @@ export class AbsencesService {
     id: ObjectId,
     updateAbsenceInput: UpdateAbsenceInput,
   ): Promise<Absence> {
-    await this.findOne(id.toString())
+    const currentAbsence = await this.findOne(id.toString())
 
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateAbsenceInput
+
+    // check if start or end date has changed
+    if (
+      currentAbsence.startDate !== updateAbsenceInput.startDate ||
+      currentAbsence.endDate !== updateAbsenceInput.endDate
+    ) {
+      // check if user allready has an absence on the same date
+      const absences = await this.absenceRepository.find({
+        where: {
+          // check if date is between start and end date of absence
+          // @ts-ignore
+          $or: [
+            {
+              startDate: { $lte: updateAbsenceInput.startDate },
+              endDate: { $gte: updateAbsenceInput.startDate },
+            },
+            {
+              startDate: { $lte: updateAbsenceInput.endDate },
+              endDate: { $gte: updateAbsenceInput.endDate },
+            },
+          ],
+
+          userId: currentAbsence.userId,
+        },
+      })
+      console.log(absences)
+      if (absences.length > 0)
+        throw new GraphQLError('User already has an absence on the same date!')
+
+      // calculate total days
+      const startDate = new Date(updateAbsenceInput.startDate)
+      const endDate = new Date(updateAbsenceInput.endDate)
+      const totalDays =
+        Math.round((endDate.getTime() - startDate.getTime()) / 86400000) + 1
+      updatedData.totalDays = totalDays
+    }
 
     await this.absenceRepository.update(id, updatedData)
 
