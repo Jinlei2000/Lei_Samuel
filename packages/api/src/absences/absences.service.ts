@@ -76,18 +76,6 @@ export class AbsencesService {
     a.type = createAbsenceInput.type
     a.startDate = createAbsenceInput.startDate
     a.endDate = createAbsenceInput.endDate
-    a.dates = []
-
-    // loop through all dates between start and end date and add them to dates array
-    for (
-      let currentDate = new Date(a.startDate);
-      currentDate <= new Date(a.endDate);
-      currentDate.setDate(currentDate.getDate() + 1)
-    ) {
-      a.dates.push(new Date(currentDate))
-    }
-    a.dates.push(new Date(a.endDate))
-    a.totalDays = a.dates.length
 
     const newAbsence = await this.absenceRepository.save(a)
 
@@ -101,27 +89,10 @@ export class AbsencesService {
     id: ObjectId,
     updateAbsenceInput: UpdateAbsenceInput,
   ): Promise<Absence> {
-    const currentAbsence = await this.findOne(id.toString())
+    await this.findOne(id.toString())
 
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateAbsenceInput
-
-    if (
-      updatedData.startDate != currentAbsence.startDate ||
-      updatedData.endDate != currentAbsence.endDate
-    ) {
-      updatedData.dates = []
-      // loop through all dates between start and end date and add them to dates array
-      for (
-        let currentDate = new Date(updatedData.startDate);
-        currentDate <= new Date(updatedData.endDate);
-        currentDate.setDate(currentDate.getDate() + 1)
-      ) {
-        updatedData.dates.push(new Date(currentDate))
-      }
-      updatedData.dates.push(new Date(updatedData.endDate))
-      updatedData.totalDays = updatedData.dates.length
-    }
 
     await this.absenceRepository.update(id, updatedData)
 
