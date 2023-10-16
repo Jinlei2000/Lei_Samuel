@@ -19,7 +19,6 @@ export class AbsencesService {
     private readonly userService: UsersService,
   ) {}
 
-  // TODO: add order and filter (type)
   async findAll(
     filters?: Array<string>,
     order?: OrderByInput,
@@ -34,7 +33,6 @@ export class AbsencesService {
     })
   }
 
-  // TODO: add order and filter (type)
   async findAllByUserId(
     userId: string,
     filters?: Array<string>,

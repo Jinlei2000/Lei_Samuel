@@ -29,6 +29,12 @@
   - [Mail](#mail)
     - [sendEmailToNewEmployeeById(id)](#sendemailtonewemployeebyidid)
   - [Absences](#absences)
+    - [absences(filters: , order: { field, direction })](#absencesfilters--order--field-direction-)
+    - [absencesByPersonId(filters: , order: { field, direction })](#absencesbypersonidfilters--order--field-direction-)
+    - [absence(id)](#absenceid)
+    - [createAbsence](#createabsence)
+    - [updateAbsence](#updateabsence)
+    - [removeAbsence](#removeabsence)
 
 ## Authorization
 
@@ -164,7 +170,7 @@ mutation {
     createMaterialInput: {
       name: "Material 1"
       isAvailable: true
-      personId: "651d55ade0e77efb23fdfe53"
+      personId: "651d55ade0e77efb23fdfe53" // optional
       serialNumber: 123456789
     }
   ) {
@@ -478,8 +484,8 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      telephone: "xx"
-      locale: "en"
+      telephone: "xx" // optional
+      locale: "en" // optional
     }
   ) {
     id
@@ -510,7 +516,7 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      locale: "en"
+      locale: "en" // optional
     }
   ) {
     id
@@ -671,6 +677,142 @@ query {
   updatedAt
 }
 ```
+
+### absences(filters: , order: { field, direction })
+
+absences(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+- `S` - Sick
+- `V` - Vacation
+- `O` - Other
+
+Order can be:
+- field = all fields from absence model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  absences {
+    id
+    user{
+      // everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### absencesByPersonId(filters: , order: { field, direction })
+
+absencesByPersonId(personId: String, filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+- `S` - Sick
+- `V` - Vacation
+- `O` - Other
+
+Order can be:
+- field = all fields from absence model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  absencesByPersonId(personId: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    user{
+      // everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### absence(id)
+
+absence(id: String)
+
+```graphql
+query {
+  absence(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    user{
+      // everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createAbsence
+
+```graphql
+mutation {
+  createAbsence(
+    createAbsenceInput: {
+      userId: "6522bd1cfabcb1f1d63dd63a"
+      startDate: "2020-01-01"
+      endDate: "2020-01-01"
+      type: "S"
+      description: "x" // optional
+    }
+  ) {
+    id
+    user{
+      // everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateAbsence
+
+```graphql
+mutation {
+  updateAbsence(
+    updateAbsenceInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      userId: "6522bd1cfabcb1f1d63dd63a"
+      startDate: "2020-01-01"
+      endDate: "2020-01-01"
+      type: "S"
+      description: "x"
+    }
+  ) {
+    id
+    user{
+      // everything from user
+    }
+    startDate
+    endDate
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### removeAbsence
+
+```graphql
+mutation {
+  removeAbsence(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+
 
 
 
