@@ -63,6 +63,13 @@ export class UsersResolver {
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [User], { name: 'usersAvailableByDate' })
+  findUsersAvailableByDate(@Args('date', { type: () => Date }) date: Date) {
+    return this.usersService.findAvailableUsersByDate(date)
+  }
+
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => User, { name: 'userUpgradeToAdmin' })
   upgradeToAdmin(@Args('id', { type: () => String }) id: string) {
     return this.usersService.upgradeToAdmin(id)

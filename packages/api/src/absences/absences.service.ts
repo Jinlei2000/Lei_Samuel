@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { CreateAbsenceInput } from './dto/create-absence.input'
 import { UpdateAbsenceInput } from './dto/update-absence.input'
 import { Absence } from './entities/absence.entity'
@@ -13,6 +13,7 @@ export class AbsencesService {
   constructor(
     @InjectRepository(Absence)
     private readonly absenceRepository: Repository<Absence>,
+    @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
   ) {}
 
@@ -32,10 +33,20 @@ export class AbsencesService {
     return absences
   }
 
-  // TODO: find all users that is a absent on a specific date (return array of users id's)
+  // find all users that is a absent on a specific date (return array of users id's)
   async findAllUserByDate(date: Date): Promise<string[]> {
-    const absences = await this.absenceRepository.find()
-    return []
+    const absences = await this.absenceRepository.find({
+      where: {
+        // check if date is between start and end date of absence
+        // @ts-ignore
+        startDate: { $lte: date }, // lte = less than or equal
+        // @ts-ignore
+        endDate: { $gte: date }, // gte = greater than or equal
+      },
+    })
+
+    const ids = absences.map(absence => absence.userId)
+    return ids
   }
 
   async findOne(id: string): Promise<Absence> {
@@ -56,6 +67,8 @@ export class AbsencesService {
       throw new GraphQLError(
         'Type not found! Type must be sick, vacation or other',
       )
+
+    // TODO check if user allready has an absence on the same date
 
     const a = new Absence()
     a.discription = createAbsenceInput.discription
