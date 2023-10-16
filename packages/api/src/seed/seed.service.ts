@@ -7,11 +7,11 @@ import { LocationsService } from 'src/locations/locations.service'
 import { Location } from 'src/locations/entities/location.entity'
 import { UsersService } from 'src/users/users.service'
 import { Role, User } from 'src/users/entities/user.entity'
+import { ObjectId } from 'typeorm'
 
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
-import { ObjectId } from 'typeorm'
 
 @Injectable()
 export class SeedService {
@@ -20,6 +20,7 @@ export class SeedService {
     private materialsService: MaterialsService,
     private locationsService: LocationsService,
     private usersService: UsersService,
+    private absencesService: UsersService,
   ) {}
 
   //#region Appointments
@@ -99,6 +100,8 @@ export class SeedService {
 
     //TODO: Add some random materials to staff
 
+    //TODO: Add some absences to staff
+
     const newUsers = await this.usersService.saveAll(theUsers)
 
     return newUsers
@@ -112,6 +115,12 @@ export class SeedService {
   //#region Locations
   async deleteAllLocations(): Promise<void> {
     return this.locationsService.truncate()
+  }
+  //#endregion
+
+  //#region Absences
+  async deleteAllAbsences(): Promise<void> {
+    return this.absencesService.truncate()
   }
   //#endregion
 
