@@ -17,6 +17,7 @@ import { AllowedRoles } from 'src/users/decorators/role.decorator'
 import { Role, User } from 'src/users/entities/user.entity'
 import { RolesGuard } from 'src/users/guards/roles.guard'
 import { UsersService } from 'src/users/users.service'
+import { OrderByInput } from 'src/interfaces/order.input'
 
 @Resolver(() => Absence)
 export class AbsencesResolver {
@@ -28,15 +29,26 @@ export class AbsencesResolver {
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Absence], { name: 'absences' })
-  findAll() {
-    return this.absencesService.findAll()
+  findAll(
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    return this.absencesService.findAll(filters, order)
   }
 
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Absence], { name: 'absencesByPersonId' })
-  findAllByUserId(@Args('id', { type: () => String }) id: string) {
-    return this.absencesService.findAllByUserId(id)
+  findAllByUserId(
+    @Args('id', { type: () => String }) id: string,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    return this.absencesService.findAllByUserId(id, filters, order)
   }
 
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)

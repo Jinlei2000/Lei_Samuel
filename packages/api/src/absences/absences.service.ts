@@ -7,6 +7,8 @@ import { Repository } from 'typeorm'
 import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { UsersService } from 'src/users/users.service'
+import { OrderByInput } from 'src/interfaces/order.input'
+import { filterAbsences, orderAbsences } from 'src/helpers/absencesFunctions'
 
 @Injectable()
 export class AbsencesService {
@@ -18,16 +20,36 @@ export class AbsencesService {
   ) {}
 
   // TODO: add order and filter (type)
-  async findAll(): Promise<Absence[]> {
-    return this.absenceRepository.find()
+  async findAll(
+    filters?: Array<string>,
+    order?: OrderByInput,
+  ): Promise<Absence[]> {
+    // filter and order absences
+    const whereQuery = filterAbsences(filters)
+    const orderQuery = orderAbsences(order)
+
+    return this.absenceRepository.find({
+      where: whereQuery,
+      order: orderQuery,
+    })
   }
 
   // TODO: add order and filter (type)
-  async findAllByUserId(userId: string): Promise<Absence[]> {
+  async findAllByUserId(
+    userId: string,
+    filters?: Array<string>,
+    order?: OrderByInput,
+  ): Promise<Absence[]> {
+    // filter and order absences
+    const whereQuery = filterAbsences(filters)
+    const orderQuery = orderAbsences(order)
+
     const absences = await this.absenceRepository.find({
       where: {
         userId: userId,
+        ...whereQuery,
       },
+      order: orderQuery,
     })
 
     return absences
@@ -111,6 +133,8 @@ export class AbsencesService {
 
     return newAbsence
   }
+
+  // TODO make a function that checks if user has an absence on the same date & calculate total days
 
   async update(
     id: ObjectId,
