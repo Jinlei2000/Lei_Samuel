@@ -3,6 +3,7 @@
 - [Graphql Queries](#graphql-queries)
   - [Authorization](#authorization)
   - [Materials](#materials)
+- [TODO: personId is a resolve field](#todo-personid-is-a-resolve-field)
     - [materials(filters: , order: { field, direction })](#materialsfilters--order--field-direction-)
     - [material(id)](#materialid)
     - [materialsByPersonId(personId, filters: , order: { field, direction })](#materialsbypersonidpersonid-filters--order--field-direction-)
@@ -41,14 +42,14 @@
 Most of queries and mutations require authorization. To authorize you need to pass `Authorization` header with `Bearer` token.
 
 ## Materials
-// TODO: personId is a resolve field
+# TODO: personId is a resolve field
 ```object
 {
   id
   name
   isAvailable
   user {
-    // everything from user
+    # everything from user
   }
   isDefect
   serialNumber
@@ -170,7 +171,7 @@ mutation {
     createMaterialInput: {
       name: "Material 1"
       isAvailable: true
-      personId: "651d55ade0e77efb23fdfe53" // optional
+      personId: "651d55ade0e77efb23fdfe53" # optional
       serialNumber: 123456789
     }
   ) {
@@ -232,7 +233,7 @@ mutation {
   fullname
   url
   locations {
-    // everthing from locations
+    # everthing from locations
   }
   email
   telephone
@@ -277,7 +278,7 @@ query {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -308,7 +309,7 @@ query {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -339,7 +340,7 @@ query {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -370,7 +371,7 @@ query {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -403,7 +404,7 @@ query {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -433,9 +434,9 @@ mutation {
       email: "xx"
       telephone: "xx"
       availability: true
-      // STAFF ONLY
+      # STAFF ONLY
       absentCount: number
-      // CLIENT ONLY
+      # CLIENT ONLY
       invoiceOption: "xx" 
       company: true
       btwNumber: "xx"
@@ -450,7 +451,7 @@ mutation {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -484,8 +485,8 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      telephone: "xx" // optional
-      locale: "en" // optional
+      telephone: "xx" # optional
+      locale: "en" # optional
     }
   ) {
     id
@@ -495,7 +496,7 @@ mutation {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -516,7 +517,7 @@ mutation {
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
-      locale: "en" // optional
+      locale: "en" # optional
     }
   ) {
     id
@@ -526,7 +527,7 @@ mutation {
     fullname
     url
     locations {
-      // everthing from locations
+      # everthing from locations
     }
     email
     telephone
@@ -669,7 +670,7 @@ query {
 {
   id
   user{
-    // everything from user
+    # everything from user
   }
   startDate
   endDate
@@ -677,6 +678,8 @@ query {
   updatedAt
 }
 ```
+
+start and end date are in format `YYYY-MM-DD`
 
 ### absences(filters: , order: { field, direction })
 
@@ -696,7 +699,7 @@ query {
   absences {
     id
     user{
-      // everything from user
+      # everything from user
     }
     startDate
     endDate
@@ -724,7 +727,7 @@ query {
   absencesByPersonId(personId: "6522bd1cfabcb1f1d63dd63a") {
     id
     user{
-      // everything from user
+      # everything from user
     }
     startDate
     endDate
@@ -743,7 +746,7 @@ query {
   absence(id: "6522bd1cfabcb1f1d63dd63a") {
     id
     user{
-      // everything from user
+      # everything from user
     }
     startDate
     endDate
@@ -760,15 +763,15 @@ mutation {
   createAbsence(
     createAbsenceInput: {
       userId: "6522bd1cfabcb1f1d63dd63a"
-      startDate: "2020-01-01"
-      endDate: "2020-01-01"
+      startDate: "2020-01-01" # YYYY-MM-DD
+      endDate: "2020-01-01" # YYYY-MM-DD
       type: "S"
-      description: "x" // optional
+      description: "x" # optional
     }
   ) {
     id
     user{
-      // everything from user
+      # everything from user
     }
     startDate
     endDate
@@ -786,15 +789,15 @@ mutation {
     updateAbsenceInput: {
       id: "6522bd1cfabcb1f1d63dd63a"
       userId: "6522bd1cfabcb1f1d63dd63a"
-      startDate: "2020-01-01"
-      endDate: "2020-01-01"
+      startDate: "2020-01-01" # YYYY-MM-DD
+      endDate: "2020-01-01" # YYYY-MM-DD
       type: "S"
       description: "x"
     }
   ) {
     id
     user{
-      // everything from user
+      # everything from user
     }
     startDate
     endDate
