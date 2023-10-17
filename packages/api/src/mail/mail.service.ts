@@ -23,7 +23,9 @@ export class MailService {
 
     // TODO: change this to the frontend url
     // TODO: how to handle the token?
+    // TODO: use env variables
     const url = `http://localhost:5173/auth/register/staff/?token=${token}`
+    // TODO: sla token in de database op (token, expiration date, user id)
 
     const result = await this.mailerService
       .sendMail({
