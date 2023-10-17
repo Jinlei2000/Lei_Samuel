@@ -28,9 +28,9 @@ export class LocationsService {
     })
   }
 
-  findAllByUid(uid: string): Promise<Location[]> {
+  findAllByUserId(userId: string): Promise<Location[]> {
     const locations = this.locationRepository.find({
-      where: { uid: uid },
+      where: { userId: userId },
     })
 
     if (!locations) {
@@ -57,12 +57,12 @@ export class LocationsService {
   async create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
-    l.uid = createLocationInput.uid
+    l.userId = createLocationInput.userId
 
     const newLoc = await this.locationRepository.save(l)
 
     // update user with new locationIds
-    const user = await this.usersService.findOneByUid(l.uid)
+    const user = await this.usersService.findOne(newLoc.userId)
     const ids = user.locationIds.map(id => id.toString())
     await this.usersService.updateUser(user.uid, user.id, {
       id: user.id,
@@ -107,8 +107,8 @@ export class LocationsService {
   }
 
   // Delete all locations of user
-  async removeAllByUid(uid: string): Promise<string[]> {
-    const locations = await this.findAllByUid(uid)
+  async removeAllByUid(userId: string): Promise<string[]> {
+    const locations = await this.findAllByUserId(userId)
 
     const ids = locations.map(location => location.id.toString())
 

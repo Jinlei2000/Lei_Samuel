@@ -14,19 +14,16 @@
     "materials": [
       {
         "name": "Pruning Shears",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 12345
       },
       {
         "name": "Gardening Gloves",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 54321
       },
       {
         "name": "Planting Shovel",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 98765
       }
@@ -47,19 +44,16 @@
     "materials": [
       {
         "name": "Watering Can",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 11111
       },
       {
         "name": "Knee Pads",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 22222
       },
       {
         "name": "Garden Rake",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 33333
       }
@@ -80,19 +74,16 @@
     "materials": [
       {
         "name": "Pruning Saw",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 44444
       },
       {
         "name": "Garden Trowel",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 55555
       },
       {
         "name": "Lawn Edger",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 66666
       }
@@ -113,19 +104,16 @@
     "materials": [
       {
         "name": "Leaf Blower",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 77777
       },
       {
         "name": "Hedge Trimmer",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 88888
       },
       {
         "name": "Garden Spade",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 99999
       }
@@ -146,19 +134,16 @@
     "materials": [
       {
         "name": "Garden Shears",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 101010
       },
       {
         "name": "Wheelbarrow",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 111111
       },
       {
         "name": "Pruning Loppers",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 121212
       }
@@ -179,19 +164,16 @@
     "materials": [
       {
         "name": "Garden Sprayer",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 131313
       },
       {
         "name": "Garden Hand Rake",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 141414
       },
       {
         "name": "Pruning Shears",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 151515
       }
@@ -215,19 +197,16 @@
     "materials": [
       {
         "name": "Garden Fork",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 161616
       },
       {
         "name": "Garden Cart",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 171717
       },
       {
         "name": "Plant Labels",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 181818
       }
@@ -243,19 +222,16 @@
     "materials": [
       {
         "name": "Garden Hoe",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 191919
       },
       {
         "name": "Garden Stake",
-        "personId": null,
         "isLoan": true,
         "serialNumber": 202020
       },
       {
         "name": "Garden Cultivator",
-        "personId": null,
         "isLoan": false,
         "serialNumber": 212121
       }
