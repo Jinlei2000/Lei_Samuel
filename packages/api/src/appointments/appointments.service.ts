@@ -7,7 +7,10 @@ import { Appointment } from './entities/appointment.entity'
 import { ObjectId } from 'mongodb'
 import { OrderByInput } from 'src/interfaces/order.input'
 import { GraphQLError } from 'graphql'
-import { Location } from 'src/locations/entities/location.entity'
+import {
+  filterAppointments,
+  orderAppointments,
+} from 'src/helpers/appointmentsFunctions'
 
 @Injectable()
 export class AppointmentsService {
@@ -22,8 +25,8 @@ export class AppointmentsService {
     order?: OrderByInput,
   ): Promise<Appointment[]> {
     // filter and order appointments
-    // const whereQuery = filterAppointments(filters)
-    // const orderQuery = orderAppointments(order)
+    const whereQuery = filterAppointments(filters)
+    const orderQuery = orderAppointments(order)
 
     return this.appointmentRepository.find()
   }
