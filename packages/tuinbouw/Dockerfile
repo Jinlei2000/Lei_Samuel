@@ -10,6 +10,7 @@ RUN npm ci
 
 # COPY, make sure that /env.production.local is copied as well. Is it excluded from dockerignore?
 COPY --chown=node:node packages/tuinbouw packages/tuinbouw
+COPY --chown=node:node packages/tuinbouw/.env.production.local packages/tuinbouw/.env
 
 USER node
 RUN npm run build -w tuinbouw

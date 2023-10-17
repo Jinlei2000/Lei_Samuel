@@ -42,4 +42,4 @@ volumes:
 
 secrets:
   my-google-secret:
-    file: /packages/api/credentials.json
+    file: C:/Users/jinle/Downloads/credentials.json
