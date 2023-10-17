@@ -7,7 +7,8 @@ import { LocationsService } from 'src/locations/locations.service'
 import { Location } from 'src/locations/entities/location.entity'
 import { UsersService } from 'src/users/users.service'
 import { Role, User } from 'src/users/entities/user.entity'
-import { ObjectId } from 'typeorm'
+// import { ObjectID } from 'typeorm'
+import { ObjectId } from 'mongodb'
 
 import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
@@ -48,10 +49,11 @@ export class SeedService {
     for (let material of materials) {
       const m = new Material()
       m.name = material.name.toLowerCase()
-      m.isAvailable = material.isAvailable
+      m.isLoan = material.isLoan
+      // m.isAvailable = material.isAvailable
       // TODO: How to add personId here? Make a User.
-      // m.personId = '333'
-      m.isDefect = material.isDefect
+      m.personId = material.personId
+      // m.isDefect = material.isDefect
       m.serialNumber = material.serialNumber
 
       theMaterials.push(m)
@@ -66,10 +68,28 @@ export class SeedService {
   //#endregion
 
   //#region Users
+
+  //TODO: Add some random materials to staff
+
+  // addMaterialsToEmployee = async (user: User) => {
+  //   console.log(user)
+  //   if (user.role === 'EMPLOYEE') {
+  //     console.log(user.materials)
+  //     for (let material of user.materials) {
+  //       const m = new Material()
+  //       m.name = material.name.toLowerCase()
+  //       m.isLoan = material.isLoan
+  //       m.personId = user.id.toString()
+  //       m.serialNumber = material.serialNumber
+  //     }
+  //   }
+  // }
+
   async addUsersFromJson(): Promise<User[]> {
     let theUsers: User[] = []
     for (let user of users) {
       const u = new User()
+      u.id = new ObjectId()
       u.firstname = user.firstname.toLowerCase()
       u.lastname = user.lastname.toLowerCase()
       u.fullname = `${user.firstname.toLowerCase()} ${user.lastname.toLowerCase()}`
@@ -81,6 +101,22 @@ export class SeedService {
       u.locationIds = []
       if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = 0
 
+      let userMaterials: Material[] = []
+      if (user.role === 'EMPLOYEE') {
+        for (let material of user.materials) {
+          const m = new Material()
+          m.name = material.name.toLowerCase()
+          m.isLoan = material.isLoan
+          m.personId = u.id.toString()
+          m.serialNumber = material.serialNumber
+
+          userMaterials.push(m)
+        }
+        this.materialsService.saveAll(userMaterials)
+      }
+
+      // this.addMaterialsToEmployee(u)
+
       // Add some locations to users
       if (user.locations) {
         let theLocationIds: ObjectId[] = []
@@ -88,6 +124,8 @@ export class SeedService {
           const l = new Location()
           l.address = location.address
           l.uid = user.uid
+
+          // TODO: change to u.id instead of user.uid
 
           const newLoc = await this.locationsService.save(l)
           theLocationIds.push(newLoc.id)
@@ -97,8 +135,6 @@ export class SeedService {
 
       theUsers.push(u)
     }
-
-    //TODO: Add some random materials to staff
 
     //TODO: Add some absences to staff
 
