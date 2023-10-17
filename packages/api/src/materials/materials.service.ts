@@ -82,9 +82,10 @@ export class MaterialsService {
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()
-    m.isAvailable = createMaterialInput.isAvailable
+    // m.isAvailable = createMaterialInput.isAvailable
     m.personId = createMaterialInput.personId
-    m.isDefect = false
+    m.isLoan = createMaterialInput.isLoan
+    // m.isDefect = false
     m.serialNumber = createMaterialInput.serialNumber
 
     return this.materialRepository.save(m)
