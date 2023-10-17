@@ -8,13 +8,17 @@ export class CreateMaterialInput {
   @Field() // graphql
   name: string
 
-  @IsOptional() //validation
-  @Field({ defaultValue: true }) // graphql
-  isAvailable: boolean
+  // For future use
+  // @IsOptional() //validation
+  // @Field({ defaultValue: true }) // graphql
+  // isAvailable: boolean
 
   @IsOptional() //validation
   @Field({ nullable: true }) // graphql
   personId?: string
+
+  @Field({ defaultValue: false }) // graphql
+  isLoan: boolean
 
   // TODO: add validation for isDefect
   @Field() // graphql

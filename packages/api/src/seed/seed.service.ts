@@ -48,10 +48,11 @@ export class SeedService {
     for (let material of materials) {
       const m = new Material()
       m.name = material.name.toLowerCase()
-      m.isAvailable = material.isAvailable
+      m.isLoan = material.isLoan
+      // m.isAvailable = material.isAvailable
       // TODO: How to add personId here? Make a User.
-      // m.personId = '333'
-      m.isDefect = material.isDefect
+      m.personId = material.personId
+      // m.isDefect = material.isDefect
       m.serialNumber = material.serialNumber
 
       theMaterials.push(m)
@@ -99,6 +100,8 @@ export class SeedService {
     }
 
     //TODO: Add some random materials to staff
+
+    
 
     //TODO: Add some absences to staff
 

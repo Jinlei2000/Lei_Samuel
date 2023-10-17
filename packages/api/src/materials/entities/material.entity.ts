@@ -39,7 +39,7 @@ export class Material {
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
-  isLoan: boolean = false
+  isLoan: boolean
 
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
