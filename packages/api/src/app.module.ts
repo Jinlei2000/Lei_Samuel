@@ -13,6 +13,7 @@ import { LocationsModule } from './locations/locations.module'
 import { UsersModule } from './users/users.module'
 import { MailModule } from './mail/mail.module';
 import { AbsencesModule } from './absences/absences.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [

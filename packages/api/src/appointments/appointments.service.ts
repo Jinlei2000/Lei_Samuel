@@ -1,49 +1,26 @@
-import { Injectable } from '@nestjs/common'
-import { CreateAppointmentInput } from './dto/create-appointment.input'
-import { UpdateAppointmentInput } from './dto/update-appointment.input'
-import { Appointment } from './entities/appointment.entity'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
+import { Injectable } from '@nestjs/common';
+import { CreateAppointmentInput } from './dto/create-appointment.input';
+import { UpdateAppointmentInput } from './dto/update-appointment.input';
 
 @Injectable()
 export class AppointmentsService {
-  constructor(
-    @InjectRepository(Appointment)
-    private readonly appointmentRepository: Repository<Appointment>,
-  ) {}
-
-  create(createAppointmentInput: CreateAppointmentInput): Promise<Appointment> {
-    const a = new Appointment()
-    a.name = createAppointmentInput.name
-    a.date = createAppointmentInput.date
-    a.location = createAppointmentInput.location
-
-    return this.appointmentRepository.save(a)
+  create(createAppointmentInput: CreateAppointmentInput) {
+    return 'This action adds a new appointment';
   }
 
   findAll() {
-    return this.appointmentRepository.find()
+    return `This action returns all appointments`;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} appointment`
+    return `This action returns a #${id} appointment`;
   }
 
   update(id: number, updateAppointmentInput: UpdateAppointmentInput) {
-    return `This action updates a #${id} appointment`
+    return `This action updates a #${id} appointment`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} appointment`
-  }
-
-  //logica for seeding
-
-  saveAll(appointments: Appointment[]) {
-    return this.appointmentRepository.save(appointments)
-  }
-
-  truncate() {
-    return this.appointmentRepository.clear()
+    return `This action removes a #${id} appointment`;
   }
 }

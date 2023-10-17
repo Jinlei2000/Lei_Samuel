@@ -1,16 +1,7 @@
-import { InputType, Int, Field } from '@nestjs/graphql'
+import { InputType, Int, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateAppointmentInput {
-  @Field()
-  name: string
-
-  @Field()
-  date: Date
-
-  @Field()
-  location: string
-
-  @Field({ nullable: true })
-  description?: string
+  @Field(() => Int, { description: 'Example field (placeholder)' })
+  exampleField: number;
 }
