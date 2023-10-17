@@ -20,8 +20,12 @@ export class Appointment {
   location: Location
 
   @Column()
-  @Field()
-  price: number
+  @Field({ nullable: true })
+  price?: number
+
+  @Column()
+  @Field({ description: 'The type of appointment (repair, maintenance, etc)' })
+  type: string
 
   @Column()
   @Field()
@@ -32,15 +36,21 @@ export class Appointment {
   endProposedDate: Date
 
   @Column()
-  @Field()
-  finalDate: Date
+  @Field({ nullable: true , description: 'The date when the appointment is'})
+  finalDate?: Date
 
   @Column()
-  @Field()
+  @Field({
+    defaultValue: false,
+    description: 'If the appointment is scheduled, it will be true',
+  })
   isScheduled: boolean
 
   @Column()
-  @Field()
+  @Field({
+    defaultValue: false,
+    description: 'If the appointment is done, it will be true',
+  })
   isDone: boolean
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
