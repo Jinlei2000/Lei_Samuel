@@ -50,28 +50,6 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
-  //#region Defects
-  @Command({
-    command: 'seed:database:defects',
-    describe: 'Seed the database with defects',
-  })
-  async seedDefects() {
-    console.info('🪺 Start seeding of defects')
-    const defects = await this.seedService.addDefectsFromJson()
-    console.info(`🐣 ${defects.length} Defects are added`)
-  }
-
-  @Command({
-    command: 'seed:reset:defects',
-    describe: 'Delete all data from the defects table',
-  })
-  async deleteDefects() {
-    console.info('🔪 Start deleting defects')
-    await this.seedService.deleteAllDefects()
-    console.info('🪶 Removed defects')
-  }
-  //#endregion
-
   //#region Staffs
   @Command({
     command: 'seed:database:staffs',
