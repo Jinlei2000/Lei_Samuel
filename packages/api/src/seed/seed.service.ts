@@ -34,10 +34,6 @@ export class SeedService {
       const m = new Material()
       m.name = material.name.toLowerCase()
       m.isLoan = material.isLoan
-      // m.isAvailable = material.isAvailable
-      // TODO: How to add personId here? Make a User.
-      m.personId = material.personId
-      // m.isDefect = material.isDefect
       m.serialNumber = material.serialNumber
 
       theMaterials.push(m)
@@ -67,36 +63,6 @@ export class SeedService {
       u.locationIds = []
       if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = 0
 
-      // let userMaterials: Material[] = []
-      // if (user.role === 'EMPLOYEE') {
-      //   for (let material of user.materials) {
-      //     const m = new Material()
-      //     m.name = material.name.toLowerCase()
-      //     m.isLoan = material.isLoan
-      //     m.personId = u.id.toString()
-      //     m.serialNumber = material.serialNumber
-
-      //     userMaterials.push(m)
-      //   }
-      //   this.materialsService.saveAll(userMaterials)
-      // }
-
-      // Add some locations to users
-      // if (user.locations) {
-      //   let theLocationIds: ObjectId[] = []
-      //   for (let location of user.locations) {
-      //     const l = new Location()
-      //     l.address = location.address
-      //     l.uid = user.uid
-
-      //     // TODO: change to u.id instead of user.uid
-
-      //     const newLoc = await this.locationsService.save(l)
-      //     theLocationIds.push(newLoc.id)
-      //   }
-      //   u.locationIds = theLocationIds
-      // }
-
       theUsers.push(u)
     }
 
@@ -107,26 +73,42 @@ export class SeedService {
     for (let user of newUsers) {
       // console.log('DBuser', user.uid)
       // console.log('jsonUser', users[num].uid)
-      // TODO: Add some locations to users
+      // Add some locations to users
       if (users[num].locations) {
         let theLocationIds: ObjectId[] = []
         for (let location of users[num].locations) {
           const l = new Location()
           l.address = location.address
-          // TODO: change to u.id instead of user.uid
-          l.id = user.id
+          l.userId = user.id.toString()
 
           const newLoc = await this.locationsService.save(l)
           theLocationIds.push(newLoc.id)
         }
         user.locationIds = theLocationIds
       }
-      //TODO: Add some materials to staff
+      // Add some materials to staff
+      if (user.role === 'EMPLOYEE' && users[num].materials) {
+        let userMaterials: Material[] = []
+        for (let material of users[num].materials) {
+          const m = new Material()
+          m.name = material.name.toLowerCase()
+          m.isLoan = false
+          m.personId = user.id.toString()
+          m.serialNumber = material.serialNumber
+
+          userMaterials.push(m)
+        }
+        this.materialsService.saveAll(userMaterials)
+      }
+
       //TODO: Add some absences to staff
       // TODO: Add some appointments to users
 
       num++
+      console.info(`🙋 user ${num} is added`)
     }
+
+    await this.usersService.saveAll(newUsers)
 
     return newUsers
   }

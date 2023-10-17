@@ -50,11 +50,6 @@ export class User {
   @Field(() => [Location], { nullable: 'itemsAndList' }) // GraphQL type
   locations?: Location[]
 
-  // TODO: no materials user
-  @Column() // Database link - Typeorm
-  @Field(() => [Material], { nullable: true }) // GraphQL type
-  materials?: Material[]
-
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
   email: string

@@ -107,7 +107,7 @@ export class LocationsService {
   }
 
   // Delete all locations of user
-  async removeAllByUid(userId: string): Promise<string[]> {
+  async removeAllByUserId(userId: string): Promise<string[]> {
     const locations = await this.findAllByUserId(userId)
 
     const ids = locations.map(location => location.id.toString())

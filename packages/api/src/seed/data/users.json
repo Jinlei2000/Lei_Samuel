@@ -10,23 +10,6 @@
       {
         "address": "Marksesteenweg 58, 8500 Kortrijk"
       }
-    ],
-    "materials": [
-      {
-        "name": "Pruning Shears",
-        "isLoan": false,
-        "serialNumber": 12345
-      },
-      {
-        "name": "Gardening Gloves",
-        "isLoan": true,
-        "serialNumber": 54321
-      },
-      {
-        "name": "Planting Shovel",
-        "isLoan": false,
-        "serialNumber": 98765
-      }
     ]
   },
   {
@@ -40,23 +23,6 @@
       {
         "address": "Sint-Janslaan 5, 8500 Kortrijk"
       }
-    ],
-    "materials": [
-      {
-        "name": "Watering Can",
-        "isLoan": false,
-        "serialNumber": 11111
-      },
-      {
-        "name": "Knee Pads",
-        "isLoan": true,
-        "serialNumber": 22222
-      },
-      {
-        "name": "Garden Rake",
-        "isLoan": false,
-        "serialNumber": 33333
-      }
     ]
   },
   {
@@ -69,23 +35,6 @@
     "locations": [
       {
         "address": "Snaggaardstraat 15, 8500 Kortrijk"
-      }
-    ],
-    "materials": [
-      {
-        "name": "Pruning Saw",
-        "isLoan": false,
-        "serialNumber": 44444
-      },
-      {
-        "name": "Garden Trowel",
-        "isLoan": true,
-        "serialNumber": 55555
-      },
-      {
-        "name": "Lawn Edger",
-        "isLoan": false,
-        "serialNumber": 66666
       }
     ]
   },
@@ -103,18 +52,27 @@
     ],
     "materials": [
       {
-        "name": "Leaf Blower",
-        "isLoan": false,
+        "name": "Gardening Gloves",
+        "serialNumber": 11111
+      },
+      {
+        "name": "Knee Pads",
+        "serialNumber": 22222
+      },
+      {
+        "name": "Plant Labels",
+        "serialNumber": 33333
+      },
+      {
+        "name": "Weeding Tool",
         "serialNumber": 77777
       },
       {
-        "name": "Hedge Trimmer",
-        "isLoan": true,
+        "name": "Garden Hand Rake",
         "serialNumber": 88888
       },
       {
-        "name": "Garden Spade",
-        "isLoan": false,
+        "name": "Pruning Loppers",
         "serialNumber": 99999
       }
     ]
@@ -133,19 +91,16 @@
     ],
     "materials": [
       {
-        "name": "Garden Shears",
-        "isLoan": false,
-        "serialNumber": 101010
+        "name": "Floral Scissors",
+        "serialNumber": 44444
       },
       {
-        "name": "Wheelbarrow",
-        "isLoan": true,
-        "serialNumber": 111111
+        "name": "Garden Kneeler",
+        "serialNumber": 55555
       },
       {
-        "name": "Pruning Loppers",
-        "isLoan": false,
-        "serialNumber": 121212
+        "name": "Garden Wire",
+        "serialNumber": 66666
       }
     ]
   },
@@ -159,23 +114,6 @@
     "locations": [
       {
         "address": "Diksmuidsesteenweg 396, 8800 Roeselare"
-      }
-    ],
-    "materials": [
-      {
-        "name": "Garden Sprayer",
-        "isLoan": false,
-        "serialNumber": 131313
-      },
-      {
-        "name": "Garden Hand Rake",
-        "isLoan": true,
-        "serialNumber": 141414
-      },
-      {
-        "name": "Pruning Shears",
-        "isLoan": false,
-        "serialNumber": 151515
       }
     ]
   },
@@ -193,23 +131,6 @@
       {
         "address": "Astridlaan 400, 8310 Brugge"
       }
-    ],
-    "materials": [
-      {
-        "name": "Garden Fork",
-        "isLoan": false,
-        "serialNumber": 161616
-      },
-      {
-        "name": "Garden Cart",
-        "isLoan": true,
-        "serialNumber": 171717
-      },
-      {
-        "name": "Plant Labels",
-        "isLoan": false,
-        "serialNumber": 181818
-      }
     ]
   },
   {
@@ -218,23 +139,6 @@
     "email": "emily.williams@gmail.com",
     "uid": "CNihqseWkQN603GCHOLU2G8hrsh2",
     "locale": "en",
-    "role": "CLIENT",
-    "materials": [
-      {
-        "name": "Garden Hoe",
-        "isLoan": false,
-        "serialNumber": 191919
-      },
-      {
-        "name": "Garden Stake",
-        "isLoan": true,
-        "serialNumber": 202020
-      },
-      {
-        "name": "Garden Cultivator",
-        "isLoan": false,
-        "serialNumber": 212121
-      }
-    ]
+    "role": "CLIENT"
   }
 ]
