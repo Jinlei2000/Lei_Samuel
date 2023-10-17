@@ -1,6 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { Column, CreateDateColumn, Entity, ObjectId, ObjectIdColumn, UpdateDateColumn } from 'typeorm'
 import { Location } from 'src/locations/entities/location.entity'
+import { Material } from 'src/materials/entities/material.entity'
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -48,6 +49,10 @@ export class User {
   locationIds?: ObjectId[]
   @Field(() => [Location], { nullable: 'itemsAndList' }) // GraphQL type
   locations?: Location[]
+
+  @Column() // Database link - Typeorm
+  @Field(() => [Material], { nullable: true }) // GraphQL type
+  materials?: Material[]
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
