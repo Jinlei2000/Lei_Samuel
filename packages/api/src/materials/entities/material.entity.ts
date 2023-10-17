@@ -19,21 +19,27 @@ export class Material {
   @Field() // GraphQL type
   name: string
 
-  @Column() // Database link - Typeorm
-  @Field() // GraphQL type
-  isAvailable: boolean
+  // For later use
+  // @Column() // Database link - Typeorm
+  // @Field() // GraphQL type
+  // isAvailable: boolean
 
   @Column() // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
   personId?: string
 
-  @Column() // Database link - Typeorm
-  @Field() // GraphQL type
-  isDefect: boolean
+  // For later use
+  // @Column() // Database link - Typeorm
+  // @Field() // GraphQL type
+  // isDefect: boolean
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
   serialNumber: number
+
+  @Column() // Database link - Typeorm
+  @Field() // GraphQL type
+  isLoan: boolean = false
 
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
