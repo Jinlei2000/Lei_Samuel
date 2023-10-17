@@ -1,7 +1,34 @@
 <template>
-  <div class="flex flex-col items-center justify-center mt-12 gap-12">
-    <div>search</div>
-    <div class="grid grid-cols-4 mx-32 gap-3">
+  <div class="flex flex-col items-center justify-center mt-12 mx-32 gap-12">
+    <div class="flex items-center justify-between w-full">
+      <!-- filters + searchbar -->
+      <div class="flex items-center gap-3">
+        <button
+          class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+        >
+          <Filter />
+        </button>
+        <button
+          class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+        >
+          <Sort />
+        </button>
+      </div>
+      <div class="flex items-center justify-center gap-3 relative">
+        <input
+          v-model="search"
+          class="bg-gray-200 rounded-full px-3 py-2 w-96"
+          type="text"
+          placeholder="Search for materials"
+        />
+        <button
+          class="bg-transparent p-2 rounded-full hover:scale-110 transition-all absolute right-1"
+        >
+          <Search class="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+    <div class="grid grid-cols-4 gap-3">
       <div
         v-if="allMaterials.materials.length > 0"
         v-for="material of allMaterials.materials"
@@ -30,6 +57,7 @@ import {
   FIND_MATERIALS_BY_SEARCH_STRING,
 } from '@/graphql/material.query'
 import { watch, ref } from 'vue'
+import { Filter, Search } from 'lucide-vue-next'
 
 const search = ref('')
 
