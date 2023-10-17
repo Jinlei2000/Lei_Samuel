@@ -93,7 +93,7 @@ export class LocationsService {
     await this.locationRepository.delete(id)
 
     // update user locationIds with new array
-    const user = await this.usersService.findOneByUid(location.uid)
+    const user = await this.usersService.findOne(location.userId)
     const ids = user.locationIds.map(id => id.toString())
     // remove the removed location id from the array
     const newIds = ids.filter(id => id !== location.id.toString())
