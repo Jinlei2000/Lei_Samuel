@@ -1,8 +1,14 @@
 import { InputType, Field } from '@nestjs/graphql'
+import { CreateLocationInput } from 'src/locations/dto/create-location.input'
+import { Location } from 'src/locations/entities/location.entity'
+import { IsDate } from 'class-validator'
 
 @InputType()
 export class CreateAppointmentInput {
-  @Field(() => Location, { nullable: true })
+  @Field()
+  userId: string
+
+  @Field(() => CreateLocationInput)
   location: Location
 
   @Field({
@@ -10,11 +16,13 @@ export class CreateAppointmentInput {
     description: 'The type of appointment (repair, maintenance, etc)',
   })
   type: string
-
-  @Field({ nullable: true })
+  
+  @IsDate() // example: 2021-01-01
+  @Field()
   startProposedDate: Date
 
-  @Field({ nullable: true })
+  @IsDate() 
+  @Field()
   endProposedDate: Date
 
   @Field({

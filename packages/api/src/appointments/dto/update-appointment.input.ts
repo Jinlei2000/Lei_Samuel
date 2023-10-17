@@ -1,15 +1,18 @@
 import { ObjectId } from 'typeorm'
 import { CreateAppointmentInput } from './create-appointment.input'
 import { InputType, Field, PartialType, ID } from '@nestjs/graphql'
+import { CreateLocationInput } from 'src/locations/dto/create-location.input'
+import { Location } from 'src/locations/entities/location.entity'
+import { IsDate, IsOptional } from 'class-validator'
 
 @InputType()
 export class UpdateAppointmentInput extends PartialType(
   CreateAppointmentInput,
 ) {
-  @Field(() => ID) 
+  @Field(() => ID)
   id: ObjectId
 
-  @Field(() => Location, { nullable: true })
+  @Field(() => CreateLocationInput, { nullable: true })
   location?: Location
 
   @Field({ nullable: true })
@@ -21,12 +24,18 @@ export class UpdateAppointmentInput extends PartialType(
   })
   type?: string
 
+  @IsOptional()
+  @IsDate() // example: 2021-01-01
   @Field({ nullable: true })
   startProposedDate?: Date
 
+  @IsOptional()
+  @IsDate()
   @Field({ nullable: true })
   endProposedDate?: Date
 
+  @IsOptional()
+  @IsDate()
   @Field({ nullable: true, description: 'The date when the appointment is' })
   finalDate?: Date
 

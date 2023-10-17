@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { User } from 'src/users/entities/user.entity'
 import {
   ObjectIdColumn,
   ObjectId,
@@ -7,13 +8,20 @@ import {
   UpdateDateColumn,
   Entity,
 } from 'typeorm'
+import { Location } from 'src/locations/entities/location.entity'
 
 @Entity()
-@ObjectType()
+@ObjectType({ description: 'Appointment' })
 export class Appointment {
   @ObjectIdColumn()
   @Field(() => ID)
   id: ObjectId
+
+  // Resolve field
+  @Column()
+  userId: string
+  @Field(() => User)
+  user: User
 
   @Column()
   @Field(() => Location)

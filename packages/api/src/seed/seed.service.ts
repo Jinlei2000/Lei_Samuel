@@ -25,18 +25,18 @@ export class SeedService {
   ) {}
 
   //#region Appointments
-  async addAppointmentsFromJson(): Promise<Appointment[]> {
-    let theAppointments: Appointment[] = []
-    for (let appointment of appointments) {
-      const a = new Appointment()
-      a.name = appointment.name
-      a.date = new Date(appointment.date)
+  // async addAppointmentsFromJson(): Promise<Appointment[]> {
+  //   let theAppointments: Appointment[] = []
+  //   for (let appointment of appointments) {
+  //     const a = new Appointment()
+  //     a.name = appointment.name
+  //     a.date = new Date(appointment.date)
 
-      theAppointments.push(a)
-    }
+  //     theAppointments.push(a)
+  //   }
 
-    return this.appointmentsService.saveAll(theAppointments)
-  }
+  //   return this.appointmentsService.saveAll(theAppointments)
+  // }
 
   async deleteAllAppointments(): Promise<void> {
     return this.appointmentsService.truncate()
@@ -89,6 +89,7 @@ export class SeedService {
     let theUsers: User[] = []
     for (let user of users) {
       const u = new User()
+      // TODO: don't use new ObjectId() here
       u.id = new ObjectId()
       u.firstname = user.firstname.toLowerCase()
       u.lastname = user.lastname.toLowerCase()
