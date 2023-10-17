@@ -50,60 +50,65 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
-  //#region Defects
+  //#region Users
   @Command({
-    command: 'seed:database:defects',
-    describe: 'Seed the database with defects',
+    command: 'seed:database:users',
+    describe: 'Seed the database with users',
   })
-  async seedDefects() {
-    console.info('🪺 Start seeding of defects')
-    const defects = await this.seedService.addDefectsFromJson()
-    console.info(`🐣 ${defects.length} Defects are added`)
+  async seedUsers() {
+    console.info('🪺 Start seeding of users')
+    const users = await this.seedService.addUsersFromJson()
+    console.info(`🐣 ${users.length} Users are added`)
   }
 
   @Command({
-    command: 'seed:reset:defects',
-    describe: 'Delete all data from the defects table',
+    command: 'seed:reset:users',
+    describe: 'Delete all data from the users table',
   })
-  async deleteDefects() {
-    console.info('🔪 Start deleting defects')
-    await this.seedService.deleteAllDefects()
-    console.info('🪶 Removed defects')
-  }
-  //#endregion
-
-  //#region Staffs
-  @Command({
-    command: 'seed:database:staffs',
-    describe: 'Seed the database with staffs',
-  })
-  async seedStaffs() {
-    console.info('🪺 Start seeding of staffs')
-    const staffs = await this.seedService.addStaffsFromJson()
-    console.info(`🐣 ${staffs.length} Staffs are added`)
-  }
-
-  @Command({
-    command: 'seed:reset:staffs',
-    describe: 'Delete all data from the staffs table',
-  })
-  async deleteStaffs() {
-    console.info('🔪 Start deleting staffs')
-    await this.seedService.deleteAllStaffs()
-    console.info('🪶 Removed staffs')
+  async deleteUsers() {
+    console.info('🔪 Start deleting users')
+    await this.seedService.deleteAllUsers()
+    console.info('🪶 Removed users')
   }
   //#endregion
 
-  // Delete all data from appointments, materials, staffs... tables
+  //#region Locations
+  @Command({
+    command: 'seed:reset:locations',
+    describe: 'Delete all data from the locations table',
+  })
+  async deleteLocations() {
+    console.info('🔪 Start deleting locations')
+    await this.seedService.deleteAllLocations()
+    console.info('🪶 Removed locations')
+  }
+  //#endregion
+
+  //#region Absences
+  @Command({
+    command: 'seed:reset:absences',
+    describe: 'Delete all data from the absences table',
+  })
+  async deleteAbsences() {
+    console.info('🔪 Start deleting absences')
+    await this.seedService.deleteAllAbsences()
+    console.info('🪶 Removed absences')
+  }
+  //#endregion
+
+  // Delete all data from appointments, materials, users, locations... tables
   @Command({
     command: 'seed:reset',
-    describe: 'Delete all data from appointments, materials, staffs... tables',
+    describe:
+      'Delete all data from appointments, materials, users, locations... tables',
   })
   async deleteAll() {
     console.info('🔪 Start deleting all data')
     await this.deleteAppointments()
     await this.deleteMaterials()
-    await this.deleteStaffs()
+    await this.deleteUsers()
+    await this.deleteLocations()
+    await this.deleteAbsences()
     console.info('🪶 Removed all data')
   }
 }

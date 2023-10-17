@@ -26,7 +26,11 @@ export class RolesGuard implements CanActivate {
     // Waarom werkt dit niet? omdat we zelf al guard hiervoor hebben
     const { user } = ctx.getContext().req
 
-    const { role } = await this.usersService.findOneByUid(user.uid)
+    const { role } = await this.usersService
+      .findOneByUid(user.uid)
+      .catch(() => {
+        throw new Error('No roles defined')
+      })
 
     return requiredRoles.includes(role)
   }

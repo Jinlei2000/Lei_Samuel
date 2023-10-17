@@ -4,16 +4,18 @@ import { CommandModule } from 'nestjs-command'
 import { SeedService } from './seed.service'
 import { DatabaseSeedCommand } from './seed.command'
 import { MaterialsModule } from 'src/materials/materials.module'
-import { StaffsModule } from 'src/staffs/staffs.module'
-import { DefectsModule } from 'src/defects/defects.module'
+import { LocationsModule } from 'src/locations/locations.module'
+import { UsersModule } from 'src/users/users.module'
+import { AbsencesModule } from 'src/absences/absences.module'
 
 @Module({
   imports: [
+    UsersModule,
+    LocationsModule,
     AppointmentsModule,
     MaterialsModule,
-    StaffsModule,
+    AbsencesModule,
     CommandModule,
-    DefectsModule,
   ],
   providers: [DatabaseSeedCommand, SeedService],
 })

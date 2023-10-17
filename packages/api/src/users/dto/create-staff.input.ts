@@ -9,11 +9,7 @@ export class CreateStaffInput {
   @Field() // graphql
   lastname: string
 
-  @Field(() => String, { nullable: true }) // graphql
-  locationId?: string
-
   @IsEmail() // validation
-  @IsOptional()
   @Field() // graphql
   email: string
 
@@ -21,4 +17,7 @@ export class CreateStaffInput {
   @IsOptional()
   @Field({ nullable: true }) // graphql
   telephone?: string
+
+  @Field(() => String, { nullable: true }) // graphql
+  locale?: string
 }
