@@ -129,7 +129,7 @@ export class UsersService {
     await this.userRepository.delete(id)
 
     // delete all locations of user
-    await this.locationsService.removeAllByUid(user.uid)
+    await this.locationsService.removeAllByUserId(user.id.toString())
 
     // return id if delete was successful
     return id

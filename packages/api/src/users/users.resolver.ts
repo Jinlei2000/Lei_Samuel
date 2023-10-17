@@ -120,6 +120,6 @@ export class UsersResolver {
   // Resolve fields
   @ResolveField()
   locations(@Parent() u: User): Promise<Location[]> {
-    return this.locationService.findAllByUid(u.uid)
+    return this.locationService.findAllByUserId(u.id.toString())
   }
 }

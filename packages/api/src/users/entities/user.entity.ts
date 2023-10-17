@@ -51,10 +51,6 @@ export class User {
   locations?: Location[]
 
   @Column() // Database link - Typeorm
-  @Field(() => [Material], { nullable: true }) // GraphQL type
-  materials?: Material[]
-
-  @Column() // Database link - Typeorm
   @Field() // GraphQL type
   email: string
 

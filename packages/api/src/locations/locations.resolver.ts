@@ -27,9 +27,9 @@ export class LocationsResolver {
   // TODO: search by address
 
   @UseGuards(FirebaseGuard)
-  @Query(() => [Location], { name: 'locationsByUid' })
-  findAllByUid(@Args('uid', { type: () => String }) uid: string) {
-    return this.locationsService.findAllByUid(uid)
+  @Query(() => [Location], { name: 'locationsByUserId' })
+  findAllByUserId(@Args('userId', { type: () => String }) userId: string) {
+    return this.locationsService.findAllByUserId(userId)
   }
 
   @UseGuards(FirebaseGuard)

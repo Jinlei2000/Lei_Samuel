@@ -3,7 +3,6 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
-import { AppointmentsModule } from './appointments/appointments.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { SeedModule } from './seed/seed.module'
 import { MaterialsModule } from './materials/materials.module'
@@ -13,6 +12,7 @@ import { LocationsModule } from './locations/locations.module'
 import { UsersModule } from './users/users.module'
 import { MailModule } from './mail/mail.module';
 import { AbsencesModule } from './absences/absences.module';
+import { AppointmentsModule } from './appointments/appointments.module'
 
 @Module({
   imports: [

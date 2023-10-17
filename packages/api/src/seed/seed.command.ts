@@ -7,15 +7,15 @@ export class DatabaseSeedCommand {
   constructor(private readonly seedService: SeedService) {}
 
   //#region Appointments
-  @Command({
-    command: 'seed:database:appointments',
-    describe: 'Seed the database with appointments',
-  })
-  async seedAppointments() {
-    console.info('🪺 Start seeding of appointments')
-    const appointments = await this.seedService.addAppointmentsFromJson()
-    console.info(`🐣 ${appointments.length} Appointments are added`)
-  }
+  // @Command({
+  //   command: 'seed:database:appointments',
+  //   describe: 'Seed the database with appointments',
+  // })
+  // async seedAppointments() {
+  //   console.info('🪺 Start seeding of appointments')
+  //   const appointments = await this.seedService.addAppointmentsFromJson()
+  //   console.info(`🐣 ${appointments.length} Appointments are added`)
+  // }
 
   @Command({
     command: 'seed:reset:appointments',

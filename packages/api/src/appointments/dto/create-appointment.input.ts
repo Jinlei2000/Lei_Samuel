@@ -1,16 +1,39 @@
-import { InputType, Int, Field } from '@nestjs/graphql'
+import { InputType, Field } from '@nestjs/graphql'
+import { CreateLocationInput } from 'src/locations/dto/create-location.input'
+import { Location } from 'src/locations/entities/location.entity'
+import { IsDate } from 'class-validator'
 
 @InputType()
 export class CreateAppointmentInput {
   @Field()
-  name: string
+  userId: string
 
+  @Field(() => CreateLocationInput)
+  location: Location
+
+  @Field({
+    nullable: true,
+    description: 'The type of appointment (repair, maintenance, etc)',
+  })
+  type: string
+  
+  @IsDate() // example: 2021-01-01
   @Field()
-  date: Date
+  startProposedDate: Date
 
+  @IsDate() 
   @Field()
-  location: string
+  endProposedDate: Date
 
-  @Field({ nullable: true })
-  description?: string
+  @Field({
+    defaultValue: false,
+    description: 'If the appointment is scheduled, it will be true',
+  })
+  isScheduled: boolean
+
+  @Field({
+    defaultValue: false,
+    description: 'If the appointment is done, it will be true',
+  })
+  isDone: boolean
 }

@@ -7,10 +7,8 @@ import { LocationsService } from 'src/locations/locations.service'
 import { Location } from 'src/locations/entities/location.entity'
 import { UsersService } from 'src/users/users.service'
 import { Role, User } from 'src/users/entities/user.entity'
-// import { ObjectID } from 'typeorm'
 import { ObjectId } from 'mongodb'
 
-import * as appointments from './data/appointments.json' // set  "resolveJsonModule": true in tsconfig.json
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
 
@@ -24,20 +22,6 @@ export class SeedService {
     private absencesService: UsersService,
   ) {}
 
-  //#region Appointments
-  async addAppointmentsFromJson(): Promise<Appointment[]> {
-    let theAppointments: Appointment[] = []
-    for (let appointment of appointments) {
-      const a = new Appointment()
-      a.name = appointment.name
-      a.date = new Date(appointment.date)
-
-      theAppointments.push(a)
-    }
-
-    return this.appointmentsService.saveAll(theAppointments)
-  }
-
   async deleteAllAppointments(): Promise<void> {
     return this.appointmentsService.truncate()
   }
@@ -50,10 +34,6 @@ export class SeedService {
       const m = new Material()
       m.name = material.name.toLowerCase()
       m.isLoan = material.isLoan
-      // m.isAvailable = material.isAvailable
-      // TODO: How to add personId here? Make a User.
-      m.personId = material.personId
-      // m.isDefect = material.isDefect
       m.serialNumber = material.serialNumber
 
       theMaterials.push(m)
@@ -68,28 +48,10 @@ export class SeedService {
   //#endregion
 
   //#region Users
-
-  //TODO: Add some random materials to staff
-
-  // addMaterialsToEmployee = async (user: User) => {
-  //   console.log(user)
-  //   if (user.role === 'EMPLOYEE') {
-  //     console.log(user.materials)
-  //     for (let material of user.materials) {
-  //       const m = new Material()
-  //       m.name = material.name.toLowerCase()
-  //       m.isLoan = material.isLoan
-  //       m.personId = user.id.toString()
-  //       m.serialNumber = material.serialNumber
-  //     }
-  //   }
-  // }
-
   async addUsersFromJson(): Promise<User[]> {
     let theUsers: User[] = []
     for (let user of users) {
       const u = new User()
-      u.id = new ObjectId()
       u.firstname = user.firstname.toLowerCase()
       u.lastname = user.lastname.toLowerCase()
       u.fullname = `${user.firstname.toLowerCase()} ${user.lastname.toLowerCase()}`
@@ -101,13 +63,37 @@ export class SeedService {
       u.locationIds = []
       if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = 0
 
-      let userMaterials: Material[] = []
-      if (user.role === 'EMPLOYEE') {
-        for (let material of user.materials) {
+      theUsers.push(u)
+    }
+
+    const newUsers = await this.usersService.saveAll(theUsers)
+
+    let num = 0
+    theUsers = []
+    for (let user of newUsers) {
+      // console.log('DBuser', user.uid)
+      // console.log('jsonUser', users[num].uid)
+      // Add some locations to users
+      if (users[num].locations) {
+        let theLocationIds: ObjectId[] = []
+        for (let location of users[num].locations) {
+          const l = new Location()
+          l.address = location.address
+          l.userId = user.id.toString()
+
+          const newLoc = await this.locationsService.save(l)
+          theLocationIds.push(newLoc.id)
+        }
+        user.locationIds = theLocationIds
+      }
+      // Add some materials to staff
+      if (user.role === 'EMPLOYEE' && users[num].materials) {
+        let userMaterials: Material[] = []
+        for (let material of users[num].materials) {
           const m = new Material()
           m.name = material.name.toLowerCase()
-          m.isLoan = material.isLoan
-          m.personId = u.id.toString()
+          m.isLoan = false
+          m.personId = user.id.toString()
           m.serialNumber = material.serialNumber
 
           userMaterials.push(m)
@@ -115,30 +101,14 @@ export class SeedService {
         this.materialsService.saveAll(userMaterials)
       }
 
-      // this.addMaterialsToEmployee(u)
+      //TODO: Add some absences to staff
+      // TODO: Add some appointments to users
 
-      // Add some locations to users
-      if (user.locations) {
-        let theLocationIds: ObjectId[] = []
-        for (let location of user.locations) {
-          const l = new Location()
-          l.address = location.address
-          l.uid = user.uid
-
-          // TODO: change to u.id instead of user.uid
-
-          const newLoc = await this.locationsService.save(l)
-          theLocationIds.push(newLoc.id)
-        }
-        u.locationIds = theLocationIds
-      }
-
-      theUsers.push(u)
+      num++
+      console.info(`🙋 user ${num} is added`)
     }
 
-    //TODO: Add some absences to staff
-
-    const newUsers = await this.usersService.saveAll(theUsers)
+    await this.usersService.saveAll(newUsers)
 
     return newUsers
   }
@@ -159,29 +129,4 @@ export class SeedService {
     return this.absencesService.truncate()
   }
   //#endregion
-
-  //   try {
-  //     // Add some random materials to staff that is not admin
-  //     const getAllNonAdminStaffs = await this.staffsService.findAll(['E'])
-  //     for (let s of getAllNonAdminStaffs) {
-  //       const materials = await this.materialsService.findAll(['A'])
-  //       // random max 5 materials
-  //       const randomMaterials = materials
-  //         .sort(() => 0.5 - Math.random())
-  //         .slice(0, 5)
-  //       for (let m of randomMaterials) {
-  //         await this.materialsService.update(m.id, {
-  //           personId: String(s.id),
-  //           isAvailable: false,
-  //           ...m,
-  //         })
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //     throw error
-  //   }
-
-  //   return result
-  // }
 }

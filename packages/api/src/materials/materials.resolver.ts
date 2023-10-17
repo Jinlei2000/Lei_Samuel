@@ -73,4 +73,11 @@ export class MaterialsResolver {
   async removeMaterial(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.remove(id)
   }
+
+  // TODO: make resolve field for user
+  // Resolve fields
+  // @ResolveField()
+  // user(@Parent() a: Appointment): Promise<User> {
+  //   return this.usersService.findOne(a.userId)
+  // }
 }
