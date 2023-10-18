@@ -130,8 +130,6 @@ export class AbsencesService {
     return newAbsence
   }
 
-  // TODO make a function that checks if user has an absence on the same date & calculate total days
-
   async update(
     id: ObjectId,
     updateAbsenceInput: UpdateAbsenceInput,
