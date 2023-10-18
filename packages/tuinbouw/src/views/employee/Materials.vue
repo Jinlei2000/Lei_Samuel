@@ -14,10 +14,10 @@
           <Sort />
         </button>
       </div>
-      <div class="flex items-center justify-center gap-3 relative">
+      <div class="flex items-center justify-center gap-3 relative w-1/3">
         <input
           v-model="search"
-          class="bg-gray-200 rounded-full px-3 py-2 w-96"
+          class="bg-gray-200 rounded-full px-3 py-2 w-full"
           type="text"
           placeholder="Search for materials"
         />
@@ -36,10 +36,10 @@
             searchMaterials.materialsBySearchString.length > 0
           "
           v-for="material of searchMaterials.materialsBySearchString"
-          class="col-span-1 rounded-2xl relative"
+          class="col-span-1 rounded-2xl relative hover:scale-110 transition-all"
         >
           <img
-            class="rounded-2xl w-full"
+            class="rounded-2xl rounded-b-3xl w-full"
             src="https://picsum.photos/200"
             alt="random picture"
           />
@@ -52,14 +52,14 @@
       </div>
     </template>
     <template v-else>
-      <div class="grid grid-cols-4 gap-3">
+      <div class="grid grid-cols-6 gap-3">
         <div
           v-if="allMaterials.materials.length > 0"
           v-for="material of allMaterials.materials"
-          class="col-span-1 rounded-2xl relative"
+          class="col-span-1 rounded-2xl relative hover:scale-105 hover:cursor-pointer transition-all"
         >
           <img
-            class="rounded-2xl w-full"
+            class="rounded-2xl rounded-b-3xl w-full"
             src="https://picsum.photos/200"
             alt="random picture"
           />
