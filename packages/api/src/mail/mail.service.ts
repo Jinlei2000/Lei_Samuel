@@ -29,6 +29,7 @@ export class MailService {
 
     console.log('start sending email')
 
+    // TODO: frontend make a page for employee to create account
     const url = `${process.env.URL_FRONTEND}/auth/register-employee/?token=${token}`
 
     const result = await this.mailerService
