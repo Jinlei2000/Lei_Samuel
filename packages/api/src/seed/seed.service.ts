@@ -73,18 +73,16 @@ export class SeedService {
     let num = 0
     theUsers = []
     for (let user of newUsers) {
-      // console.log('DBuser', user.uid)
-      // console.log('jsonUser', users[num].uid)
       // Add some locations to users
       if (users[num].locations) {
-        let theLocationIds: ObjectId[] = []
+        let theLocationIds: string[] = []
         for (let location of users[num].locations) {
           const l = new Location()
           l.address = location.address
           l.userId = user.id.toString()
 
           const newLoc = await this.locationsService.save(l)
-          theLocationIds.push(newLoc.id)
+          theLocationIds.push(newLoc.id.toString())
         }
         user.locationIds = theLocationIds
       }
