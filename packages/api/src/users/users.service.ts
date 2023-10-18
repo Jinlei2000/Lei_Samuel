@@ -84,6 +84,9 @@ export class UsersService {
     return users
   }
 
+  // TODO: find of a user is available today (absent && scheduled)
+  // async isUserAvailableToday(userId: string): Promise<boolean> {}
+
   async upgradeToAdmin(id: string): Promise<User> {
     await this.userRepository.update(id, { role: Role.ADMIN })
 
