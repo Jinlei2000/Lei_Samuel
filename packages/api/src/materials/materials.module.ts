@@ -3,10 +3,11 @@ import { MaterialsService } from './materials.service'
 import { MaterialsResolver } from './materials.resolver'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Material } from './entities/material.entity'
+import { UsersModule } from 'src/users/users.module'
 
 @Module({
   providers: [MaterialsResolver, MaterialsService],
-  imports: [TypeOrmModule.forFeature([Material])],
+  imports: [TypeOrmModule.forFeature([Material]), UsersModule],
 
   exports: [MaterialsService],
 })

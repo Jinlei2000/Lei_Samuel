@@ -33,8 +33,8 @@ export class MaterialsService {
     return materials
   }
 
-  async findAllByPersonId(
-    personId: string,
+  async findAllByUserId(
+    userId: string,
     filters?: Array<string>,
     order?: OrderByInput,
   ): Promise<Material[]> {
@@ -44,7 +44,7 @@ export class MaterialsService {
 
     const materials = await this.materialRepository.find({
       where: {
-        personId: personId,
+        userId: userId,
         ...whereQuery,
       },
       order: {
@@ -83,7 +83,7 @@ export class MaterialsService {
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()
     // m.isAvailable = createMaterialInput.isAvailable
-    m.personId = createMaterialInput.personId
+    m.userId = createMaterialInput.userId
     m.isLoan = createMaterialInput.isLoan
     // m.isDefect = false
     m.serialNumber = createMaterialInput.serialNumber
@@ -113,8 +113,6 @@ export class MaterialsService {
     // return id if delete was successful
     return id
   }
-
-  // TODO resolve field of personId
 
   // Seeding functions
   saveAll(materials: Material[]): Promise<Material[]> {
