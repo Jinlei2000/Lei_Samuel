@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { User } from 'src/users/entities/user.entity'
 import {
   Column,
   CreateDateColumn,
@@ -19,28 +20,18 @@ export class Material {
   @Field() // GraphQL type
   name: string
 
-  // For later use
-  // @Column() // Database link - Typeorm
-  // @Field() // GraphQL type
-  // isAvailable: boolean
-
-  // TODO: user resolver
   // Resolve field
   @Column() // Database link - Typeorm
-  @Field({ nullable: true }) // GraphQL type
-  personId?: string
-
-  // For later use
-  // @Column() // Database link - Typeorm
-  // @Field() // GraphQL type
-  // isDefect: boolean
+  userId?: string
+  @Field(() => User, { nullable: true, description: 'material owner' }) // GraphQL type
+  user?: User
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
   serialNumber: number
 
   @Column() // Database link - Typeorm
-  @Field() // GraphQL type
+  @Field({ description: 'material loanable or not' }) // GraphQL type
   isLoan: boolean
 
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
