@@ -19,7 +19,6 @@ export class AppointmentsService {
     private readonly appointmentRepository: Repository<Appointment>,
   ) {}
 
-  // TODO: filter and order
   async findAll(
     filters?: Array<string>,
     order?: OrderByInput,
@@ -28,7 +27,10 @@ export class AppointmentsService {
     const whereQuery = filterAppointments(filters)
     const orderQuery = orderAppointments(order)
 
-    return this.appointmentRepository.find()
+    return this.appointmentRepository.find({
+      where: whereQuery,
+      order: orderQuery,
+    })
   }
 
   async findOne(id: string) {
@@ -47,9 +49,6 @@ export class AppointmentsService {
   ): Promise<Appointment> {
     const a = new Appointment()
     a.userId = createAppointmentInput.userId
-    // TODO: when we add location the id is not being saved?
-    // is beter om id mee te geven en dan te zoeken naar de location
-    // en dan de location mee te geven aan de appointment
     a.location = createAppointmentInput.location
     a.type = createAppointmentInput.type
     a.endProposedDate = createAppointmentInput.endProposedDate
