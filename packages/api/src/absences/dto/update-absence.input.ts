@@ -8,7 +8,7 @@ export class UpdateAbsenceInput extends PartialType(CreateAbsenceInput) {
   id: ObjectId
 
   @Field({ nullable: true })
-  discription?: string
+  description?: string
 
   @Field({ nullable: true })
   type?: string

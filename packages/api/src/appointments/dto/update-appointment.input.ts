@@ -46,6 +46,9 @@ export class UpdateAppointmentInput extends PartialType(
   })
   isScheduled?: boolean
 
+  @Field({ nullable: true })
+  description?: string
+
   @Field({
     defaultValue: false,
     nullable: true,

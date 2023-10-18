@@ -16,12 +16,12 @@ export class CreateAppointmentInput {
     description: 'The type of appointment (repair, maintenance, etc)',
   })
   type: string
-  
+
   @IsDate() // example: 2021-01-01
   @Field()
   startProposedDate: Date
 
-  @IsDate() 
+  @IsDate()
   @Field()
   endProposedDate: Date
 
@@ -30,6 +30,9 @@ export class CreateAppointmentInput {
     description: 'If the appointment is scheduled, it will be true',
   })
   isScheduled: boolean
+
+  @Field({ nullable: true })
+  description?: string
 
   @Field({
     defaultValue: false,

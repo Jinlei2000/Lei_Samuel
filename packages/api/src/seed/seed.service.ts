@@ -8,9 +8,11 @@ import { Location } from 'src/locations/entities/location.entity'
 import { UsersService } from 'src/users/users.service'
 import { Role, User } from 'src/users/entities/user.entity'
 import { ObjectId } from 'mongodb'
+import { Absence } from 'src/absences/entities/absence.entity'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
+import { AbsencesService } from 'src/absences/absences.service'
 
 @Injectable()
 export class SeedService {
@@ -19,7 +21,7 @@ export class SeedService {
     private materialsService: MaterialsService,
     private locationsService: LocationsService,
     private usersService: UsersService,
-    private absencesService: UsersService,
+    private absencesService: AbsencesService,
   ) {}
 
   async deleteAllAppointments(): Promise<void> {
@@ -98,11 +100,54 @@ export class SeedService {
 
           userMaterials.push(m)
         }
-        this.materialsService.saveAll(userMaterials)
+        await this.materialsService.saveAll(userMaterials)
       }
 
-      //TODO: Add some absences to staff
-      // TODO: Add some appointments to users
+      // Add some appointments to users
+      if (users[num].appointments) {
+        let userAppointments: Appointment[] = []
+        for (let appointment of users[num].appointments) {
+          const a = new Appointment()
+          a.userId = user.id.toString()
+          a.type = appointment.type
+          a.startProposedDate = new Date(appointment.startProposedDate)
+          a.endProposedDate = new Date(appointment.endProposedDate)
+          a.isScheduled = appointment.isScheduled
+          a.isDone = appointment.isDone
+          a.description = appointment.description
+          a.location = await this.locationsService.findOne(
+            user.locationIds[0].toString(),
+          )
+          a.price = appointment.price
+          a.finalDate = new Date(appointment.finalDate)
+
+          userAppointments.push(a)
+        }
+        await this.appointmentsService.saveAll(userAppointments)
+      }
+
+      // Add some absences to staff
+      if (
+        (user.role === 'EMPLOYEE' || user.role === 'ADMIN') &&
+        users[num].absences
+      ) {
+        let absences: Absence[] = []
+        for (let absence of users[num].absences) {
+          const a = new Absence()
+          a.startDate = new Date(absence.startDate)
+          a.endDate = new Date(absence.endDate)
+          a.userId = user.id.toString()
+          a.type = absence.type
+          a.description = absence.description
+          a.totalDays =
+            Math.round(
+              (a.endDate.getTime() - a.startDate.getTime()) / 86400000,
+            ) + 1
+
+          absences.push(a)
+        }
+        await this.absencesService.saveAll(absences)
+      }
 
       num++
       console.info(`🙋 user ${num} is added`)
