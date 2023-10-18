@@ -53,6 +53,17 @@ export class LocationsService {
     return location
   }
 
+  async findLocationsBySearchString(searchString: string): Promise<Location[]> {
+    searchString = searchString.toLowerCase()
+
+    const locations = this.locationRepository.find({
+      // @ts-ignore
+      address: { $regex: new RegExp(searchString, 'i') },
+    })
+
+    return locations
+  }
+
   // Create location and update user with new locationId
   async create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
