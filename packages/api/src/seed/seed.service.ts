@@ -61,7 +61,6 @@ export class SeedService {
       u.role = user.role as Role
       u.uid = user.uid
       u.locale = user.locale
-      u.availability = true
       u.locationIds = []
       if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = 0
 

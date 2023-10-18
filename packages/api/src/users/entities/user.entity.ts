@@ -65,11 +65,6 @@ export class User {
   @Field({ nullable: true }) // GraphQL type
   telephone?: string
 
-  // TODO: delete this
-  @Column() // Database link - Typeorm
-  @Field({ description: 'Is the user available for appointments?' }) // GraphQL type
-  availability: boolean
-
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
   createdAt?: Date
