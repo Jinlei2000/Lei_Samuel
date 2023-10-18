@@ -53,7 +53,7 @@ export class User {
 
   // for resolve field
   @Column() // Database link - Typeorm
-  locationIds?: ObjectId[] //TODO: use string
+  locationIds?: string[]
   @Field(() => [Location], { nullable: 'itemsAndList' }) // GraphQL type
   locations?: Location[]
 
