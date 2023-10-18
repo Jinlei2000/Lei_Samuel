@@ -8,7 +8,11 @@ import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { UsersService } from 'src/users/users.service'
 import { OrderByInput } from 'src/interfaces/order.input'
-import { filterAbsences, orderAbsences } from 'src/helpers/absencesFunctions'
+import {
+  calculateTotalDays,
+  filterAbsences,
+  orderAbsences,
+} from 'src/helpers/absencesFunctions'
 
 @Injectable()
 export class AbsencesService {
@@ -116,13 +120,7 @@ export class AbsencesService {
     a.type = createAbsenceInput.type
     a.startDate = createAbsenceInput.startDate
     a.endDate = createAbsenceInput.endDate
-
-    // calculate total days
-    const startDate = new Date(a.startDate)
-    const endDate = new Date(a.endDate)
-    const totalDays =
-      Math.round((endDate.getTime() - startDate.getTime()) / 86400000) + 1
-    a.totalDays = totalDays
+    a.totalDays = calculateTotalDays(new Date(a.startDate), new Date(a.endDate))
 
     const newAbsence = await this.absenceRepository.save(a)
 
@@ -172,11 +170,10 @@ export class AbsencesService {
         throw new GraphQLError('User already has an absence on the same date!')
 
       // calculate total days
-      const startDate = new Date(updateAbsenceInput.startDate)
-      const endDate = new Date(updateAbsenceInput.endDate)
-      const totalDays =
-        Math.round((endDate.getTime() - startDate.getTime()) / 86400000) + 1
-      updatedData.totalDays = totalDays
+      updatedData.totalDays = calculateTotalDays(
+        new Date(updateAbsenceInput.startDate),
+        new Date(updateAbsenceInput.endDate),
+      )
     }
 
     await this.absenceRepository.update(id, updatedData)

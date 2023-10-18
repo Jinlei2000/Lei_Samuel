@@ -76,3 +76,21 @@ export const orderAbsences = (
 
   return orderQuery
 }
+
+export const calculateTotalDays = (startDate: Date, endDate: Date): number => {
+  //   console.log(startDate, endDate)
+
+  // check if startDate is before endDate
+  if (startDate > endDate) {
+    throw new GraphQLError(
+      `Invalid dates! startDate = ${startDate} is after endDate = ${endDate}`,
+    )
+  }
+
+  // calculate total days
+  const totalDays = Math.round(
+    (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24),
+  ) + 1
+
+  return totalDays
+}
