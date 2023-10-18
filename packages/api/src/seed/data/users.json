@@ -10,6 +10,26 @@
       {
         "address": "Marksesteenweg 58, 8500 Kortrijk"
       }
+    ],
+    "absences": [
+      {
+        "type": "sick",
+        "startDate": "2020-05-01",
+        "endDate": "2020-05-03",
+        "description": "I'm sick"
+      },
+      {
+        "type": "vacation",
+        "startDate": "2021-05-04",
+        "endDate": "2021-05-08",
+        "description": "I'm on vacation"
+      },
+      {
+        "type": "other",
+        "startDate": "2023-05-09",
+        "endDate": "2023-05-10",
+        "description": "I'm on other"
+      }
     ]
   },
   {
@@ -23,6 +43,14 @@
       {
         "address": "Sint-Janslaan 5, 8500 Kortrijk"
       }
+    ],
+    "absences": [
+      {
+        "type": "other",
+        "startDate": "2023-10-20",
+        "endDate": "2023-10-22",
+        "description": "Attending a training workshop."
+      }
     ]
   },
   {
@@ -35,6 +63,14 @@
     "locations": [
       {
         "address": "Snaggaardstraat 15, 8500 Kortrijk"
+      }
+    ],
+    "absences": [
+      {
+        "type": "other",
+        "startDate": "2023-10-25",
+        "endDate": "2023-10-26",
+        "description": "Taking care of personal matters."
       }
     ]
   },
@@ -74,6 +110,14 @@
       {
         "name": "Pruning Loppers",
         "serialNumber": 99999
+      }
+    ],
+    "absences": [
+      {
+        "type": "vacation",
+        "startDate": "2023-11-01",
+        "endDate": "2023-11-05",
+        "description": "Enjoying a vacation."
       }
     ]
   },
@@ -115,6 +159,44 @@
       {
         "address": "Diksmuidsesteenweg 396, 8800 Roeselare"
       }
+    ],
+    "appointments": [
+      {
+        "type": "maintenance",
+        "startProposedDate": "2022-05-01",
+        "endProposedDate": "2022-05-10",
+        "price": 100,
+        "finalDate": "2022-05-03",
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained."
+      },
+      {
+        "type": "repair",
+        "startProposedDate": "2022-05-11",
+        "endProposedDate": "2022-05-20",
+        "price": 100,
+        "finalDate": "2022-05-15",
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained."
+      },
+      {
+        "type": "maintenance",
+        "startProposedDate": "2023-05-01",
+        "endProposedDate": "2023-05-10",
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be maintained."
+      },
+      {
+        "type": "repair",
+        "startProposedDate": "2023-05-11",
+        "endProposedDate": "2023-05-20",
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be repaired."
+      }
     ]
   },
   {
@@ -130,6 +212,44 @@
       },
       {
         "address": "Astridlaan 400, 8310 Brugge"
+      }
+    ],
+    "appointments": [
+      {
+        "type": "maintenance",
+        "startProposedDate": "2022-05-01",
+        "endProposedDate": "2022-05-10",
+        "price": 100,
+        "finalDate": "2022-05-03",
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained."
+      },
+      {
+        "type": "repair",
+        "startProposedDate": "2022-05-11",
+        "endProposedDate": "2022-05-20",
+        "price": 100,
+        "finalDate": "2022-05-15",
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained."
+      },
+      {
+        "type": "maintenance",
+        "startProposedDate": "2023-05-01",
+        "endProposedDate": "2023-05-10",
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be maintained."
+      },
+      {
+        "type": "repair",
+        "startProposedDate": "2023-05-11",
+        "endProposedDate": "2023-05-20",
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be repaired."
       }
     ]
   },

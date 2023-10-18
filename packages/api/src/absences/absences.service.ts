@@ -109,9 +109,9 @@ export class AbsencesService {
     })
     if (absences.length > 0)
       throw new GraphQLError('User already has an absence on the same date!')
-
+    // TODO: if user is add a absent. set all appointments to IsScheduled = false in that period
     const a = new Absence()
-    a.discription = createAbsenceInput.discription
+    a.description = createAbsenceInput.description
     a.userId = createAbsenceInput.userId
     a.type = createAbsenceInput.type
     a.startDate = createAbsenceInput.startDate

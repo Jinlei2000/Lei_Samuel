@@ -61,6 +61,10 @@ export class Appointment {
   })
   isDone: boolean
 
+  @Column()
+  @Field({ nullable: true })
+  description?: string
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   createdAt?: Date

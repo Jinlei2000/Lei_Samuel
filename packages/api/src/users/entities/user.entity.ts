@@ -1,5 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Column, CreateDateColumn, Entity, ObjectId, ObjectIdColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ObjectId,
+  ObjectIdColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 import { Location } from 'src/locations/entities/location.entity'
 import { Material } from 'src/materials/entities/material.entity'
 
@@ -46,7 +53,7 @@ export class User {
 
   // for resolve field
   @Column() // Database link - Typeorm
-  locationIds?: ObjectId[]
+  locationIds?: ObjectId[] //TODO: use string
   @Field(() => [Location], { nullable: 'itemsAndList' }) // GraphQL type
   locations?: Location[]
 

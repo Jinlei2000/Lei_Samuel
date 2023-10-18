@@ -56,6 +56,7 @@ export class AppointmentsService {
     a.startProposedDate = createAppointmentInput.startProposedDate
     a.isDone = false
     a.isScheduled = false
+    a.description = createAppointmentInput.description
 
     return this.appointmentRepository.save(a)
   }
