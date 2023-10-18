@@ -14,7 +14,6 @@ export class CreateMaterialInput {
   @Field({ defaultValue: false }) // graphql
   isLoan: boolean
 
-  // TODO: add validation for isDefect
   @Field() // graphql
   serialNumber: number
 }
