@@ -121,6 +121,10 @@ export class LocationsService {
   async removeAllByUserId(userId: string): Promise<string[]> {
     const locations = await this.findAllByUserId(userId)
 
+    if (!locations) {
+      return []
+    }
+
     const ids = locations.map(location => location.id.toString())
 
     await this.locationRepository.delete(ids)

@@ -13,7 +13,7 @@ export const ADD_CLIENT = gql`
       url
       locations {
         id
-        uid
+        userId
         address
         createdAt
         updatedAt
