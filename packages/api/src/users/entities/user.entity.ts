@@ -65,6 +65,7 @@ export class User {
   @Field({ nullable: true }) // GraphQL type
   telephone?: string
 
+  // TODO: delete this
   @Column() // Database link - Typeorm
   @Field({ description: 'Is the user available for appointments?' }) // GraphQL type
   availability: boolean

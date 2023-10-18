@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
 import { MailService } from './mail.service'
 import { MailerModule } from '@nestjs-modules/mailer'
 import { MailResolver } from './mail.resolver'
@@ -10,7 +10,7 @@ import { Mail } from './entities/mail.entity'
 @Module({
   imports: [
     TypeOrmModule.forFeature([Mail]),
-    UsersModule,
+    forwardRef(() => UsersModule),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({

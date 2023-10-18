@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { GraphQLError } from 'graphql'
 import { User } from 'src/users/entities/user.entity'
 import { UsersService } from 'src/users/users.service'
@@ -8,6 +8,7 @@ import { Mail } from './entities/mail.entity'
 import { CreateMailInput } from './dto/create-mail.input'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { randomBytes } from 'crypto'
 
 @Injectable()
 export class MailService {
@@ -15,6 +16,7 @@ export class MailService {
     @InjectRepository(Mail)
     private readonly mailRepository: Repository<Mail>,
     private readonly mailerService: MailerService,
+    @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
   ) {}
 
@@ -22,8 +24,8 @@ export class MailService {
   async sendMailByUserId(userId: string): Promise<string> {
     const user: User = await this.userService.findOne(userId)
 
-    // make a random token
-    const token = Math.floor(1000 + Math.random() * 9000).toString()
+    //generated token of 32 bytes
+    const token = randomBytes(32).toString('hex')
 
     console.log('start sending email')
 
@@ -70,13 +72,7 @@ export class MailService {
 
   // Save token
   async saveToken(createMailInput: CreateMailInput): Promise<Mail> {
-    // check if this user already has a token
-    const tokens = await this.findAllByUserId(createMailInput.userId)
-
-    // if so, delete all tokens
-    if (tokens.length > 0) {
-      await this.removeAllByUserId(createMailInput.userId)
-    }
+    await this.removeAllByUserId(createMailInput.userId)
 
     const m = new Mail()
     m.userId = createMailInput.userId
@@ -87,10 +83,13 @@ export class MailService {
     return this.mailRepository.save(m)
   }
 
-  // TODO: add to userService when user delete his account
   // Remove all tokens by userId
   async removeAllByUserId(userId: string): Promise<string[]> {
     const tokens = await this.findAllByUserId(userId)
+
+    if (!tokens) {
+      return []
+    }
 
     const ids = tokens.map(token => token.id.toString())
 
