@@ -95,7 +95,7 @@ export class SeedService {
           const m = new Material()
           m.name = material.name.toLowerCase()
           m.isLoan = false
-          m.personId = user.id.toString()
+          m.userId = user.id.toString()
           m.serialNumber = material.serialNumber
 
           userMaterials.push(m)
