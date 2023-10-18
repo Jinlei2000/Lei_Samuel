@@ -28,25 +28,49 @@
         </button>
       </div>
     </div>
-    <div class="grid grid-cols-4 gap-3">
-      <div
-        v-if="allMaterials.materials.length > 0"
-        v-for="material of allMaterials.materials"
-        class="col-span-1 rounded-2xl relative"
-      >
-        <img
-          class="rounded-2xl w-full"
-          src="https://picsum.photos/200"
-          alt="random picture"
-        />
+    <template v-if="search" class="grid grid-cols-4 gap-3">
+      <div v-if="search.length > 0" class="grid grid-cols-4 gap-3">
         <div
-          class="bg-gray-200 rounded-2xl rounded-t-none w-full absolute bottom-0 px-3 py-2"
+          v-if="
+            searchMaterials &&
+            searchMaterials.materialsBySearchString.length > 0
+          "
+          v-for="material of searchMaterials.materialsBySearchString"
+          class="col-span-1 rounded-2xl relative"
         >
-          <h2 class="truncate">{{ material.name }}</h2>
-          <!-- <p>{{ material.isLoan ? 'To loan' : '' }}</p> -->
+          <img
+            class="rounded-2xl w-full"
+            src="https://picsum.photos/200"
+            alt="random picture"
+          />
+          <div
+            class="bg-gray-200 rounded-2xl rounded-t-none w-full absolute bottom-0 px-3 py-2"
+          >
+            <h2 class="truncate">{{ material.name }}</h2>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="grid grid-cols-4 gap-3">
+        <div
+          v-if="allMaterials.materials.length > 0"
+          v-for="material of allMaterials.materials"
+          class="col-span-1 rounded-2xl relative"
+        >
+          <img
+            class="rounded-2xl w-full"
+            src="https://picsum.photos/200"
+            alt="random picture"
+          />
+          <div
+            class="bg-gray-200 rounded-2xl rounded-t-none w-full absolute bottom-0 px-3 py-2"
+          >
+            <h2 class="truncate">{{ material.name }}</h2>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
