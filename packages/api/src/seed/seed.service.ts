@@ -149,6 +149,8 @@ export class SeedService {
         await this.absencesService.saveAll(absences)
       }
 
+      // TODO: Add some schedules
+
       num++
       console.info(`🙋 user ${num} is added`)
     }
