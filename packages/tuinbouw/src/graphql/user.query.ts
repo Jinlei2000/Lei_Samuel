@@ -13,7 +13,7 @@ export const GET_USER_BY_UID = gql`
       url
       locations {
         id
-        uid
+        userId
         address
         createdAt
         updatedAt
