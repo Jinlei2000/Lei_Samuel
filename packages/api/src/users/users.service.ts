@@ -157,7 +157,6 @@ export class UsersService {
     s.fullname = `${createStaffInput.firstname.toLowerCase()} ${createStaffInput.lastname.toLowerCase()}`
     s.email = createStaffInput.email
     s.telephone = createStaffInput.telephone
-    s.availability = true
     s.absentCount = 0
 
     const newUser = await this.userRepository.save(s)
@@ -184,7 +183,6 @@ export class UsersService {
     s.lastname = createClientInput.lastname.toLowerCase()
     s.fullname = `${createClientInput.firstname.toLowerCase()} ${createClientInput.lastname.toLowerCase()}`
     s.email = createClientInput.email
-    s.availability = true
 
     const newUser = this.userRepository.save(s)
 
@@ -202,25 +200,24 @@ export class UsersService {
       { absentCount: user.absentCount + 1 },
     )
   }
-
-  // Make a function
+  //  TODO: use this function everywhere
   // Check that user is not trying to do something to someone else if not admin
-  // async checkUserPermissions(
-  //   currentUserUid: string,
-  //   id: string,
-  // ): Promise<void> {
-  //   const user = await this.userRepository.findOne({
-  //     // @ts-ignore
-  //     _id: new ObjectId(id),
-  //   })
-  //   const currentUser = await this.userRepository.findOneBy({
-  //     uid: currentUserUid,
-  //   })
+  async checkUserPermissions(
+    currentUserUid: string,
+    id: string,
+  ): Promise<void> {
+    const user = await this.userRepository.findOne({
+      // @ts-ignore
+      _id: new ObjectId(id),
+    })
+    const currentUser = await this.userRepository.findOneBy({
+      uid: currentUserUid,
+    })
 
-  //   // Check that user is not trying to something to someone else if not admin
-  //   if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
-  //     throw new GraphQLError('You are not allowed')
-  // }
+    // Check that user is not trying to something to someone else if not admin
+    if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
+      throw new GraphQLError('You are not allowed')
+  }
 
   // Seeding functions
   saveAll(users: User[]): Promise<User[]> {
