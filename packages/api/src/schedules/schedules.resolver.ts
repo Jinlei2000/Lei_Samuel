@@ -1,35 +1,68 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { SchedulesService } from './schedules.service';
-import { Schedule } from './entities/schedule.entity';
-import { CreateScheduleInput } from './dto/create-schedule.input';
-import { UpdateScheduleInput } from './dto/update-schedule.input';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  Parent,
+  ResolveField,
+} from '@nestjs/graphql'
+import { SchedulesService } from './schedules.service'
+import { Schedule } from './entities/schedule.entity'
+import { CreateScheduleInput } from './dto/create-schedule.input'
+import { UpdateScheduleInput } from './dto/update-schedule.input'
+import { AppointmentsService } from 'src/appointments/appointments.service'
+import { Appointment } from 'src/appointments/entities/appointment.entity'
 
 @Resolver(() => Schedule)
 export class SchedulesResolver {
-  constructor(private readonly schedulesService: SchedulesService) {}
-
-  @Mutation(() => Schedule)
-  createSchedule(@Args('createScheduleInput') createScheduleInput: CreateScheduleInput) {
-    return this.schedulesService.create(createScheduleInput);
-  }
+  constructor(
+    private readonly schedulesService: SchedulesService,
+    private readonly appointmentsService: AppointmentsService,
+  ) {}
 
   @Query(() => [Schedule], { name: 'schedules' })
   findAll() {
-    return this.schedulesService.findAll();
+    return this.schedulesService.findAll()
   }
 
   @Query(() => Schedule, { name: 'schedule' })
   findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.schedulesService.findOne(id);
+    return this.schedulesService.findOne(id)
   }
 
   @Mutation(() => Schedule)
-  updateSchedule(@Args('updateScheduleInput') updateScheduleInput: UpdateScheduleInput) {
-    return this.schedulesService.update(updateScheduleInput.id, updateScheduleInput);
+  createSchedule(
+    @Args('createScheduleInput') createScheduleInput: CreateScheduleInput,
+  ) {
+    return this.schedulesService.create(createScheduleInput)
+  }
+
+  @Mutation(() => Schedule)
+  updateSchedule(
+    @Args('updateScheduleInput') updateScheduleInput: UpdateScheduleInput,
+  ) {
+    return this.schedulesService.update(
+      updateScheduleInput.id,
+      updateScheduleInput,
+    )
   }
 
   @Mutation(() => Schedule)
   removeSchedule(@Args('id', { type: () => Int }) id: number) {
-    return this.schedulesService.remove(id);
+    return this.schedulesService.remove(id)
+  }
+
+  // Resolve field
+  @ResolveField()
+  async appointments(@Parent() s: Schedule): Promise<Appointment[]> {
+    let appointments: Appointment[] = []
+    for (let id of s.appointmentsIds) {
+      const appointment = await this.appointmentsService.findOne(id)
+
+      appointments.push(appointment)
+    }
+
+    return appointments
   }
 }
