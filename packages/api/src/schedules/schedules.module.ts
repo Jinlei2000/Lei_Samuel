@@ -14,7 +14,7 @@ import { MaterialsModule } from 'src/materials/materials.module'
     TypeOrmModule.forFeature([Schedule]),
     forwardRef(() => UsersModule),
     forwardRef(() => AppointmentsModule),
-    MaterialsModule,
+    forwardRef(() => MaterialsModule),
   ],
 
   exports: [SchedulesService],

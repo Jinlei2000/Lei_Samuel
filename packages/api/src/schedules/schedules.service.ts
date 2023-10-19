@@ -18,6 +18,7 @@ export class SchedulesService {
     // use forwardRef to avoid circular dependency
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
+    @Inject(forwardRef(() => MaterialsService))
     private readonly materialsService: MaterialsService,
   ) {}
 
@@ -73,13 +74,38 @@ export class SchedulesService {
     s.employees = await this.usersService.findAllByIds(
       createScheduleInput.employeeIds,
     )
-    s.materials = createScheduleInput.materialIds
+    s.materials = await this.materialsService.findAllByIds(
+      createScheduleInput.materialIds,
+    )
     s.finalDate = createScheduleInput.finalDate
     s.createdBy = createScheduleInput.createdBy
+
+    return this.scheduleRepository.save(s)
   }
 
   async update(id: ObjectId, updateScheduleInput: UpdateScheduleInput) {
-    return `This action updates a #${id} schedule`
+    const currentSchedule = await this.findOne(id.toString())
+
+    const s = new Schedule()
+    s.appointmentIds = updateScheduleInput.appointmentIds
+      ? updateScheduleInput.appointmentIds
+      : currentSchedule.appointmentIds
+    s.employees = updateScheduleInput.employeeIds
+      ? await this.usersService.findAllByIds(updateScheduleInput.employeeIds)
+      : currentSchedule.employees
+    s.materials = updateScheduleInput.materialIds
+      ? await this.materialsService.findAllByIds(updateScheduleInput.materialIds)
+      : currentSchedule.materials
+    s.finalDate = updateScheduleInput.finalDate
+      ? updateScheduleInput.finalDate
+      : currentSchedule.finalDate
+    s.createdBy = updateScheduleInput.createdBy
+      ? updateScheduleInput.createdBy
+      : currentSchedule.createdBy
+
+    await this.scheduleRepository.update(id, s)
+
+    return this.findOne(id.toString())
   }
 
   // TODO: if a client is deleted, delete all his appointments that are isDone = false (return all ids)
