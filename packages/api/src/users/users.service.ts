@@ -131,6 +131,14 @@ export class UsersService {
 
     // TODO employee cant not delete himself
 
+    // TODO: if a client is deleted, delete all his appointments that are isDone = false (return all ids)
+    // search all schedules where appointmentIds is in ids (update schedule appointmentIds)
+    // if schedule appointmentIds is empty, delete schedule
+    // make a remove function in schedule service
+
+    // TODO: delete also firebase user
+    
+
     // Check that user is not trying to delete someone else if not admin
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
       throw new GraphQLError('You are not allowed to delete someone else')

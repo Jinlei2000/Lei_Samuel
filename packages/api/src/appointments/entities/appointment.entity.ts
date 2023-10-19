@@ -17,6 +17,7 @@ export class Appointment {
   @Field(() => ID)
   id: ObjectId
 
+  // TODO: embed user
   // Resolve field
   @Column()
   userId: string

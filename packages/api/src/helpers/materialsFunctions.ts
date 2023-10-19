@@ -15,6 +15,7 @@ export const filterMaterials = (
   // where object for query
   const whereQuery: { [key: string]: string | boolean } = {}
   const filtersList = ['A', 'NA', 'D', 'ND']
+  // TODO: add isLoan, has userId,
 
   // check if filters are valid
   if (filters) {

@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 import { Location } from 'src/locations/entities/location.entity'
-import { Material } from 'src/materials/entities/material.entity'
 
 export enum Role {
   ADMIN = 'ADMIN',

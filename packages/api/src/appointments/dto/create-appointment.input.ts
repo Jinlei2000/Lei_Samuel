@@ -8,6 +8,7 @@ export class CreateAppointmentInput {
   @Field()
   userId: string
 
+  // TODO: use location id instead of location
   @Field(() => CreateLocationInput)
   location: Location
 

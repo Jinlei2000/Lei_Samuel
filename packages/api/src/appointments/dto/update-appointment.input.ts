@@ -12,6 +12,7 @@ export class UpdateAppointmentInput extends PartialType(
   @Field(() => ID)
   id: ObjectId
 
+  // TODO: use location id instead of location
   @Field(() => CreateLocationInput, { nullable: true })
   location?: Location
 
