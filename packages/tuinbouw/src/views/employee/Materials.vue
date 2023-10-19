@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center mt-12 mx-32 gap-12">
+    <!-- filters + searchbar -->
     <div class="flex items-center justify-between w-full">
-      <!-- filters + searchbar -->
       <div class="flex items-center gap-3">
         <button
           class="bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
@@ -23,6 +23,22 @@
           type="text"
           placeholder="Search for materials"
         />
+      </div>
+    </div>
+    <!-- title + sort -->
+    <div class="flex items-center justify-between w-full">
+      <h1 class="text-2xl">Materials</h1>
+      <div class="flex items-center gap-3">
+        <div><p>Alphabetical</p></div>
+        <div class="flex items-center gap-3">
+          <button
+            class="bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
+          >
+            <img class="h-3 w-4 m-1" src="../../../public/icons/sort.svg" />
+            <p class="m-0 text-lg">Sort</p>
+            <ChevronDown class="h-[22px] w-[22px]" />
+          </button>
+        </div>
       </div>
     </div>
     <template v-if="search" class="grid grid-cols-4 gap-3">
