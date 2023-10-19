@@ -99,26 +99,30 @@ export class SchedulesService {
   async update(id: ObjectId, updateScheduleInput: UpdateScheduleInput) {
     const currentSchedule = await this.findOne(id.toString())
 
-    const s = new Schedule()
-    s.appointmentIds = updateScheduleInput.appointmentIds
-      ? updateScheduleInput.appointmentIds
-      : currentSchedule.appointmentIds
-    s.employees = updateScheduleInput.employeeIds
-      ? await this.usersService.findAllByIds(updateScheduleInput.employeeIds)
-      : currentSchedule.employees
-    s.materials = updateScheduleInput.materialIds
-      ? await this.materialsService.findAllByIds(
+    const updatedSchedule = {
+      ...currentSchedule,
+      ...updateScheduleInput.appointmentIds && {
+        appointmentIds: updateScheduleInput.appointmentIds,
+      },
+      ...updateScheduleInput.employeeIds && {
+        employees: await this.usersService.findAllByIds(
+          updateScheduleInput.employeeIds,
+        ),
+      },
+      ...updateScheduleInput.materialIds && {
+        materials: await this.materialsService.findAllByIds(
           updateScheduleInput.materialIds,
-        )
-      : currentSchedule.materials
-    s.finalDate = updateScheduleInput.finalDate
-      ? updateScheduleInput.finalDate
-      : currentSchedule.finalDate
-    s.createdBy = updateScheduleInput.createdBy
-      ? updateScheduleInput.createdBy
-      : currentSchedule.createdBy
+        ),
+      },
+      ...updateScheduleInput.finalDate && {
+        finalDate: updateScheduleInput.finalDate,
+      },
+      ...updateScheduleInput.createdBy && {
+        createdBy: updateScheduleInput.createdBy,
+      },
+    }
 
-    await this.scheduleRepository.update(id, s)
+    await this.scheduleRepository.update(id, updatedSchedule)
 
     return this.findOne(id.toString())
   }
