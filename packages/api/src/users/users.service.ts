@@ -99,7 +99,28 @@ export class UsersService {
   }
 
   // TODO: find of a user is available today (absent && scheduled)
-  // async isUserAvailableToday(userId: string): Promise<boolean> {}
+  async findStaffIsAvailableToday(userId: string): Promise<boolean> {
+    const user = await this.findOne(userId)
+    // delete all behind the time of today
+    let date = new Date(new Date().toISOString().split('T')[0]) // reset time to 00:00:00
+
+    // check if user is absent today
+    const isAbsent = await this.absenceService.findOneByDateAndUserId(
+      userId,
+      date,
+    )
+
+    // check if user is scheduled today
+    const isScheduled = await this.scheduleService.findOneByDateAndUserId(
+      userId,
+      date,
+    )
+
+    // if user is absent or scheduled, return false
+    if (isAbsent || isScheduled) return false
+
+    return true
+  }
 
   async upgradeToAdmin(id: string): Promise<User> {
     await this.userRepository.update(id, { role: Role.ADMIN })

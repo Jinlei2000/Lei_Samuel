@@ -93,6 +93,22 @@ export class AbsencesService {
     return absence
   }
 
+  // check if user is already absent on this date (return true or false)
+  async findOneByDateAndUserId(userId: string, date: Date): Promise<Boolean> {
+    const absences = await this.absenceRepository.find({
+      where: {
+        // check if date is between start and end date of absence
+        // @ts-ignore
+        startDate: { $lte: date },
+        // @ts-ignore
+        endDate: { $gte: date },
+        userId: userId,
+      },
+    })
+
+    return absences.length > 0
+  }
+
   async create(createAbsenceInput: CreateAbsenceInput) {
     if (!['sick', 'vacation', 'other'].includes(createAbsenceInput.type))
       throw new GraphQLError(

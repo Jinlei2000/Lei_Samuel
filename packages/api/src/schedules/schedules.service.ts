@@ -37,7 +37,7 @@ export class SchedulesService {
     })
   }
 
-  // TODO: find all scheduled employees on a specific date (return ids)
+  // find all scheduled employees on a specific date (return uids)
   async findAllScheduledUsersByDate(date: Date): Promise<string[]> {
     const schedules = await this.scheduleRepository.find({
       where: {
@@ -66,7 +66,20 @@ export class SchedulesService {
     return schedule
   }
 
-  // TODO: find of a specific user on a specific date is scheduled (return boolean)
+  // check if user is already scheduled on this date (return true or false)
+  async findOneByDateAndUserId(userId: string, date: Date): Promise<boolean> {
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        finalDate: date,
+        employees: {
+          // @ts-ignore
+          $elemMatch: { id: new ObjectId(userId) }, // $elemMatch is needed to search in array of objects
+        },
+      },
+    })
+
+    return schedules.length > 0
+  }
 
   async create(createScheduleInput: CreateScheduleInput) {
     const s = new Schedule()
