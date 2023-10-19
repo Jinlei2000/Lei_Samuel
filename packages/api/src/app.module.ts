@@ -13,6 +13,7 @@ import { UsersModule } from './users/users.module'
 import { MailModule } from './mail/mail.module';
 import { AbsencesModule } from './absences/absences.module';
 import { AppointmentsModule } from './appointments/appointments.module'
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AppointmentsModule } from './appointments/appointments.module'
     SeedModule,
     MailModule,
     AbsencesModule,
+    SchedulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
