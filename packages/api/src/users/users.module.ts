@@ -6,6 +6,7 @@ import { User } from './entities/user.entity'
 import { LocationsModule } from 'src/locations/locations.module'
 import { AbsencesModule } from 'src/absences/absences.module'
 import { MailModule } from 'src/mail/mail.module'
+import { SchedulesModule } from 'src/schedules/schedules.module'
 
 @Module({
   providers: [UsersResolver, UsersService],
@@ -17,6 +18,7 @@ import { MailModule } from 'src/mail/mail.module'
     forwardRef(() => LocationsModule),
     forwardRef(() => AbsencesModule),
     forwardRef(() => MailModule),
+    forwardRef(() => SchedulesModule),
   ],
 
   exports: [UsersService],

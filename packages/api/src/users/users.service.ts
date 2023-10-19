@@ -12,6 +12,7 @@ import { CreateClientInput } from './dto/create-client.input'
 import { LocationsService } from 'src/locations/locations.service'
 import { AbsencesService } from 'src/absences/absences.service'
 import { MailService } from 'src/mail/mail.service'
+import { SchedulesService } from 'src/schedules/schedules.service'
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,8 @@ export class UsersService {
     private readonly absenceService: AbsencesService,
     @Inject(forwardRef(() => MailService))
     private readonly mailService: MailService,
+    @Inject(forwardRef(() => SchedulesService))
+    private readonly scheduleService: SchedulesService,
   ) {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
