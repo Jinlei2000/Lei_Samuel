@@ -3,7 +3,6 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
   Parent,
   ResolveField,
 } from '@nestjs/graphql'
@@ -27,7 +26,7 @@ export class SchedulesResolver {
   }
 
   @Query(() => Schedule, { name: 'schedule' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.schedulesService.findOne(id)
   }
 
@@ -49,7 +48,7 @@ export class SchedulesResolver {
   }
 
   @Mutation(() => Schedule)
-  removeSchedule(@Args('id', { type: () => Int }) id: number) {
+  removeSchedule(@Args('id', { type: () => String }) id: string) {
     return this.schedulesService.remove(id)
   }
 
@@ -57,7 +56,7 @@ export class SchedulesResolver {
   @ResolveField()
   async appointments(@Parent() s: Schedule): Promise<Appointment[]> {
     let appointments: Appointment[] = []
-    for (let id of s.appointmentsIds) {
+    for (let id of s.appointmentIds) {
       const appointment = await this.appointmentsService.findOne(id)
 
       appointments.push(appointment)

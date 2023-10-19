@@ -2,13 +2,13 @@ import { InputType, Field } from '@nestjs/graphql'
 
 @InputType()
 export class CreateScheduleInput {
-  @Field()
+  @Field(() => [String])
   appointmentIds: string[]
 
-  @Field()
+  @Field(() => [String])
   employeeIds: string[]
 
-  @Field()
+  @Field(() => [String])
   materialIds: string[]
 
   @Field()

@@ -5,6 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { UsersService } from 'src/users/users.service'
 import { Repository } from 'typeorm'
 import { Schedule } from './entities/schedule.entity'
+import { OrderByInput } from 'src/interfaces/order.input'
+import { GraphQLError } from 'graphql'
+import { ObjectId } from 'mongodb'
+import { MaterialsService } from 'src/materials/materials.service'
 
 @Injectable()
 export class SchedulesService {
@@ -14,25 +18,90 @@ export class SchedulesService {
     // use forwardRef to avoid circular dependency
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
+    private readonly materialsService: MaterialsService,
   ) {}
 
-  findAll() {
-    return `This action returns all schedules`
+  // TODO: filter and order schedules
+  async findAll(
+    filters?: Array<string>,
+    order?: OrderByInput,
+  ): Promise<Schedule[]> {
+    // filter and order schedules
+    // const whereQuery = filterSchedules(filters)
+    // const orderQuery = orderSchedules(order)
+
+    return this.scheduleRepository.find({
+      // where: whereQuery,
+      // order: orderQuery,
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} schedule`
+  // TODO: find all scheduled employees on a specific date (return ids)
+  async findAllScheduledUsersByDate(date: Date): Promise<string[]> {
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        finalDate: date,
+      },
+    })
+
+    let ids: string[] = []
+    for (const schedule of schedules) {
+      for (const employeeId of schedule.employees) {
+        ids.push(employeeId.toString())
+      }
+    }
+
+    return ids
   }
 
-  create(createScheduleInput: CreateScheduleInput) {
-    return 'This action adds a new schedule'
+  async findOne(id: string): Promise<Schedule> {
+    const schedule = await this.scheduleRepository.findOne({
+      //@ts-ignore
+      where: { _id: new ObjectId(id) },
+    })
+
+    if (!schedule) throw new GraphQLError('Schedule not found')
+
+    return schedule
   }
 
-  update(id: number, updateScheduleInput: UpdateScheduleInput) {
+  // TODO: find of a specific user on a specific date is scheduled (return boolean)
+
+  async create(createScheduleInput: CreateScheduleInput) {
+    const s = new Schedule()
+    s.appointmentIds = createScheduleInput.appointmentIds
+    s.employees = await this.usersService.findAllByIds(
+      createScheduleInput.employeeIds,
+    )
+    s.materials = createScheduleInput.materialIds
+    s.finalDate = createScheduleInput.finalDate
+    s.createdBy = createScheduleInput.createdBy
+  }
+
+  async update(id: ObjectId, updateScheduleInput: UpdateScheduleInput) {
     return `This action updates a #${id} schedule`
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} schedule`
+  // TODO: if a client is deleted, delete all his appointments that are isDone = false (return all ids)
+  // search all schedules where appointmentIds is in ids (update schedule appointmentIds)
+  // if schedule appointmentIds is empty, delete schedule
+  // make a remove function in schedule service
+
+  async remove(id: string): Promise<string> {
+    await this.findOne(id.toString())
+
+    await this.scheduleRepository.delete(id)
+
+    // return id if delete was successful
+    return id
+  }
+
+  // Seeding functions
+  saveAll(schedules: Schedule[]): Promise<Schedule[]> {
+    return this.scheduleRepository.save(schedules)
+  }
+
+  truncate(): Promise<void> {
+    return this.scheduleRepository.clear()
   }
 }

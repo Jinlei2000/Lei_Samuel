@@ -41,6 +41,15 @@ export class UsersService {
     })
   }
 
+  async findAllByIds(ids: string[]): Promise<User[]> {
+    const users: User[] = []
+    for (const id of ids) {
+      const user = await this.findOne(id)
+      users.push(user)
+    }
+    return users
+  }
+
   // TODO: create own error, but than or roles guard dont work
   async findOneByUid(uid: string): Promise<User> {
     return this.userRepository.findOneByOrFail({ uid })
@@ -137,7 +146,6 @@ export class UsersService {
     // make a remove function in schedule service
 
     // TODO: delete also firebase user
-    
 
     // Check that user is not trying to delete someone else if not admin
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
