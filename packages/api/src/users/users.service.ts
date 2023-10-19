@@ -98,7 +98,7 @@ export class UsersService {
     return users
   }
 
-  // TODO: find of a user is available today (absent && scheduled)
+  // find of a user is available today (absent && scheduled)
   async findStaffIsAvailableToday(userId: string): Promise<boolean> {
     const user = await this.findOne(userId)
     // delete all behind the time of today
@@ -161,8 +161,6 @@ export class UsersService {
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
 
-    // TODO employee cant not delete himself
-
     // TODO: if a client is deleted, delete all his appointments that are isDone = false (return all ids)
     // search all schedules where appointmentIds is in ids (update schedule appointmentIds)
     // if schedule appointmentIds is empty, delete schedule
@@ -170,9 +168,9 @@ export class UsersService {
 
     // TODO: delete also firebase user
 
-    // Check that user is not trying to delete someone else if not admin
-    if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
-      throw new GraphQLError('You are not allowed to delete someone else')
+    // Check that user is not trying to delete someone else if not admin & employee cant delete himself
+    if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid && user.role !== Role.EMPLOYEE)
+      throw new GraphQLError('You are not allowed to delete')
 
     await this.userRepository.delete(id)
 
@@ -234,8 +232,6 @@ export class UsersService {
     return newUser
   }
 
-  // TODO: make a functions start automaticly on a time & check if a user is absent today and if so, set availability to false
-
   // Absences
   async incrementAbsencesCount(staffId: string): Promise<void> {
     const user = await this.findOne(staffId)
@@ -245,6 +241,7 @@ export class UsersService {
       { absentCount: user.absentCount + 1 },
     )
   }
+
   //  TODO: use this function everywhere
   // Check that user is not trying to do something to someone else if not admin
   async checkUserPermissions(
