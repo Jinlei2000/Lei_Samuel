@@ -83,10 +83,8 @@ export class UsersService {
     const scheduledIds =
       await this.scheduleService.findAllScheduledUsersByDate(date)
 
-    console.log('scheduledIds', scheduledIds)
-    console.log('absentIds', absentIds)
-
-    const ids = [...absentIds, ...scheduledIds]
+    // dont show users that are absent or scheduled or null or empty (account not made yet)
+    const ids = [...absentIds, ...scheduledIds, null, '']
 
     const users = await this.userRepository.find({
       where: {

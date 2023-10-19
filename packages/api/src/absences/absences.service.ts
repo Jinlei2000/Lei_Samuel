@@ -193,6 +193,8 @@ export class AbsencesService {
 
     await this.absenceRepository.delete(id)
 
+    // TODO: decrement user absences
+
     // return id if delete was successful
     return id
   }
