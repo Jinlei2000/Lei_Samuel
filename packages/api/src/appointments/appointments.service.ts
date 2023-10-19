@@ -80,6 +80,9 @@ export class AppointmentsService {
 
     await this.appointmentRepository.delete(id)
 
+    // TODO: delete the schedule that has this appointment id & finalDate => today
+    // Can only delete this appointment if IsDone = false
+
     // return id if delete was successful
     return id
   }

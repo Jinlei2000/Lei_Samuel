@@ -77,19 +77,23 @@ export class UsersService {
     return users
   }
 
-  // TODO find all users that is not a absent on a specific date (return array of users) & find all users that is not scheduled on a specific date (return array of users)
-  // use the absenceService to find all absent users on a specific date
-  // use the scheduleService to find all scheduled users on a specific date
-  async findAvailableUsersByDate(date: Date): Promise<User[]> {
-    const absentIds = await this.absenceService.findAllUserByDate(date)
+  // find all employees that are available on a specific date (not absent && not scheduled)
+  async findAvailableEmployeesByDate(date: Date): Promise<User[]> {
+    const absentIds = await this.absenceService.findAllUsersByDate(date)
+    const scheduledIds =
+      await this.scheduleService.findAllScheduledUsersByDate(date)
+
+    console.log('scheduledIds', scheduledIds)
+    console.log('absentIds', absentIds)
+
+    const ids = [...absentIds, ...scheduledIds]
 
     const users = await this.userRepository.find({
       where: {
-        // check if id is not in absentIds
+        // check if id is not in absentIds and not in scheduledIds
         // @ts-ignore
-        id: { $nin: absentIds }, // nin = not in
-
-        // TODO: check if user is not scheduled on date
+        uid: { $nin: ids }, // not in
+        role: Role.EMPLOYEE,
       },
     })
 

@@ -45,14 +45,14 @@ export class SchedulesService {
       },
     })
 
-    let ids: string[] = []
+    let uids: string[] = []
     for (const schedule of schedules) {
-      for (const employeeId of schedule.employees) {
-        ids.push(employeeId.toString())
+      for (const e of schedule.employees) {
+        uids.push(e.uid.toString())
       }
     }
 
-    return ids
+    return uids
   }
 
   async findOne(id: string): Promise<Schedule> {
@@ -94,7 +94,9 @@ export class SchedulesService {
       ? await this.usersService.findAllByIds(updateScheduleInput.employeeIds)
       : currentSchedule.employees
     s.materials = updateScheduleInput.materialIds
-      ? await this.materialsService.findAllByIds(updateScheduleInput.materialIds)
+      ? await this.materialsService.findAllByIds(
+          updateScheduleInput.materialIds,
+        )
       : currentSchedule.materials
     s.finalDate = updateScheduleInput.finalDate
       ? updateScheduleInput.finalDate
