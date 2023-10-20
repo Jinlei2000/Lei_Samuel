@@ -13,6 +13,7 @@ import {
   filterAbsences,
   orderAbsences,
 } from 'src/helpers/absencesFunctions'
+import { SchedulesService } from 'src/schedules/schedules.service'
 
 @Injectable()
 export class AbsencesService {
@@ -21,6 +22,8 @@ export class AbsencesService {
     private readonly absenceRepository: Repository<Absence>,
     @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
+    @Inject(forwardRef(() => SchedulesService))
+    private readonly scheduleService: SchedulesService,
   ) {}
 
   async findAll(
@@ -136,9 +139,7 @@ export class AbsencesService {
     })
     if (absences.length > 0)
       throw new GraphQLError('User already has an absence on the same date!')
-    // TODO: if user is add a absent. set all appointments to IsScheduled = false in that period
-    // if he works alone, set all appointments to IsScheduled = false in that period & not delete finalDate & if IsDone not false
-    // if he works with someone else, delete the user from schudule in that period
+
     const a = new Absence()
     a.description = createAbsenceInput.description
     a.userId = createAbsenceInput.userId
@@ -151,6 +152,14 @@ export class AbsencesService {
 
     // increment user absences
     await this.userService.incrementAbsencesCount(createAbsenceInput.userId)
+
+    // remove user from schedules with date range
+    const user = await this.userService.findOne(createAbsenceInput.userId)
+    await this.scheduleService.updateAllByEmployeeWithDateRange(
+      user,
+      new Date(createAbsenceInput.startDate),
+      new Date(createAbsenceInput.endDate),
+    )
 
     return newAbsence
   }

@@ -112,7 +112,7 @@ export class AppointmentsService {
     return id
   }
 
-  // remove all appointments by userId only if not done
+  // remove all appointments by userId only if not done (client)
   async removeAllByUser(user: User): Promise<string[]> {
     const appointments = await this.appointmentRepository.find({
       where: {
