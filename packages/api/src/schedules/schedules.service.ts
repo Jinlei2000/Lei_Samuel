@@ -105,9 +105,10 @@ export class SchedulesService {
 
     const updatedSchedule = {
       ...currentSchedule,
-      ...(updateScheduleInput.appointmentIds && {
-        appointmentIds: updateScheduleInput.appointmentIds,
-      }),
+      // ...(updateScheduleInput.appointmentIds && {
+      //   appointmentIds: updateScheduleInput.appointmentIds,
+      // }),
+      // update when not null (if null, keep current value)
       ...(updateScheduleInput.employeeIds && {
         employees: await this.usersService.findAllByIds(
           updateScheduleInput.employeeIds,
@@ -118,12 +119,12 @@ export class SchedulesService {
           updateScheduleInput.materialIds,
         ),
       }),
-      ...(updateScheduleInput.finalDate && {
-        finalDate: updateScheduleInput.finalDate,
-      }),
-      ...(updateScheduleInput.createdBy && {
-        createdBy: updateScheduleInput.createdBy,
-      }),
+      // ...(updateScheduleInput.finalDate && {
+      //   finalDate: updateScheduleInput.finalDate,
+      // }),
+      // ...(updateScheduleInput.createdBy && {
+      //   createdBy: updateScheduleInput.createdBy,
+      // }),
     }
 
     await this.scheduleRepository.update(id, updatedSchedule)

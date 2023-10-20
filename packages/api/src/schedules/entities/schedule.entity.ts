@@ -24,10 +24,12 @@ export class Schedule {
   @Field(() => [Appointment])
   appointments: Appointment[]
 
+  // Embedded field
   @Column()
   @Field(() => [User])
   employees: User[]
 
+  // Embedded field
   @Column()
   @Field(() => [Material])
   materials: Material[]
