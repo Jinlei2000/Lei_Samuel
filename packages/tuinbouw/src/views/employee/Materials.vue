@@ -67,16 +67,94 @@
           <div class="flex flex-col gap-3">
             <h2 class="text-lg">Type</h2>
             <div class="flex gap-12">
-              <ul class="flex flex-col gap-3">
-                <li>Machinery</li>
-                <li>Screwdrivers</li>
-                <li>Cutting tools</li>
-              </ul>
-              <ul class="flex flex-col gap-3">
-                <li>Machinery</li>
-                <li>Screwdrivers</li>
-                <li>Cutting tools</li>
-              </ul>
+              <div class="flex flex-col gap-3">
+                <div class="flex gap-2">
+                  <input
+                    type="checkbox"
+                    id="checkbox"
+                    v-model="machinery"
+                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="checkbox">Machinery</label>
+                </div>
+                <div class="flex gap-2">
+                  <input
+                    type="checkbox"
+                    id="checkbox"
+                    v-model="screwdrivers"
+                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="checkbox">Screwdrivers</label>
+                </div>
+                <div class="flex gap-2">
+                  <input
+                    type="checkbox"
+                    id="checkbox"
+                    v-model="cuttingTools"
+                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="checkbox">Cutting tools</label>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3">
+                <div class="flex gap-2">
+                  <input
+                    type="checkbox"
+                    id="checkbox"
+                    v-model="machinery"
+                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="checkbox">Machinery</label>
+                </div>
+                <div class="flex gap-2">
+                  <input
+                    type="checkbox"
+                    id="checkbox"
+                    v-model="screwdrivers"
+                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="checkbox">Screwdrivers</label>
+                </div>
+                <div class="flex gap-2">
+                  <input
+                    type="checkbox"
+                    id="some_id"
+                    v-model="cuttingTools"
+                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="checkbox">Cutting tools</label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -174,6 +252,10 @@ import { Check } from 'lucide-vue-next'
 
 const search = ref('')
 const availability = ref('all')
+
+const machinery = ref(false)
+const screwdrivers = ref(false)
+const cuttingTools = ref(false)
 
 const { result: allMaterials, loading, error } = useQuery(GET_MATERIALS)
 const {
