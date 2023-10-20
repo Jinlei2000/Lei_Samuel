@@ -12,6 +12,7 @@ export const filterAppointments = (
 
   // where object for query
   const whereQuery: { [key: string]: any } = {}
+  // TODO: filter for priority true and is not done & finalDate is in the past where is not done
   const filtersList = ['M', 'R', 'D', 'ND', 'S', 'NS']
 
   // check if filters are valid
