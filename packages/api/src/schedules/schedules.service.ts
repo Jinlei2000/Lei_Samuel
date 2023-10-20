@@ -9,8 +9,9 @@ import { OrderByInput } from 'src/interfaces/order.input'
 import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { MaterialsService } from 'src/materials/materials.service'
-import { AppointmentsService } from 'src/appointments/appointments.service'
 import { User } from 'src/users/entities/user.entity'
+import { AppointmentsService } from 'src/appointments/appointments.service'
+import { filterSchedules, orderSchedules } from 'src/helpers/schedulesFunctions'
 
 @Injectable()
 export class SchedulesService {
@@ -32,12 +33,12 @@ export class SchedulesService {
     order?: OrderByInput,
   ): Promise<Schedule[]> {
     // filter and order schedules
-    // const whereQuery = filterSchedules(filters)
-    // const orderQuery = orderSchedules(order)
+    const whereQuery = filterSchedules(filters)
+    const orderQuery = orderSchedules(order)
 
     return this.scheduleRepository.find({
-      // where: whereQuery,
-      // order: orderQuery,
+      where: whereQuery,
+      order: orderQuery,
     })
   }
 
@@ -132,9 +133,7 @@ export class SchedulesService {
   }
 
   // remove all appointments id from schedules & delete schedule if empty appointmentIds
-  async updateAllByAppointment(
-    appointmentId: string,
-  ): Promise<string[]> {
+  async updateAllByAppointment(appointmentId: string): Promise<string[]> {
     let ids: string[] = []
 
     // find all schedules where appointmentIds is in ids

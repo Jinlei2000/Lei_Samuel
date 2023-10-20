@@ -14,7 +14,7 @@ import { LocationsModule } from 'src/locations/locations.module'
     TypeOrmModule.forFeature([Appointment]),
     UsersModule,
     LocationsModule,
-    forwardRef(() => SchedulesModule),
+    SchedulesModule,
   ],
   exports: [AppointmentsService],
 })
