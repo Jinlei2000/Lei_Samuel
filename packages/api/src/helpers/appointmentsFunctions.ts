@@ -11,8 +11,7 @@ export const filterAppointments = (
   filters = filters?.map(filter => filter.toUpperCase())
 
   // where object for query
-  const whereQuery: { [key: string]: any } = {}
-  // TODO: filter for priority true and is not done & finalDate is in the past where is not done
+  let whereQuery: any = {}
   const filtersList = ['M', 'R', 'D', 'ND', 'S', 'NS', 'P', 'NP']
 
   // check if filters are valid
@@ -60,8 +59,19 @@ export const filterAppointments = (
     if (filters?.includes('NS')) whereQuery.isScheduled = false
 
     // priority filter
-    if (filters?.includes('P')) whereQuery.priority = true
-    if (filters?.includes('NP')) whereQuery.priority = false
+    const date = new Date(new Date().toISOString().split('T')[0])
+    if (filters?.includes('P')) {
+      // filter for priority true and is not done & finalDate is in the past where is not done
+      whereQuery = {
+        ...whereQuery,
+        isDone: false,
+        OR: [{ priority: true }, { finalDate: { $lt: date } }],
+      }
+    }
+    if (filters?.includes('NP')) {
+      whereQuery.priority = false
+      whereQuery.isDone = false
+    }
   }
 
   return whereQuery
