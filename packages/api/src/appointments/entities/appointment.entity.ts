@@ -65,6 +65,10 @@ export class Appointment {
   @Field({ nullable: true })
   description?: string
 
+  @Column()
+  @Field()
+  priority: boolean
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   createdAt?: Date

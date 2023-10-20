@@ -121,6 +121,7 @@ export class SeedService {
           )
           a.price = appointment.price
           a.finalDate = new Date(appointment.finalDate)
+          a.priority = appointment.priority
 
           userAppointments.push(a)
         }

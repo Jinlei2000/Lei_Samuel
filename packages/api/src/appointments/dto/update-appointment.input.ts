@@ -49,6 +49,9 @@ export class UpdateAppointmentInput extends PartialType(
   @Field({ nullable: true })
   description?: string
 
+  @Field({ nullable: true })
+  priority?: boolean
+
   @Field({
     defaultValue: false,
     nullable: true,
