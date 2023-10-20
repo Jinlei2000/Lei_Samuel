@@ -191,6 +191,7 @@ export class UsersService {
       // update schedules of employee where finalDate is in the future
       await this.scheduleService.updateAllByEmployee(user)
       // TODO: all materials of user, delete all materials of user
+      // await this.materialsService.updateAllByUserId(user.id.toString())
     }
 
     // return id if delete was successful
