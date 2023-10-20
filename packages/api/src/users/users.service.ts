@@ -193,7 +193,7 @@ export class UsersService {
     if (user.role === Role.EMPLOYEE) {
       // update schedules of employee where finalDate is in the future
       await this.scheduleService.updateAllByEmployee(user)
-      // TODO: all materials of user, delete all materials of user
+      // remove user from all materials
       await this.materialsService.updateAllByUserId(user.id.toString())
     }
 
