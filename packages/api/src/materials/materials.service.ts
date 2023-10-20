@@ -114,6 +114,17 @@ export class MaterialsService {
     return this.findOne(id.toString())
   }
 
+  async updateAllByUserId(userId: string): Promise<Material[]> {
+    const materials = await this.findAllByUserId(userId)
+
+    for (const material of materials) {
+      // @ts-ignore
+      await this.update(material.id, { userId: null })
+    }
+
+    return materials
+  }
+
   async remove(id: string): Promise<string> {
     await this.findOne(id)
 
