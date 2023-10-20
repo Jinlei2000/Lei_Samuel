@@ -205,11 +205,12 @@ export class AbsencesService {
   }
 
   async remove(id: string): Promise<string> {
-    await this.findOne(id)
+    const absence = await this.findOne(id)
 
     await this.absenceRepository.delete(id)
 
-    // TODO: decrement user absences
+    // decrement user absences
+    await this.userService.decrementAbsencesCount(absence.userId)
 
     // return id if delete was successful
     return id
