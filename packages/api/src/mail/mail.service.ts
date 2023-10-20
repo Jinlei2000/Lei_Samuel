@@ -98,4 +98,9 @@ export class MailService {
 
     return ids
   }
+
+  // Seeding functions
+  truncate(): Promise<void> {
+    return this.mailRepository.clear()
+  }
 }
