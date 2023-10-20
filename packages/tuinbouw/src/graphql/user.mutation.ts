@@ -20,7 +20,6 @@ export const ADD_CLIENT = gql`
       }
       email
       telephone
-      availability
       createdAt
       updatedAt
       absentCount

@@ -5,9 +5,7 @@ export const GET_MATERIALS = gql`
     materials {
       id
       name
-      isAvailable
-      personId
-      isDefect
+      userId
       serialNumber
       createdAt
       updatedAt

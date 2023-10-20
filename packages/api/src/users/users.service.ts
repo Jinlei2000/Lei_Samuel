@@ -12,6 +12,8 @@ import { CreateClientInput } from './dto/create-client.input'
 import { LocationsService } from 'src/locations/locations.service'
 import { AbsencesService } from 'src/absences/absences.service'
 import { MailService } from 'src/mail/mail.service'
+import { SchedulesService } from 'src/schedules/schedules.service'
+import { AppointmentsService } from 'src/appointments/appointments.service'
 
 @Injectable()
 export class UsersService {
@@ -25,6 +27,10 @@ export class UsersService {
     private readonly absenceService: AbsencesService,
     @Inject(forwardRef(() => MailService))
     private readonly mailService: MailService,
+    @Inject(forwardRef(() => SchedulesService))
+    private readonly scheduleService: SchedulesService,
+    @Inject(forwardRef(() => AppointmentsService))
+    private readonly appointmentService: AppointmentsService,
   ) {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
@@ -36,6 +42,15 @@ export class UsersService {
       where: whereQuery,
       order: orderQuery,
     })
+  }
+
+  async findAllByIds(ids: string[]): Promise<User[]> {
+    const users: User[] = []
+    for (const id of ids) {
+      const user = await this.findOne(id)
+      users.push(user)
+    }
+    return users
   }
 
   // TODO: create own error, but than or roles guard dont work
@@ -65,27 +80,50 @@ export class UsersService {
     return users
   }
 
-  // TODO find all users that is not a absent on a specific date (return array of users) & find all users that is not scheduled on a specific date (return array of users)
-  // use the absenceService to find all absent users on a specific date
-  // use the scheduleService to find all scheduled users on a specific date
-  async findAvailableUsersByDate(date: Date): Promise<User[]> {
-    const absentIds = await this.absenceService.findAllUserByDate(date)
+  // find all employees that are available on a specific date (not absent && not scheduled)
+  async findAvailableEmployeesByDate(date: Date): Promise<User[]> {
+    const absentIds = await this.absenceService.findAllUsersByDate(date)
+    const scheduledIds =
+      await this.scheduleService.findAllScheduledUsersByDate(date)
+
+    // dont show users that are absent or scheduled or null or empty (account not made yet)
+    const ids = [...absentIds, ...scheduledIds, null, '']
 
     const users = await this.userRepository.find({
       where: {
-        // check if id is not in absentIds
+        // check if id is not in absentIds and not in scheduledIds
         // @ts-ignore
-        id: { $nin: absentIds }, // nin = not in
-
-        // TODO: check if user is not scheduled on date
+        uid: { $nin: ids }, // not in
+        role: Role.EMPLOYEE,
       },
     })
 
     return users
   }
 
-  // TODO: find of a user is available today (absent && scheduled)
-  // async isUserAvailableToday(userId: string): Promise<boolean> {}
+  // find of a user is available today (absent && scheduled)
+  async findStaffIsAvailableToday(userId: string): Promise<boolean> {
+    const user = await this.findOne(userId)
+    // delete all behind the time of today
+    let date = new Date(new Date().toISOString().split('T')[0]) // reset time to 00:00:00
+
+    // check if user is absent today
+    const isAbsent = await this.absenceService.findOneByDateAndUserId(
+      userId,
+      date,
+    )
+
+    // check if user is scheduled today
+    const isScheduled = await this.scheduleService.findOneByDateAndUserId(
+      userId,
+      date,
+    )
+
+    // if user is absent or scheduled, return false
+    if (isAbsent || isScheduled) return false
+
+    return true
+  }
 
   async upgradeToAdmin(id: string): Promise<User> {
     await this.userRepository.update(id, { role: Role.ADMIN })
@@ -126,12 +164,17 @@ export class UsersService {
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
 
-    // TODO employee cant not delete himself
+    // TODO: delete also firebase user
 
-    // Check that user is not trying to delete someone else if not admin
-    if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
-      throw new GraphQLError('You are not allowed to delete someone else')
+    // Check that user is not trying to delete someone else if not admin & employee cant delete himself
+    if (
+      currentUser.role !== Role.ADMIN &&
+      currentUser.uid !== user.uid &&
+      user.role !== Role.EMPLOYEE
+    )
+      throw new GraphQLError('You are not allowed to delete')
 
+    // delete user
     await this.userRepository.delete(id)
 
     // delete all locations of user
@@ -139,6 +182,17 @@ export class UsersService {
 
     // delete all mail tokens of user
     await this.mailService.removeAllByUserId(user.id.toString())
+
+    // delete all appointments of user & delete schedule appointments (client)
+    if (user.role === Role.CLIENT)
+      await this.appointmentService.removeAllByUser(user)
+
+    if (user.role === Role.EMPLOYEE) {
+      // update schedules of employee where finalDate is in the future
+      await this.scheduleService.updateAllByEmployee(user)
+      // TODO: all materials of user, delete all materials of user
+      // await this.materialsService.updateAllByUserId(user.id.toString())
+    }
 
     // return id if delete was successful
     return id
@@ -192,8 +246,6 @@ export class UsersService {
     return newUser
   }
 
-  // TODO: make a functions start automaticly on a time & check if a user is absent today and if so, set availability to false
-
   // Absences
   async incrementAbsencesCount(staffId: string): Promise<void> {
     const user = await this.findOne(staffId)
@@ -203,6 +255,7 @@ export class UsersService {
       { absentCount: user.absentCount + 1 },
     )
   }
+
   //  TODO: use this function everywhere
   // Check that user is not trying to do something to someone else if not admin
   async checkUserPermissions(

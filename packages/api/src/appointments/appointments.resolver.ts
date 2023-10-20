@@ -73,10 +73,4 @@ export class AppointmentsResolver {
   removeAppointment(@Args('id', { type: () => String }) id: string) {
     return this.appointmentsService.remove(id)
   }
-
-  // Resolve fields
-  @ResolveField()
-  user(@Parent() a: Appointment): Promise<User> {
-    return this.usersService.findOne(a.userId)
-  }
 }

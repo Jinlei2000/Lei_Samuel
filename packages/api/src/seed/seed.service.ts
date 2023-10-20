@@ -105,7 +105,7 @@ export class SeedService {
         let userAppointments: Appointment[] = []
         for (let appointment of users[num].appointments) {
           const a = new Appointment()
-          a.userId = user.id.toString()
+          a.user = await this.usersService.findOne(user.id.toString())
           a.type = appointment.type
           a.startProposedDate = new Date(appointment.startProposedDate)
           a.endProposedDate = new Date(appointment.endProposedDate)

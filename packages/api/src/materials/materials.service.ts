@@ -55,7 +55,16 @@ export class MaterialsService {
     return materials
   }
 
-  async findOne(id: string): Promise<Material | GraphQLError> {
+  async findAllByIds(ids: string[]): Promise<Material[]> {
+    const materials: Material[] = []
+    for (const id of ids) {
+      const material = await this.findOne(id)
+      materials.push(material)
+    }
+    return materials
+  }
+
+  async findOne(id: string): Promise<Material> {
     const material = await this.materialRepository.findOne({
       // @ts-ignore
       _id: new ObjectId(id),

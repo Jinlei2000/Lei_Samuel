@@ -17,12 +17,12 @@ export class Appointment {
   @Field(() => ID)
   id: ObjectId
 
-  // Resolve field
+  // Embedded field
   @Column()
-  userId: string
   @Field(() => User)
   user: User
 
+  // Embedded field
   @Column()
   @Field(() => Location)
   location: Location
@@ -44,7 +44,7 @@ export class Appointment {
   endProposedDate: Date
 
   @Column()
-  @Field({ nullable: true , description: 'The date when the appointment is'})
+  @Field({ nullable: true, description: 'The date when the appointment is' })
   finalDate?: Date
 
   @Column()

@@ -58,7 +58,7 @@ export class AbsencesService {
   }
 
   // find all users that is a absent on a specific date (return array of users id's)
-  async findAllUserByDate(date: Date): Promise<string[]> {
+  async findAllUsersByDate(date: Date): Promise<string[]> {
     const absences = await this.absenceRepository.find({
       where: {
         // check if date is between start and end date of absence
@@ -69,8 +69,15 @@ export class AbsencesService {
       },
     })
 
-    const ids = absences.map(absence => absence.userId)
-    return ids
+    const uids: string[] = []
+
+    for (const absence of absences) {
+      const user = await this.userService.findOne(absence.userId)
+
+      uids.push(user.uid)
+    }
+
+    return uids
   }
 
   async findOne(id: string): Promise<Absence> {
@@ -84,6 +91,22 @@ export class AbsencesService {
     }
 
     return absence
+  }
+
+  // check if user is already absent on this date (return true or false)
+  async findOneByDateAndUserId(userId: string, date: Date): Promise<Boolean> {
+    const absences = await this.absenceRepository.find({
+      where: {
+        // check if date is between start and end date of absence
+        // @ts-ignore
+        startDate: { $lte: date },
+        // @ts-ignore
+        endDate: { $gte: date },
+        userId: userId,
+      },
+    })
+
+    return absences.length > 0
   }
 
   async create(createAbsenceInput: CreateAbsenceInput) {
@@ -114,6 +137,8 @@ export class AbsencesService {
     if (absences.length > 0)
       throw new GraphQLError('User already has an absence on the same date!')
     // TODO: if user is add a absent. set all appointments to IsScheduled = false in that period
+    // if he works alone, set all appointments to IsScheduled = false in that period & not delete finalDate & if IsDone not false
+    // if he works with someone else, delete the user from schudule in that period
     const a = new Absence()
     a.description = createAbsenceInput.description
     a.userId = createAbsenceInput.userId
@@ -183,6 +208,8 @@ export class AbsencesService {
     await this.findOne(id)
 
     await this.absenceRepository.delete(id)
+
+    // TODO: decrement user absences
 
     // return id if delete was successful
     return id
