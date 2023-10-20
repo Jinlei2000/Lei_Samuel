@@ -2,15 +2,83 @@
   <div class="flex flex-col items-center justify-center mt-12 mx-32 gap-5">
     <div class="w-full flex flex-col gap-10">
       <!-- filters + searchbar -->
-      <div class="flex items-center justify-between w-full">
+      <div class="flex items-center justify-between w-full relative">
         <div class="flex items-center gap-3">
           <button
-            class="bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
+            class="group bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
           >
             <Filter class="h-5 w-5" />
             <p class="m-0 text-lg">Filter</p>
-            <ChevronDown class="h-[22px] w-[22px]" />
+            <ChevronDown
+              class="h-[22px] w-[22px] group-hover:translate-y-1 transition-all"
+            />
           </button>
+        </div>
+        <div
+          class="absolute flex gap-12 top-16 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12"
+        >
+          <div class="flex flex-col gap-3">
+            <h2 class="text-lg">Availability</h2>
+            <div class="flex flex-col gap-3">
+              <div class="flex gap-2 items-center relative">
+                <input
+                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+                  type="radio"
+                  v-model="availability"
+                  value="all"
+                />
+                <div
+                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                >
+                  <Check class="h-3 w-3" />
+                </div>
+                <label for="">All</label>
+              </div>
+              <div class="flex gap-2 items-center">
+                <input
+                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+                  type="radio"
+                  v-model="availability"
+                  value="available"
+                />
+                <div
+                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                >
+                  <Check class="h-3 w-3" />
+                </div>
+                <label for="">Available</label>
+              </div>
+              <div class="flex gap-2 items-center">
+                <input
+                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+                  type="radio"
+                  v-model="availability"
+                  value="not available"
+                />
+                <div
+                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                >
+                  <Check class="h-3 w-3" />
+                </div>
+                <label for="">Not available</label>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <h2 class="text-lg">Type</h2>
+            <div class="flex gap-12">
+              <ul class="flex flex-col gap-3">
+                <li>Machinery</li>
+                <li>Screwdrivers</li>
+                <li>Cutting tools</li>
+              </ul>
+              <ul class="flex flex-col gap-3">
+                <li>Machinery</li>
+                <li>Screwdrivers</li>
+                <li>Cutting tools</li>
+              </ul>
+            </div>
+          </div>
         </div>
         <div class="flex items-center justify-center gap-3 relative w-1/3">
           <button
@@ -56,7 +124,7 @@
         >
           <img
             class="rounded-2xl rounded-b-3xl w-full"
-            src="https://picsum.photos/200"
+            src="https://picsum.photos/400"
             alt="random picture"
           />
           <div
@@ -102,8 +170,10 @@ import {
 } from '@/graphql/material.query'
 import { watch, ref } from 'vue'
 import { Filter, Search, ChevronDown } from 'lucide-vue-next'
+import { Check } from 'lucide-vue-next'
 
 const search = ref('')
+const availability = ref('all')
 
 const { result: allMaterials, loading, error } = useQuery(GET_MATERIALS)
 const {
