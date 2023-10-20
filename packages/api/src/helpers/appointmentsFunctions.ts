@@ -13,14 +13,14 @@ export const filterAppointments = (
   // where object for query
   const whereQuery: { [key: string]: any } = {}
   // TODO: filter for priority true and is not done & finalDate is in the past where is not done
-  const filtersList = ['M', 'R', 'D', 'ND', 'S', 'NS']
+  const filtersList = ['M', 'R', 'D', 'ND', 'S', 'NS', 'P', 'NP']
 
   // check if filters are valid
   if (filters) {
     // check if all filters are valid (M, R, D, ND, S, NS)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
-        `Invalid filter in filters = [${filters}]! Supported filters are: M = Maintenance, R = Repair, D = Done, ND = Not Done, S = Scheduled, NS = Not Scheduled`,
+        `Invalid filter in filters = [${filters}]! Supported filters are: M = Maintenance, R = Repair, D = Done, ND = Not Done, S = Scheduled, NS = Not Scheduled, P = Priority, NP = Not Priority`,
       )
     }
 
@@ -38,6 +38,13 @@ export const filterAppointments = (
       )
     }
 
+    // priority and not priority cannot be used at the same time
+    if (filters?.includes('P') && filters?.includes('NP')) {
+      throw new GraphQLError(
+        'Cannot filter for P and NP at the same time! P = Priority, NP = Not Priority',
+      )
+    }
+
     // type filter
     let selectTypes: Array<string> = []
     if (filters?.includes('M')) selectTypes.push('MAINTENANCE')
@@ -51,6 +58,10 @@ export const filterAppointments = (
     // scheduled filter
     if (filters?.includes('S')) whereQuery.isScheduled = true
     if (filters?.includes('NS')) whereQuery.isScheduled = false
+
+    // priority filter
+    if (filters?.includes('P')) whereQuery.priority = true
+    if (filters?.includes('NP')) whereQuery.priority = false
   }
 
   return whereQuery
@@ -78,6 +89,7 @@ export const orderAppointments = (
     'finalDate',
     'isScheduled',
     'isDone',
+    'priority',
     'createdAt',
     'updatedAt',
   ]
