@@ -14,6 +14,7 @@ import {
 import { SchedulesService } from 'src/schedules/schedules.service'
 import { UsersService } from 'src/users/users.service'
 import { LocationsService } from 'src/locations/locations.service'
+import { User } from 'src/users/entities/user.entity'
 
 @Injectable()
 export class AppointmentsService {
@@ -94,7 +95,7 @@ export class AppointmentsService {
       throw new GraphQLError('Cannot delete an appointment that is done')
 
     // remove all appointments id from schedules & delete schedule if empty appointmentIds
-    await this.scheduleService.removeAllAppointmentsIdFromSchedules(id)
+    await this.scheduleService.updateAllByAppointment(id)
 
     await this.appointmentRepository.delete(id)
 
@@ -103,9 +104,7 @@ export class AppointmentsService {
   }
 
   // remove all appointments by userId only if not done
-  async removeAllByUserId(userId: string): Promise<string[]> {
-    const user = await this.usersService.findOne(userId)
-
+  async removeAllByUser(user: User): Promise<string[]> {
     const appointments = await this.appointmentRepository.find({
       where: {
         user: { uid: user.uid },

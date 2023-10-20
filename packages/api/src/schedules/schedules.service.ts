@@ -10,6 +10,7 @@ import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { MaterialsService } from 'src/materials/materials.service'
 import { AppointmentsService } from 'src/appointments/appointments.service'
+import { User } from 'src/users/entities/user.entity'
 
 @Injectable()
 export class SchedulesService {
@@ -131,7 +132,7 @@ export class SchedulesService {
   }
 
   // remove all appointments id from schedules & delete schedule if empty appointmentIds
-  async removeAllAppointmentsIdFromSchedules(
+  async updateAllByAppointment(
     appointmentId: string,
   ): Promise<string[]> {
     let ids: string[] = []
@@ -160,6 +161,45 @@ export class SchedulesService {
     for (const updatedSchedule of updatedSchedules) {
       // if schedule appointmentIds is empty, delete schedule
       if (updatedSchedule.appointmentIds.length === 0) {
+        await this.remove(updatedSchedule.id.toString())
+      } else {
+        await this.update(updatedSchedule.id, updatedSchedule)
+      }
+      ids.push(updatedSchedule.id.toString())
+    }
+
+    return ids
+  }
+
+  // remove all employees from schedules & delete schedule if empty employees
+  async updateAllByEmployee(user: User): Promise<string[]> {
+    let ids: string[] = []
+    const date = new Date(new Date().toISOString().split('T')[0]) // reset time to 00:00:00
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        // check if user is in employees array
+        employees: {
+          // @ts-ignore
+          $elemMatch: { uid: user.uid },
+        },
+        // find all schedules that are not in the past
+        // @ts-ignore
+        finalDate: { $gte: date },
+      },
+    })
+
+    // return empty array if no schedules found
+    if (schedules.length === 0) return []
+
+    // update schedule employees with the remaining employees
+    const updatedSchedules = schedules.map(schedule => ({
+      id: schedule.id,
+      employees: schedule.employees.filter(e => e.uid !== user.uid),
+    }))
+
+    for (const updatedSchedule of updatedSchedules) {
+      // if schedule employees is empty, delete schedule
+      if (updatedSchedule.employees.length === 0) {
         await this.remove(updatedSchedule.id.toString())
       } else {
         await this.update(updatedSchedule.id, updatedSchedule)

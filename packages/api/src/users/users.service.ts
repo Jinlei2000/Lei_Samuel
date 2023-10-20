@@ -164,17 +164,17 @@ export class UsersService {
     const user = await this.findOne(id)
     const currentUser = await this.findOneByUid(currentUserUid)
 
-    // TODO: if a client is deleted, delete all his appointments that are isDone = false (return all ids)
-    // search all schedules where appointmentIds is in ids (update schedule appointmentIds)
-    // if schedule appointmentIds is empty, delete schedule
-    // make a remove function in schedule service
-
     // TODO: delete also firebase user
 
     // Check that user is not trying to delete someone else if not admin & employee cant delete himself
-    if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid && user.role !== Role.EMPLOYEE)
+    if (
+      currentUser.role !== Role.ADMIN &&
+      currentUser.uid !== user.uid &&
+      user.role !== Role.EMPLOYEE
+    )
       throw new GraphQLError('You are not allowed to delete')
 
+    // delete user
     await this.userRepository.delete(id)
 
     // delete all locations of user
@@ -183,8 +183,15 @@ export class UsersService {
     // delete all mail tokens of user
     await this.mailService.removeAllByUserId(user.id.toString())
 
-    // delete all appointments of user
-    await this.appointmentService.removeAllByUserId(user.id.toString())
+    // delete all appointments of user & delete schedule appointments (client)
+    if (user.role === Role.CLIENT)
+      await this.appointmentService.removeAllByUser(user)
+
+    if (user.role === Role.EMPLOYEE) {
+      // update schedules of employee where finalDate is in the future
+      await this.scheduleService.updateAllByEmployee(user)
+      // TODO: all materials of user, delete all materials of user
+    }
 
     // return id if delete was successful
     return id
