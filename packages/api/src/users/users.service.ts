@@ -56,7 +56,6 @@ export class UsersService {
     return users
   }
 
-  // TODO: create own error, but than or roles guard dont work
   async findOneByUid(uid: string): Promise<User> {
     return this.userRepository.findOneByOrFail({ uid })
   }
