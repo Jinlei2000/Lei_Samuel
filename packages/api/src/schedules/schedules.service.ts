@@ -27,7 +27,6 @@ export class SchedulesService {
     private readonly appointmentsService: AppointmentsService,
   ) {}
 
-  // TODO: filter and order schedules
   async findAll(
     filters?: Array<string>,
     order?: OrderByInput,
