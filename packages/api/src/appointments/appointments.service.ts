@@ -72,17 +72,26 @@ export class AppointmentsService {
     return this.appointmentRepository.save(a)
   }
 
-  // TODO: update user & locations
   async update(
     id: ObjectId,
     updateAppointmentInput: UpdateAppointmentInput,
   ): Promise<Appointment> {
-    await this.findOne(id.toString())
+    const currentAppointment = await this.findOne(id.toString())
 
-    // remove id and make a new variable with the rest of the data
-    const { id: _, ...updatedData } = updateAppointmentInput
+    const updatedAppointment = {
+      ...currentAppointment,
+      // update when not null (if null, keep current value)
+      ...(updateAppointmentInput.userId && {
+        user: await this.usersService.findOne(updateAppointmentInput.userId),
+      }),
+      ...(updateAppointmentInput.locationId && {
+        location: await this.locationsService.findOne(
+          updateAppointmentInput.locationId,
+        ),
+      }),
+    }
 
-    await this.appointmentRepository.update(id, updatedData)
+    await this.appointmentRepository.update(id, updatedAppointment)
 
     return this.findOne(id.toString())
   }
