@@ -209,6 +209,48 @@ export class SchedulesService {
     return ids
   }
 
+  // remove all employees from schedules & delete schedule if empty employees (with date range)
+  async updateAllByEmployeeWithDateRange(
+    user: User,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<string[]> {
+    let ids: string[] = []
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        // check if user is in employees array
+        employees: {
+          // @ts-ignore
+          $elemMatch: { uid: user.uid },
+        },
+        // find all schedules that are between start and end date
+        // @ts-ignore
+        finalDate: { $gte: startDate, $lte: endDate},
+      },
+    })
+
+    // return empty array if no schedules found
+    if (schedules.length === 0) return []
+
+    // update schedule employees with the remaining employees
+    const updatedSchedules = schedules.map(schedule => ({
+      id: schedule.id,
+      employees: schedule.employees.filter(e => e.uid !== user.uid),
+    }))
+
+    for (const updatedSchedule of updatedSchedules) {
+      // if schedule employees is empty, delete schedule
+      if (updatedSchedule.employees.length === 0) {
+        await this.remove(updatedSchedule.id.toString())
+      } else {
+        await this.update(updatedSchedule.id, updatedSchedule)
+      }
+      ids.push(updatedSchedule.id.toString())
+    }
+
+    return ids
+  }
+
   async remove(id: string): Promise<string> {
     await this.findOne(id.toString())
 

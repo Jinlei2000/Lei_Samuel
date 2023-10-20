@@ -256,6 +256,15 @@ export class UsersService {
     )
   }
 
+  async decrementAbsencesCount(staffId: string): Promise<void> {
+    const user = await this.findOne(staffId)
+
+    this.userRepository.update(
+      { id: new ObjectId(staffId) },
+      { absentCount: user.absentCount - 1 },
+    )
+  }
+
   //  TODO: use this function everywhere
   // Check that user is not trying to do something to someone else if not admin
   async checkUserPermissions(
