@@ -9,6 +9,7 @@ import { OrderByInput } from 'src/interfaces/order.input'
 import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { MaterialsService } from 'src/materials/materials.service'
+import { AppointmentsService } from 'src/appointments/appointments.service'
 
 @Injectable()
 export class SchedulesService {
@@ -20,6 +21,8 @@ export class SchedulesService {
     private readonly usersService: UsersService,
     @Inject(forwardRef(() => MaterialsService))
     private readonly materialsService: MaterialsService,
+    @Inject(forwardRef(() => AppointmentsService))
+    private readonly appointmentsService: AppointmentsService,
   ) {}
 
   // TODO: filter and order schedules
@@ -101,25 +104,25 @@ export class SchedulesService {
 
     const updatedSchedule = {
       ...currentSchedule,
-      ...updateScheduleInput.appointmentIds && {
+      ...(updateScheduleInput.appointmentIds && {
         appointmentIds: updateScheduleInput.appointmentIds,
-      },
-      ...updateScheduleInput.employeeIds && {
+      }),
+      ...(updateScheduleInput.employeeIds && {
         employees: await this.usersService.findAllByIds(
           updateScheduleInput.employeeIds,
         ),
-      },
-      ...updateScheduleInput.materialIds && {
+      }),
+      ...(updateScheduleInput.materialIds && {
         materials: await this.materialsService.findAllByIds(
           updateScheduleInput.materialIds,
         ),
-      },
-      ...updateScheduleInput.finalDate && {
+      }),
+      ...(updateScheduleInput.finalDate && {
         finalDate: updateScheduleInput.finalDate,
-      },
-      ...updateScheduleInput.createdBy && {
+      }),
+      ...(updateScheduleInput.createdBy && {
         createdBy: updateScheduleInput.createdBy,
-      },
+      }),
     }
 
     await this.scheduleRepository.update(id, updatedSchedule)
@@ -127,10 +130,45 @@ export class SchedulesService {
     return this.findOne(id.toString())
   }
 
-  // TODO: if a client is deleted, delete all his appointments that are isDone = false (return all ids)
-  // search all schedules where appointmentIds is in ids (update schedule appointmentIds)
-  // if schedule appointmentIds is empty, delete schedule
-  // make a remove function in schedule service
+  // remove all appointments id from schedules & delete schedule if empty appointmentIds
+  async removeAllAppointmentsIdFromSchedules(
+    appointmentId: string,
+  ): Promise<string[]> {
+    let ids: string[] = []
+
+    // find all schedules where appointmentIds is in ids
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        appointmentIds: {
+          // @ts-ignore
+          $elemMatch: { id: new ObjectId(appointmentId) },
+        },
+      },
+    })
+
+    // return empty array if no schedules found
+    if (schedules.length === 0) return []
+
+    // update schedule appointmentIds with the remaining ids
+    const updatedSchedules = schedules.map(schedule => ({
+      id: schedule.id,
+      appointmentIds: schedule.appointmentIds.filter(
+        id => id.toString() !== appointmentId,
+      ),
+    }))
+
+    for (const updatedSchedule of updatedSchedules) {
+      // if schedule appointmentIds is empty, delete schedule
+      if (updatedSchedule.appointmentIds.length === 0) {
+        await this.remove(updatedSchedule.id.toString())
+      } else {
+        await this.update(updatedSchedule.id, updatedSchedule)
+      }
+      ids.push(updatedSchedule.id.toString())
+    }
+
+    return ids
+  }
 
   async remove(id: string): Promise<string> {
     await this.findOne(id.toString())

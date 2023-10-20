@@ -13,6 +13,7 @@ import { LocationsService } from 'src/locations/locations.service'
 import { AbsencesService } from 'src/absences/absences.service'
 import { MailService } from 'src/mail/mail.service'
 import { SchedulesService } from 'src/schedules/schedules.service'
+import { AppointmentsService } from 'src/appointments/appointments.service'
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,8 @@ export class UsersService {
     private readonly mailService: MailService,
     @Inject(forwardRef(() => SchedulesService))
     private readonly scheduleService: SchedulesService,
+    @Inject(forwardRef(() => AppointmentsService))
+    private readonly appointmentService: AppointmentsService,
   ) {}
 
   findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
@@ -179,6 +182,9 @@ export class UsersService {
 
     // delete all mail tokens of user
     await this.mailService.removeAllByUserId(user.id.toString())
+
+    // delete all appointments of user
+    await this.appointmentService.removeAllByUserId(user.id.toString())
 
     // return id if delete was successful
     return id

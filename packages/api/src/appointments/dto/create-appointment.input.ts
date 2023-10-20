@@ -1,6 +1,4 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { CreateLocationInput } from 'src/locations/dto/create-location.input'
-import { Location } from 'src/locations/entities/location.entity'
 import { IsDate } from 'class-validator'
 
 @InputType()
@@ -8,9 +6,8 @@ export class CreateAppointmentInput {
   @Field()
   userId: string
 
-  // TODO: use location id instead of location
-  @Field(() => CreateLocationInput)
-  location: Location
+  @Field()
+  locationId: string
 
   @Field({
     nullable: true,
