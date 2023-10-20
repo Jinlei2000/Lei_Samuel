@@ -9,10 +9,12 @@ import { UsersService } from 'src/users/users.service'
 import { Role, User } from 'src/users/entities/user.entity'
 import { ObjectId } from 'mongodb'
 import { Absence } from 'src/absences/entities/absence.entity'
+import { AbsencesService } from 'src/absences/absences.service'
+import { SchedulesService } from 'src/schedules/schedules.service'
+import { MailService } from 'src/mail/mail.service'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
-import { AbsencesService } from 'src/absences/absences.service'
 
 @Injectable()
 export class SeedService {
@@ -22,6 +24,8 @@ export class SeedService {
     private locationsService: LocationsService,
     private usersService: UsersService,
     private absencesService: AbsencesService,
+    private schedulesService: SchedulesService,
+    private mailService: MailService,
   ) {}
 
   async deleteAllAppointments(): Promise<void> {
@@ -171,6 +175,18 @@ export class SeedService {
   //#region Absences
   async deleteAllAbsences(): Promise<void> {
     return this.absencesService.truncate()
+  }
+  //#endregion
+
+  //#region Schedules
+  async deleteAllSchedules(): Promise<void> {
+    return this.schedulesService.truncate()
+  }
+  //#endregion
+
+  //#region Mail
+  async deleteAllMail(): Promise<void> {
+    return this.mailService.truncate()
   }
   //#endregion
 }
