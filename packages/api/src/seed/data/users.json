@@ -169,7 +169,8 @@
         "finalDate": "2022-05-03",
         "isScheduled": true,
         "isDone": true,
-        "description": "I need my garden to be maintained."
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
         "type": "repair",
@@ -179,7 +180,8 @@
         "finalDate": "2022-05-15",
         "isScheduled": true,
         "isDone": true,
-        "description": "I need my garden to be maintained."
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
         "type": "maintenance",
@@ -187,7 +189,8 @@
         "endProposedDate": "2023-05-10",
         "isScheduled": false,
         "isDone": false,
-        "description": "I need my garden to be maintained."
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
         "type": "repair",
@@ -195,7 +198,8 @@
         "endProposedDate": "2023-05-20",
         "isScheduled": false,
         "isDone": false,
-        "description": "I need my garden to be repaired."
+        "description": "I need my garden to be repaired.",
+        "priority": false
       }
     ]
   },
@@ -223,7 +227,8 @@
         "finalDate": "2022-05-03",
         "isScheduled": true,
         "isDone": true,
-        "description": "I need my garden to be maintained."
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
         "type": "repair",
@@ -233,7 +238,8 @@
         "finalDate": "2022-05-15",
         "isScheduled": true,
         "isDone": true,
-        "description": "I need my garden to be maintained."
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
         "type": "maintenance",
@@ -241,7 +247,8 @@
         "endProposedDate": "2023-05-10",
         "isScheduled": false,
         "isDone": false,
-        "description": "I need my garden to be maintained."
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
         "type": "repair",
@@ -249,7 +256,8 @@
         "endProposedDate": "2023-05-20",
         "isScheduled": false,
         "isDone": false,
-        "description": "I need my garden to be repaired."
+        "description": "I need my garden to be repaired.",
+        "priority": false
       }
     ]
   },

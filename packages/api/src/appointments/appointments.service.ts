@@ -67,7 +67,7 @@ export class AppointmentsService {
     a.isDone = false
     a.isScheduled = false
     a.description = createAppointmentInput.description
-    // TODO: priority
+    a.priority = createAppointmentInput.priority
 
     return this.appointmentRepository.save(a)
   }

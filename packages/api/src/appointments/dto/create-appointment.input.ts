@@ -32,6 +32,9 @@ export class CreateAppointmentInput {
   @Field({ nullable: true })
   description?: string
 
+  @Field()
+  priority: boolean
+
   @Field({
     defaultValue: false,
     description: 'If the appointment is done, it will be true',
