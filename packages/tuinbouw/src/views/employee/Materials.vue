@@ -19,7 +19,9 @@
         <!-- Filter dropdown -->
         <div
           :class="
-            filter ? 'opacity-100 transition-all duration-200' : 'opacity-0 transition-all duration-200'
+            filter
+              ? 'opacity-100 transition-all duration-200'
+              : 'opacity-0 transition-all duration-200'
           "
           class="absolute flex gap-12 top-16 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12"
         >
@@ -164,6 +166,8 @@
             </div>
           </div>
         </div>
+        <!-- End filter dropdown -->
+        <!-- Searchbar -->
         <div class="flex items-center justify-center gap-3 relative w-1/3">
           <button
             class="bg-transparent p-2 rounded-full hover:scale-110 transition-all absolute left-2"
@@ -181,17 +185,61 @@
       <!-- title + sort -->
       <div class="flex items-center justify-between w-full">
         <h1 class="text-2xl">Materials</h1>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 relative">
           <div><p>Alphabetical</p></div>
           <div class="flex items-center gap-3">
             <button
               class="bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
+              v-on:click="sort = !sort"
             >
               <img class="h-3 w-4 m-1" src="../../../public/icons/sort.svg" />
               <p class="m-0 text-lg">Sort</p>
               <ChevronDown class="h-[22px] w-[22px]" />
             </button>
           </div>
+          <!-- Sort dropdown -->
+          <div
+            :class="
+              sort
+                ? 'opacity-100 transition-all duration-200'
+                : 'opacity-0 transition-all duration-200'
+            "
+            class="absolute flex gap-12 top-16 right-0 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12"
+          >
+            <div class="flex flex-col gap-3">
+              <div class="flex flex-col gap-3">
+                <div class="flex gap-2 items-center">
+                  <input
+                    class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+                    type="radio"
+                    v-model="sorting"
+                    value="alphabetically"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="">Alphabetically</label>
+                </div>
+                <div class="flex gap-2 items-center">
+                  <input
+                    class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+                    type="radio"
+                    v-model="sorting"
+                    value="other"
+                  />
+                  <div
+                    class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  >
+                    <Check class="h-3 w-3" />
+                  </div>
+                  <label for="">other sort</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End sort dropdown -->
         </div>
       </div>
     </div>
@@ -260,6 +308,9 @@ const search = ref('')
 
 // availability radio buttons
 const availability = ref('all')
+
+// sort radio buttons
+const sorting = ref('all')
 
 // type checkboxes
 const machinery = ref(false)
