@@ -6,15 +6,21 @@
         <div class="flex items-center gap-3">
           <button
             class="group bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
+            v-on:click="filter = !filter"
           >
             <Filter class="h-5 w-5" />
             <p class="m-0 text-lg">Filter</p>
             <ChevronDown
-              class="h-[22px] w-[22px] group-hover:translate-y-1 transition-all"
+              :class="filter ? 'rotate-180 transition-all' : 'transition-all'"
+              class="h-[22px] w-[22px]transition-all"
             />
           </button>
         </div>
+        <!-- Filter dropdown -->
         <div
+          :class="
+            filter ? 'opacity-100 transition-all duration-200' : 'opacity-0 transition-all duration-200'
+          "
           class="absolute flex gap-12 top-16 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12"
         >
           <div class="flex flex-col gap-3">
@@ -251,11 +257,20 @@ import { Filter, Search, ChevronDown } from 'lucide-vue-next'
 import { Check } from 'lucide-vue-next'
 
 const search = ref('')
+
+// availability radio buttons
 const availability = ref('all')
 
+// type checkboxes
 const machinery = ref(false)
 const screwdrivers = ref(false)
 const cuttingTools = ref(false)
+
+// display filter dropdown
+const filter = ref(false)
+
+//display sort dropdown
+const sort = ref(false)
 
 const { result: allMaterials, loading, error } = useQuery(GET_MATERIALS)
 const {
