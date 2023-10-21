@@ -88,6 +88,16 @@ export class DatabaseSeedCommand {
 
   //#region Schedules
   @Command({
+    command: 'seed:database:schedules',
+    describe: 'Seed the database with schedules',
+  })
+  async seedSchedules() {
+    console.info('👌 Start seeding of schedules')
+    const schedules = await this.seedService.addSchedules()
+    console.info(`😎 ${schedules.length} Schedules are added`)
+  }
+
+  @Command({
     command: 'seed:reset:schedules',
     describe: 'Delete all data from the schedules table',
   })
@@ -109,6 +119,19 @@ export class DatabaseSeedCommand {
     console.info('🥲 Removed mail tokens')
   }
   //#endregion
+
+  // Seed the database with appointments, materials, users...
+  @Command({
+    command: 'seed:database',
+    describe: 'Seed the database with appointments, materials, users...',
+  })
+  async seedDatabase() {
+    console.info('👌 Start seeding of appointments, materials, users...')
+    await this.seedMaterials()
+    await this.seedUsers()
+    await this.seedSchedules()
+    console.info('😎 Seeding of appointments, materials, users... is done')
+  }
 
   // Delete all data from appointments, materials, users, locations... tables
   @Command({
