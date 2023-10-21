@@ -8,6 +8,7 @@ import { AbsencesModule } from 'src/absences/absences.module'
 import { MailModule } from 'src/mail/mail.module'
 import { SchedulesModule } from 'src/schedules/schedules.module'
 import { AppointmentsModule } from 'src/appointments/appointments.module'
+import { MaterialsModule } from 'src/materials/materials.module'
 
 @Module({
   providers: [UsersResolver, UsersService],
@@ -21,6 +22,7 @@ import { AppointmentsModule } from 'src/appointments/appointments.module'
     forwardRef(() => MailModule),
     forwardRef(() => SchedulesModule),
     forwardRef(() => AppointmentsModule),
+    forwardRef(() => MaterialsModule),
   ],
 
   exports: [UsersService],
