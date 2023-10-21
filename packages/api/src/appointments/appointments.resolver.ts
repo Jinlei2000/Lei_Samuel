@@ -35,7 +35,7 @@ export class AppointmentsResolver {
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
   ) {
-    return this.appointmentsService.findAll()
+    return this.appointmentsService.findAll(filters, order)
   }
 
   @UseGuards(FirebaseGuard)
