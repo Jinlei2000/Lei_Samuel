@@ -12,6 +12,7 @@ import { MaterialsService } from 'src/materials/materials.service'
 import { User } from 'src/users/entities/user.entity'
 import { AppointmentsService } from 'src/appointments/appointments.service'
 import { filterSchedules, orderSchedules } from 'src/helpers/schedulesFunctions'
+import { resetTime } from 'src/helpers/genericFunctions'
 
 @Injectable()
 export class SchedulesService {
@@ -173,7 +174,7 @@ export class SchedulesService {
   // remove all employees from schedules & delete schedule if empty employees
   async updateAllByEmployee(user: User): Promise<string[]> {
     let ids: string[] = []
-    const date = new Date(new Date().toISOString().split('T')[0]) // reset time to 00:00:00
+    const date = resetTime(new Date()) // reset time to 00:00:00
     const schedules = await this.scheduleRepository.find({
       where: {
         // check if user is in employees array

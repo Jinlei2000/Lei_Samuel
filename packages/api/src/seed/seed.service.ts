@@ -15,6 +15,7 @@ import { Schedule } from 'src/schedules/entities/schedule.entity'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
+import { resetTime } from 'src/helpers/genericFunctions'
 
 @Injectable()
 export class SeedService {
@@ -114,8 +115,32 @@ export class SeedService {
           const a = new Appointment()
           a.user = await this.usersService.findOne(user.id.toString())
           a.type = appointment.type
-          a.startProposedDate = new Date(appointment.startProposedDate)
-          a.endProposedDate = new Date(appointment.endProposedDate)
+
+          // appointment in past
+          if (appointment.startProposedDate && appointment.endProposedDate) {
+            a.startProposedDate = new Date(appointment.startProposedDate)
+            a.endProposedDate = new Date(appointment.endProposedDate)
+            a.finalDate = new Date(appointment.finalDate)
+          }
+
+          // appointment in future (dynamic date)
+          if (
+            appointment.startProposedDateNumber !== undefined &&
+            appointment.endProposedDateNumber !== undefined
+          ) {
+            a.startProposedDate = resetTime(
+              new Date(
+                Date.now() +
+                  appointment.startProposedDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+            a.endProposedDate = resetTime(
+              new Date(
+                Date.now() +
+                  appointment.endProposedDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+          }
           a.isScheduled = appointment.isScheduled
           a.isDone = appointment.isDone
           a.description = appointment.description
@@ -123,7 +148,6 @@ export class SeedService {
             user.locationIds[0].toString(),
           )
           a.price = appointment.price
-          a.finalDate = new Date(appointment.finalDate)
           a.priority = appointment.priority
 
           userAppointments.push(a)
@@ -132,10 +156,7 @@ export class SeedService {
       }
 
       // Add some absences to staff
-      if (
-        (user.role === 'EMPLOYEE' || user.role === 'ADMIN') &&
-        users[num].absences
-      ) {
+      if (users[num].absences) {
         let absences: Absence[] = []
         for (let absence of users[num].absences) {
           const a = new Absence()
@@ -189,7 +210,7 @@ export class SeedService {
     // MAKE SCHEDULES
     // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
     // DO THIS FOR 1 WEEK (5 DAYS)
-    // choose a date (now + 1 day, now + 2 days, etc.)
+    // choose a date (now + 1 day, now + 2 days, etc.) no weekends
 
     // APPOINTMENTS
     // find all appointments for that date (filter by ND)
