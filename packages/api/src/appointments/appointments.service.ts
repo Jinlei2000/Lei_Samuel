@@ -42,8 +42,6 @@ export class AppointmentsService {
     })
   }
 
-  // TODO: find all by date
-
   async findOne(id: string) {
     const appointment = await this.appointmentRepository.findOne({
       //@ts-ignore
