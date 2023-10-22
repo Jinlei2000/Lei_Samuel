@@ -3,7 +3,7 @@ import { resetTime } from './genericFunctions'
 // get days that are not weekend days from now until amountDays (saturday and sunday) and do something with it
 export const generateNonWeekendDates = (
   amountDays: number,
-  actions: (date: Date) => void,
+  callbackActions: (date: Date) => void,
 ) => {
   let currentDate = resetTime(new Date(Date.now()))
   let i = 0
@@ -20,8 +20,8 @@ export const generateNonWeekendDates = (
     if (![0, 6].includes(currentDate.getDay())) {
       currentDate = resetTime(currentDate)
 
-      if (actions) {
-        actions(currentDate)
+      if (callbackActions) {
+        callbackActions(currentDate)
       }
 
       i++
