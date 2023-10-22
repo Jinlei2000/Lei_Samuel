@@ -218,7 +218,7 @@
         "address": "Astridlaan 400, 8310 Brugge"
       }
     ],
-    "x": [
+    "appointments": [
       {
         "type": "maintenance",
         "startProposedDate": "2022-05-01",
