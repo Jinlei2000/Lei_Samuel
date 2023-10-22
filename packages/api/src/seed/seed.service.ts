@@ -155,6 +155,7 @@ export class SeedService {
         await this.appointmentsService.saveAll(userAppointments)
       }
 
+      // TODO: make some absences dynamic
       // Add some absences to staff
       if (users[num].absences) {
         let absences: Absence[] = []
