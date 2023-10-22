@@ -16,6 +16,7 @@ import { Schedule } from 'src/schedules/entities/schedule.entity'
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
 import { resetTime } from 'src/helpers/genericFunctions'
+import { generateNonWeekendDates } from 'src/helpers/seedingFunctions'
 
 @Injectable()
 export class SeedService {
@@ -28,12 +29,6 @@ export class SeedService {
     private schedulesService: SchedulesService,
     private mailService: MailService,
   ) {}
-
-  //#region Appointments
-  async deleteAllAppointments(): Promise<void> {
-    return this.appointmentsService.truncate()
-  }
-  //#endregion
 
   //#region Materials
   async addMaterialsFromJson(): Promise<Material[]> {
@@ -55,7 +50,6 @@ export class SeedService {
   }
   //#endregion
 
-  // TODO: use dynamic date for appointments (now + 1 day, now + 2 days, etc.)
   // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.)
   //#region Users
   async addUsersFromJson(): Promise<User[]> {
@@ -190,6 +184,53 @@ export class SeedService {
   }
   //#endregion
 
+  //#region Schedules
+  async addSchedules(): Promise<Schedule[]> {
+    let schedules: Schedule[] = []
+    // TODO: make schedules
+
+    // get all admin users
+    const admins = await this.usersService.findAll(['A'])
+
+    // MAKE SCHEDULES
+    // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
+    // DO THIS FOR 1 WEEK (5 DAYS) OR STOP WHEN NO MORE APPOINTMENTS ARE AVAILABLE
+
+    // get all non-weekend days for next 10 days
+    generateNonWeekendDates(10, selectDate => {
+      console.log('💠', selectDate)
+
+      // APPOINTMENTS
+      // find all appointments for that date (filter by ND)
+      // choose 3, 2 or 1 appointments
+      // add price for each appointment (random between 0 and 600)
+      // add finalDate for each appointment
+      // set isScheduled to true for each appointment
+
+      // EMPLOYEES
+      // find all employees that are available for that date (not absent & not scheduled)
+      // choose 1 or 2 employees
+
+      // MATERIALS
+      // find all materials (that are loanable)
+      // choose 2-6 materials (random)
+
+      // SCHEDULE
+      // add finalDate to schedule
+      // add appointments to schedule
+      // add employees to schedule
+      // add materials to schedule
+      // add createdBy name of admin
+    })
+
+    return schedules
+  }
+
+  async deleteAllSchedules(): Promise<void> {
+    return this.schedulesService.truncate()
+  }
+  //#endregion
+
   //#region Locations
   async deleteAllLocations(): Promise<void> {
     return this.locationsService.truncate()
@@ -202,44 +243,9 @@ export class SeedService {
   }
   //#endregion
 
-  //#region Schedules
-  async addSchedules(): Promise<Schedule[]> {
-    let schedules: Schedule[] = []
-    // TODO: make schedules
-    // get all admin users
-
-    // MAKE SCHEDULES
-    // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
-    // DO THIS FOR 1 WEEK (5 DAYS)
-    // choose a date (now + 1 day, now + 2 days, etc.) no weekends
-
-    // APPOINTMENTS
-    // find all appointments for that date (filter by ND)
-    // choose 3, 2 or 1 appointments
-    // add price for each appointment (random between 0 and 600)
-    // add finalDate for each appointment
-    // set isScheduled to true for each appointment
-
-    // EMPLOYEES
-    // find all employees that are available for that date (not absent & not scheduled)
-    // choose 1 or 2 employees
-
-    // MATERIALS
-    // find all materials (that are loanable)
-    // choose 2-6 materials (random)
-
-    // SCHEDULE
-    // add finalDate to schedule
-    // add appointments to schedule
-    // add employees to schedule
-    // add materials to schedule
-    // add createdBy name of admin
-
-    return schedules
-  }
-
-  async deleteAllSchedules(): Promise<void> {
-    return this.schedulesService.truncate()
+  //#region Appointments
+  async deleteAllAppointments(): Promise<void> {
+    return this.appointmentsService.truncate()
   }
   //#endregion
 
