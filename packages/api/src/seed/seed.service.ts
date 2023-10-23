@@ -239,6 +239,7 @@ export class SeedService {
       // find all materials (that are loanable)
       const availableMaterials = await this.materialsService.findAll(['L'])
       // choose 2-6 materials (random)
+      // TODO: choose random amount of materials & choose random materials
       const chosenMaterials = availableMaterials.slice(
         0,
         Math.floor(Math.random() * 4) + 2,
@@ -266,7 +267,8 @@ export class SeedService {
     }
 
     // save schedules
-    await this.schedulesService.saveAll(schedules)
+    const result = await this.schedulesService.saveAll(schedules)
+    // console.log('saved schedules', result)
 
     return schedules
   }
