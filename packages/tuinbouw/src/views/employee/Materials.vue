@@ -244,8 +244,22 @@
       </div>
     </div>
 
+    <div v-if="loading">
+      <div
+        class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3"
+      >
+        <div v-for="skeleton in skeletons">
+          <div class="animate-pulse flex items-center gap-6">
+            <div class="w-56 h-48 bg-neutral-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <template v-if="search">
-      <div v-if="search.length > 0" class="grid grid-cols-6 gap-3">
+      <div
+        v-if="search.length > 0"
+        class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3"
+      >
         <div
           v-if="
             searchMaterials &&
@@ -255,7 +269,7 @@
           class="col-span-1 rounded-2xl relative hover:scale-110 transition-all"
         >
           <img
-            class="rounded-2xl rounded-b-3xl w-full"
+            class="rounded-2xl h-full rounded-b-3xl w-full"
             src="https://picsum.photos/400"
             alt="random picture"
           />
@@ -268,7 +282,9 @@
       </div>
     </template>
     <template v-else>
-      <div class="grid grid-cols-6 gap-3">
+      <div
+        class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3"
+      >
         <div
           v-if="allMaterials && allMaterials.materials.length > 0"
           v-for="material of allMaterials.materials"
@@ -304,6 +320,7 @@ import { watch, ref } from 'vue'
 import { Filter, Search, ChevronDown } from 'lucide-vue-next'
 import { Check } from 'lucide-vue-next'
 
+// search
 const search = ref('')
 
 // availability radio buttons
@@ -320,10 +337,15 @@ const cuttingTools = ref(false)
 // display filter dropdown
 const filter = ref(false)
 
-//display sort dropdown
+// display sort dropdown
 const sort = ref(false)
 
+// skeletons
+const skeletons = ref<number[]>(new Array(24))
+// const loading = ref(true)
+
 const { result: allMaterials, loading, error } = useQuery(GET_MATERIALS)
+
 const {
   document,
   result: searchMaterials,
@@ -337,6 +359,4 @@ watch(search, () => {
     searchString: search.value,
   })
 })
-
-console.log('all materials', allMaterials)
 </script>
