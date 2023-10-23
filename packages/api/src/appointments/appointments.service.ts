@@ -15,6 +15,7 @@ import { SchedulesService } from 'src/schedules/schedules.service'
 import { UsersService } from 'src/users/users.service'
 import { LocationsService } from 'src/locations/locations.service'
 import { User } from 'src/users/entities/user.entity'
+import { resetTime } from 'src/helpers/genericFunctions'
 
 @Injectable()
 export class AppointmentsService {
@@ -40,6 +41,34 @@ export class AppointmentsService {
       where: whereQuery,
       order: orderQuery,
     })
+  }
+
+  // find all appointments by date (between startProposedDate and endProposedDate)
+  // not done & final date is passed (now) or null
+  async findAllAvailableByDate(date: Date): Promise<Appointment[]> {
+    const appointments = await this.appointmentRepository.find({
+      where: {
+        isDone: false,
+        // date is between startProposedDate and endProposedDate
+        // @ts-ignore
+        startProposedDate: { $lte: date },
+        // @ts-ignore
+        endProposedDate: { $gte: date },
+        // @ts-ignore
+        $or: [
+          {
+            // final date is null
+            finalDate: null,
+          },
+          {
+            // or final date is passed (now)
+            finalDate: { $lte: resetTime(new Date()) },
+          },
+        ],
+      },
+    })
+
+    return appointments
   }
 
   async findOne(id: string) {

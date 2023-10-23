@@ -12,11 +12,13 @@ import { AbsencesService } from 'src/absences/absences.service'
 import { SchedulesService } from 'src/schedules/schedules.service'
 import { MailService } from 'src/mail/mail.service'
 import { Schedule } from 'src/schedules/entities/schedule.entity'
+import { ObjectId } from 'mongodb'
+import { resetTime } from 'src/helpers/genericFunctions'
+import { generateNonWeekendDates } from 'src/helpers/seedingFunctions'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
-import { resetTime } from 'src/helpers/genericFunctions'
-import { generateNonWeekendDates } from 'src/helpers/seedingFunctions'
+import { async } from 'rxjs'
 
 @Injectable()
 export class SeedService {
@@ -196,32 +198,105 @@ export class SeedService {
     // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
     // DO THIS FOR 1 WEEK (5 DAYS) OR STOP WHEN NO MORE APPOINTMENTS ARE AVAILABLE
 
-    // get all non-weekend days for next 10 days
-    generateNonWeekendDates(10, selectDate => {
+    // get all non-weekend days for next 5 days
+    // await generateNonWeekendDates(3, async selectDate => {
+    //   console.log('💠', selectDate)
+
+    //   // APPOINTMENTS
+    //   // find all appointments that is not done (filter by ND)
+    //   const availableAppointments =
+    //     await this.appointmentsService.findAllAvailableByDate(selectDate)
+
+    //   console.log(
+    //     'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    //   )
+    //   availableAppointments.forEach(async appointment => {
+    //     console.log(`id: ${appointment.id}`)
+    //   })
+    //   console.log(
+    //     'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    //   )
+
+    //   // stop if no appointments available
+    //   if (availableAppointments.length === 0) return
+    //   // choose 3, 2 or 1 appointments
+    //   // TODO: if there is enough available appointments to choose from
+    //   const chosenAppointments = availableAppointments.slice(
+    //     0,
+    //     Math.floor(Math.random() * 3) + 1,
+    //   )
+    //   // add price, finalDate and isScheduled to each appointment
+    //   chosenAppointments.forEach(appointment => {
+    //     // random price between 0 and 600
+    //     appointment.price = Math.floor(Math.floor(Math.random() * 600))
+    //     // add finalDate
+    //     appointment.finalDate = selectDate
+    //     // set isScheduled to true
+    //     appointment.isScheduled = true
+    //   })
+
+    //   // update appointments
+    //   await this.appointmentsService.saveAll(chosenAppointments)
+
+    //   console.log('saved appointments')
+
+    //   // console.log('📅', chosenAppointments)
+    //   // console.log(`appointments: ${chosenAppointments.length} chosen`)
+
+    //   // EMPLOYEES
+    //   // find all employees that are available for that date (not absent & not scheduled)
+    //   // choose 1 or 2 employees
+
+    //   // MATERIALS
+    //   // find all materials (that are loanable)
+    //   // choose 2-6 materials (random)
+
+    //   // SCHEDULE
+    //   const schedule = new Schedule()
+    //   // add finalDate to schedule
+    //   schedule.finalDate = selectDate
+    //   // add appointments to schedule
+    //   schedule.appointmentIds = chosenAppointments.map(appointment =>
+    //     appointment.id.toString(),
+    //   )
+    //   // add employees to schedule
+    //   // add materials to schedule
+    //   // add createdBy name of admin
+
+    //   // add schedule to schedules
+    //   schedules.push(schedule)
+    // })
+
+    let availableAppointments, chosenAppointments
+
+    const dates = await generateNonWeekendDates(3)
+    for (const selectDate of dates) {
       console.log('💠', selectDate)
-
       // APPOINTMENTS
-      // find all appointments for that date (filter by ND)
-      // choose 3, 2 or 1 appointments
-      // add price for each appointment (random between 0 and 600)
-      // add finalDate for each appointment
-      // set isScheduled to true for each appointment
+      // find all appointments that is not done (filter by ND)
+      availableAppointments =
+        await this.appointmentsService.findAllAvailableByDate(selectDate)
+      // stop if no appointments available
+      if (availableAppointments.length === 0) return schedules
+      // TODO: choose 3, 2 or 1 appointments
+      // TODO: if there is enough available appointments to choose from
+      chosenAppointments = [availableAppointments[0]]
+      // add price, finalDate and isScheduled to each appointment
+      chosenAppointments.forEach((appointment: Appointment) => {
+        // random price between 0 and 600
+        appointment.price = Math.floor(Math.floor(Math.random() * 600))
+        // add finalDate
+        appointment.finalDate = selectDate
+        // set isScheduled to true
+        appointment.isScheduled = true
+      })
+      // update appointments
+      await this.appointmentsService.saveAll(chosenAppointments)
+      console.log('saved appointments')
+    }
 
-      // EMPLOYEES
-      // find all employees that are available for that date (not absent & not scheduled)
-      // choose 1 or 2 employees
-
-      // MATERIALS
-      // find all materials (that are loanable)
-      // choose 2-6 materials (random)
-
-      // SCHEDULE
-      // add finalDate to schedule
-      // add appointments to schedule
-      // add employees to schedule
-      // add materials to schedule
-      // add createdBy name of admin
-    })
+    // save schedules
+    // await this.schedulesService.saveAll(schedules)
 
     return schedules
   }

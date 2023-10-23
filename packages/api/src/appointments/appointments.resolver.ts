@@ -67,6 +67,12 @@ export class AppointmentsResolver {
     )
   }
 
+  // TODO: delete test 
+  @Query(() => [Appointment], { name: 'test' })
+  test(@Args('date', { type: () => String }) date: string) {
+    return this.appointmentsService.findAllAvailableByDate(new Date(date))
+  }
+
   // TODO: update is done for employee
 
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
