@@ -52,7 +52,7 @@ export class SeedService {
   }
   //#endregion
 
-  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.)
+  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.) 
   //#region Users
   async addUsersFromJson(): Promise<User[]> {
     let theUsers: User[] = []
@@ -205,6 +205,10 @@ export class SeedService {
         'appointmentsIds',
         availableAppointments.map(appointment => appointment.id.toString()),
       )
+      console.log(
+        'finalDates',
+        availableAppointments.map(appointment => appointment.finalDate),
+      )
 
       // find all employees that are available for that date (not absent & not scheduled)
       const availableEmployees =
@@ -265,6 +269,7 @@ export class SeedService {
 
         // update appointments
         await this.appointmentsService.saveAll(chosenAppointments)
+        console.log('saved appointments')
         const test =
           await this.appointmentsService.findAllAvailableByDate(selectDate)
         console.log(
@@ -275,7 +280,6 @@ export class SeedService {
           'testtt',
           test.map(appointment => appointment.finalDate),
         )
-        console.log('saved appointments')
         console.log(
           'chosenAppointments',
           chosenAppointments.map(appointment => appointment.id.toString()),
