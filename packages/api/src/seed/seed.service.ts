@@ -191,11 +191,13 @@ export class SeedService {
     let schedules: Schedule[] = []
     // MAKE SCHEDULES
     // get all non-weekend days for next amount of days
-    const dates = await generateNonWeekendDates(3)
+    const dates = await generateNonWeekendDates(5)
+    console.log('dates', dates)
     for (const selectDate of dates) {
       console.log('💠', selectDate)
       // APPOINTMENTS
       // find all appointments that is not done (filter by ND)
+      // TODO: use a while loop (stop no appointments available or no employees available)
       const availableAppointments =
         await this.appointmentsService.findAllAvailableByDate(selectDate)
       // stop if no appointments available
@@ -212,9 +214,6 @@ export class SeedService {
         // set isScheduled to true
         appointment.isScheduled = true
       })
-      // update appointments
-      await this.appointmentsService.saveAll(chosenAppointments)
-      console.log('saved appointments')
 
       // EMPLOYEES
       // find all employees that are available for that date (not absent & not scheduled)
@@ -236,6 +235,10 @@ export class SeedService {
         0,
         Math.floor(Math.random() * 4) + 2,
       )
+
+      // update appointments
+      await this.appointmentsService.saveAll(chosenAppointments)
+      console.log('saved appointments')
 
       // SCHEDULE
       const schedule = new Schedule()
