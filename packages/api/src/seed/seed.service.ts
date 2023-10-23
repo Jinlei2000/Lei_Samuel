@@ -191,9 +191,6 @@ export class SeedService {
     let schedules: Schedule[] = []
     // TODO: make schedules
 
-    // get all admin users
-    const admins = await this.usersService.findAll(['A'])
-
     // MAKE SCHEDULES
     // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
     // DO THIS FOR 1 WEEK (5 DAYS) OR STOP WHEN NO MORE APPOINTMENTS ARE AVAILABLE
@@ -202,85 +199,18 @@ export class SeedService {
     // await generateNonWeekendDates(3, async selectDate => {
     //   console.log('💠', selectDate)
 
-    //   // APPOINTMENTS
-    //   // find all appointments that is not done (filter by ND)
-    //   const availableAppointments =
-    //     await this.appointmentsService.findAllAvailableByDate(selectDate)
-
-    //   console.log(
-    //     'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    //   )
-    //   availableAppointments.forEach(async appointment => {
-    //     console.log(`id: ${appointment.id}`)
-    //   })
-    //   console.log(
-    //     'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    //   )
-
-    //   // stop if no appointments available
-    //   if (availableAppointments.length === 0) return
-    //   // choose 3, 2 or 1 appointments
-    //   // TODO: if there is enough available appointments to choose from
-    //   const chosenAppointments = availableAppointments.slice(
-    //     0,
-    //     Math.floor(Math.random() * 3) + 1,
-    //   )
-    //   // add price, finalDate and isScheduled to each appointment
-    //   chosenAppointments.forEach(appointment => {
-    //     // random price between 0 and 600
-    //     appointment.price = Math.floor(Math.floor(Math.random() * 600))
-    //     // add finalDate
-    //     appointment.finalDate = selectDate
-    //     // set isScheduled to true
-    //     appointment.isScheduled = true
-    //   })
-
-    //   // update appointments
-    //   await this.appointmentsService.saveAll(chosenAppointments)
-
-    //   console.log('saved appointments')
-
-    //   // console.log('📅', chosenAppointments)
-    //   // console.log(`appointments: ${chosenAppointments.length} chosen`)
-
-    //   // EMPLOYEES
-    //   // find all employees that are available for that date (not absent & not scheduled)
-    //   // choose 1 or 2 employees
-
-    //   // MATERIALS
-    //   // find all materials (that are loanable)
-    //   // choose 2-6 materials (random)
-
-    //   // SCHEDULE
-    //   const schedule = new Schedule()
-    //   // add finalDate to schedule
-    //   schedule.finalDate = selectDate
-    //   // add appointments to schedule
-    //   schedule.appointmentIds = chosenAppointments.map(appointment =>
-    //     appointment.id.toString(),
-    //   )
-    //   // add employees to schedule
-    //   // add materials to schedule
-    //   // add createdBy name of admin
-
-    //   // add schedule to schedules
-    //   schedules.push(schedule)
-    // })
-
-    let availableAppointments, chosenAppointments
-
     const dates = await generateNonWeekendDates(3)
     for (const selectDate of dates) {
       console.log('💠', selectDate)
       // APPOINTMENTS
       // find all appointments that is not done (filter by ND)
-      availableAppointments =
+      const availableAppointments =
         await this.appointmentsService.findAllAvailableByDate(selectDate)
       // stop if no appointments available
       if (availableAppointments.length === 0) return schedules
       // TODO: choose 3, 2 or 1 appointments
       // TODO: if there is enough available appointments to choose from
-      chosenAppointments = [availableAppointments[0]]
+      const chosenAppointments = [availableAppointments[0]]
       // add price, finalDate and isScheduled to each appointment
       chosenAppointments.forEach((appointment: Appointment) => {
         // random price between 0 and 600
@@ -293,6 +223,34 @@ export class SeedService {
       // update appointments
       await this.appointmentsService.saveAll(chosenAppointments)
       console.log('saved appointments')
+
+      // EMPLOYEES
+      // find all employees that are available for that date (not absent & not scheduled)
+      // choose 1 or 2 employees
+
+      // MATERIALS
+      // find all materials (that are loanable)
+      // choose 2-6 materials (random)
+
+      // SCHEDULE
+      const schedule = new Schedule()
+      // add finalDate to schedule
+      schedule.finalDate = selectDate
+      // add appointments to schedule
+      schedule.appointmentIds = chosenAppointments.map(appointment =>
+        appointment.id.toString(),
+      )
+      // add employees to schedule
+      // schedule.employees = chosenEmployees
+      // add materials to schedule
+      // schedule.materials = chosenMaterials
+      // add createdBy name of admin
+      const admins = await this.usersService.findAll(['A'])
+      schedule.createdBy =
+        admins[Math.floor(Math.random() * admins.length)].fullname
+
+      // add schedule to schedules
+      schedules.push(schedule)
     }
 
     // save schedules
