@@ -207,7 +207,7 @@ export class SeedService {
       const availableAppointments =
         await this.appointmentsService.findAllAvailableByDate(selectDate)
       // stop if no appointments available
-      if (availableAppointments.length === 0) return schedules
+      if (availableAppointments.length === 0) continue // go to next date
       // TODO: choose 3, 2 or 1 appointments
       // TODO: if there is enough available appointments to choose from
       const chosenAppointments = [availableAppointments[0]]
@@ -226,7 +226,14 @@ export class SeedService {
 
       // EMPLOYEES
       // find all employees that are available for that date (not absent & not scheduled)
-      // choose 1 or 2 employees
+      const availableEmployees =
+        await this.usersService.findAvailableEmployeesByDate(selectDate)
+      // stop if no employees available
+      // TODO: test this
+      if (availableEmployees.length === 0) continue // go to next date
+      console.log('available employees')
+      // TODO: choose 1 or 2 employees
+      const chosenEmployees = [availableEmployees[0]]
 
       // MATERIALS
       // find all materials (that are loanable)
@@ -241,7 +248,7 @@ export class SeedService {
         appointment.id.toString(),
       )
       // add employees to schedule
-      // schedule.employees = chosenEmployees
+      schedule.employees = chosenEmployees
       // add materials to schedule
       // schedule.materials = chosenMaterials
       // add createdBy name of admin
