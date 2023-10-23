@@ -62,7 +62,7 @@ export class AppointmentsService {
           },
           {
             // or final date is passed (now)
-            finalDate: { $lte: resetTime(new Date()) },
+            finalDate: { $lt: resetTime(new Date()) },
           },
         ],
       },
