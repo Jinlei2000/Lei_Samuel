@@ -67,6 +67,8 @@ export class AppointmentsResolver {
     )
   }
 
+  // TODO: update is done for employee
+
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => String)

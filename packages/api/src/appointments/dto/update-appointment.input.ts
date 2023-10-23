@@ -12,8 +12,8 @@ export class UpdateAppointmentInput extends PartialType(
   @Field(() => ID)
   id: ObjectId
 
-  @Field()
-  locationId: string
+  @Field({ nullable: true })
+  locationId?: string
 
   @Field({ nullable: true })
   price?: number

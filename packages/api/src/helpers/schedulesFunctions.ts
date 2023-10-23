@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from 'src/interfaces/order.input'
+import { resetTime } from './genericFunctions'
 
 export const filterSchedules = (
   filters: Array<string>,
@@ -46,7 +47,7 @@ export const filterSchedules = (
     if (filters?.includes('NT')) whereQuery.finalDate = null
 
     // filter past and future
-    const date = new Date(new Date().toISOString().split('T')[0]) // reset time to 00:00:00
+    const date = resetTime(new Date()) // reset time to 00:00:00
     if (filters?.includes('P')) whereQuery.finalDate = { $lt: date }
     if (filters?.includes('F')) whereQuery.finalDate = { $gte: date }
     if (filters?.includes('T')) whereQuery.finalDate = date

@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql'
 import { OrderByInput } from 'src/interfaces/order.input'
+import { resetTime } from './genericFunctions'
 
 export const filterAppointments = (
   filters: Array<string>,
@@ -59,7 +60,7 @@ export const filterAppointments = (
     if (filters?.includes('NS')) whereQuery.isScheduled = false
 
     // priority filter
-    const date = new Date(new Date().toISOString().split('T')[0])
+    const date = resetTime(new Date())
     if (filters?.includes('P')) {
       // filter for priority true and is not done & finalDate is in the past where is not done
       whereQuery = {

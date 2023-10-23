@@ -15,6 +15,7 @@ import { MailService } from 'src/mail/mail.service'
 import { SchedulesService } from 'src/schedules/schedules.service'
 import { AppointmentsService } from 'src/appointments/appointments.service'
 import { MaterialsService } from 'src/materials/materials.service'
+import { resetTime } from 'src/helpers/genericFunctions'
 
 @Injectable()
 export class UsersService {
@@ -107,7 +108,7 @@ export class UsersService {
   async findStaffIsAvailableToday(userId: string): Promise<boolean> {
     const user = await this.findOne(userId)
     // delete all behind the time of today
-    let date = new Date(new Date().toISOString().split('T')[0]) // reset time to 00:00:00
+    let date = resetTime(new Date()) // reset time to 00:00:00
 
     // check if user is absent today
     const isAbsent = await this.absenceService.findOneByDateAndUserId(

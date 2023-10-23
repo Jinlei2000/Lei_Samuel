@@ -12,9 +12,13 @@ import { AbsencesService } from 'src/absences/absences.service'
 import { SchedulesService } from 'src/schedules/schedules.service'
 import { MailService } from 'src/mail/mail.service'
 import { Schedule } from 'src/schedules/entities/schedule.entity'
+import { ObjectId } from 'mongodb'
+import { resetTime } from 'src/helpers/genericFunctions'
+import { generateNonWeekendDates } from 'src/helpers/seedingFunctions'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
+import { async } from 'rxjs'
 
 @Injectable()
 export class SeedService {
@@ -27,12 +31,6 @@ export class SeedService {
     private schedulesService: SchedulesService,
     private mailService: MailService,
   ) {}
-
-  //#region Appointments
-  async deleteAllAppointments(): Promise<void> {
-    return this.appointmentsService.truncate()
-  }
-  //#endregion
 
   //#region Materials
   async addMaterialsFromJson(): Promise<Material[]> {
@@ -54,7 +52,6 @@ export class SeedService {
   }
   //#endregion
 
-  // TODO: use dynamic date for appointments (now + 1 day, now + 2 days, etc.)
   // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.)
   //#region Users
   async addUsersFromJson(): Promise<User[]> {
@@ -114,8 +111,32 @@ export class SeedService {
           const a = new Appointment()
           a.user = await this.usersService.findOne(user.id.toString())
           a.type = appointment.type
-          a.startProposedDate = new Date(appointment.startProposedDate)
-          a.endProposedDate = new Date(appointment.endProposedDate)
+
+          // appointment in past
+          if (appointment.startProposedDate && appointment.endProposedDate) {
+            a.startProposedDate = new Date(appointment.startProposedDate)
+            a.endProposedDate = new Date(appointment.endProposedDate)
+            a.finalDate = new Date(appointment.finalDate)
+          }
+
+          // appointment in future (dynamic date)
+          if (
+            appointment.startProposedDateNumber !== undefined &&
+            appointment.endProposedDateNumber !== undefined
+          ) {
+            a.startProposedDate = resetTime(
+              new Date(
+                Date.now() +
+                  appointment.startProposedDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+            a.endProposedDate = resetTime(
+              new Date(
+                Date.now() +
+                  appointment.endProposedDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+          }
           a.isScheduled = appointment.isScheduled
           a.isDone = appointment.isDone
           a.description = appointment.description
@@ -123,7 +144,6 @@ export class SeedService {
             user.locationIds[0].toString(),
           )
           a.price = appointment.price
-          a.finalDate = new Date(appointment.finalDate)
           a.priority = appointment.priority
 
           userAppointments.push(a)
@@ -131,11 +151,9 @@ export class SeedService {
         await this.appointmentsService.saveAll(userAppointments)
       }
 
+      // TODO: make some absences dynamic
       // Add some absences to staff
-      if (
-        (user.role === 'EMPLOYEE' || user.role === 'ADMIN') &&
-        users[num].absences
-      ) {
+      if (users[num].absences) {
         let absences: Absence[] = []
         for (let absence of users[num].absences) {
           const a = new Absence()
@@ -168,6 +186,96 @@ export class SeedService {
   }
   //#endregion
 
+  //#region Schedules
+  async addSchedules(): Promise<Schedule[]> {
+    let schedules: Schedule[] = []
+    // TODO: make schedules
+
+    // MAKE SCHEDULES
+    // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
+    // DO THIS FOR 1 WEEK (5 DAYS) OR STOP WHEN NO MORE APPOINTMENTS ARE AVAILABLE
+
+    // get all non-weekend days for next 5 days
+    // await generateNonWeekendDates(3, async selectDate => {
+    //   console.log('💠', selectDate)
+
+    const dates = await generateNonWeekendDates(3)
+    for (const selectDate of dates) {
+      console.log('💠', selectDate)
+      // APPOINTMENTS
+      // find all appointments that is not done (filter by ND)
+      const availableAppointments =
+        await this.appointmentsService.findAllAvailableByDate(selectDate)
+      // stop if no appointments available
+      if (availableAppointments.length === 0) continue // go to next date
+      // TODO: choose 3, 2 or 1 appointments
+      // TODO: if there is enough available appointments to choose from
+      const chosenAppointments = [availableAppointments[0]]
+      // add price, finalDate and isScheduled to each appointment
+      chosenAppointments.forEach((appointment: Appointment) => {
+        // random price between 0 and 600
+        appointment.price = Math.floor(Math.floor(Math.random() * 600))
+        // add finalDate
+        appointment.finalDate = selectDate
+        // set isScheduled to true
+        appointment.isScheduled = true
+      })
+      // update appointments
+      await this.appointmentsService.saveAll(chosenAppointments)
+      console.log('saved appointments')
+
+      // EMPLOYEES
+      // find all employees that are available for that date (not absent & not scheduled)
+      const availableEmployees =
+        await this.usersService.findAvailableEmployeesByDate(selectDate)
+      // stop if no employees available
+      // TODO: test this
+      if (availableEmployees.length === 0) continue // go to next date
+      console.log('available employees')
+      // TODO: choose 1 or 2 employees
+      const chosenEmployees = [availableEmployees[0]]
+
+      // MATERIALS
+      // find all materials (that are loanable)
+      const availableMaterials = await this.materialsService.findAll(['L'])
+      // choose 2-6 materials (random)
+      const chosenMaterials = availableMaterials.slice(
+        0,
+        Math.floor(Math.random() * 4) + 2,
+      )
+
+      // SCHEDULE
+      const schedule = new Schedule()
+      // add finalDate to schedule
+      schedule.finalDate = selectDate
+      // add appointments to schedule
+      schedule.appointmentIds = chosenAppointments.map(appointment =>
+        appointment.id.toString(),
+      )
+      // add employees to schedule
+      schedule.employees = chosenEmployees
+      // add materials to schedule
+      schedule.materials = chosenMaterials
+      // add createdBy name of admin
+      const admins = await this.usersService.findAll(['A'])
+      schedule.createdBy =
+        admins[Math.floor(Math.random() * admins.length)].fullname
+
+      // add schedule to schedules
+      schedules.push(schedule)
+    }
+
+    // save schedules
+    await this.schedulesService.saveAll(schedules)
+
+    return schedules
+  }
+
+  async deleteAllSchedules(): Promise<void> {
+    return this.schedulesService.truncate()
+  }
+  //#endregion
+
   //#region Locations
   async deleteAllLocations(): Promise<void> {
     return this.locationsService.truncate()
@@ -180,44 +288,9 @@ export class SeedService {
   }
   //#endregion
 
-  //#region Schedules
-  async addSchedules(): Promise<Schedule[]> {
-    let schedules: Schedule[] = []
-    // TODO: make schedules
-    // get all admin users
-
-    // MAKE SCHEDULES
-    // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
-    // DO THIS FOR 1 WEEK (5 DAYS)
-    // choose a date (now + 1 day, now + 2 days, etc.)
-
-    // APPOINTMENTS
-    // find all appointments for that date (filter by ND)
-    // choose 3, 2 or 1 appointments
-    // add price for each appointment (random between 0 and 600)
-    // add finalDate for each appointment
-    // set isScheduled to true for each appointment
-
-    // EMPLOYEES
-    // find all employees that are available for that date (not absent & not scheduled)
-    // choose 1 or 2 employees
-
-    // MATERIALS
-    // find all materials (that are loanable)
-    // choose 2-6 materials (random)
-
-    // SCHEDULE
-    // add finalDate to schedule
-    // add appointments to schedule
-    // add employees to schedule
-    // add materials to schedule
-    // add createdBy name of admin
-
-    return schedules
-  }
-
-  async deleteAllSchedules(): Promise<void> {
-    return this.schedulesService.truncate()
+  //#region Appointments
+  async deleteAllAppointments(): Promise<void> {
+    return this.appointmentsService.truncate()
   }
   //#endregion
 
