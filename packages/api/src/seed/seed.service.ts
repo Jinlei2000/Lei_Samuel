@@ -189,16 +189,8 @@ export class SeedService {
   //#region Schedules
   async addSchedules(): Promise<Schedule[]> {
     let schedules: Schedule[] = []
-    // TODO: make schedules
-
     // MAKE SCHEDULES
-    // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
-    // DO THIS FOR 1 WEEK (5 DAYS) OR STOP WHEN NO MORE APPOINTMENTS ARE AVAILABLE
-
-    // get all non-weekend days for next 5 days
-    // await generateNonWeekendDates(3, async selectDate => {
-    //   console.log('💠', selectDate)
-
+    // get all non-weekend days for next amount of days
     const dates = await generateNonWeekendDates(3)
     for (const selectDate of dates) {
       console.log('💠', selectDate)
