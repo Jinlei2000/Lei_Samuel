@@ -13,8 +13,8 @@ import useCustomUser from './composables/useCustomUser'
 // PrimeVue
 import PrimeVue from 'primevue/config'
 
-// import 'primevue/resources/themes/lara-light-teal/theme.css'
-// import 'primevue/resources/primevue.min.css' // core css
+import 'primevue/resources/themes/lara-light-teal/theme.css'
+import 'primevue/resources/primevue.min.css' // core css
 
 import Button from 'primevue/button'
 
@@ -22,7 +22,7 @@ const app = createApp(App)
 const { restoreUser, firebaseUser } = useFirebase()
 const { restoreCustomUser, customUser } = useCustomUser()
 
-app.use(PrimeVue, { unstyled: true })
+app.use(PrimeVue)
 app.component('Button', Button)
 
 app.use(i18n) // ALTIJD VOOR DE ROUTER!
