@@ -237,7 +237,12 @@ export class SeedService {
 
       // MATERIALS
       // find all materials (that are loanable)
+      const availableMaterials = await this.materialsService.findAll(['L'])
       // choose 2-6 materials (random)
+      const chosenMaterials = availableMaterials.slice(
+        0,
+        Math.floor(Math.random() * 4) + 2,
+      )
 
       // SCHEDULE
       const schedule = new Schedule()
@@ -250,7 +255,7 @@ export class SeedService {
       // add employees to schedule
       schedule.employees = chosenEmployees
       // add materials to schedule
-      // schedule.materials = chosenMaterials
+      schedule.materials = chosenMaterials
       // add createdBy name of admin
       const admins = await this.usersService.findAll(['A'])
       schedule.createdBy =
@@ -261,7 +266,7 @@ export class SeedService {
     }
 
     // save schedules
-    // await this.schedulesService.saveAll(schedules)
+    await this.schedulesService.saveAll(schedules)
 
     return schedules
   }
