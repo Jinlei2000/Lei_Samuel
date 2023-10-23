@@ -244,8 +244,8 @@
       </div>
     </div>
 
-    <template v-if="search" class="grid grid-cols-4 gap-3">
-      <div v-if="search.length > 0" class="grid grid-cols-4 gap-3">
+    <template v-if="search">
+      <div v-if="search.length > 0" class="grid grid-cols-6 gap-3">
         <div
           v-if="
             searchMaterials &&
