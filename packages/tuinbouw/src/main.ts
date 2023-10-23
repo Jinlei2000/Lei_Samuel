@@ -10,9 +10,20 @@ import useFirebase from '@/composables/useFirebase'
 import { i18n } from './bootstrap/i18n'
 import useCustomUser from './composables/useCustomUser'
 
+// PrimeVue
+import PrimeVue from 'primevue/config'
+
+// import 'primevue/resources/themes/lara-light-teal/theme.css'
+// import 'primevue/resources/primevue.min.css' // core css
+
+import Button from 'primevue/button'
+
 const app = createApp(App)
 const { restoreUser, firebaseUser } = useFirebase()
 const { restoreCustomUser, customUser } = useCustomUser()
+
+app.use(PrimeVue, { unstyled: true })
+app.component('Button', Button)
 
 app.use(i18n) // ALTIJD VOOR DE ROUTER!
 ;(async () => {
