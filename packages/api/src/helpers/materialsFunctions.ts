@@ -44,8 +44,8 @@ export const filterMaterials = (
     if (filters?.includes('NA')) whereQuery.userId = { $ne: null }
 
     // filter for loanable
-    if (filters?.includes('L')) whereQuery.isLoanable = true
-    if (filters?.includes('NL')) whereQuery.isLoanable = false
+    if (filters?.includes('L')) whereQuery.isLoan = true
+    if (filters?.includes('NL')) whereQuery.isLoan = false
   }
 
   return whereQuery

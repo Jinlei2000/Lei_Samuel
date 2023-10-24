@@ -44,9 +44,7 @@ export const generateNonWeekendDates = async (amountDays: number) => {
 
     // check if date is not weekend
     if (![0, 6].includes(currentDate.getDay())) {
-      currentDate = resetTime(currentDate)
-      dates.push(currentDate)
-
+      dates.push(resetTime(currentDate))
       i++
     }
   }

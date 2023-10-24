@@ -52,7 +52,7 @@ export class SeedService {
   }
   //#endregion
 
-  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.)
+  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.) 
   //#region Users
   async addUsersFromJson(): Promise<User[]> {
     let theUsers: User[] = []
@@ -189,84 +189,125 @@ export class SeedService {
   //#region Schedules
   async addSchedules(): Promise<Schedule[]> {
     let schedules: Schedule[] = []
-    // TODO: make schedules
-
     // MAKE SCHEDULES
-    // STOP WHEN ALL EMPLOYEES ARE SCHEDULED
-    // DO THIS FOR 1 WEEK (5 DAYS) OR STOP WHEN NO MORE APPOINTMENTS ARE AVAILABLE
-
-    // get all non-weekend days for next 5 days
-    // await generateNonWeekendDates(3, async selectDate => {
-    //   console.log('💠', selectDate)
-
-    const dates = await generateNonWeekendDates(3)
+    // get all non-weekend days for next amount of days
+    const dates = await generateNonWeekendDates(5)
+    console.log('dates', dates)
     for (const selectDate of dates) {
       console.log('💠', selectDate)
-      // APPOINTMENTS
+
+      // GET DATA
       // find all appointments that is not done (filter by ND)
       const availableAppointments =
         await this.appointmentsService.findAllAvailableByDate(selectDate)
-      // stop if no appointments available
-      if (availableAppointments.length === 0) continue // go to next date
-      // TODO: choose 3, 2 or 1 appointments
-      // TODO: if there is enough available appointments to choose from
-      const chosenAppointments = [availableAppointments[0]]
-      // add price, finalDate and isScheduled to each appointment
-      chosenAppointments.forEach((appointment: Appointment) => {
-        // random price between 0 and 600
-        appointment.price = Math.floor(Math.floor(Math.random() * 600))
-        // add finalDate
-        appointment.finalDate = selectDate
-        // set isScheduled to true
-        appointment.isScheduled = true
-      })
-      // update appointments
-      await this.appointmentsService.saveAll(chosenAppointments)
-      console.log('saved appointments')
+      // TODO: delete this
+      console.log(
+        'appointmentsIds',
+        availableAppointments.map(appointment => appointment.id.toString()),
+      )
+      console.log(
+        'finalDates',
+        availableAppointments.map(appointment => appointment.finalDate),
+      )
 
-      // EMPLOYEES
       // find all employees that are available for that date (not absent & not scheduled)
       const availableEmployees =
         await this.usersService.findAvailableEmployeesByDate(selectDate)
-      // stop if no employees available
-      // TODO: test this
-      if (availableEmployees.length === 0) continue // go to next date
-      console.log('available employees')
-      // TODO: choose 1 or 2 employees
-      const chosenEmployees = [availableEmployees[0]]
 
-      // MATERIALS
       // find all materials (that are loanable)
       const availableMaterials = await this.materialsService.findAll(['L'])
-      // choose 2-6 materials (random)
-      const chosenMaterials = availableMaterials.slice(
-        0,
-        Math.floor(Math.random() * 4) + 2,
-      )
 
-      // SCHEDULE
-      const schedule = new Schedule()
-      // add finalDate to schedule
-      schedule.finalDate = selectDate
-      // add appointments to schedule
-      schedule.appointmentIds = chosenAppointments.map(appointment =>
-        appointment.id.toString(),
-      )
-      // add employees to schedule
-      schedule.employees = chosenEmployees
-      // add materials to schedule
-      schedule.materials = chosenMaterials
-      // add createdBy name of admin
       const admins = await this.usersService.findAll(['A'])
-      schedule.createdBy =
+      const adminName =
         admins[Math.floor(Math.random() * admins.length)].fullname
 
-      // add schedule to schedules
-      schedules.push(schedule)
+      // TODO: use a while loop (stop no appointments available or no employees available)
+      while (true) {
+        // APPOINTMENTS
+        // stop if no appointments available
+        if (availableAppointments.length === 0) {
+          console.log(
+            `no appointments available for ${selectDate.toISOString()}`,
+          )
+          break // stop while loop
+        }
+        // TODO: choose 3, 2 or 1 appointments
+        // TODO: if there is enough available appointments to choose from
+        const chosenAppointments = [availableAppointments[0]]
+        // remove chosen appointments from available appointments
+        availableAppointments.splice(0, chosenAppointments.length)
+        // add price, finalDate and isScheduled to each appointment
+        chosenAppointments.forEach((appointment: Appointment) => {
+          // random price between 0 and 600
+          appointment.price = Math.floor(Math.floor(Math.random() * 600))
+          // add finalDate
+          appointment.finalDate = selectDate
+          // set isScheduled to true
+          appointment.isScheduled = true
+        })
+
+        // EMPLOYEES
+        // stop if no employees available
+        // TODO: test this
+        if (availableEmployees.length === 0) {
+          console.log(`no employees available for ${selectDate.toISOString()}`)
+          break // stop while loop
+        }
+        console.log('available employees')
+        // TODO: choose 1 or 2 employees
+        const chosenEmployees = [availableEmployees[0]]
+        // remove chosen employees from available employees
+        availableEmployees.splice(0, chosenEmployees.length)
+
+        // MATERIALS
+        // choose 2-6 materials (random)
+        // TODO: choose random amount of materials & choose random materials
+        const chosenMaterials = availableMaterials.slice(
+          0,
+          Math.floor(Math.random() * 4) + 2,
+        )
+
+        // update appointments
+        await this.appointmentsService.saveAll(chosenAppointments)
+        console.log('saved appointments')
+        const test =
+          await this.appointmentsService.findAllAvailableByDate(selectDate)
+        console.log(
+          'testtt',
+          test.map(appointment => appointment.id.toString()),
+        )
+        console.log(
+          'testtt',
+          test.map(appointment => appointment.finalDate),
+        )
+        console.log(
+          'chosenAppointments',
+          chosenAppointments.map(appointment => appointment.id.toString()),
+        )
+
+        // SCHEDULE
+        const schedule = new Schedule()
+        // add finalDate to schedule
+        schedule.finalDate = selectDate
+        // add appointments to schedule
+        schedule.appointmentIds = chosenAppointments.map(appointment =>
+          appointment.id.toString(),
+        )
+        // add employees to schedule
+        schedule.employees = chosenEmployees
+        // add materials to schedule
+        schedule.materials = chosenMaterials
+        // add createdBy name of admin
+        schedule.createdBy = adminName
+
+        // add schedule to schedules
+        schedules.push(schedule)
+      }
     }
 
     // save schedules
-    await this.schedulesService.saveAll(schedules)
+    const result = await this.schedulesService.saveAll(schedules)
+    // console.log('saved schedules', result)
 
     return schedules
   }
