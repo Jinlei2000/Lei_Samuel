@@ -1,13 +1,10 @@
 <template>
-  <div class="flex flex-col items-center justify-center">
-    <h1
-      class="text-transparent text-3xl font-extrabold md:text-5xl lg:text-6xl bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
-    >
-      Dashboard
-    </h1>
+  <div class="flex flex-col items-center justify-center mt-12">
     <div class="grid grid-cols-4 mx-32 gap-3">
+      <Button label="Check" />
       <div class="col-start-1 col-span-1">
         <h2 class="mb-3 text-2xl">Next Client</h2>
+
         <!-- for each client -->
         <div class="flex flex-col" v-for="(item, index) in clients">
           <AppointmentCard
@@ -76,6 +73,8 @@ import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
 import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+
+import Button from 'primevue/button'
 
 const days = [
   'Sunday',

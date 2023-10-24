@@ -1,6 +1,6 @@
 <template>
   <Container class="py-6 border-b-gray-700 border-b-[1px]"
-    ><header class="flex items-center justify-between">
+    ><header class="flex items-center justify-between max-w-7xl m-auto">
       <RouterLink
         class="w-1/6 flex items-center space-x-4 focus:outline-none focus-visible:ring-4 ring-blue-400 hover:scale-105 transition-all rounded-lg"
         to="/"
