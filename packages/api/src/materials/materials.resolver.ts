@@ -37,6 +37,8 @@ export class MaterialsResolver {
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
+    @Args('searchString', { type: () => String, nullable: true })
+    searchString?: string,
   ) {
     return this.materialsService.findAll(filters, order)
   }
@@ -61,12 +63,12 @@ export class MaterialsResolver {
     return this.materialsService.findOne(id)
   }
 
-  @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
-  @UseGuards(FirebaseGuard, RolesGuard)
-  @Query(() => [Material], { name: 'materialsBySearchString', nullable: true })
-  findMaterialsBySearchString(@Args('searchString') searchString: string) {
-    return this.materialsService.findMaterialsBySearchString(searchString)
-  }
+  // @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
+  // @UseGuards(FirebaseGuard, RolesGuard)
+  // @Query(() => [Material], { name: 'materialsBySearchString', nullable: true })
+  // findMaterialsBySearchString(@Args('searchString') searchString: string) {
+  //   return this.materialsService.findMaterialsBySearchString(searchString)
+  // }
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
@@ -99,6 +101,10 @@ export class MaterialsResolver {
   // Resolve fields
   @ResolveField()
   user(@Parent() m: Material): Promise<User> {
-    return this.usersService.findOne(m.userId)
+    if (m.userId) {
+      return this.usersService.findOne(m.userId)
+    } else {
+      return null
+    }
   }
 }

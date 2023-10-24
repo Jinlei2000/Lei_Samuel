@@ -16,9 +16,13 @@ export class MaterialsService {
     private readonly materialRepository: Repository<Material>,
   ) {}
 
-  findAll(filters?: Array<string>, order?: OrderByInput): Promise<Material[]> {
+  findAll(
+    filters?: Array<string>,
+    order?: OrderByInput,
+    searchString?: string,
+  ): Promise<Material[]> {
     // filter and order materials
-    const whereQuery = filterMaterials(filters)
+    const whereQuery = filterMaterials(filters, searchString)
     const orderQuery = orderMaterials(order)
 
     const materials = this.materialRepository.find({
@@ -77,16 +81,16 @@ export class MaterialsService {
     return material
   }
 
-  findMaterialsBySearchString(searchString: string): Promise<Material[]> {
-    searchString = searchString.toLowerCase()
+  // findMaterialsBySearchString(searchString: string): Promise<Material[]> {
+  //   searchString = searchString.toLowerCase()
 
-    const materials = this.materialRepository.find({
-      // @ts-ignore
-      name: { $regex: new RegExp(searchString, 'i') },
-    })
+  //   const materials = this.materialRepository.find({
+  //     // @ts-ignore
+  //     name: { $regex: new RegExp(searchString, 'i') },
+  //   })
 
-    return materials
-  }
+  //   return materials
+  // }
 
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
     const m = new Material()
