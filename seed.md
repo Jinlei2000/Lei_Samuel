@@ -9,6 +9,7 @@ npx nestjs-command <SEED_COMMAND_NAME>
 ```bash
 npx nestjs-command seed:database:materials
 npx nestjs-command seed:database:users
+npx nestjs-command seed:database:schedules
 ```
 
 ## Seed all data
