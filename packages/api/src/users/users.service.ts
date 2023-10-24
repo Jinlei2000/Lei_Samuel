@@ -72,6 +72,7 @@ export class UsersService {
     return user
   }
 
+  // TODO: put in find all
   findUsersBySearchString(searchString: string): Promise<User[]> {
     searchString = searchString.toLowerCase()
 
