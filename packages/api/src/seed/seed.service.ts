@@ -14,7 +14,10 @@ import { MailService } from 'src/mail/mail.service'
 import { Schedule } from 'src/schedules/entities/schedule.entity'
 import { ObjectId } from 'mongodb'
 import { resetTime } from 'src/helpers/genericFunctions'
-import { generateNonWeekendDates } from 'src/helpers/seedingFunctions'
+import {
+  chooseRandomItems,
+  generateNonWeekendDates,
+} from 'src/helpers/seedingFunctions'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
@@ -52,7 +55,7 @@ export class SeedService {
   }
   //#endregion
 
-  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.) 
+  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.)
   //#region Users
   async addUsersFromJson(): Promise<User[]> {
     let theUsers: User[] = []
@@ -198,66 +201,62 @@ export class SeedService {
 
       // GET DATA
       // find all appointments that is not done (filter by ND)
-      const availableAppointments =
+      let availableAppointments =
         await this.appointmentsService.findAllAvailableByDate(selectDate)
       // TODO: delete this
       console.log(
-        'appointmentsIds',
+        'ALL APPOINTMENTS',
         availableAppointments.map(appointment => appointment.id.toString()),
-      )
-      console.log(
-        'finalDates',
-        availableAppointments.map(appointment => appointment.finalDate),
       )
 
       // find all employees that are available for that date (not absent & not scheduled)
-      const availableEmployees =
+      let availableEmployees =
         await this.usersService.findAvailableEmployeesByDate(selectDate)
 
       // find all materials (that are loanable)
       const availableMaterials = await this.materialsService.findAll(['L'])
 
+      // find all admins and choose one randomly
       const admins = await this.usersService.findAll(['A'])
       const adminName =
         admins[Math.floor(Math.random() * admins.length)].fullname
 
-      // TODO: use a while loop (stop no appointments available or no employees available)
+      // make schedules on same day until no appointments left or no employees left for that day
       while (true) {
         // APPOINTMENTS
         // stop if no appointments available
+        console.log('check', availableAppointments.length)
         if (availableAppointments.length === 0) {
           console.log(
             `no appointments available for ${selectDate.toISOString()}`,
           )
           break // stop while loop
         }
-        // TODO: choose 3, 2 or 1 appointments
-        // TODO: if there is enough available appointments to choose from
-        const chosenAppointments = [availableAppointments[0]]
-        // remove chosen appointments from available appointments
-        availableAppointments.splice(0, chosenAppointments.length)
-        // add price, finalDate and isScheduled to each appointment
+        // choose random amount of appointments (1-3) from available appointments
+        const {
+          chosenItems: chosenAppointments,
+          remainingItems: remainingAppointments,
+        } = chooseRandomItems(availableAppointments, 3)
+        availableAppointments = remainingAppointments
+        // add random price between 0 and 600, finalDate and isScheduled is true to each appointment
         chosenAppointments.forEach((appointment: Appointment) => {
-          // random price between 0 and 600
           appointment.price = Math.floor(Math.floor(Math.random() * 600))
-          // add finalDate
           appointment.finalDate = selectDate
-          // set isScheduled to true
           appointment.isScheduled = true
         })
 
         // EMPLOYEES
         // stop if no employees available
-        // TODO: test this
         if (availableEmployees.length === 0) {
           console.log(`no employees available for ${selectDate.toISOString()}`)
           break // stop while loop
         }
-        console.log('available employees')
-        // TODO: choose 1 or 2 employees
-        const chosenEmployees = [availableEmployees[0]]
-        // remove chosen employees from available employees
-        availableEmployees.splice(0, chosenEmployees.length)
+        // choose random amount of employees (1-2) from available employees
+        const {
+          chosenItems: chosenEmployees,
+          remainingItems: remainingEmployees,
+        } = chooseRandomItems(availableEmployees, 2)
+        availableEmployees = remainingEmployees
 
         // MATERIALS
         // choose 2-6 materials (random)
@@ -266,23 +265,20 @@ export class SeedService {
           0,
           Math.floor(Math.random() * 4) + 2,
         )
+        console.log('get available employees')
 
         // update appointments
         await this.appointmentsService.saveAll(chosenAppointments)
-        console.log('saved appointments')
         const test =
           await this.appointmentsService.findAllAvailableByDate(selectDate)
-        console.log(
-          'testtt',
-          test.map(appointment => appointment.id.toString()),
-        )
-        console.log(
-          'testtt',
-          test.map(appointment => appointment.finalDate),
-        )
+        console.log('saved appointments')
         console.log(
           'chosenAppointments',
           chosenAppointments.map(appointment => appointment.id.toString()),
+        )
+        console.log(
+          'get available appointments after save',
+          test.map(appointment => appointment.id.toString()),
         )
 
         // SCHEDULE
@@ -306,8 +302,7 @@ export class SeedService {
     }
 
     // save schedules
-    const result = await this.schedulesService.saveAll(schedules)
-    // console.log('saved schedules', result)
+    await this.schedulesService.saveAll(schedules)
 
     return schedules
   }
