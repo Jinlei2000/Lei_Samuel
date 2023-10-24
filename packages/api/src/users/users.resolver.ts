@@ -63,9 +63,16 @@ export class UsersResolver {
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
-  @Query(() => [User], { name: 'usersAvailableByDate' })
-  findUsersAvailableByDate(@Args('date', { type: () => Date }) date: Date) {
-    return this.usersService.findAvailableUsersByDate(date)
+  @Query(() => [User], { name: 'usersEmployeesAvailableByDate' })
+  findEmployeesAvailableByDate(@Args('date', { type: () => Date }) date: Date) {
+    return this.usersService.findAvailableEmployeesByDate(date)
+  }
+
+  @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => Boolean, { name: 'userIsAvailableTodayByUserId' })
+  findStaffIsAvailableToday(@Args('userId', { type: () => String }) userId: string) {
+    return this.usersService.findStaffIsAvailableToday(userId)
   }
 
   @AllowedRoles(Role.ADMIN)
@@ -120,6 +127,6 @@ export class UsersResolver {
   // Resolve fields
   @ResolveField()
   locations(@Parent() u: User): Promise<Location[]> {
-    return this.locationService.findAllByUid(u.uid)
+    return this.locationService.findAllByUserId(u.id.toString())
   }
 }

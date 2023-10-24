@@ -33,8 +33,8 @@ export class MaterialsService {
     return materials
   }
 
-  async findAllByPersonId(
-    personId: string,
+  async findAllByUserId(
+    userId: string,
     filters?: Array<string>,
     order?: OrderByInput,
   ): Promise<Material[]> {
@@ -44,7 +44,7 @@ export class MaterialsService {
 
     const materials = await this.materialRepository.find({
       where: {
-        personId: personId,
+        userId: userId,
         ...whereQuery,
       },
       order: {
@@ -55,7 +55,16 @@ export class MaterialsService {
     return materials
   }
 
-  async findOne(id: string): Promise<Material | GraphQLError> {
+  async findAllByIds(ids: string[]): Promise<Material[]> {
+    const materials: Material[] = []
+    for (const id of ids) {
+      const material = await this.findOne(id)
+      materials.push(material)
+    }
+    return materials
+  }
+
+  async findOne(id: string): Promise<Material> {
     const material = await this.materialRepository.findOne({
       // @ts-ignore
       _id: new ObjectId(id),
@@ -83,7 +92,7 @@ export class MaterialsService {
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()
     // m.isAvailable = createMaterialInput.isAvailable
-    m.personId = createMaterialInput.personId
+    m.userId = createMaterialInput.userId
     m.isLoan = createMaterialInput.isLoan
     // m.isDefect = false
     m.serialNumber = createMaterialInput.serialNumber
@@ -105,6 +114,17 @@ export class MaterialsService {
     return this.findOne(id.toString())
   }
 
+  async updateAllByUserId(userId: string): Promise<Material[]> {
+    const materials = await this.findAllByUserId(userId)
+
+    for (const material of materials) {
+      // @ts-ignore
+      await this.update(material.id, { userId: null })
+    }
+
+    return materials
+  }
+
   async remove(id: string): Promise<string> {
     await this.findOne(id)
 
@@ -113,8 +133,6 @@ export class MaterialsService {
     // return id if delete was successful
     return id
   }
-
-  // TODO resolve field of personId
 
   // Seeding functions
   saveAll(materials: Material[]): Promise<Material[]> {

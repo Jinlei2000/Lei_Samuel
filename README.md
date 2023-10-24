@@ -23,3 +23,7 @@ Short description of the project.
 - [Nodemailer](https://nodemailer.com/about/) for sending emails
 - [Handlebars](https://handlebarsjs.com/) for templating emails
 
+## Environment variables
+
+documentatie over de environment variables
+
