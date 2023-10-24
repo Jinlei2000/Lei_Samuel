@@ -99,6 +99,10 @@ export class MaterialsResolver {
   // Resolve fields
   @ResolveField()
   user(@Parent() m: Material): Promise<User> {
-    return this.usersService.findOne(m.userId)
+    if (m.userId) {
+      return this.usersService.findOne(m.userId)
+    } else {
+      return null
+    }
   }
 }
