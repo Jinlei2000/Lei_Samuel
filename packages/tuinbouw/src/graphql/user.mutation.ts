@@ -13,14 +13,13 @@ export const ADD_CLIENT = gql`
       url
       locations {
         id
-        uid
+        userId
         address
         createdAt
         updatedAt
       }
       email
       telephone
-      availability
       createdAt
       updatedAt
       absentCount

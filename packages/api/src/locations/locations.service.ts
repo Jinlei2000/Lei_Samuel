@@ -28,9 +28,9 @@ export class LocationsService {
     })
   }
 
-  findAllByUid(uid: string): Promise<Location[]> {
+  findAllByUserId(userId: string): Promise<Location[]> {
     const locations = this.locationRepository.find({
-      where: { uid: uid },
+      where: { userId: userId },
     })
 
     if (!locations) {
@@ -53,16 +53,27 @@ export class LocationsService {
     return location
   }
 
+  async findLocationsBySearchString(searchString: string): Promise<Location[]> {
+    searchString = searchString.toLowerCase()
+
+    const locations = this.locationRepository.find({
+      // @ts-ignore
+      address: { $regex: new RegExp(searchString, 'i') },
+    })
+
+    return locations
+  }
+
   // Create location and update user with new locationId
   async create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
     l.address = createLocationInput.address
-    l.uid = createLocationInput.uid
+    l.userId = createLocationInput.userId
 
     const newLoc = await this.locationRepository.save(l)
 
     // update user with new locationIds
-    const user = await this.usersService.findOneByUid(l.uid)
+    const user = await this.usersService.findOne(newLoc.userId)
     const ids = user.locationIds.map(id => id.toString())
     await this.usersService.updateUser(user.uid, user.id, {
       id: user.id,
@@ -93,7 +104,7 @@ export class LocationsService {
     await this.locationRepository.delete(id)
 
     // update user locationIds with new array
-    const user = await this.usersService.findOneByUid(location.uid)
+    const user = await this.usersService.findOne(location.userId)
     const ids = user.locationIds.map(id => id.toString())
     // remove the removed location id from the array
     const newIds = ids.filter(id => id !== location.id.toString())
@@ -107,8 +118,12 @@ export class LocationsService {
   }
 
   // Delete all locations of user
-  async removeAllByUid(uid: string): Promise<string[]> {
-    const locations = await this.findAllByUid(uid)
+  async removeAllByUserId(userId: string): Promise<string[]> {
+    const locations = await this.findAllByUserId(userId)
+
+    if (!locations) {
+      return []
+    }
 
     const ids = locations.map(location => location.id.toString())
 

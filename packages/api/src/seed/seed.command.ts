@@ -8,23 +8,13 @@ export class DatabaseSeedCommand {
 
   //#region Appointments
   @Command({
-    command: 'seed:database:appointments',
-    describe: 'Seed the database with appointments',
-  })
-  async seedAppointments() {
-    console.info('🪺 Start seeding of appointments')
-    const appointments = await this.seedService.addAppointmentsFromJson()
-    console.info(`🐣 ${appointments.length} Appointments are added`)
-  }
-
-  @Command({
     command: 'seed:reset:appointments',
     describe: 'Delete all data from the appointments table',
   })
   async deleteAppointments() {
-    console.info('🔪 Start deleting appointments')
+    console.info('💀 Start deleting appointments')
     await this.seedService.deleteAllAppointments()
-    console.info('🪶 Removed appointments')
+    console.info('🥲 Removed appointments')
   }
   //#endregion
 
@@ -34,9 +24,9 @@ export class DatabaseSeedCommand {
     describe: 'Seed the database with materials',
   })
   async seedMaterials() {
-    console.info('🪺 Start seeding of materials')
+    console.info('👌 Start seeding of materials')
     const materials = await this.seedService.addMaterialsFromJson()
-    console.info(`🐣 ${materials.length} Materials are added`)
+    console.info(`😎 ${materials.length} Materials are added`)
   }
 
   @Command({
@@ -44,9 +34,9 @@ export class DatabaseSeedCommand {
     describe: 'Delete all data from the materials table',
   })
   async deleteMaterials() {
-    console.info('🔪 Start deleting materials')
+    console.info('💀 Start deleting materials')
     await this.seedService.deleteAllMaterials()
-    console.info('🪶 Removed materials')
+    console.info('🥲 Removed materials')
   }
   //#endregion
 
@@ -56,9 +46,9 @@ export class DatabaseSeedCommand {
     describe: 'Seed the database with users',
   })
   async seedUsers() {
-    console.info('🪺 Start seeding of users')
+    console.info('👌 Start seeding of users')
     const users = await this.seedService.addUsersFromJson()
-    console.info(`🐣 ${users.length} Users are added`)
+    console.info(`😎 ${users.length} Users are added`)
   }
 
   @Command({
@@ -66,9 +56,9 @@ export class DatabaseSeedCommand {
     describe: 'Delete all data from the users table',
   })
   async deleteUsers() {
-    console.info('🔪 Start deleting users')
+    console.info('💀 Start deleting users')
     await this.seedService.deleteAllUsers()
-    console.info('🪶 Removed users')
+    console.info('🥲 Removed users')
   }
   //#endregion
 
@@ -78,9 +68,9 @@ export class DatabaseSeedCommand {
     describe: 'Delete all data from the locations table',
   })
   async deleteLocations() {
-    console.info('🔪 Start deleting locations')
+    console.info('💀 Start deleting locations')
     await this.seedService.deleteAllLocations()
-    console.info('🪶 Removed locations')
+    console.info('🥲 Removed locations')
   }
   //#endregion
 
@@ -90,11 +80,58 @@ export class DatabaseSeedCommand {
     describe: 'Delete all data from the absences table',
   })
   async deleteAbsences() {
-    console.info('🔪 Start deleting absences')
+    console.info('💀 Start deleting absences')
     await this.seedService.deleteAllAbsences()
-    console.info('🪶 Removed absences')
+    console.info('🥲 Removed absences')
   }
   //#endregion
+
+  //#region Schedules
+  @Command({
+    command: 'seed:database:schedules',
+    describe: 'Seed the database with schedules',
+  })
+  async seedSchedules() {
+    console.info('👌 Start seeding of schedules')
+    const schedules = await this.seedService.addSchedules()
+    console.info(`😎 ${schedules.length} Schedules are added`)
+  }
+
+  @Command({
+    command: 'seed:reset:schedules',
+    describe: 'Delete all data from the schedules table',
+  })
+  async deleteSchedules() {
+    console.info('💀 Start deleting schedules')
+    await this.seedService.deleteAllSchedules()
+    console.info('🥲 Removed schedules')
+  }
+  //#endregion
+
+  //#region Mail
+  @Command({
+    command: 'seed:reset:mail',
+    describe: 'Delete all data from the mail table',
+  })
+  async deleteMail() {
+    console.info('💀 Start deleting tokens sent by mail')
+    await this.seedService.deleteAllMail()
+    console.info('🥲 Removed mail tokens')
+  }
+  //#endregion
+
+  // Seed the database with appointments, materials, users...
+  @Command({
+    command: 'seed:database',
+    describe: 'Seed the database with appointments, materials, users...',
+  })
+  async seedDatabase() {
+    console.info('👌 Start seeding of appointments, materials, users...')
+    await this.seedMaterials()
+    await this.seedUsers()
+    await this.seedSchedules()
+    console.info('😎 Seeding of appointments, materials, users... is done')
+  }
 
   // Delete all data from appointments, materials, users, locations... tables
   @Command({
@@ -103,12 +140,14 @@ export class DatabaseSeedCommand {
       'Delete all data from appointments, materials, users, locations... tables',
   })
   async deleteAll() {
-    console.info('🔪 Start deleting all data')
+    console.info('💀 Start deleting all data')
     await this.deleteAppointments()
     await this.deleteMaterials()
     await this.deleteUsers()
     await this.deleteLocations()
     await this.deleteAbsences()
-    console.info('🪶 Removed all data')
+    await this.deleteSchedules()
+    await this.deleteMail()
+    console.info('🥲 Removed all data')
   }
 }

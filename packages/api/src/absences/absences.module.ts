@@ -4,6 +4,7 @@ import { AbsencesResolver } from './absences.resolver'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Absence } from './entities/absence.entity'
 import { UsersModule } from 'src/users/users.module'
+import { SchedulesModule } from 'src/schedules/schedules.module'
 
 @Module({
   providers: [AbsencesResolver, AbsencesService],
@@ -14,6 +15,7 @@ import { UsersModule } from 'src/users/users.module'
     // Because 2 modules depend on each other
     // https://docs.nestjs.com/fundamentals/circular-dependency
     forwardRef(() => UsersModule),
+    forwardRef(() => SchedulesModule),
   ],
   exports: [AbsencesService],
 })

@@ -11,24 +11,24 @@
         "address": "Marksesteenweg 58, 8500 Kortrijk"
       }
     ],
-    "materials": [
+    "absences": [
       {
-        "name": "Pruning Shears",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 12345
+        "type": "sick",
+        "startDate": "2020-05-01",
+        "endDate": "2020-05-03",
+        "description": "I'm sick"
       },
       {
-        "name": "Gardening Gloves",
-        "personId": null,
-        "isLoan": true,
-        "serialNumber": 54321
+        "type": "vacation",
+        "startDate": "2021-05-04",
+        "endDate": "2021-05-08",
+        "description": "I'm on vacation"
       },
       {
-        "name": "Planting Shovel",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 98765
+        "type": "other",
+        "startDate": "2023-05-09",
+        "endDate": "2023-05-10",
+        "description": "I'm on other"
       }
     ]
   },
@@ -44,24 +44,12 @@
         "address": "Sint-Janslaan 5, 8500 Kortrijk"
       }
     ],
-    "materials": [
+    "absences": [
       {
-        "name": "Watering Can",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 11111
-      },
-      {
-        "name": "Knee Pads",
-        "personId": null,
-        "isLoan": true,
-        "serialNumber": 22222
-      },
-      {
-        "name": "Garden Rake",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 33333
+        "type": "other",
+        "startDate": "2023-10-20",
+        "endDate": "2023-10-22",
+        "description": "Attending a training workshop."
       }
     ]
   },
@@ -77,24 +65,12 @@
         "address": "Snaggaardstraat 15, 8500 Kortrijk"
       }
     ],
-    "materials": [
+    "absences": [
       {
-        "name": "Pruning Saw",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 44444
-      },
-      {
-        "name": "Garden Trowel",
-        "personId": null,
-        "isLoan": true,
-        "serialNumber": 55555
-      },
-      {
-        "name": "Lawn Edger",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 66666
+        "type": "other",
+        "startDate": "2023-10-25",
+        "endDate": "2023-10-26",
+        "description": "Taking care of personal matters."
       }
     ]
   },
@@ -112,22 +88,36 @@
     ],
     "materials": [
       {
-        "name": "Leaf Blower",
-        "personId": null,
-        "isLoan": false,
+        "name": "Gardening Gloves",
+        "serialNumber": 11111
+      },
+      {
+        "name": "Knee Pads",
+        "serialNumber": 22222
+      },
+      {
+        "name": "Plant Labels",
+        "serialNumber": 33333
+      },
+      {
+        "name": "Weeding Tool",
         "serialNumber": 77777
       },
       {
-        "name": "Hedge Trimmer",
-        "personId": null,
-        "isLoan": true,
+        "name": "Garden Hand Rake",
         "serialNumber": 88888
       },
       {
-        "name": "Garden Spade",
-        "personId": null,
-        "isLoan": false,
+        "name": "Pruning Loppers",
         "serialNumber": 99999
+      }
+    ],
+    "absences": [
+      {
+        "type": "vacation",
+        "startDate": "2023-11-01",
+        "endDate": "2023-11-05",
+        "description": "Enjoying a vacation."
       }
     ]
   },
@@ -145,22 +135,16 @@
     ],
     "materials": [
       {
-        "name": "Garden Shears",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 101010
+        "name": "Floral Scissors",
+        "serialNumber": 44444
       },
       {
-        "name": "Wheelbarrow",
-        "personId": null,
-        "isLoan": true,
-        "serialNumber": 111111
+        "name": "Garden Kneeler",
+        "serialNumber": 55555
       },
       {
-        "name": "Pruning Loppers",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 121212
+        "name": "Garden Wire",
+        "serialNumber": 66666
       }
     ]
   },
@@ -176,24 +160,46 @@
         "address": "Diksmuidsesteenweg 396, 8800 Roeselare"
       }
     ],
-    "materials": [
+    "appointments": [
       {
-        "name": "Garden Sprayer",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 131313
+        "type": "maintenance",
+        "startProposedDate": "2022-05-01",
+        "endProposedDate": "2022-05-10",
+        "finalDate": "2022-05-03",
+        "price": 320,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
-        "name": "Garden Hand Rake",
-        "personId": null,
-        "isLoan": true,
-        "serialNumber": 141414
+        "type": "repair",
+        "startProposedDate": "2022-05-11",
+        "endProposedDate": "2022-05-20",
+        "finalDate": "2022-05-15",
+        "price": 401,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
-        "name": "Pruning Shears",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 151515
+        "type": "maintenance",
+        "startProposedDateNumber": 0,
+        "endProposedDateNumber": 5,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be maintained.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 0,
+        "endProposedDateNumber": 10,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be repaired.",
+        "priority": false
       }
     ]
   },
@@ -212,24 +218,46 @@
         "address": "Astridlaan 400, 8310 Brugge"
       }
     ],
-    "materials": [
+    "appointments": [
       {
-        "name": "Garden Fork",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 161616
+        "type": "maintenance",
+        "startProposedDate": "2022-05-01",
+        "endProposedDate": "2022-05-10",
+        "finalDate": "2022-05-03",
+        "price": 520,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
-        "name": "Garden Cart",
-        "personId": null,
-        "isLoan": true,
-        "serialNumber": 171717
+        "type": "repair",
+        "startProposedDate": "2022-05-11",
+        "endProposedDate": "2022-05-20",
+        "finalDate": "2022-05-15",
+        "price": 250,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained.",
+        "priority": false
       },
       {
-        "name": "Plant Labels",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 181818
+        "type": "maintenance",
+        "startProposedDateNumber": 0,
+        "endProposedDateNumber": 5,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be maintained.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 0,
+        "endProposedDateNumber": 10,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be repaired.",
+        "priority": false
       }
     ]
   },
@@ -239,26 +267,6 @@
     "email": "emily.williams@gmail.com",
     "uid": "CNihqseWkQN603GCHOLU2G8hrsh2",
     "locale": "en",
-    "role": "CLIENT",
-    "materials": [
-      {
-        "name": "Garden Hoe",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 191919
-      },
-      {
-        "name": "Garden Stake",
-        "personId": null,
-        "isLoan": true,
-        "serialNumber": 202020
-      },
-      {
-        "name": "Garden Cultivator",
-        "personId": null,
-        "isLoan": false,
-        "serialNumber": 212121
-      }
-    ]
+    "role": "CLIENT"
   }
 ]

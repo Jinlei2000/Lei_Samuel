@@ -1,0 +1,15 @@
+**/node_modules
+**/dist
+#Ignore all env files api and pwa
+**/.env*
+#This is the only env file needed to build via vite
+!**/tuinbouw/.env.production.local 
+**/.git
+**/.gitignore
+**/.DS_Store
+
+**/Dockerfile
+**/.dockerignore
+**/.vscode
+
+**/credentials.json

@@ -8,7 +8,12 @@ import { GraphQLError } from 'graphql'
 import { ObjectId } from 'mongodb'
 import { UsersService } from 'src/users/users.service'
 import { OrderByInput } from 'src/interfaces/order.input'
-import { filterAbsences, orderAbsences } from 'src/helpers/absencesFunctions'
+import {
+  calculateTotalDays,
+  filterAbsences,
+  orderAbsences,
+} from 'src/helpers/absencesFunctions'
+import { SchedulesService } from 'src/schedules/schedules.service'
 
 @Injectable()
 export class AbsencesService {
@@ -17,6 +22,8 @@ export class AbsencesService {
     private readonly absenceRepository: Repository<Absence>,
     @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
+    @Inject(forwardRef(() => SchedulesService))
+    private readonly scheduleService: SchedulesService,
   ) {}
 
   async findAll(
@@ -54,7 +61,7 @@ export class AbsencesService {
   }
 
   // find all users that is a absent on a specific date (return array of users id's)
-  async findAllUserByDate(date: Date): Promise<string[]> {
+  async findAllUsersByDate(date: Date): Promise<string[]> {
     const absences = await this.absenceRepository.find({
       where: {
         // check if date is between start and end date of absence
@@ -65,8 +72,15 @@ export class AbsencesService {
       },
     })
 
-    const ids = absences.map(absence => absence.userId)
-    return ids
+    const uids: string[] = []
+
+    for (const absence of absences) {
+      const user = await this.userService.findOne(absence.userId)
+
+      uids.push(user.uid)
+    }
+
+    return uids
   }
 
   async findOne(id: string): Promise<Absence> {
@@ -80,6 +94,22 @@ export class AbsencesService {
     }
 
     return absence
+  }
+
+  // check if user is already absent on this date (return true or false)
+  async findOneByDateAndUserId(userId: string, date: Date): Promise<Boolean> {
+    const absences = await this.absenceRepository.find({
+      where: {
+        // check if date is between start and end date of absence
+        // @ts-ignore
+        startDate: { $lte: date },
+        // @ts-ignore
+        endDate: { $gte: date },
+        userId: userId,
+      },
+    })
+
+    return absences.length > 0
   }
 
   async create(createAbsenceInput: CreateAbsenceInput) {
@@ -111,28 +141,28 @@ export class AbsencesService {
       throw new GraphQLError('User already has an absence on the same date!')
 
     const a = new Absence()
-    a.discription = createAbsenceInput.discription
+    a.description = createAbsenceInput.description
     a.userId = createAbsenceInput.userId
     a.type = createAbsenceInput.type
     a.startDate = createAbsenceInput.startDate
     a.endDate = createAbsenceInput.endDate
-
-    // calculate total days
-    const startDate = new Date(a.startDate)
-    const endDate = new Date(a.endDate)
-    const totalDays =
-      Math.round((endDate.getTime() - startDate.getTime()) / 86400000) + 1
-    a.totalDays = totalDays
+    a.totalDays = calculateTotalDays(new Date(a.startDate), new Date(a.endDate))
 
     const newAbsence = await this.absenceRepository.save(a)
 
     // increment user absences
     await this.userService.incrementAbsencesCount(createAbsenceInput.userId)
 
+    // remove user from schedules with date range
+    const user = await this.userService.findOne(createAbsenceInput.userId)
+    await this.scheduleService.updateAllByEmployeeWithDateRange(
+      user,
+      new Date(createAbsenceInput.startDate),
+      new Date(createAbsenceInput.endDate),
+    )
+
     return newAbsence
   }
-
-  // TODO make a function that checks if user has an absence on the same date & calculate total days
 
   async update(
     id: ObjectId,
@@ -172,11 +202,10 @@ export class AbsencesService {
         throw new GraphQLError('User already has an absence on the same date!')
 
       // calculate total days
-      const startDate = new Date(updateAbsenceInput.startDate)
-      const endDate = new Date(updateAbsenceInput.endDate)
-      const totalDays =
-        Math.round((endDate.getTime() - startDate.getTime()) / 86400000) + 1
-      updatedData.totalDays = totalDays
+      updatedData.totalDays = calculateTotalDays(
+        new Date(updateAbsenceInput.startDate),
+        new Date(updateAbsenceInput.endDate),
+      )
     }
 
     await this.absenceRepository.update(id, updatedData)
@@ -185,9 +214,12 @@ export class AbsencesService {
   }
 
   async remove(id: string): Promise<string> {
-    await this.findOne(id)
+    const absence = await this.findOne(id)
 
     await this.absenceRepository.delete(id)
+
+    // decrement user absences
+    await this.userService.decrementAbsencesCount(absence.userId)
 
     // return id if delete was successful
     return id

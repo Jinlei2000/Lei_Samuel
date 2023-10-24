@@ -24,7 +24,7 @@ export class Absence {
 
   @Column()
   @Field({ nullable: true })
-  discription?: string
+  description?: string
 
   @Column()
   @Field({ description: 'Type of absence (sick, vacation, other)' })

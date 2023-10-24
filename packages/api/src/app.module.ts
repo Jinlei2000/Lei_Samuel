@@ -3,7 +3,6 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
-import { AppointmentsModule } from './appointments/appointments.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { SeedModule } from './seed/seed.module'
 import { MaterialsModule } from './materials/materials.module'
@@ -13,6 +12,8 @@ import { LocationsModule } from './locations/locations.module'
 import { UsersModule } from './users/users.module'
 import { MailModule } from './mail/mail.module';
 import { AbsencesModule } from './absences/absences.module';
+import { AppointmentsModule } from './appointments/appointments.module'
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
@@ -21,13 +22,14 @@ import { AbsencesModule } from './absences/absences.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      playground: process.env.NODE_ENV == 'production' ? false : true,
     }),
 
     TypeOrmModule.forRoot({
       type: 'mongodb',
-      url: 'mongodb://localhost:27027/api',
+      url: `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, // DOCKER
       entities: [__dirname + '/**/*.entity.{js,ts}'],
-      synchronize: true, // Careful with this in production
+      synchronize: process.env.NODE_ENV == 'production' ? false : true, // Careful with this in production
       useNewUrlParser: true,
       useUnifiedTopology: true, // Disable deprecated warnings
     }),
@@ -40,6 +42,7 @@ import { AbsencesModule } from './absences/absences.module';
     SeedModule,
     MailModule,
     AbsencesModule,
+    SchedulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

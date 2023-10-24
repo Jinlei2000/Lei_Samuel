@@ -6,5 +6,5 @@ export class CreateLocationInput {
   address: string
 
   @Field() // graphql
-  uid: string
+  userId: string
 }

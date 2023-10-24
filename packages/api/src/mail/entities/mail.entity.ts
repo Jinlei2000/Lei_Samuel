@@ -1,7 +1,32 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { User } from 'src/users/entities/user.entity'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ObjectId,
+  ObjectIdColumn,
+} from 'typeorm'
 
+@Entity()
 @ObjectType()
 export class Mail {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @ObjectIdColumn()
+  @Field(() => ID)
+  id: ObjectId
+
+  @Column()
+  @Field()
+  token: string
+
+  @Column()
+  @Field({ description: 'Expiration date of the token (2 weeks)' })
+  expirationDate: Date
+
+  @Column()
+  userId: string
+
+  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @Field({ nullable: true })
+  createdAt?: Date
 }

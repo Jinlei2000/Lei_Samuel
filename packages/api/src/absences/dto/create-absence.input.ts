@@ -4,7 +4,7 @@ import { IsDate, IsDateString } from 'class-validator'
 @InputType()
 export class CreateAbsenceInput {
   @Field({ nullable: true })
-  discription?: string
+  description?: string
 
   @Field()
   userId: string

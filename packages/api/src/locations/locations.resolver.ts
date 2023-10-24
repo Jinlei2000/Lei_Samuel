@@ -24,18 +24,26 @@ export class LocationsResolver {
     return this.locationsService.findAll(order)
   }
 
-  // TODO: search by address
-
   @UseGuards(FirebaseGuard)
-  @Query(() => [Location], { name: 'locationsByUid' })
-  findAllByUid(@Args('uid', { type: () => String }) uid: string) {
-    return this.locationsService.findAllByUid(uid)
+  @Query(() => [Location], { name: 'locationsByUserId' })
+  findAllByUserId(@Args('userId', { type: () => String }) userId: string) {
+    return this.locationsService.findAllByUserId(userId)
   }
 
   @UseGuards(FirebaseGuard)
   @Query(() => Location, { name: 'location' })
   findOneById(@Args('id', { type: () => String }) id: string) {
     return this.locationsService.findOne(id)
+  }
+
+  // search by address
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Location], { name: 'locationsBySearchString' })
+  findLocationsBySearchString(
+    @Args('searchString', { type: () => String }) searchString: string,
+  ) {
+    return this.locationsService.findLocationsBySearchString(searchString)
   }
 
   @UseGuards(FirebaseGuard)
