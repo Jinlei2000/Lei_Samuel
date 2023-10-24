@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 
+// import '@unocss/reset/tailwind.css'
+// import '@unocss/reset/eric-meyer.css'
 import '@unocss/reset/tailwind.css'
 import 'virtual:uno.css'
 
@@ -13,8 +15,8 @@ import useCustomUser from './composables/useCustomUser'
 // PrimeVue
 import PrimeVue from 'primevue/config'
 
-import 'primevue/resources/themes/lara-light-teal/theme.css'
 import 'primevue/resources/primevue.min.css' // core css
+import 'primevue/resources/themes/lara-light-teal/theme.css'
 
 import Button from 'primevue/button'
 
