@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col items-center justify-center mt-12 mx-32 gap-5">
+  <div
+    class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
+  >
     <div class="w-full flex flex-col gap-10">
       <!-- filters + searchbar -->
       <div class="flex items-center justify-between w-full relative">
@@ -344,7 +346,13 @@ const sort = ref(false)
 const skeletons = ref<number[]>(new Array(24))
 // const loading = ref(true)
 
-const { result: allMaterials, loading, error } = useQuery(GET_MATERIALS)
+const {
+  result: allMaterials,
+  loading,
+  error,
+} = useQuery(GET_MATERIALS, () => ({
+  filters: [],
+}))
 
 const {
   document,
@@ -358,5 +366,33 @@ watch(search, () => {
   load(document.value, {
     searchString: search.value,
   })
+})
+
+watch(filter, () => {
+  if (availability.value == 'available') {
+    const {
+      result: allMaterials,
+      loading,
+      error,
+    } = useQuery(GET_MATERIALS, () => ({
+      filters: ['A'],
+    }))
+  } else if (availability.value == 'not available') {
+    const {
+      result: allMaterials,
+      loading,
+      error,
+    } = useQuery(GET_MATERIALS, () => ({
+      filters: ['NA'],
+    }))
+  } else {
+    const {
+      result: allMaterials,
+      loading,
+      error,
+    } = useQuery(GET_MATERIALS, () => ({
+      filters: [],
+    }))
+  }
 })
 </script>

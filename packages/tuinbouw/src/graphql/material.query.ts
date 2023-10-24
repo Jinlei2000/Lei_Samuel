@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_MATERIALS = gql`
-  query materials {
-    materials {
+  query materials($filters: [String!]) {
+    materials(filters: $filters) {
       id
       name
       isLoan
