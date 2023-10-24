@@ -192,10 +192,10 @@ export class SeedService {
   //#region Schedules
   async addSchedules(): Promise<Schedule[]> {
     let schedules: Schedule[] = []
-    // MAKE SCHEDULES
     // get all non-weekend days for next amount of days
     const dates = await generateNonWeekendDates(5)
     console.log('dates', dates)
+    
     for (const selectDate of dates) {
       console.log('💠', selectDate)
 
@@ -283,17 +283,12 @@ export class SeedService {
 
         // SCHEDULE
         const schedule = new Schedule()
-        // add finalDate to schedule
         schedule.finalDate = selectDate
-        // add appointments to schedule
         schedule.appointmentIds = chosenAppointments.map(appointment =>
           appointment.id.toString(),
         )
-        // add employees to schedule
         schedule.employees = chosenEmployees
-        // add materials to schedule
         schedule.materials = chosenMaterials
-        // add createdBy name of admin
         schedule.createdBy = adminName
 
         // add schedule to schedules
