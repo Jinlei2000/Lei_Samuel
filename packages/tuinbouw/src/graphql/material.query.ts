@@ -6,7 +6,6 @@ export const GET_MATERIALS = gql`
       id
       name
       isLoan
-
       serialNumber
       createdAt
       updatedAt
