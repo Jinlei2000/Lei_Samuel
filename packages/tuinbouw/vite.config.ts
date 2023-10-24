@@ -4,12 +4,21 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import presetUno from '@unocss/preset-uno'
+import presetAttributify from '@unocss/preset-attributify'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    UnoCSS(),
+    UnoCSS({
+      presets: [presetUno(), presetAttributify()],
+      include: [
+        './index.html',
+        './src/**/*.{vue,js,ts,jsx,tsx}',
+        './node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}',
+      ],
+    }),
     VitePWA({
       manifest: {
         name: 'Tuinbouw',

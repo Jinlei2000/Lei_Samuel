@@ -1,5 +1,5 @@
 <template>
-  <div class="text-black">
+  <div class="text-black mx-4">
     <AppHeader />
     <RouterView />
   </div>

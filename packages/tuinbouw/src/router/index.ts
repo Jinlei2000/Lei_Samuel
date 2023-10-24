@@ -40,6 +40,10 @@ const router = createRouter({
           component: () => import('../views/employee/Dashboard.vue'),
         },
         {
+          path: 'materials',
+          component: () => import('../views/employee/Materials.vue'),
+        },
+        {
           path: 'profile',
           component: () => import('../views/employee/Profile.vue'),
         },
