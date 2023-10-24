@@ -368,31 +368,28 @@ watch(search, () => {
   })
 })
 
-watch(filter, () => {
+watch(availability, () => {
   if (availability.value == 'available') {
-    const {
-      result: allMaterials,
-      loading,
-      error,
-    } = useQuery(GET_MATERIALS, () => ({
+    console.log('available')
+    const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: ['A'],
     }))
+    allMaterials.value = result.value
+    console.log(allMaterials)
   } else if (availability.value == 'not available') {
-    const {
-      result: allMaterials,
-      loading,
-      error,
-    } = useQuery(GET_MATERIALS, () => ({
+    console.log('not available')
+    const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: ['NA'],
     }))
+    allMaterials.value = result.value
+    console.log(allMaterials)
   } else {
-    const {
-      result: allMaterials,
-      loading,
-      error,
-    } = useQuery(GET_MATERIALS, () => ({
+    console.log('all')
+    const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: [],
     }))
+    allMaterials.value = result.value
+    console.log(allMaterials)
   }
 })
 </script>
