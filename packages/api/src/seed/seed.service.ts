@@ -195,7 +195,7 @@ export class SeedService {
     // get all non-weekend days for next amount of days
     const dates = await generateNonWeekendDates(5)
     console.log('dates', dates)
-    
+
     for (const selectDate of dates) {
       console.log('💠', selectDate)
 
