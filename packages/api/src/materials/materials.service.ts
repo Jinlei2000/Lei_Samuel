@@ -22,12 +22,14 @@ export class MaterialsService {
     searchString?: string,
   ): Promise<Material[]> {
     // filter and order materials
-    const whereQuery = filterMaterials(filters, searchString)
+    const whereQuery = filterMaterials(filters)
     const orderQuery = orderMaterials(order)
 
     const materials = this.materialRepository.find({
       where: {
         ...whereQuery,
+        // @ts-ignore
+        name: { $regex: new RegExp(searchString, 'i') },
       },
       order: {
         ...orderQuery,
