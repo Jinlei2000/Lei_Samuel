@@ -120,6 +120,7 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
+  //#region Seed all
   // Seed the database with appointments, materials, users...
   @Command({
     command: 'seed:database',
@@ -132,7 +133,9 @@ export class DatabaseSeedCommand {
     await this.seedSchedules()
     console.info('😎 Seeding of appointments, materials, users... is done')
   }
+  //#endregion
 
+  //#region Reset all
   // Delete all data from appointments, materials, users, locations... tables
   @Command({
     command: 'seed:reset',
@@ -150,4 +153,5 @@ export class DatabaseSeedCommand {
     await this.deleteMail()
     console.info('🥲 Removed all data')
   }
+  //#endregion
 }

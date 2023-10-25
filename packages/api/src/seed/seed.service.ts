@@ -12,7 +12,6 @@ import { AbsencesService } from 'src/absences/absences.service'
 import { SchedulesService } from 'src/schedules/schedules.service'
 import { MailService } from 'src/mail/mail.service'
 import { Schedule } from 'src/schedules/entities/schedule.entity'
-import { ObjectId } from 'mongodb'
 import { resetTime } from 'src/helpers/genericFunctions'
 import {
   chooseRandomItems,
@@ -21,7 +20,6 @@ import {
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
-import { async } from 'rxjs'
 
 @Injectable()
 export class SeedService {
@@ -55,7 +53,6 @@ export class SeedService {
   }
   //#endregion
 
-  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.)
   //#region Users
   async addUsersFromJson(): Promise<User[]> {
     let theUsers: User[] = []
@@ -154,14 +151,32 @@ export class SeedService {
         await this.appointmentsService.saveAll(userAppointments)
       }
 
-      // TODO: make some absences dynamic
-      // Add some absences to staff
+      // Add some absences to staff (some are in the past, some in the future)
       if (users[num].absences) {
         let absences: Absence[] = []
         for (let absence of users[num].absences) {
           const a = new Absence()
-          a.startDate = new Date(absence.startDate)
-          a.endDate = new Date(absence.endDate)
+          // absence in past
+          if (absence.startDate && absence.endDate) {
+            a.startDate = new Date(absence.startDate)
+            a.endDate = new Date(absence.endDate)
+          }
+          // absence in future (dynamic date)
+          if (
+            absence.startDateNumber !== undefined &&
+            absence.endDateNumber !== undefined
+          ) {
+            a.startDate = resetTime(
+              new Date(
+                Date.now() + absence.startDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+            a.endDate = resetTime(
+              new Date(
+                Date.now() + absence.endDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+          }
           a.userId = user.id.toString()
           a.type = absence.type
           a.description = absence.description
@@ -176,7 +191,6 @@ export class SeedService {
       }
 
       num++
-      console.info(`🙋 user ${num} is added`)
     }
 
     await this.usersService.saveAll(newUsers)
@@ -194,20 +208,20 @@ export class SeedService {
     let schedules: Schedule[] = []
     // get all non-weekend days for next amount of days
     const dates = await generateNonWeekendDates(5)
-    console.log('dates', dates)
+    // console.log('dates', dates)
 
     for (const selectDate of dates) {
-      console.log('💠', selectDate)
+      // console.log('💠', selectDate)
 
       // GET DATA
       // find all appointments that is not done (filter by ND)
       let availableAppointments =
         await this.appointmentsService.findAllAvailableByDate(selectDate)
-      // TODO: delete this
-      console.log(
-        'ALL APPOINTMENTS',
-        availableAppointments.map(appointment => appointment.id.toString()),
-      )
+
+      // console.log(
+      //   'ALL APPOINTMENTS',
+      //   availableAppointments.map(appointment => appointment.id.toString()),
+      // )
 
       // find all employees that are available for that date (not absent & not scheduled)
       let availableEmployees =
@@ -225,11 +239,10 @@ export class SeedService {
       while (true) {
         // APPOINTMENTS
         // stop if no appointments available
-        console.log('check', availableAppointments.length)
         if (availableAppointments.length === 0) {
-          console.log(
-            `no appointments available for ${selectDate.toISOString()}`,
-          )
+          // console.log(
+          //   `no appointments available for ${selectDate.toISOString()}`,
+          // )
           break // stop while loop
         }
         // choose random amount of appointments (1-3) from available appointments
@@ -248,7 +261,7 @@ export class SeedService {
         // EMPLOYEES
         // stop if no employees available
         if (availableEmployees.length === 0) {
-          console.log(`no employees available for ${selectDate.toISOString()}`)
+          // console.log(`no employees available for ${selectDate.toISOString()}`)
           break // stop while loop
         }
         // choose random amount of employees (1-2) from available employees
@@ -259,27 +272,36 @@ export class SeedService {
         availableEmployees = remainingEmployees
 
         // MATERIALS
-        // choose 2-6 materials (random)
-        // TODO: choose random amount of materials & choose random materials
-        const chosenMaterials = availableMaterials.slice(
-          0,
-          Math.floor(Math.random() * 4) + 2,
-        )
-        console.log('get available employees')
+        // choose random amount of materials (2-6) from available materials
+        const randomAmountOfMaterials = Math.floor(Math.random() * 5) + 2
+        const chosenMaterials = []
+        const usedIndices = new Set()
+
+        // choose random materials
+        while (chosenMaterials.length < randomAmountOfMaterials) {
+          const randomIndex = Math.floor(
+            Math.random() * availableMaterials.length,
+          )
+
+          if (!usedIndices.has(randomIndex)) {
+            chosenMaterials.push(availableMaterials[randomIndex])
+            usedIndices.add(randomIndex)
+          }
+        }
+        // console.log('get available employees')
+        // console.log(
+        //   'chosenMaterials',
+        //   chosenMaterials.map(m => m.name),
+        // )
 
         // update appointments
         await this.appointmentsService.saveAll(chosenAppointments)
-        const test =
-          await this.appointmentsService.findAllAvailableByDate(selectDate)
-        console.log('saved appointments')
-        console.log(
-          'chosenAppointments',
-          chosenAppointments.map(appointment => appointment.id.toString()),
-        )
-        console.log(
-          'get available appointments after save',
-          test.map(appointment => appointment.id.toString()),
-        )
+
+        // console.log('saved appointments')
+        // console.log(
+        //   'chosenAppointments',
+        //   chosenAppointments.map(appointment => appointment.id.toString()),
+        // )
 
         // SCHEDULE
         const schedule = new Schedule()
