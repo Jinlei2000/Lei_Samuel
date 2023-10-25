@@ -316,7 +316,7 @@
 import { useLazyQuery, useQuery } from '@vue/apollo-composable'
 import {
   GET_MATERIALS,
-  FIND_MATERIALS_BY_SEARCH_STRING,
+  // FIND_MATERIALS_BY_SEARCH_STRING,
 } from '@/graphql/material.query'
 import { watch, ref } from 'vue'
 import { Filter, Search, ChevronDown } from 'lucide-vue-next'
@@ -358,7 +358,7 @@ const {
   document,
   result: searchMaterials,
   load,
-} = useLazyQuery(FIND_MATERIALS_BY_SEARCH_STRING, () => ({
+} = useLazyQuery(GET_MATERIALS, () => ({
   searchString: search.value,
 }))
 
@@ -366,30 +366,25 @@ watch(search, () => {
   load(document.value, {
     searchString: search.value,
   })
+  console.log(searchMaterials)
 })
 
 watch(availability, () => {
   if (availability.value == 'available') {
-    console.log('available')
     const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: ['A'],
     }))
     allMaterials.value = result.value
-    console.log(allMaterials)
   } else if (availability.value == 'not available') {
-    console.log('not available')
     const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: ['NA'],
     }))
     allMaterials.value = result.value
-    console.log(allMaterials)
   } else {
-    console.log('all')
     const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: [],
     }))
     allMaterials.value = result.value
-    console.log(allMaterials)
   }
 })
 </script>
