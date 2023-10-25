@@ -263,11 +263,8 @@
         class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3"
       >
         <div
-          v-if="
-            searchMaterials &&
-            searchMaterials.materialsBySearchString.length > 0
-          "
-          v-for="material of searchMaterials.materialsBySearchString"
+          v-if="searchMaterials && searchMaterials.materials.length > 0"
+          v-for="material of searchMaterials.materials"
           class="col-span-1 rounded-2xl relative hover:scale-110 transition-all"
         >
           <img
@@ -366,7 +363,7 @@ watch(search, () => {
   load(document.value, {
     searchString: search.value,
   })
-  console.log(searchMaterials)
+  console.log(searchMaterials.value)
 })
 
 watch(availability, () => {
