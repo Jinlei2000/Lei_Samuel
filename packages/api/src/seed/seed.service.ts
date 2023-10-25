@@ -207,7 +207,7 @@ export class SeedService {
   async addSchedules(): Promise<Schedule[]> {
     let schedules: Schedule[] = []
     // get all non-weekend days for next amount of days
-    const dates = await generateNonWeekendDates(5)
+    const dates = await generateNonWeekendDates(10)
     // console.log('dates', dates)
 
     for (const selectDate of dates) {
