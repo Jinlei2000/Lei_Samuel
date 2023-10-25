@@ -12,7 +12,6 @@ import { AbsencesService } from 'src/absences/absences.service'
 import { SchedulesService } from 'src/schedules/schedules.service'
 import { MailService } from 'src/mail/mail.service'
 import { Schedule } from 'src/schedules/entities/schedule.entity'
-import { ObjectId } from 'mongodb'
 import { resetTime } from 'src/helpers/genericFunctions'
 import {
   chooseRandomItems,
@@ -21,7 +20,6 @@ import {
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
-import { async } from 'rxjs'
 
 @Injectable()
 export class SeedService {
