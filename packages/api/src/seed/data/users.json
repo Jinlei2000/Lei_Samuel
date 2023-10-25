@@ -175,6 +175,41 @@
     ]
   },
   {
+    "firstname": "Jens",
+    "lastname": "Lefever",
+    "email": "jens.lefever@gmail.com",
+    "uid": "oXYYctdmiNXyYNVHSwkC56VZNv53",
+    "locale": "en",
+    "role": "EMPLOYEE",
+    "locations": [
+      {
+        "address": "Kortrijksesteenweg 500, 9000 Zottegem"
+      }
+    ],
+    "materials": [
+      {
+        "name": "Floral Scissors",
+        "serialNumber": 44444
+      },
+      {
+        "name": "Garden Kneeler",
+        "serialNumber": 55555
+      },
+      {
+        "name": "Garden Wire",
+        "serialNumber": 66666
+      }
+    ],
+    "absences": [
+      {
+        "type": "vacation",
+        "startDate": "2023-07-01",
+        "endDate": "2023-07-05",
+        "description": "Enjoying a vacation."
+      }
+    ]
+  },
+  {
     "firstname": "Jane",
     "lastname": "Smith",
     "email": "jane.smith@gmail.com",
@@ -212,7 +247,7 @@
       {
         "type": "maintenance",
         "startProposedDateNumber": 0,
-        "endProposedDateNumber": 5,
+        "endProposedDateNumber": 0,
         "isScheduled": false,
         "isDone": false,
         "description": "I need my garden to be maintained.",
@@ -220,12 +255,129 @@
       },
       {
         "type": "repair",
-        "startProposedDateNumber": 0,
-        "endProposedDateNumber": 10,
+        "startProposedDateNumber": 1,
+        "endProposedDateNumber": 1,
         "isScheduled": false,
         "isDone": false,
         "description": "I need my garden to be repaired.",
         "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 2,
+        "endProposedDateNumber": 2,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Scheduled garden maintenance.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 3,
+        "endProposedDateNumber": 3,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for garden lighting fixtures.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 4,
+        "endProposedDateNumber": 4,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Routine garden care and pruning.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 5,
+        "endProposedDateNumber": 5,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Urgent repair for garden irrigation system.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 6,
+        "endProposedDateNumber": 6,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Seasonal garden maintenance and planting.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 7,
+        "endProposedDateNumber": 7,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair work for damaged garden ornaments.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 8,
+        "endProposedDateNumber": 8,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Ongoing garden upkeep and weeding.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 9,
+        "endProposedDateNumber": 9,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for a damaged garden bench.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 10,
+        "endProposedDateNumber": 10,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 11,
+        "endProposedDateNumber": 11,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 12,
+        "endProposedDateNumber": 12,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 13,
+        "endProposedDateNumber": 13,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 14,
+        "endProposedDateNumber": 14,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
       }
     ]
   },
@@ -270,7 +422,7 @@
       {
         "type": "maintenance",
         "startProposedDateNumber": 0,
-        "endProposedDateNumber": 5,
+        "endProposedDateNumber": 0,
         "isScheduled": false,
         "isDone": false,
         "description": "I need my garden to be maintained.",
@@ -278,12 +430,651 @@
       },
       {
         "type": "repair",
-        "startProposedDateNumber": 0,
-        "endProposedDateNumber": 10,
+        "startProposedDateNumber": 1,
+        "endProposedDateNumber": 1,
         "isScheduled": false,
         "isDone": false,
         "description": "I need my garden to be repaired.",
         "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 2,
+        "endProposedDateNumber": 2,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Scheduled garden maintenance.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 3,
+        "endProposedDateNumber": 3,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for garden lighting fixtures.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 4,
+        "endProposedDateNumber": 4,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Routine garden care and pruning.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 5,
+        "endProposedDateNumber": 5,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Urgent repair for garden irrigation system.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 6,
+        "endProposedDateNumber": 6,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Seasonal garden maintenance and planting.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 7,
+        "endProposedDateNumber": 7,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair work for damaged garden ornaments.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 8,
+        "endProposedDateNumber": 8,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Ongoing garden upkeep and weeding.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 9,
+        "endProposedDateNumber": 9,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for a damaged garden bench.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 10,
+        "endProposedDateNumber": 10,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 11,
+        "endProposedDateNumber": 11,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 12,
+        "endProposedDateNumber": 12,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 13,
+        "endProposedDateNumber": 13,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 14,
+        "endProposedDateNumber": 14,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      }
+    ]
+  },
+  {
+    "firstname": "Bart",
+    "lastname": "Knokke",
+    "email": "bart.knokke@gmail.com",
+    "uid": "QGca0m8ENZc1pjQsmaHy0JDLDyD3",
+    "locale": "en",
+    "role": "CLIENT",
+    "locations": [
+      {
+        "address": "Sint-Janslaan 5, 8500 Kortrijk"
+      },
+      {
+        "address": "Marksesteenweg 58, 8500 Kortrijk"
+      }
+    ],
+    "appointments": [
+      {
+        "type": "maintenance",
+        "startProposedDate": "2022-05-01",
+        "endProposedDate": "2022-05-10",
+        "finalDate": "2022-05-03",
+        "price": 520,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDate": "2022-05-11",
+        "endProposedDate": "2022-05-20",
+        "finalDate": "2022-05-15",
+        "price": 250,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "I need my garden to be maintained.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 0,
+        "endProposedDateNumber": 0,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be maintained.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 1,
+        "endProposedDateNumber": 1,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "I need my garden to be repaired.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 2,
+        "endProposedDateNumber": 2,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Scheduled garden maintenance.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 3,
+        "endProposedDateNumber": 3,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for garden lighting fixtures.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 4,
+        "endProposedDateNumber": 4,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Routine garden care and pruning.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 5,
+        "endProposedDateNumber": 5,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Urgent repair for garden irrigation system.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 6,
+        "endProposedDateNumber": 6,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Seasonal garden maintenance and planting.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 7,
+        "endProposedDateNumber": 7,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair work for damaged garden ornaments.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 8,
+        "endProposedDateNumber": 8,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Ongoing garden upkeep and weeding.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 9,
+        "endProposedDateNumber": 9,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for a damaged garden bench.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 10,
+        "endProposedDateNumber": 10,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 11,
+        "endProposedDateNumber": 11,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 12,
+        "endProposedDateNumber": 12,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 13,
+        "endProposedDateNumber": 13,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 14,
+        "endProposedDateNumber": 14,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      }
+    ]
+  },
+  {
+    "firstname": "Alice",
+    "lastname": "Johnson",
+    "email": "alice.johnson@outlook.com",
+    "uid": "iY5FitxvE2MzmXtlo2qw5kcrHtv2",
+    "locale": "en",
+    "role": "CLIENT",
+    "locations": [
+      {
+        "address": "Rue de la Station 1, 7500 Tournai"
+      }
+    ],
+    "appointments": [
+      {
+        "type": "maintenance",
+        "startProposedDate": "2022-06-01",
+        "endProposedDate": "2022-06-10",
+        "finalDate": "2022-06-03",
+        "price": 480,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "General garden maintenance and pruning.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDate": "2022-06-11",
+        "endProposedDate": "2022-06-20",
+        "finalDate": "2022-06-15",
+        "price": 300,
+        "isScheduled": true,
+        "isDone": false,
+        "description": "Repair of a broken garden fence.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 0,
+        "endProposedDateNumber": 0,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Scheduled garden upkeep and weeding.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 1,
+        "endProposedDateNumber": 1,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Urgent repair for a damaged garden statue.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 2,
+        "endProposedDateNumber": 2,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 3,
+        "endProposedDateNumber": 3,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 4,
+        "endProposedDateNumber": 4,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Seasonal garden care and planting.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 5,
+        "endProposedDateNumber": 5,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for garden lighting fixtures.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 6,
+        "endProposedDateNumber": 6,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Routine garden care and pruning.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 7,
+        "endProposedDateNumber": 7,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair work for damaged garden ornaments.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 8,
+        "endProposedDateNumber": 8,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Ongoing garden upkeep and weeding.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 9,
+        "endProposedDateNumber": 9,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for a damaged garden bench.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 10,
+        "endProposedDateNumber": 10,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 11,
+        "endProposedDateNumber": 11,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 12,
+        "endProposedDateNumber": 12,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 13,
+        "endProposedDateNumber": 13,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 14,
+        "endProposedDateNumber": 14,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      }
+    ]
+  },
+  {
+    "firstname": "Eleanor",
+    "lastname": "Smith",
+    "email": "eleanor.smith@hotmail.com",
+    "uid": "9O4vHjsnxicB9693W2hT4yb9hYs2",
+    "locale": "en",
+    "role": "CLIENT",
+    "locations": [
+      {
+        "address": "Hillside, 21, 9000 Gent"
+      },
+      {
+        "address": "Ieperstraat 5, 8500 Kortrijk"
+      }
+    ],
+    "appointments": [
+      {
+        "type": "maintenance",
+        "startProposedDate": "2022-07-01",
+        "endProposedDate": "2022-07-10",
+        "finalDate": "2022-07-03",
+        "price": 550,
+        "isScheduled": true,
+        "isDone": true,
+        "description": "Full garden maintenance and landscaping.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDate": "2022-07-11",
+        "endProposedDate": "2022-07-20",
+        "finalDate": "2022-07-15",
+        "price": 280,
+        "isScheduled": true,
+        "isDone": false,
+        "description": "Repair of a broken garden gate.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 0,
+        "endProposedDateNumber": 0,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Scheduled garden care and planting.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 1,
+        "endProposedDateNumber": 1,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Urgent repair for a damaged garden fountain.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 2,
+        "endProposedDateNumber": 2,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Routine garden care and weeding.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 3,
+        "endProposedDateNumber": 3,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden shed.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 4,
+        "endProposedDateNumber": 4,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Seasonal garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 5,
+        "endProposedDateNumber": 5,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for garden pathway stones.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 6,
+        "endProposedDateNumber": 6,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and pruning.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 7,
+        "endProposedDateNumber": 7,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair work for damaged garden furniture.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 8,
+        "endProposedDateNumber": 8,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Ongoing garden upkeep and planting.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 9,
+        "endProposedDateNumber": 9,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Repair request for a damaged garden bench.",
+        "priority": false
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 10,
+        "endProposedDateNumber": 10,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 11,
+        "endProposedDateNumber": 11,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "maintenance",
+        "startProposedDateNumber": 12,
+        "endProposedDateNumber": 12,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Regular garden maintenance and lawn care.",
+        "priority": false
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 13,
+        "endProposedDateNumber": 13,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
+      },
+      {
+        "type": "repair",
+        "startProposedDateNumber": 14,
+        "endProposedDateNumber": 14,
+        "isScheduled": false,
+        "isDone": false,
+        "description": "Emergency repair for a collapsed garden trellis.",
+        "priority": true
       }
     ]
   },
