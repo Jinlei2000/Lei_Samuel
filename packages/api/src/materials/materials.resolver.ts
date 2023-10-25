@@ -40,7 +40,7 @@ export class MaterialsResolver {
     @Args('searchString', { type: () => String, nullable: true })
     searchString?: string,
   ) {
-    return this.materialsService.findAll(filters, order)
+    return this.materialsService.findAll(filters, order, searchString)
   }
 
   // find all materials with the same userId

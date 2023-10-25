@@ -3,7 +3,6 @@ import { OrderByInput } from 'src/interfaces/order.input'
 
 export const filterMaterials = (
   filters: Array<string>,
-  searchString?: string,
 ): { [key: string]: any } => {
   //   console.log(filters)
 
@@ -47,11 +46,6 @@ export const filterMaterials = (
     // filter for loanable
     if (filters?.includes('L')) whereQuery.isLoan = true
     if (filters?.includes('NL')) whereQuery.isLoan = false
-
-    // filter for searchString
-    if (searchString) {
-      whereQuery.name = { $regex: searchString, $options: 'i' }
-    }
   }
 
   return whereQuery
