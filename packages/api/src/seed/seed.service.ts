@@ -53,7 +53,6 @@ export class SeedService {
   }
   //#endregion
 
-  // TODO: use dynamic date for absences (now + 1 day, now + 2 days, etc.)
   //#region Users
   async addUsersFromJson(): Promise<User[]> {
     let theUsers: User[] = []
@@ -192,20 +191,20 @@ export class SeedService {
     let schedules: Schedule[] = []
     // get all non-weekend days for next amount of days
     const dates = await generateNonWeekendDates(5)
-    console.log('dates', dates)
+    // console.log('dates', dates)
 
     for (const selectDate of dates) {
-      console.log('💠', selectDate)
+      // console.log('💠', selectDate)
 
       // GET DATA
       // find all appointments that is not done (filter by ND)
       let availableAppointments =
         await this.appointmentsService.findAllAvailableByDate(selectDate)
-      // TODO: delete this
-      console.log(
-        'ALL APPOINTMENTS',
-        availableAppointments.map(appointment => appointment.id.toString()),
-      )
+
+      // console.log(
+      //   'ALL APPOINTMENTS',
+      //   availableAppointments.map(appointment => appointment.id.toString()),
+      // )
 
       // find all employees that are available for that date (not absent & not scheduled)
       let availableEmployees =
@@ -223,11 +222,10 @@ export class SeedService {
       while (true) {
         // APPOINTMENTS
         // stop if no appointments available
-        console.log('check', availableAppointments.length)
         if (availableAppointments.length === 0) {
-          console.log(
-            `no appointments available for ${selectDate.toISOString()}`,
-          )
+          // console.log(
+          //   `no appointments available for ${selectDate.toISOString()}`,
+          // )
           break // stop while loop
         }
         // choose random amount of appointments (1-3) from available appointments
@@ -246,7 +244,7 @@ export class SeedService {
         // EMPLOYEES
         // stop if no employees available
         if (availableEmployees.length === 0) {
-          console.log(`no employees available for ${selectDate.toISOString()}`)
+          // console.log(`no employees available for ${selectDate.toISOString()}`)
           break // stop while loop
         }
         // choose random amount of employees (1-2) from available employees
@@ -257,27 +255,36 @@ export class SeedService {
         availableEmployees = remainingEmployees
 
         // MATERIALS
-        // choose 2-6 materials (random)
-        // TODO: choose random amount of materials & choose random materials
-        const chosenMaterials = availableMaterials.slice(
-          0,
-          Math.floor(Math.random() * 4) + 2,
-        )
-        console.log('get available employees')
+        // choose random amount of materials (2-6) from available materials
+        const randomAmountOfMaterials = Math.floor(Math.random() * 5) + 2
+        const chosenMaterials = []
+        const usedIndices = new Set()
+
+        // choose random materials
+        while (chosenMaterials.length < randomAmountOfMaterials) {
+          const randomIndex = Math.floor(
+            Math.random() * availableMaterials.length,
+          )
+
+          if (!usedIndices.has(randomIndex)) {
+            chosenMaterials.push(availableMaterials[randomIndex])
+            usedIndices.add(randomIndex)
+          }
+        }
+        // console.log('get available employees')
+        // console.log(
+        //   'chosenMaterials',
+        //   chosenMaterials.map(m => m.name),
+        // )
 
         // update appointments
         await this.appointmentsService.saveAll(chosenAppointments)
-        const test =
-          await this.appointmentsService.findAllAvailableByDate(selectDate)
-        console.log('saved appointments')
-        console.log(
-          'chosenAppointments',
-          chosenAppointments.map(appointment => appointment.id.toString()),
-        )
-        console.log(
-          'get available appointments after save',
-          test.map(appointment => appointment.id.toString()),
-        )
+
+        // console.log('saved appointments')
+        // console.log(
+        //   'chosenAppointments',
+        //   chosenAppointments.map(appointment => appointment.id.toString()),
+        // )
 
         // SCHEDULE
         const schedule = new Schedule()
