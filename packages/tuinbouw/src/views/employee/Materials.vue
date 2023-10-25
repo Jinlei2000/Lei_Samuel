@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div
     class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
   >
@@ -343,6 +344,9 @@ const sort = ref(false)
 const skeletons = ref<number[]>(new Array(24))
 // const loading = ref(true)
 
+import { useToast } from 'primevue/usetoast'
+const toast = useToast()
+
 const {
   result: allMaterials,
   loading,
@@ -350,6 +354,16 @@ const {
 } = useQuery(GET_MATERIALS, () => ({
   filters: [],
 }))
+
+watch(error, () => {
+  if (!error.value) return
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: error.value.message,
+    life: 2000000000,
+  })
+})
 
 const {
   document,
