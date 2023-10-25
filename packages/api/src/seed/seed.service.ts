@@ -151,14 +151,32 @@ export class SeedService {
         await this.appointmentsService.saveAll(userAppointments)
       }
 
-      // TODO: make some absences dynamic
-      // Add some absences to staff
+      // Add some absences to staff (some are in the past, some in the future)
       if (users[num].absences) {
         let absences: Absence[] = []
         for (let absence of users[num].absences) {
           const a = new Absence()
-          a.startDate = new Date(absence.startDate)
-          a.endDate = new Date(absence.endDate)
+          // absence in past
+          if (absence.startDate && absence.endDate) {
+            a.startDate = new Date(absence.startDate)
+            a.endDate = new Date(absence.endDate)
+          }
+          // absence in future (dynamic date)
+          if (
+            absence.startDateNumber !== undefined &&
+            absence.endDateNumber !== undefined
+          ) {
+            a.startDate = resetTime(
+              new Date(
+                Date.now() + absence.startDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+            a.endDate = resetTime(
+              new Date(
+                Date.now() + absence.endDateNumber * 24 * 60 * 60 * 1000,
+              ),
+            )
+          }
           a.userId = user.id.toString()
           a.type = absence.type
           a.description = absence.description
@@ -173,7 +191,6 @@ export class SeedService {
       }
 
       num++
-      console.info(`🙋 user ${num} is added`)
     }
 
     await this.usersService.saveAll(newUsers)
