@@ -3,9 +3,6 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
-  Parent,
-  ResolveField,
 } from '@nestjs/graphql'
 import { AppointmentsService } from './appointments.service'
 import { Appointment } from './entities/appointment.entity'
