@@ -25,7 +25,7 @@ export class MaterialsResolver {
     private readonly usersService: UsersService,
   ) {}
 
-  @AllowedRoles(Role.ADMIN)
+  @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Material], { name: 'materials' })
   findAll(
