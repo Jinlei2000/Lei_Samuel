@@ -154,7 +154,7 @@ const router = createRouter({
 // check if route requires auth
 router.beforeEach(async (to, from, next) => {
   const { firebaseUser } = useFirebase()
-  const { customUser } = useCustomUser()
+  const { customUser, getDashboardPathForRole } = useCustomUser()
   // Redirect to login page if not logged in and trying to access a restricted page
   if (to.meta.shouldBeAuthenticated && !firebaseUser.value) {
     next({ path: '/auth/login' })
@@ -168,13 +168,7 @@ router.beforeEach(async (to, from, next) => {
   // Prevent logged in users from accessing login and register pages
   if (to.meta.preventLoggedIn && firebaseUser.value) {
     // redirect to dashboard of user role
-    let path = '/'
-    const role = customUser.value?.role
-    if (role === Role.ADMIN) path = '/admin/dashboard'
-    if (role === Role.EMPLOYEE) path = '/employee/dashboard'
-    if (role === Role.CLIENT) path = '/client/dashboard'
-
-    next({ path: path })
+    next({ path: getDashboardPathForRole() })
   } else {
     next()
   }
