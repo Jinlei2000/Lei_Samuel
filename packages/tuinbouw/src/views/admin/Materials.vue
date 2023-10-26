@@ -19,8 +19,6 @@ import Container from '@/components/wrapper/Container.vue'
 import { useQuery } from '@vue/apollo-composable'
 import { GET_MATERIALS } from '@/graphql/material.query'
 
-// import Material from '@/interfaces/material'
-
 export default {
   components: {
     Container,
