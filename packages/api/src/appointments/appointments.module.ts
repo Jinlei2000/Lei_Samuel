@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { AppointmentsService } from './appointments.service'
 import { AppointmentsResolver } from './appointments.resolver'
 import { UsersModule } from 'src/users/users.module'

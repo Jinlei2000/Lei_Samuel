@@ -1,8 +1,6 @@
 import { ObjectId } from 'typeorm'
 import { CreateAppointmentInput } from './create-appointment.input'
 import { InputType, Field, PartialType, ID } from '@nestjs/graphql'
-import { CreateLocationInput } from 'src/locations/dto/create-location.input'
-import { Location } from 'src/locations/entities/location.entity'
 import { IsDate, IsOptional } from 'class-validator'
 
 @InputType()
