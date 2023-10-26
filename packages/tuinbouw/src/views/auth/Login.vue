@@ -3,13 +3,6 @@
     <div
       class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
     >
-      <a
-        href="#"
-        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-      >
-        <img class="w-8 h-8 mr-2" src="" alt="logo" />
-        Name
-      </a>
       <div
         class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
       >
@@ -19,29 +12,71 @@
           >
             Log in to your account
           </h1>
-          <span v-if="errorMessages.general" class="text-red-600">{{
-            errorMessages.general
+          <span v-if="errorMessages" class="text-red-600">{{
+            errorMessages
           }}</span>
-          <form @submit.prevent="handleLogin" class="space-y-4 md:space-y-6">
-            <div class="flex flex-col space-y-1">
-              <label for="email">Username</label>
-              <InputText id="email" v-model="loginCredentials.email" />
+          <form @submit.prevent="handleLogin">
+            <div class="flex flex-col">
+              <label
+                class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
+                for="email"
+                >Email</label
+              >
+              <InputText
+                id="email"
+                type="text"
+                v-model="email"
+                placeholder="john@example.com"
+                :class="{
+                  'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                    errorEmail,
+                }"
+                aria-describedby="text-error"
+              />
+              <small class="p-error" id="text-error">{{
+                errorEmail || '&nbsp;'
+              }}</small>
+            </div>
+            <div class="flex flex-col">
+              <label
+                class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
+                for="password"
+                >Password</label
+              >
+              <Password
+                id="password"
+                type="text"
+                v-model="password"
+                placeholder="••••••••"
+                :feedback="false"
+                :class="{
+                  'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                    errorPassword,
+                }"
+                aria-describedby="text-error"
+                toggleMask
+              >
+                <template #hideicon="{ onClick }">
+                  <span
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  >
+                    <EyeOff @click="onClick()" />
+                  </span>
+                </template>
+                <template #showicon="{ onClick }">
+                  <span
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  >
+                    <Eye @click="onClick()" />
+                  </span>
+                </template>
+              </Password>
+
+              <small class="p-error" id="text-error">{{
+                errorPassword || '&nbsp;'
+              }}</small>
             </div>
 
-            <!-- <InputField
-              label="Email"
-              type="email"
-              placeholder="john@example.com"
-              :error="errorMessages.email"
-              v-model="loginCredentials.email"
-            />
-            <InputField
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              :error="errorMessages.password"
-              v-model="loginCredentials.password"
-            /> -->
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
@@ -79,6 +114,9 @@ import InputField from '@/components/generic/form/InputField.vue'
 import { object, string } from 'yup'
 import useCustomUser from '@/composables/useCustomUser'
 import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import { useField, useForm } from 'vee-validate'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
 export default {
   // TODO: load CustomUser in when login
@@ -87,75 +125,138 @@ export default {
     const { login } = useFirebase()
     const { getDashboardPathForRole, restoreCustomUser } = useCustomUser()
 
-    // Data
-    const loginCredentials = ref({
-      email: '',
-      password: '',
-    })
-    const errorMessages = ref<{ [key: string]: string }>({
-      email: '',
-      password: '',
-      general: '',
-    })
+    const { handleSubmit, resetForm } = useForm()
 
-    // Validation schema
-    const loginSchema = object({
-      email: string().required('email is required'),
-      password: string().required('password is required'),
-    })
-
-    // Reset error messages to empty strings
-    const resetErrorMessages = () => {
-      errorMessages.value = {
-        email: '',
-        password: '',
-        general: '',
+    const validateField = (value: string, field: any) => {
+      if (!value) {
+        return `${field.name} is required`
       }
+
+      if (field.name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        return 'Invalid email'
+      }
+
+      // password length 6
+      if (field.name === 'password' && value.length < 6) {
+        return 'Password must be at least 6 characters'
+      }
+
+      return true
     }
 
-    // Handle validation errors
-    const handleValidationErrors = (err: any) => {
-      // console.log(err)
-      err.inner.forEach((e: any) => {
-        errorMessages.value[e.path] = e.message
+    const { value: email, errorMessage: errorEmail } = useField(
+      'email',
+      validateField,
+    )
+    const { value: password, errorMessage: errorPassword } = useField(
+      'password',
+      validateField,
+    )
+
+    const errorMessages = ref<string | null>(null)
+
+    const hasFieldError = (fields: any) => {
+      let hasError = false
+      Object.keys(fields).forEach(key => {
+        if (fields[key].errorMessage) {
+          hasError = true
+        }
       })
+      return hasError
     }
 
-    // Validate and login
-    const handleLogin = () => {
-      resetErrorMessages()
+    const handleLogin = handleSubmit(async values => {
+      console.log(values)
+      const fields = {
+        email,
+        password,
+      }
 
-      // Validate login credentials with yup
-      loginSchema
-        .validate(loginCredentials.value, {
-          abortEarly: false,
-        })
-        .then(() => {
-          console.log('validation success')
-          login(loginCredentials.value.email, loginCredentials.value.password)
-            .then(() => {
-              console.log('login success')
-              restoreCustomUser().then(() => {
-                // redirect to role based dashboard
-                router.replace(getDashboardPathForRole())
-              })
+      if (!hasFieldError(fields)) {
+        console.log('validation success')
+        login(email.value, password.value)
+          .then(() => {
+            console.log('login success')
+            resetForm()
+            restoreCustomUser().then(() => {
+              // redirect to role based dashboard
+              router.replace(getDashboardPathForRole())
             })
-            .catch(error => {
-              console.log(error.message)
-              errorMessages.value.general = error.message
-            })
-        })
-        .catch(err => {
-          handleValidationErrors(err)
-        })
-    }
+          })
+          .catch(error => {
+            console.log(error.message)
+            errorMessages.value = error.message
+          })
+      }
+    })
+
+    // // Data
+    // const loginCredentials = ref({
+    //   email: '',
+    //   password: '',
+    // })
+
+    // // Validation schema
+    // const loginSchema = object({
+    //   email: string().required('email is required'),
+    //   password: string().required('password is required'),
+    // })
+
+    // // Reset error messages to empty strings
+    // const resetErrorMessages = () => {
+    //   errorMessages.value = {
+    //     email: '',
+    //     password: '',
+    //     general: '',
+    //   }
+    // }
+
+    // // Handle validation errors
+    // const handleValidationErrors = (err: any) => {
+    //   // console.log(err)
+    //   err.inner.forEach((e: any) => {
+    //     errorMessages.value[e.path] = e.message
+    //   })
+    // }
+
+    // // Validate and login
+    // const handleLogin = () => {
+    //   resetErrorMessages()
+
+    //   // Validate login credentials with yup
+    //   loginSchema
+    //     .validate(loginCredentials.value, {
+    //       abortEarly: false,
+    //     })
+    //     .then(() => {
+    //       console.log('validation success')
+    //       login(loginCredentials.value.email, loginCredentials.value.password)
+    //         .then(() => {
+    //           console.log('login success')
+    //           restoreCustomUser().then(() => {
+    //             // redirect to role based dashboard
+    //             router.replace(getDashboardPathForRole())
+    //           })
+    //         })
+    //         .catch(error => {
+    //           console.log(error.message)
+    //           errorMessages.value.general = error.message
+    //         })
+    //     })
+    //     .catch(err => {
+    //       handleValidationErrors(err)
+    //     })
+    // }
 
     return {
-      loginCredentials,
       errorMessages,
       handleLogin,
+      email,
+      errorEmail,
+      password,
+      errorPassword,
     }
   },
-  components: { InputField, InputText },
+  components: { InputField, InputText, Password, Eye, EyeOff },
 }
 </script>
