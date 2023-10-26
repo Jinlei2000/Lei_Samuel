@@ -4,7 +4,7 @@
   "scripts": {
     "dev:api": "npm run dev -w api",
     "dev": "npm run dev -w tuinbouw",
-    "translate:tuinbouw": "npm run generate:translate -w tuinbouw"
+    "translate": "npm run generate:translations -w tuinbouw"
   },
   "repository": {
     "type": "git",
