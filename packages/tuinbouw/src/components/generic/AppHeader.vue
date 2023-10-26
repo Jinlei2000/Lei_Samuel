@@ -1,6 +1,6 @@
 <template>
   <Container
-    class="py-4 w-full bg-white backdrop-blur-2xl bg-opacity-50 fixed left-0"
+    class="py-4 w-full bg-white backdrop-blur-2xl bg-opacity-50 fixed left-0 z-50"
   >
     <header class="flex items-center justify-between max-w-7xl m-auto">
       <RouterLink
