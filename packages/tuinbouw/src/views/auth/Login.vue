@@ -23,7 +23,12 @@
             errorMessages.general
           }}</span>
           <form @submit.prevent="handleLogin" class="space-y-4 md:space-y-6">
-            <InputField
+            <div class="flex flex-col space-y-1">
+              <label for="email">Username</label>
+              <InputText id="email" v-model="loginCredentials.email" />
+            </div>
+
+            <!-- <InputField
               label="Email"
               type="email"
               placeholder="john@example.com"
@@ -36,7 +41,7 @@
               placeholder="••••••••"
               :error="errorMessages.password"
               v-model="loginCredentials.password"
-            />
+            /> -->
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
@@ -73,6 +78,7 @@ import router from '@/router'
 import InputField from '@/components/generic/form/InputField.vue'
 import { object, string } from 'yup'
 import useCustomUser from '@/composables/useCustomUser'
+import InputText from 'primevue/inputtext'
 
 export default {
   // TODO: load CustomUser in when login
@@ -150,6 +156,6 @@ export default {
       handleLogin,
     }
   },
-  components: { InputField },
+  components: { InputField, InputText },
 }
 </script>
