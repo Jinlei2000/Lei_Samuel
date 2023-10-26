@@ -56,6 +56,7 @@ import { ref } from 'vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useLanguage from '@/composables/useLanguage'
 import { useI18n } from 'vue-i18n'
+import useCustomUser from '@/composables/useCustomUser'
 
 export default {
   setup() {
@@ -69,9 +70,11 @@ export default {
     const { firebaseUser, logout } = useFirebase()
     const { setLocale } = useLanguage()
     const { locale } = useI18n()
+    const { customUser } = useCustomUser()
 
     const handleLogout = async () => {
       await logout()
+      customUser.value = null
       // go to login page
       router.replace('/auth/login')
       console.log('logout')

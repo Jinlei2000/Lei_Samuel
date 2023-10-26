@@ -41,12 +41,10 @@ const login = async (email: string, password: string): Promise<User> => {
 }
 
 const logout = async (): Promise<void> => {
-  const {customUser} = useCustomUser()
   return new Promise((resolve, reject) => {
     signOut(auth)
       .then(() => {
         firebaseUser.value = null
-        customUser.value = null
         resolve()
       })
       .catch(error => {

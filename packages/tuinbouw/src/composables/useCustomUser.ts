@@ -5,7 +5,7 @@ import useFirebase from './useFirebase'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import useGraphql from './useGraphql'
 
-const customUser = ref<CustomUser>()
+const customUser = ref<CustomUser | null>()
 
 const { firebaseUser } = useFirebase()
 const { apolloClient } = useGraphql()
