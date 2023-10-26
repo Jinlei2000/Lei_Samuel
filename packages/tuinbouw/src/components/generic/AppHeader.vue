@@ -1,6 +1,8 @@
 <template>
-  <Container class="py-6 border-b-gray-700 border-b-[1px]"
-    ><header class="flex items-center justify-between max-w-7xl m-auto">
+  <Container
+    class="py-4 w-full bg-white backdrop-blur-2xl bg-opacity-50 fixed left-0"
+  >
+    <header class="flex items-center justify-between max-w-7xl m-auto">
       <RouterLink
         class="w-1/6 flex items-center space-x-4 focus:outline-none focus-visible:ring-4 ring-blue-400 hover:scale-105 transition-all rounded-lg"
         to="/"
@@ -25,16 +27,6 @@
               >Materials</RouterLink
             >
           </li>
-          <!-- <li>
-            <button
-              class="bg-[#1A281D] rounded-full flex justify-center gap-[16px] items-center py-[16px] pl-[16px] pr-[32px] text-white"
-            >
-              <span class="bg-white rounded-full">
-                <Plus class="h-6 w-6" color="black" />
-              </span>
-              Afspraak
-            </button>
-          </li> -->
         </ul>
       </nav>
       <div>
