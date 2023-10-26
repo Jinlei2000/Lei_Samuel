@@ -2,7 +2,7 @@
   <Toast />
   <div class="text-black mx-4">
     <AppHeader />
-    <RouterView />
+    <RouterView class="pt-24" />
   </div>
 </template>
 
