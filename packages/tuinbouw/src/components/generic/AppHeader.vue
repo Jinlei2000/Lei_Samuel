@@ -1,6 +1,6 @@
 <template>
   <Container
-    class="py-4 w-full bg-white backdrop-blur-2xl bg-opacity-50 fixed left-0 z-50"
+    class="py-4 w-full bg-white backdrop-blur-2xl bg-opacity-50 fixed left-0 top-0 z-50"
   >
     <header class="flex items-center justify-between max-w-7xl m-auto">
       <RouterLink
@@ -15,7 +15,7 @@
             <RouterLink
               class="text-black py-1 hover:text-primary-orange transition-all"
               active-class="border-b-[1px] border-black"
-              to="dashboard"
+              :to="`/${role}/dashboard`"
               >Dashboard</RouterLink
             >
           </li>
@@ -23,7 +23,7 @@
             <RouterLink
               class="text-black py-1 hover:text-primary-orange transition-all"
               active-class=" border-b-[1px] border-black"
-              to="/{{  }}"
+              :to="`/${role}/materials`"
               >Materials</RouterLink
             >
           </li>
@@ -65,7 +65,12 @@ import Container from '../wrapper/Container.vue'
 import Logo from '../Logo.vue'
 import useLanguage from '@/composables/useLanguage'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
+import useCustomUser from '@/composables/useCustomUser'
 const { setLocale } = useLanguage()
+
+const { customUser } = useCustomUser()
+
+const role = customUser.value?.role.toLowerCase()
 
 const setLanguage = (e: Event) => {
   const target = e.target as HTMLSelectElement
