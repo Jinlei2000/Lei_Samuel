@@ -72,12 +72,15 @@ import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import InputField from '@/components/generic/form/InputField.vue'
 import { object, string } from 'yup'
+import useCustomUser from '@/composables/useCustomUser'
 
 export default {
   // TODO: load CustomUser in when login
   setup() {
     // Composables
     const { login } = useFirebase()
+    const { getDashboardPathForRole, restoreCustomUser } = useCustomUser()
+
     // Data
     const loginCredentials = ref({
       email: '',
@@ -126,8 +129,10 @@ export default {
           login(loginCredentials.value.email, loginCredentials.value.password)
             .then(() => {
               console.log('login success')
-              // TODO: redirect to role based dashboard
-              router.push('/admin/dashboard')
+              restoreCustomUser().then(() => {
+                // redirect to role based dashboard
+                router.replace(getDashboardPathForRole())
+              })
             })
             .catch(error => {
               console.log(error.message)

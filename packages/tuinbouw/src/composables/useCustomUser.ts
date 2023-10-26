@@ -1,4 +1,4 @@
-import type { CustomUser } from '@/interfaces/custom.user.interface'
+import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
 import { provideApolloClient, useQuery } from '@vue/apollo-composable'
 import { ref } from 'vue'
 import useFirebase from './useFirebase'
@@ -28,9 +28,20 @@ const restoreCustomUser = async () => {
   })
 }
 
+const getDashboardPathForRole = (): string => {
+  let path = '/'
+  const role = customUser.value?.role
+  if (role === Role.ADMIN) path = '/admin/dashboard'
+  if (role === Role.EMPLOYEE) path = '/employee/dashboard'
+  if (role === Role.CLIENT) path = '/client/dashboard'
+
+  return path
+}
+
 export default () => {
   return {
     customUser,
     restoreCustomUser,
+    getDashboardPathForRole,
   }
 }
