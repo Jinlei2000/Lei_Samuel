@@ -54,7 +54,7 @@ export class AppointmentsResolver {
     return this.appointmentsService.create(createAppointmentInput)
   }
 
-  @AllowedRoles(Role.ADMIN, Role.CLIENT)
+  @AllowedRoles(Role.ADMIN, Role.CLIENT, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Appointment)
   updateAppointment(
@@ -66,8 +66,6 @@ export class AppointmentsResolver {
       updateAppointmentInput,
     )
   }
-
-  // TODO: update is done for employee
 
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)
