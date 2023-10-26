@@ -27,7 +27,7 @@ export default () => {
     setLocaleMessage(targetLocale, messages)
     locale.value = targetLocale
 
-    // TODO: save locale to user in database
+    // save locale to user in database
     const {
       mutate: updateLocale,
       loading,
