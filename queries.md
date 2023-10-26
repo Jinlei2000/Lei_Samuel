@@ -42,6 +42,11 @@
     - [updateSchedule](#updateschedule)
     - [removeSchedule](#removeschedule)
   - [Appointments](#appointments)
+    - [appointments(filters: , order: { field, direction })](#appointmentsfilters--order--field-direction-)
+    - [appointment(id)](#appointmentid)
+    - [createAppointment](#createappointment)
+    - [updateAppointment](#updateappointment)
+    - [removeAppointment](#removeappointment)
 
 ## Authorization
 
@@ -1043,12 +1048,189 @@ mutation {
 ```object
 {
   id
-  userId
-  date
-  startTime
-  endTime
+  user{
+    # everything from user
+  }
+  location{
+    # everything from location
+  }
+  price
+  type
+  startProposedDate
+  endProposedDate
+  isScheduled
+  finalDate
+  isDone
+  description
+  priority
   createdAt
   updatedAt
+}
+```
+
+### appointments(filters: , order: { field, direction })
+
+appointments(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+
+- `M` - Maintenance
+- `R` - Repair
+- `D` - Done
+- `ND` - Not Done
+- `S` - Scheduled
+- `NS` - Not Scheduled
+- `P` - Priority
+- `NP` - Not Priority
+
+Order can be:
+
+- field = all fields from appointment model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  appointments(filters: ['M'], order: { field: "startDate", direction: ASC }) {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### appointment(id)
+
+appointment(id: String)
+
+```graphql
+query {
+  appointment(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createAppointment
+
+Type:
+- Maintenance
+- Repair
+
+```graphql
+mutation {
+  createAppointment(
+    createAppointmentInput: {
+      userId: "xx"
+      locationId: "xx"
+      type: "Maintenance"
+      startProposedDate: "2020-01-01" # YYYY-MM-DD
+      endProposedDate: "2020-01-01" # YYYY-MM-DD
+      isScheduled: true
+      isDone: true
+      description: "x" 
+      priority: true
+    }
+  ) {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateAppointment
+
+```graphql
+mutation {
+  updateAppointment(
+    updateAppointmentInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      locationId: "xx" # optional
+      price: 123 # optional
+      type: "Maintenance" # optional
+      startProposedDate: "2020-01-01" # YYYY-MM-DD # optional
+      endProposedDate: "2020-01-01" # YYYY-MM-DD # optional
+      finalDate: "2020-01-01" # YYYY-MM-DD # optional
+      isScheduled: true # optional
+      description: "x" # optional
+      priority: true # optional
+      isDone: true # optional
+    }
+  ) {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### removeAppointment
+
+```graphql
+mutation {
+  removeAppointment(id: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
 
