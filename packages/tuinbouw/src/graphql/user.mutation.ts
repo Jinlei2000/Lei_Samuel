@@ -29,3 +29,14 @@ export const ADD_CLIENT = gql`
     }
   }
 `
+
+export const UPDATE_LOCALE = gql`
+  mutation updateUserInput($id: ID!, $locale: String!) {
+    updateUser(updateUserInput: { id: $id, locale: $locale }) {
+      id
+      locale
+      role
+      fullname
+    }
+  }
+`

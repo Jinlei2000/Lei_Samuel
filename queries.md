@@ -459,6 +459,7 @@ mutation {
       firstname: "xx" # optional
       url: "xx" # optional
       uid: "xx" # optional
+      locale: "xx" # optional
       locationIds: ["xx"] # optional
       email: "xx" # optional
       telephone: "xx" # optional

@@ -141,8 +141,10 @@ export class UsersService {
 
     // Update the fullname if firstname or lastname is updated
     if (
-      updateUserInput.firstname.toLowerCase() != user.firstname ||
-      updateUserInput.lastname.toLowerCase() != user.lastname
+      (updateUserInput.firstname &&
+        updateUserInput.firstname.toLowerCase() != user.firstname) ||
+      (updateUserInput.lastname &&
+        updateUserInput.lastname.toLowerCase() != user.lastname)
     ) {
       updateUserInput.fullname = `${updateUserInput.firstname.toLowerCase()} ${updateUserInput.lastname.toLowerCase()}`
     }
