@@ -1,5 +1,4 @@
 <template>
-  <Toast />
   <div
     class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
   >

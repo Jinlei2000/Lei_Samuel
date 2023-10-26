@@ -1,7 +1,7 @@
 export interface Location {
-  uid: string
-  address: string
   id: string
+  userId: string
+  address: string
   createdAt?: Date
   updatedAt?: Date
 }
