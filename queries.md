@@ -30,7 +30,7 @@
   - [Mail](#mail)
   - [Absences](#absences)
     - [absences(filters: , order: { field, direction })](#absencesfilters--order--field-direction-)
-    - [absencesByPersonId(filters: , order: { field, direction })](#absencesbypersonidfilters--order--field-direction-)
+    - [absencesByUserId(filters: , order: { field, direction })](#absencesbyuseridfilters--order--field-direction-)
     - [absence(id)](#absenceid)
     - [createAbsence](#createabsence)
     - [updateAbsence](#updateabsence)
@@ -705,8 +705,11 @@ query {
   user{
     # everything from user
   }
+  description
+  type
   startDate
   endDate
+  totalDays
   createdAt
   updatedAt
 }
@@ -729,22 +732,25 @@ Order can be:
 
 ```graphql
 query {
-  absences {
+  absences(filters: ['S'], order: { field: "startDate", direction: ASC }) {
     id
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
 }
 ```
 
-### absencesByPersonId(filters: , order: { field, direction })
+### absencesByUserId(filters: , order: { field, direction })
 
-absencesByPersonId(personId: String, filters: [String], order: { field: String, direction: String })
+absencesByUserId(personId: String, filters: [String], order: { field: String, direction: String })
 
 Filters can be:
 - `S` - Sick
@@ -757,13 +763,20 @@ Order can be:
 
 ```graphql
 query {
-  absencesByPersonId(personId: "6522bd1cfabcb1f1d63dd63a") {
+  absencesByUserId(
+    personId: "6522bd1cfabcb1f1d63dd63a", 
+    filters: ['S'], 
+    order: { field: "startDate", direction: ASC }) 
+  {
     id
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -781,8 +794,11 @@ query {
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -791,6 +807,11 @@ query {
 
 ### createAbsence
 
+Type:
+- Sick
+- Vacation
+- Other
+
 ```graphql
 mutation {
   createAbsence(
@@ -798,7 +819,7 @@ mutation {
       userId: "6522bd1cfabcb1f1d63dd63a"
       startDate: "2020-01-01" # YYYY-MM-DD
       endDate: "2020-01-01" # YYYY-MM-DD
-      type: "S"
+      type: "Sick"
       description: "x" # optional
     }
   ) {
@@ -806,8 +827,11 @@ mutation {
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -821,19 +845,22 @@ mutation {
   updateAbsence(
     updateAbsenceInput: {
       id: "6522bd1cfabcb1f1d63dd63a"
-      userId: "6522bd1cfabcb1f1d63dd63a"
-      startDate: "2020-01-01" # YYYY-MM-DD
-      endDate: "2020-01-01" # YYYY-MM-DD
-      type: "S"
-      description: "x"
+      userId: "6522bd1cfabcb1f1d63dd63a" # optional
+      startDate: "2020-01-01" # YYYY-MM-DD # optional
+      endDate: "2020-01-01" # YYYY-MM-DD # optional
+      type: "S" # optional
+      description: "x" # optional
     }
   ) {
     id
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -848,7 +875,6 @@ mutation {
 }
 ```
 
-TODO: update location, appointment
 
 
 
