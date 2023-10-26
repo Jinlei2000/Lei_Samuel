@@ -4,12 +4,10 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation } from '@vue/apollo-composable'
 import { useI18n } from 'vue-i18n'
 import useCustomUser from './useCustomUser'
-import { useToast } from 'primevue/usetoast'
 
 export default () => {
   const { locale, setLocaleMessage } = useI18n()
   const { customUser } = useCustomUser()
-  const toast = useToast()
 
   const loadMessages = async (locale: string) => {
     if (locale in SUPPORTED_LOCALES) {
