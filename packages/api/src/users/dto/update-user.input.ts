@@ -35,13 +35,6 @@ export class UpdateUserInput {
   @Field({ nullable: true }) // graphql
   telephone?: string
 
-  @Field({ nullable: true }) // graphql
-  availability?: boolean
-
-  // STAFF ONLY
-  @Field({ nullable: true }) // GraphQL type
-  absentCount?: number
-
   // CLIENT ONLY
   @Field({ nullable: true }) // GraphQL type
   invoiceOption?: string // post or email

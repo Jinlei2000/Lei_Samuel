@@ -43,6 +43,7 @@ export class MaterialsService {
     userId: string,
     filters?: Array<string>,
     order?: OrderByInput,
+    searchString?: string,
   ): Promise<Material[]> {
     // filter and order materials
     const whereQuery = filterMaterials(filters)
@@ -52,6 +53,8 @@ export class MaterialsService {
       where: {
         userId: userId,
         ...whereQuery,
+        // @ts-ignore
+        name: { $regex: new RegExp(searchString, 'i') },
       },
       order: {
         ...orderQuery,

@@ -13,19 +13,19 @@ export const filterSchedules = (
 
   // where object for query
   const whereQuery: { [key: string]: any } = {}
-  const filtersList = ['F', 'NT', 'P', 'F', 'T']
+  const filtersList = ['FD', 'NFD', 'P', 'F', 'T']
 
   // check if filters are valid
   if (filters) {
-    // check if all filters are valid (F, NT, P, F, T)
+    // check if all filters are valid (FD, NFD, P, F, T)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
-        `Invalid filter in filters = [${filters}]! Supported filters are: F = FinalDate, NT = No FinalDate, P = Past, F = Future, T = Today`,
+        `Invalid filter in filters = [${filters}]! Supported filters are: FD = FinalDate, NFD = No FinalDate, P = Past, F = Future, T = Today`,
       )
     }
 
     // finalDate and no finalDate cannot be used at the same time
-    if (filters?.includes('F') && filters?.includes('NT')) {
+    if (filters?.includes('FD') && filters?.includes('NFD')) {
       throw new GraphQLError(
         'Cannot filter for FinalDate and No FinalDate at the same time! F = FinalDate, NT = No FinalDate',
       )
@@ -43,13 +43,13 @@ export const filterSchedules = (
     }
 
     // filter final date
-    if (filters?.includes('F')) whereQuery.finalDate = { $ne: null }
-    if (filters?.includes('NT')) whereQuery.finalDate = null
+    if (filters?.includes('FD')) whereQuery.finalDate = { $ne: null }
+    if (filters?.includes('NFD')) whereQuery.finalDate = null
 
     // filter past and future
     const date = resetTime(new Date()) // reset time to 00:00:00
     if (filters?.includes('P')) whereQuery.finalDate = { $lt: date }
-    if (filters?.includes('F')) whereQuery.finalDate = { $gte: date }
+    if (filters?.includes('F')) whereQuery.finalDate = { $gt: date }
     if (filters?.includes('T')) whereQuery.finalDate = date
   }
 
