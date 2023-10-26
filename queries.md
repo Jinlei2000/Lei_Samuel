@@ -28,7 +28,6 @@
     - [updateLocation](#updatelocation)
     - [removeLocation](#removelocation)
   - [Mail](#mail)
-    - [sendEmailToNewEmployeeById(id)](#sendemailtonewemployeebyidid)
   - [Absences](#absences)
     - [absences(filters: , order: { field, direction })](#absencesfilters--order--field-direction-)
     - [absencesByPersonId(filters: , order: { field, direction })](#absencesbypersonidfilters--order--field-direction-)
@@ -677,13 +676,24 @@ mutation {
 ```
 
 ## Mail
-### sendEmailToNewEmployeeById(id)
 
-sendEmailToNewEmployeeById(id: String)
+```object
+{
+  id
+  token
+  expirationDate
+  userId
+  createdAt
+}
+```	
+
+### sendEmailToNewEmployeeById(userId)
+
+sendEmailToNewEmployeeById(userId: String)
 
 ```graphql
 query {
-  sendEmailToNewEmployeeById(id: "6522bd1cfabcb1f1d63dd63a")
+  sendEmailToNewEmployeeById(userId: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
 
