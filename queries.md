@@ -10,13 +10,14 @@
     - [updateMaterial](#updatematerial)
     - [removeMaterial](#removematerial)
   - [Users](#users)
-    - [users(filters, order: { field, direction })](#usersfilters-order--field-direction-)
+    - [users(filters, order: { field, direction }, searchString)](#usersfilters-order--field-direction--searchstring)
     - [user(id)](#userid)
     - [userByUid(uid)](#userbyuiduid)
-    - [usersBySearchString(searchString)](#usersbysearchstringsearchstring)
+    - [usersEmployeesAvailableByDate(date)](#usersemployeesavailablebydatedate)
+    - [userIsAvailableTodayByUserId(userId)](#userisavailabletodaybyuseriduserid)
     - [userUpgradeToAdmin(id)](#userupgradetoadminid)
     - [updateUser](#updateuser)
-    - [removeUser](#removeuser)
+    - [removeUser(id)](#removeuserid)
     - [createStaff](#createstaff)
     - [createClient](#createclient)
   - [Locations](#locations)
@@ -232,9 +233,9 @@ mutation {
 }
 ```
 
-### users(filters, order: { field, direction })
+### users(filters, order: { field, direction }, searchString)
 
-users(filters: [String], order: { field: String, direction: String })
+users(filters: [String], order: { field: String, direction: String }, searchString: String)
 
 Filters can be:
 
@@ -250,6 +251,8 @@ Order can be:
 
 - field = all fields from material model
 - direction = `ASC` or `DESC`
+
+Search by fullname
 
 ```graphql	
 query {
@@ -288,7 +291,7 @@ user(id: String)
 
 ```graphql
 query {
-  user(id: "6522bd1cfabcb1f1d63dd63a") {
+  user(id: "651d55ade0e77efb23fdfe53") {
     id
     uid
     locale
@@ -297,15 +300,16 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
@@ -319,7 +323,7 @@ userByUid(uid: String)
 
 ```graphql
 query {
-  userByUid(uid: "6522bd1cfabcb1f1d63dd63a") {
+  userByUid(uid: "651d55ade0e77efb23fdfe53") {
     id
     uid
     locale
@@ -328,29 +332,31 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
-   invoiceOption
+    # Additional fields for clients
+    invoiceOption
     company
     btwNumber
   }
 }
+
 ```
 
-### usersBySearchString(searchString)
+### usersEmployeesAvailableByDate(date)
 
-usersBySearchString(searchString: String)
+usersEmployeesAvailableByDate(date: Date)
 
 ```graphql
 query {
-  usersBySearchString(searchString: "x") {
+  usersEmployeesAvailableByDate(date: "2020-01-01") {
     id
     uid
     locale
@@ -359,18 +365,43 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
-   invoiceOption
-    company
-    btwNumber
+  }
+}
+```
+
+### userIsAvailableTodayByUserId(userId)
+
+userIsAvailableTodayByUserId(userId: String)
+
+```graphql
+query {
+  userIsAvailableTodayByUserId(userId: "651d55ade0e77efb23fdfe53"){
+    id
+    uid
+    locale
+    role
+    firstname
+    lastname
+    fullname
+    url
+    email
+    telephone
+    createdAt
+    updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
+    absentCount
   }
 }
 ```
@@ -392,18 +423,15 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
-    invoiceOption
-    company
-    btwNumber
   }
 }
 ```
@@ -415,20 +443,18 @@ mutation {
   updateUser(
     updateUserInput: {
       id: "xx"
-      lastname: "xx"
-      firstname: "xx"
-      url: "xx"
-      uid: "xx"
-      locationIds: ["xx"]
-      email: "xx"
-      telephone: "xx"
-      availability: true
-      # STAFF ONLY
-      absentCount: number
-      # CLIENT ONLY
-      invoiceOption: "xx" 
-      company: true
-      btwNumber: "xx"
+      lastname: "xx" # optional
+      firstname: "xx" # optional
+      url: "xx" # optional
+      uid: "xx" # optional
+      locationIds: ["xx"] # optional
+      email: "xx" # optional
+      telephone: "xx" # optional
+      availability: true # optional
+      # CLIENT ONLY 
+      invoiceOption: "xx"  # optional
+      company: true # optional
+      btwNumber: "xx" # optional
     }
   ) {
     id
@@ -439,15 +465,16 @@ mutation {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
@@ -455,7 +482,9 @@ mutation {
 }
 ```
 
-### removeUser
+### removeUser(id)
+
+removeUser(id: String)
 
 ```graphql
 mutation {
@@ -480,19 +509,21 @@ mutation {
   ) {
     id
     uid
+    locale
+    role
     firstname
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
-    absentCount
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
+    absentCount
   }
 }
 ```
@@ -509,21 +540,22 @@ mutation {
       locale: "en" # optional
     }
   ) {
-    id
+     id
     uid
+    locale
+    role
     firstname
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
-    absentCount
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
