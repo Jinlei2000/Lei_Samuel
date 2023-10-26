@@ -111,7 +111,6 @@ import { ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import InputField from '@/components/generic/form/InputField.vue'
-import { object, string } from 'yup'
 import useCustomUser from '@/composables/useCustomUser'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -119,7 +118,6 @@ import { useField, useForm } from 'vee-validate'
 import { Eye, EyeOff } from 'lucide-vue-next'
 
 export default {
-  // TODO: load CustomUser in when login
   setup() {
     // Composables
     const { login } = useFirebase()
@@ -127,11 +125,12 @@ export default {
 
     const { handleSubmit, resetForm } = useForm()
 
+    // TODO: fix not to validate on every keypress
+
     const validateField = (value: string, field: any) => {
       if (!value) {
         return `${field.name} is required`
       }
-
       if (field.name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         return 'Invalid email'
       }
@@ -189,64 +188,6 @@ export default {
           })
       }
     })
-
-    // // Data
-    // const loginCredentials = ref({
-    //   email: '',
-    //   password: '',
-    // })
-
-    // // Validation schema
-    // const loginSchema = object({
-    //   email: string().required('email is required'),
-    //   password: string().required('password is required'),
-    // })
-
-    // // Reset error messages to empty strings
-    // const resetErrorMessages = () => {
-    //   errorMessages.value = {
-    //     email: '',
-    //     password: '',
-    //     general: '',
-    //   }
-    // }
-
-    // // Handle validation errors
-    // const handleValidationErrors = (err: any) => {
-    //   // console.log(err)
-    //   err.inner.forEach((e: any) => {
-    //     errorMessages.value[e.path] = e.message
-    //   })
-    // }
-
-    // // Validate and login
-    // const handleLogin = () => {
-    //   resetErrorMessages()
-
-    //   // Validate login credentials with yup
-    //   loginSchema
-    //     .validate(loginCredentials.value, {
-    //       abortEarly: false,
-    //     })
-    //     .then(() => {
-    //       console.log('validation success')
-    //       login(loginCredentials.value.email, loginCredentials.value.password)
-    //         .then(() => {
-    //           console.log('login success')
-    //           restoreCustomUser().then(() => {
-    //             // redirect to role based dashboard
-    //             router.replace(getDashboardPathForRole())
-    //           })
-    //         })
-    //         .catch(error => {
-    //           console.log(error.message)
-    //           errorMessages.value.general = error.message
-    //         })
-    //     })
-    //     .catch(err => {
-    //       handleValidationErrors(err)
-    //     })
-    // }
 
     return {
       errorMessages,
