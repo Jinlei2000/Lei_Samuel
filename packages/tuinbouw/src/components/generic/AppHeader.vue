@@ -13,17 +13,17 @@
         <ul class="flex items-center justify-center gap-12">
           <li>
             <RouterLink
-              class="rounded-full text-black py-3"
-              active-class="text-gray-200! bg-primary-green"
+              class="text-black py-1 hover:text-primary-orange transition-all"
+              active-class="border-b-[1px] border-black"
               to="dashboard"
               >Dashboard</RouterLink
             >
           </li>
           <li>
             <RouterLink
-              class="rounded-full text-black py-3"
-              active-class="text-gray-200! bg-primary-green"
-              to="/tuin"
+              class="text-black py-1 hover:text-primary-orange transition-all"
+              active-class=" border-b-[1px] border-black"
+              to="/{{  }}"
               >Materials</RouterLink
             >
           </li>
