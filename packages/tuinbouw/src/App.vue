@@ -22,16 +22,17 @@ export default {
     const { apolloClient } = useGraphql()
     const { setLocale } = useLanguage()
     const { locale } = useI18n()
-
-    // TODO: set locale from user settings in customUser
+    const { customUser } = useCustomUser()
 
     provide(DefaultApolloClient, apolloClient)
 
-    setLocale(locale.value)
+    // set locale from user or default
+    setLocale(customUser.value?.locale || locale.value)
 
     return {}
   },
 }
 // import type AppHeaderVue from '../components/generic/AppHeader.vue'
 import AppHeader from './components/generic/AppHeader.vue'
+import useCustomUser from './composables/useCustomUser'
 </script>

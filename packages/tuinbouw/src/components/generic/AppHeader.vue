@@ -37,6 +37,24 @@
           </li> -->
         </ul>
       </nav>
+      <div>
+        <label class="block" for="language">Select Language</label>
+        <select
+          class="block mb-3"
+          name="language"
+          id="language"
+          @change="setLanguage"
+        >
+          <option
+            v-for="(value, key) in SUPPORTED_LOCALES"
+            :key="key"
+            :value="key"
+            @change="setLanguage"
+          >
+            {{ value }}
+          </option>
+        </select>
+      </div>
       <div class="w-1/6 flex justify-end">
         <RouterLink class="rounded-full" to="/profile">
           <img
@@ -54,6 +72,15 @@ import { Plus } from 'lucide-vue-next'
 
 import Container from '../wrapper/Container.vue'
 import Logo from '../Logo.vue'
+import useLanguage from '@/composables/useLanguage'
+import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
+const { setLocale } = useLanguage()
+
+const setLanguage = (e: Event) => {
+  const target = e.target as HTMLSelectElement
+  setLocale(target.value)
+  console.log(target.value)
+}
 
 const user = ref<Object | null>(null)
 </script>

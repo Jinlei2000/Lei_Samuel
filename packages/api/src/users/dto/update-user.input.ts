@@ -17,6 +17,9 @@ export class UpdateUserInput {
   firstname?: string
 
   @Field({ nullable: true }) // graphql
+  locale?: string
+
+  @Field({ nullable: true }) // graphql
   url?: string
 
   @Field({ nullable: true }) // graphql

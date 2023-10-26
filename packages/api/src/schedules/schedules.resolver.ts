@@ -23,8 +23,10 @@ export class SchedulesResolver {
 
   @Query(() => [Schedule], { name: 'schedules' })
   findAll(
-    @Args('filters', { nullable: true }) filters?: Array<string>,
-    @Args('order', { nullable: true }) order?: OrderByInput,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: string[],
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
   ) {
     return this.schedulesService.findAll(filters, order)
   }

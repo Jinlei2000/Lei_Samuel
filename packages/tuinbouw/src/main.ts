@@ -24,7 +24,7 @@ import Button from 'primevue/button'
 
 const app = createApp(App)
 const { restoreUser, firebaseUser } = useFirebase()
-const { restoreCustomUser, customUser } = useCustomUser()
+const { restoreCustomUser } = useCustomUser()
 
 app.use(PrimeVue, {
   ptOptions: {
@@ -51,8 +51,6 @@ app.use(i18n) // ALTIJD VOOR DE ROUTER!
   console.log('firebaseUser', firebaseUser.value)
   // Restore custom user session before mounting the app if firebaseUser is set
   if (firebaseUser.value) await restoreCustomUser()
-
-  //BUG: waarom krijg ik geen error als mijn graphql query niet klopt? uid was string
 
   app.use(router)
   app.mount('#app')
