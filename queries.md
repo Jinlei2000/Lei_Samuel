@@ -35,6 +35,13 @@
     - [createAbsence](#createabsence)
     - [updateAbsence](#updateabsence)
     - [removeAbsence](#removeabsence)
+  - [Schedules](#schedules)
+    - [schedules(filters: , order: { field, direction })](#schedulesfilters--order--field-direction-)
+    - [schedule(id)](#scheduleid)
+    - [createSchedule](#createschedule)
+    - [updateSchedule](#updateschedule)
+    - [removeSchedule](#removeschedule)
+  - [Appointments](#appointments)
 
 ## Authorization
 
@@ -249,7 +256,7 @@ Filters can be:
 
 Order can be:
 
-- field = all fields from material model
+- field = all fields from user model
 - direction = `ASC` or `DESC`
 
 Search by fullname
@@ -874,6 +881,177 @@ mutation {
   removeAbsence(id: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
+
+## Schedules
+
+```object
+{
+  id
+  appointments{
+    # everything from appointment
+  }
+  employees{
+    # everything from user
+  }
+  materials{
+    # everything from material
+  }
+  finalDate
+  createdBy
+  createdAt
+  updatedAt
+}
+```
+
+### schedules(filters: , order: { field, direction })
+
+schedules(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+
+- `FD` - Final date
+- `NFD` - Not final date
+- `P` - Past
+- `F` - Future
+- `T` - Today
+
+Order can be:
+
+- field = all fields from schedule model
+- direction = `ASC` or `DESC`
+
+
+```graphql
+query {
+  schedules(filters: ['P'], order: { field: "startDate", direction: ASC }) {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### schedule(id)
+
+schedule(id: String)
+
+```graphql
+query {
+  schedule(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createSchedule
+
+```graphql
+mutation {
+  createSchedule(
+    createScheduleInput: {
+      appointmentIds: ["xx", "xx"]
+      employeeIds: ["xx", "xx"]
+      materialIds: ["xx", "xx"]
+      finalDate: "2020-01-01" # YYYY-MM-DD
+      createdBy: "xx" 
+    }
+  ) {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateSchedule
+
+```graphql
+mutation {
+  updateSchedule(
+    updateScheduleInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      appointmentIds: ["xx", "xx"] # optional
+      employeeIds: ["xx", "xx"] # optional
+      materialIds: ["xx", "xx"] # optional
+      finalDate: "2020-01-01" # YYYY-MM-DD # optional
+      createdBy: "xx" # optional
+    }
+  ) {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### removeSchedule
+
+```graphql
+mutation {
+  removeSchedule(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+## Appointments
+
+```object
+{
+  id
+  userId
+  date
+  startTime
+  endTime
+  createdAt
+  updatedAt
+}
+```
+
 
 
 

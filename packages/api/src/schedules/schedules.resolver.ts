@@ -12,6 +12,7 @@ import { CreateScheduleInput } from './dto/create-schedule.input'
 import { UpdateScheduleInput } from './dto/update-schedule.input'
 import { AppointmentsService } from 'src/appointments/appointments.service'
 import { Appointment } from 'src/appointments/entities/appointment.entity'
+import { OrderByInput } from 'src/interfaces/order.input'
 
 @Resolver(() => Schedule)
 export class SchedulesResolver {
@@ -21,8 +22,11 @@ export class SchedulesResolver {
   ) {}
 
   @Query(() => [Schedule], { name: 'schedules' })
-  findAll() {
-    return this.schedulesService.findAll()
+  findAll(
+    @Args('filters', { nullable: true }) filters?: Array<string>,
+    @Args('order', { nullable: true }) order?: OrderByInput,
+  ) {
+    return this.schedulesService.findAll(filters, order)
   }
 
   @Query(() => Schedule, { name: 'schedule' })
