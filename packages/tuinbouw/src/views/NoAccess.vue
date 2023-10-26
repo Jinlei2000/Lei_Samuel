@@ -787,6 +787,9 @@
       <p class="text-xl text-center">
         You tried to access a page you did not have prior authorization for.
       </p>
+      <router-link to="/auth/login" class="text-blue-500 underline"
+        >Back</router-link
+      >
     </div>
   </div>
 </template>

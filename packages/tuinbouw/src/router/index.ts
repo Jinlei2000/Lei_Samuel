@@ -167,8 +167,14 @@ router.beforeEach(async (to, from, next) => {
 
   // Prevent logged in users from accessing login and register pages
   if (to.meta.preventLoggedIn && firebaseUser.value) {
-    // TODO: redirect to dashboard of user role
-    next({ path: '/admin/dashboard' })
+    // redirect to dashboard of user role
+    let path = '/'
+    const role = customUser.value?.role
+    if (role === Role.ADMIN) path = '/admin/dashboard'
+    if (role === Role.EMPLOYEE) path = '/employee/dashboard'
+    if (role === Role.CLIENT) path = '/client/dashboard'
+
+    next({ path: path })
   } else {
     next()
   }
