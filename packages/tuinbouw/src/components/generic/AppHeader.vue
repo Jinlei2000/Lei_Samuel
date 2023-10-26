@@ -9,11 +9,11 @@
       >
         <Logo />
       </RouterLink>
-      <nav>
-        <ul class="flex items-center justify-center">
+      <nav class="flex gap-24">
+        <ul class="flex items-center justify-center gap-12">
           <li>
             <RouterLink
-              class="rounded-full text-primary-green py-3 px-6 hover:text-gray-200 hover:bg-primary-green"
+              class="rounded-full text-black py-3"
               active-class="text-gray-200! bg-primary-green"
               to="dashboard"
               >Dashboard</RouterLink
@@ -21,40 +21,39 @@
           </li>
           <li>
             <RouterLink
-              class="rounded-full text-primary-green py-3 px-6 hover:text-gray-200 hover:bg-primary-green"
+              class="rounded-full text-black py-3"
               active-class="text-gray-200! bg-primary-green"
               to="/tuin"
               >Materials</RouterLink
             >
           </li>
+          <li class="pl-6 py-2 border-l-[1px] border-black">
+            <select
+              class="block bg-transparent hover:cursor-pointer"
+              name="language"
+              id="language"
+              @change="setLanguage"
+            >
+              <option
+                v-for="(value, key) in SUPPORTED_LOCALES"
+                :key="key"
+                :value="key"
+                @change="setLanguage"
+              >
+                {{ value }}
+              </option>
+            </select>
+          </li>
         </ul>
-      </nav>
-      <div>
-        <label class="block" for="language">Select Language</label>
-        <select
-          class="block mb-3"
-          name="language"
-          id="language"
-          @change="setLanguage"
-        >
-          <option
-            v-for="(value, key) in SUPPORTED_LOCALES"
-            :key="key"
-            :value="key"
-            @change="setLanguage"
-          >
-            {{ value }}
-          </option>
-        </select>
-      </div>
-      <div class="w-1/6 flex justify-end">
-        <RouterLink class="rounded-full" to="/profile">
-          <img
-            class="rounded-full w-12 h-12 hover:scale-105 transition-all"
-            src="https://i.pravatar.cc/300"
-            alt="Profile picture"
-        /></RouterLink>
-      </div></header
+        <div class="w-1/6 flex justify-end">
+          <RouterLink class="rounded-full" to="/profile">
+            <img
+              class="rounded-full w-12 h-12 hover:scale-105 transition-all"
+              src="https://i.pravatar.cc/300"
+              alt="Profile picture"
+          /></RouterLink>
+        </div>
+      </nav></header
   ></Container>
 </template>
 
