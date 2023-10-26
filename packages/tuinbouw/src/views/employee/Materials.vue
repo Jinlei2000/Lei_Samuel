@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div
     class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
   >
@@ -263,11 +264,8 @@
         class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3"
       >
         <div
-          v-if="
-            searchMaterials &&
-            searchMaterials.materialsBySearchString.length > 0
-          "
-          v-for="material of searchMaterials.materialsBySearchString"
+          v-if="searchMaterials && searchMaterials.materials.length > 0"
+          v-for="material of searchMaterials.materials"
           class="col-span-1 rounded-2xl relative hover:scale-110 transition-all"
         >
           <img
@@ -316,7 +314,7 @@
 import { useLazyQuery, useQuery } from '@vue/apollo-composable'
 import {
   GET_MATERIALS,
-  FIND_MATERIALS_BY_SEARCH_STRING,
+  // FIND_MATERIALS_BY_SEARCH_STRING,
 } from '@/graphql/material.query'
 import { watch, ref } from 'vue'
 import { Filter, Search, ChevronDown } from 'lucide-vue-next'
@@ -346,6 +344,9 @@ const sort = ref(false)
 const skeletons = ref<number[]>(new Array(24))
 // const loading = ref(true)
 
+import { useToast } from 'primevue/usetoast'
+const toast = useToast()
+
 const {
   result: allMaterials,
   loading,
@@ -354,11 +355,21 @@ const {
   filters: [],
 }))
 
+watch(error, () => {
+  if (!error.value) return
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: error.value.message,
+    life: 2000000000,
+  })
+})
+
 const {
   document,
   result: searchMaterials,
   load,
-} = useLazyQuery(FIND_MATERIALS_BY_SEARCH_STRING, () => ({
+} = useLazyQuery(GET_MATERIALS, () => ({
   searchString: search.value,
 }))
 
@@ -366,30 +377,25 @@ watch(search, () => {
   load(document.value, {
     searchString: search.value,
   })
+  console.log(searchMaterials.value)
 })
 
 watch(availability, () => {
   if (availability.value == 'available') {
-    console.log('available')
     const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: ['A'],
     }))
     allMaterials.value = result.value
-    console.log(allMaterials)
   } else if (availability.value == 'not available') {
-    console.log('not available')
     const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: ['NA'],
     }))
     allMaterials.value = result.value
-    console.log(allMaterials)
   } else {
-    console.log('all')
     const { result, loading, error } = useQuery(GET_MATERIALS, () => ({
       filters: [],
     }))
     allMaterials.value = result.value
-    console.log(allMaterials)
   }
 })
 </script>

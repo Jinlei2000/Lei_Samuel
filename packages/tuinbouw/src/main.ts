@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 
-// import '@unocss/reset/tailwind.css'
-// import '@unocss/reset/eric-meyer.css'
 import '@unocss/reset/tailwind.css'
+// import '@unocss/reset/eric-meyer.css'
+// import '@unocss/reset/tailwind-compat.css'
 import 'virtual:uno.css'
 
 import App from './App.vue'
@@ -14,6 +14,8 @@ import useCustomUser from './composables/useCustomUser'
 
 // PrimeVue
 import PrimeVue from 'primevue/config'
+import Toast from 'primevue/toast'
+import ToastService from 'primevue/toastservice'
 
 import 'primevue/resources/primevue.min.css' // core css
 import 'primevue/resources/themes/lara-light-teal/theme.css'
@@ -24,8 +26,23 @@ const app = createApp(App)
 const { restoreUser, firebaseUser } = useFirebase()
 const { restoreCustomUser, customUser } = useCustomUser()
 
-app.use(PrimeVue)
+app.use(PrimeVue, {
+  ptOptions: {
+    mergeProps: true,
+  },
+  pt: {
+    toast: {
+      closeButton: {
+        class: ['hover:bg-white/30', 'focus:shadow-none'],
+      },
+    },
+  },
+})
+
 app.component('Button', Button)
+app.component('Toast', Toast)
+
+app.use(ToastService)
 
 app.use(i18n) // ALTIJD VOOR DE ROUTER!
 ;(async () => {
