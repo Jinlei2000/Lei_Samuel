@@ -12,9 +12,6 @@ import { CreateMaterialInput } from './dto/create-material.input'
 import { UpdateMaterialInput } from './dto/update-material.input'
 import { UseGuards } from '@nestjs/common'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
-import { FirebaseUser } from 'src/authentication/decorators/user.decorator'
-import { UserRecord } from 'firebase-admin/auth'
-import { GraphQLError } from 'graphql'
 import { OrderByInput } from '../interfaces/order.input'
 import { Role, User } from 'src/users/entities/user.entity'
 import { UsersService } from 'src/users/users.service'
@@ -53,8 +50,15 @@ export class MaterialsResolver {
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
+    @Args('searchString', { type: () => [String], nullable: true })
+    searchString?: string,
   ): Promise<Material[]> {
-    return this.materialsService.findAllByUserId(userId, filters, order)
+    return this.materialsService.findAllByUserId(
+      userId,
+      filters,
+      order,
+      searchString,
+    )
   }
 
   @UseGuards(FirebaseGuard)
@@ -62,13 +66,6 @@ export class MaterialsResolver {
   findOneById(@Args('id', { type: () => String }) id: string) {
     return this.materialsService.findOne(id)
   }
-
-  // @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
-  // @UseGuards(FirebaseGuard, RolesGuard)
-  // @Query(() => [Material], { name: 'materialsBySearchString', nullable: true })
-  // findMaterialsBySearchString(@Args('searchString') searchString: string) {
-  //   return this.materialsService.findMaterialsBySearchString(searchString)
-  // }
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)

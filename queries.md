@@ -3,11 +3,9 @@
 - [Graphql Queries](#graphql-queries)
   - [Authorization](#authorization)
   - [Materials](#materials)
-- [TODO: personId is a resolve field](#todo-personid-is-a-resolve-field)
-    - [materials(filters: , order: { field, direction })](#materialsfilters--order--field-direction-)
+    - [materials(filters: , order: { field, direction }, searchString)](#materialsfilters--order--field-direction--searchstring)
     - [material(id)](#materialid)
-    - [materialsByPersonId(personId, filters: , order: { field, direction })](#materialsbypersonidpersonid-filters--order--field-direction-)
-    - [materialsBySearchString(searchString)](#materialsbysearchstringsearchstring)
+    - [materialsByUserId(userId, filters: , order: { field, direction }, searchString)](#materialsbyuseriduserid-filters--order--field-direction--searchstring)
     - [createMaterial](#creatematerial)
     - [updateMaterial](#updatematerial)
     - [removeMaterial](#removematerial)
@@ -42,46 +40,48 @@
 Most of queries and mutations require authorization. To authorize you need to pass `Authorization` header with `Bearer` token.
 
 ## Materials
-# TODO: personId is a resolve field
+
 ```object
 {
   id
   name
-  isAvailable
   user {
     # everything from user
   }
-  isDefect
+  isLoan
   serialNumber
   createdAt
   updatedAt
 }
 ```
 
-### materials(filters: , order: { field, direction })
+### materials(filters: , order: { field, direction }, searchString)
 
-materials(filters: [String], order: { field: String, direction: String })
+materials(filters: [String], order: { field: String, direction: String }, searchString: String)
 
 Filters can be:
 
 - `A` - available
 - `NA` - not available
-- `D` - defect
-- `ND` - not defect
+- `L` - loanable
+- `NL` - not loanable
 
 Order can be:
 
 - field = all fields from material model
 - direction = `ASC` or `DESC`
 
+Search by name
+
 ```graphql
 query {
-  materials {
+  materials(filters: ['A'], order: { field: "name", direction: ASC }, searchString: "search string") {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -98,9 +98,10 @@ query {
   material(id: "651d55ade0e77efb23fdfe53") {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -108,60 +109,43 @@ query {
 }
 ```
 
-### materialsByPersonId(personId, filters: , order: { field, direction })
+### materialsByUserId(userId, filters: , order: { field, direction }, searchString)
 
-materialsByPersonId(personId: String, filters: [String], order: { field: String, direction: String })
+materialsByUserId(userId: String, filters: [String], order: { field: String, direction: String }, searchString: String)
 
 Filters can be:
 
 - `A` - available
 - `NA` - not available
-- `D` - defect
-- `ND` - not defect
-
+- `L` - loanable
+- `NL` - not loanable
+  
 Order can be:
 
 - field = all fields from material model
 - direction = `ASC` or `DESC`
 
+Search by name
+
 ```graphql
 query {
-  materialsByPersonId(
-    personId: "651d55ade0e77efb23fdfe53"
-    filters: ["NA", "ND"]
-    order: { field: "name", direction: "ASC" }
-  ) {
+  materialsByUserId(
+    userId: "651d55ade0e77efb23fdfe53", 
+    filters: ['A'], 
+    order: { field: "name", direction: DESC }) 
+  {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
   }
 }
 ```
-
-### materialsBySearchString(searchString)
-
-materialsBySearchString(searchString: String)
-
-```graphql
-query {
-  materialsBySearchString(searchString: "hoe") {
-    id
-    name
-    isAvailable
-    personId
-    isDefect
-    serialNumber
-    createdAt
-    updatedAt
-  }
-}
-```
-
 
 ### createMaterial
 
@@ -170,16 +154,17 @@ mutation {
   createMaterial(
     createMaterialInput: {
       name: "Material 1"
-      isAvailable: true
-      personId: "651d55ade0e77efb23fdfe53" # optional
+      userId: "651d55ade0e77efb23fdfe53" # optional
+      isLoan: false
       serialNumber: 123456789
     }
   ) {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -194,17 +179,18 @@ mutation {
   updateMaterial(
     updateMaterialInput: {
       id: "651d55ade0e77efb23fdfe53"
-      name: "Material 1"
-      isAvailable: true
-      personId: "651d55ade0e77efb23fdfe53"
-      serialNumber: 123456789
+      name: "Material 1" # optional
+      isLoan: false # optional
+      userId: "651d55ade0e77efb23fdfe53" # optional
+      serialNumber: 123456789 # optional
     }
   ) {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -237,7 +223,6 @@ mutation {
   }
   email
   telephone
-  availability
   createdAt
   updatedAt
   absentCount
@@ -268,7 +253,10 @@ Order can be:
 
 ```graphql	
 query {
-  users {
+  users(filters: ["filter1", "filter2"], 
+  order: { field: "fullname", direction: "ASC" }, 
+  searchString: "search string") 
+  {
     id
     uid
     locale
@@ -277,15 +265,16 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
