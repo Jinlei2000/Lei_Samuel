@@ -1,5 +1,5 @@
 version: '3.1'
-# name: api-tuinbouw
+name: api-tuinbouw
 
 services:
   mongodb:
