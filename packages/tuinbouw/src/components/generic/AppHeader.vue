@@ -27,7 +27,7 @@
               >Materials</RouterLink
             >
           </li>
-          <li class="pl-6 py-2 border-l-[1px] border-black">
+          <li class="pl-12 py-2 border-l-[1px] border-black">
             <select
               class="block bg-transparent hover:cursor-pointer"
               name="language"
