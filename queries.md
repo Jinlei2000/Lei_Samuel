@@ -17,15 +17,16 @@
     - [userIsAvailableTodayByUserId(userId)](#userisavailabletodaybyuseriduserid)
     - [userUpgradeToAdmin(id)](#userupgradetoadminid)
     - [updateUser](#updateuser)
-    - [removeUser(id)](#removeuserid)
+    - [removeUser](#removeuser)
     - [createStaff](#createstaff)
     - [createClient](#createclient)
   - [Locations](#locations)
     - [locations(order: { field, direction })](#locationsorder--field-direction-)
-    - [locationsByUid(uid)](#locationsbyuiduid)
+    - [locationsByUserId(userId)](#locationsbyuseriduserid)
     - [location(id)](#locationid)
     - [createLocation](#createlocation)
     - [updateLocation](#updatelocation)
+    - [removeLocation](#removelocation)
   - [Mail](#mail)
     - [sendEmailToNewEmployeeById(id)](#sendemailtonewemployeebyidid)
   - [Absences](#absences)
@@ -482,7 +483,7 @@ mutation {
 }
 ```
 
-### removeUser(id)
+### removeUser
 
 removeUser(id: String)
 
@@ -569,7 +570,7 @@ mutation {
 ```object
 {
   id
-  uid
+  userId
   address
   createdAt
   updatedAt
@@ -589,7 +590,7 @@ Order can be:
 query {
   locations {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
@@ -597,15 +598,15 @@ query {
 }
 ```
 
-### locationsByUid(uid)
+### locationsByUserId(userId)
 
-locationsByUid(uid: String)
+locationsByUserId(userId: String)
 
 ```graphql
 query {
-  locationsByUid(uid: "6522bd1cfabcb1f1d63dd63a") {
+  findAllByUserId(userId: "6522bd1cfabcb1f1d63dd63a") {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
@@ -621,7 +622,7 @@ location(id: String)
 query {
   location(id: "6522bd1cfabcb1f1d63dd63a") {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
@@ -636,12 +637,12 @@ mutation {
   createLocation(
     createLocationInput: {
       address: "x"
-      uid: "xx"
+      userId: "xx"
     }
   ) {
     id
     address
-    uid
+    userId
     createdAt
     updatedAt
   }
@@ -659,12 +660,13 @@ mutation {
     }
   ) {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
   }
 }
+```
 
 ### removeLocation
 
