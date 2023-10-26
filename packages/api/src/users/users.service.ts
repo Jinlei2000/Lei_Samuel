@@ -37,13 +37,21 @@ export class UsersService {
     private readonly materialsService: MaterialsService,
   ) {}
 
-  findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
+  findAll(
+    filters?: Array<string>,
+    order?: OrderByInput,
+    searchString?: string,
+  ): Promise<User[]> {
     // filter and order users
     const whereQuery = filterUsers(filters)
     const orderQuery = orderUsers(order)
 
     return this.userRepository.find({
-      where: whereQuery,
+      where: {
+        ...whereQuery,
+        // @ts-ignore
+        fullname: { $regex: new RegExp(searchString, 'i') },
+      },
       order: orderQuery,
     })
   }
@@ -70,18 +78,6 @@ export class UsersService {
     if (!user) throw new GraphQLError('User not found')
 
     return user
-  }
-
-  // TODO: use this in findAll
-  findUsersBySearchString(searchString: string): Promise<User[]> {
-    searchString = searchString.toLowerCase()
-
-    const users = this.userRepository.find({
-      // @ts-ignore
-      fullname: { $regex: new RegExp(searchString, 'i') },
-    })
-
-    return users
   }
 
   // find all employees that are available on a specific date (not absent && not scheduled)
