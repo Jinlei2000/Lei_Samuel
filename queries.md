@@ -3,19 +3,18 @@
 - [Graphql Queries](#graphql-queries)
   - [Authorization](#authorization)
   - [Materials](#materials)
-- [TODO: personId is a resolve field](#todo-personid-is-a-resolve-field)
-    - [materials(filters: , order: { field, direction })](#materialsfilters--order--field-direction-)
+    - [materials(filters: , order: { field, direction }, searchString)](#materialsfilters--order--field-direction--searchstring)
     - [material(id)](#materialid)
-    - [materialsByPersonId(personId, filters: , order: { field, direction })](#materialsbypersonidpersonid-filters--order--field-direction-)
-    - [materialsBySearchString(searchString)](#materialsbysearchstringsearchstring)
+    - [materialsByUserId(userId, filters: , order: { field, direction }, searchString)](#materialsbyuseriduserid-filters--order--field-direction--searchstring)
     - [createMaterial](#creatematerial)
     - [updateMaterial](#updatematerial)
     - [removeMaterial](#removematerial)
   - [Users](#users)
-    - [users(filters, order: { field, direction })](#usersfilters-order--field-direction-)
+    - [users(filters, order: { field, direction }, searchString)](#usersfilters-order--field-direction--searchstring)
     - [user(id)](#userid)
     - [userByUid(uid)](#userbyuiduid)
-    - [usersBySearchString(searchString)](#usersbysearchstringsearchstring)
+    - [usersEmployeesAvailableByDate(date)](#usersemployeesavailablebydatedate)
+    - [userIsAvailableTodayByUserId(userId)](#userisavailabletodaybyuseriduserid)
     - [userUpgradeToAdmin(id)](#userupgradetoadminid)
     - [updateUser](#updateuser)
     - [removeUser](#removeuser)
@@ -23,65 +22,79 @@
     - [createClient](#createclient)
   - [Locations](#locations)
     - [locations(order: { field, direction })](#locationsorder--field-direction-)
-    - [locationsByUid(uid)](#locationsbyuiduid)
+    - [locationsByUserId(userId)](#locationsbyuseriduserid)
     - [location(id)](#locationid)
     - [createLocation](#createlocation)
     - [updateLocation](#updatelocation)
+    - [removeLocation](#removelocation)
   - [Mail](#mail)
-    - [sendEmailToNewEmployeeById(id)](#sendemailtonewemployeebyidid)
   - [Absences](#absences)
     - [absences(filters: , order: { field, direction })](#absencesfilters--order--field-direction-)
-    - [absencesByPersonId(filters: , order: { field, direction })](#absencesbypersonidfilters--order--field-direction-)
+    - [absencesByUserId(filters: , order: { field, direction })](#absencesbyuseridfilters--order--field-direction-)
     - [absence(id)](#absenceid)
     - [createAbsence](#createabsence)
     - [updateAbsence](#updateabsence)
     - [removeAbsence](#removeabsence)
+  - [Schedules](#schedules)
+    - [schedules(filters: , order: { field, direction })](#schedulesfilters--order--field-direction-)
+    - [schedule(id)](#scheduleid)
+    - [createSchedule](#createschedule)
+    - [updateSchedule](#updateschedule)
+    - [removeSchedule](#removeschedule)
+  - [Appointments](#appointments)
+    - [appointments(filters: , order: { field, direction })](#appointmentsfilters--order--field-direction-)
+    - [appointment(id)](#appointmentid)
+    - [createAppointment](#createappointment)
+    - [updateAppointment](#updateappointment)
+    - [removeAppointment](#removeappointment)
 
 ## Authorization
 
 Most of queries and mutations require authorization. To authorize you need to pass `Authorization` header with `Bearer` token.
 
 ## Materials
-# TODO: personId is a resolve field
+
 ```object
 {
   id
   name
-  isAvailable
   user {
     # everything from user
   }
-  isDefect
+  isLoan
   serialNumber
   createdAt
   updatedAt
 }
 ```
 
-### materials(filters: , order: { field, direction })
+### materials(filters: , order: { field, direction }, searchString)
 
-materials(filters: [String], order: { field: String, direction: String })
+materials(filters: [String], order: { field: String, direction: String }, searchString: String)
 
 Filters can be:
 
 - `A` - available
 - `NA` - not available
-- `D` - defect
-- `ND` - not defect
+- `L` - loanable
+- `NL` - not loanable
 
 Order can be:
 
 - field = all fields from material model
 - direction = `ASC` or `DESC`
 
+Search by name
+
 ```graphql
 query {
-  materials {
+  materials(filters: ['A'], order: { field: "name", direction: ASC }, searchString: "search string") {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -98,9 +111,10 @@ query {
   material(id: "651d55ade0e77efb23fdfe53") {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -108,60 +122,43 @@ query {
 }
 ```
 
-### materialsByPersonId(personId, filters: , order: { field, direction })
+### materialsByUserId(userId, filters: , order: { field, direction }, searchString)
 
-materialsByPersonId(personId: String, filters: [String], order: { field: String, direction: String })
+materialsByUserId(userId: String, filters: [String], order: { field: String, direction: String }, searchString: String)
 
 Filters can be:
 
 - `A` - available
 - `NA` - not available
-- `D` - defect
-- `ND` - not defect
-
+- `L` - loanable
+- `NL` - not loanable
+  
 Order can be:
 
 - field = all fields from material model
 - direction = `ASC` or `DESC`
 
+Search by name
+
 ```graphql
 query {
-  materialsByPersonId(
-    personId: "651d55ade0e77efb23fdfe53"
-    filters: ["NA", "ND"]
-    order: { field: "name", direction: "ASC" }
-  ) {
+  materialsByUserId(
+    userId: "651d55ade0e77efb23fdfe53", 
+    filters: ['A'], 
+    order: { field: "name", direction: DESC }) 
+  {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
   }
 }
 ```
-
-### materialsBySearchString(searchString)
-
-materialsBySearchString(searchString: String)
-
-```graphql
-query {
-  materialsBySearchString(searchString: "hoe") {
-    id
-    name
-    isAvailable
-    personId
-    isDefect
-    serialNumber
-    createdAt
-    updatedAt
-  }
-}
-```
-
 
 ### createMaterial
 
@@ -170,16 +167,17 @@ mutation {
   createMaterial(
     createMaterialInput: {
       name: "Material 1"
-      isAvailable: true
-      personId: "651d55ade0e77efb23fdfe53" # optional
+      userId: "651d55ade0e77efb23fdfe53" # optional
+      isLoan: false
       serialNumber: 123456789
     }
   ) {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -194,17 +192,18 @@ mutation {
   updateMaterial(
     updateMaterialInput: {
       id: "651d55ade0e77efb23fdfe53"
-      name: "Material 1"
-      isAvailable: true
-      personId: "651d55ade0e77efb23fdfe53"
-      serialNumber: 123456789
+      name: "Material 1" # optional
+      isLoan: false # optional
+      userId: "651d55ade0e77efb23fdfe53" # optional
+      serialNumber: 123456789 # optional
     }
   ) {
     id
     name
-    isAvailable
-    personId
-    isDefect
+    user {
+      # everything from user
+    }
+    isLoan
     serialNumber
     createdAt
     updatedAt
@@ -237,7 +236,6 @@ mutation {
   }
   email
   telephone
-  availability
   createdAt
   updatedAt
   absentCount
@@ -247,9 +245,9 @@ mutation {
 }
 ```
 
-### users(filters, order: { field, direction })
+### users(filters, order: { field, direction }, searchString)
 
-users(filters: [String], order: { field: String, direction: String })
+users(filters: [String], order: { field: String, direction: String }, searchString: String)
 
 Filters can be:
 
@@ -263,12 +261,17 @@ Filters can be:
 
 Order can be:
 
-- field = all fields from material model
+- field = all fields from user model
 - direction = `ASC` or `DESC`
+
+Search by fullname
 
 ```graphql	
 query {
-  users {
+  users(filters: ["filter1", "filter2"], 
+  order: { field: "fullname", direction: "ASC" }, 
+  searchString: "search string") 
+  {
     id
     uid
     locale
@@ -277,15 +280,16 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
@@ -299,7 +303,7 @@ user(id: String)
 
 ```graphql
 query {
-  user(id: "6522bd1cfabcb1f1d63dd63a") {
+  user(id: "651d55ade0e77efb23fdfe53") {
     id
     uid
     locale
@@ -308,15 +312,16 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
@@ -330,7 +335,7 @@ userByUid(uid: String)
 
 ```graphql
 query {
-  userByUid(uid: "6522bd1cfabcb1f1d63dd63a") {
+  userByUid(uid: "651d55ade0e77efb23fdfe53") {
     id
     uid
     locale
@@ -339,29 +344,31 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
-   invoiceOption
+    # Additional fields for clients
+    invoiceOption
     company
     btwNumber
   }
 }
+
 ```
 
-### usersBySearchString(searchString)
+### usersEmployeesAvailableByDate(date)
 
-usersBySearchString(searchString: String)
+usersEmployeesAvailableByDate(date: Date)
 
 ```graphql
 query {
-  usersBySearchString(searchString: "x") {
+  usersEmployeesAvailableByDate(date: "2020-01-01") {
     id
     uid
     locale
@@ -370,18 +377,43 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
-   invoiceOption
-    company
-    btwNumber
+  }
+}
+```
+
+### userIsAvailableTodayByUserId(userId)
+
+userIsAvailableTodayByUserId(userId: String)
+
+```graphql
+query {
+  userIsAvailableTodayByUserId(userId: "651d55ade0e77efb23fdfe53"){
+    id
+    uid
+    locale
+    role
+    firstname
+    lastname
+    fullname
+    url
+    email
+    telephone
+    createdAt
+    updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
+    absentCount
   }
 }
 ```
@@ -403,18 +435,15 @@ query {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
-    invoiceOption
-    company
-    btwNumber
   }
 }
 ```
@@ -426,20 +455,18 @@ mutation {
   updateUser(
     updateUserInput: {
       id: "xx"
-      lastname: "xx"
-      firstname: "xx"
-      url: "xx"
-      uid: "xx"
-      locationIds: ["xx"]
-      email: "xx"
-      telephone: "xx"
-      availability: true
-      # STAFF ONLY
-      absentCount: number
-      # CLIENT ONLY
-      invoiceOption: "xx" 
-      company: true
-      btwNumber: "xx"
+      lastname: "xx" # optional
+      firstname: "xx" # optional
+      url: "xx" # optional
+      uid: "xx" # optional
+      locationIds: ["xx"] # optional
+      email: "xx" # optional
+      telephone: "xx" # optional
+      availability: true # optional
+      # CLIENT ONLY 
+      invoiceOption: "xx"  # optional
+      company: true # optional
+      btwNumber: "xx" # optional
     }
   ) {
     id
@@ -450,15 +477,16 @@ mutation {
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
     absentCount
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
@@ -467,6 +495,8 @@ mutation {
 ```
 
 ### removeUser
+
+removeUser(id: String)
 
 ```graphql
 mutation {
@@ -491,19 +521,21 @@ mutation {
   ) {
     id
     uid
+    locale
+    role
     firstname
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
-    absentCount
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
+    absentCount
   }
 }
 ```
@@ -520,21 +552,22 @@ mutation {
       locale: "en" # optional
     }
   ) {
-    id
+     id
     uid
+    locale
+    role
     firstname
     lastname
     fullname
     url
-    locations {
-      # everthing from locations
-    }
     email
     telephone
-    availability
-    absentCount
     createdAt
     updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for clients
     invoiceOption
     company
     btwNumber
@@ -548,7 +581,7 @@ mutation {
 ```object
 {
   id
-  uid
+  userId
   address
   createdAt
   updatedAt
@@ -568,7 +601,7 @@ Order can be:
 query {
   locations {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
@@ -576,15 +609,15 @@ query {
 }
 ```
 
-### locationsByUid(uid)
+### locationsByUserId(userId)
 
-locationsByUid(uid: String)
+locationsByUserId(userId: String)
 
 ```graphql
 query {
-  locationsByUid(uid: "6522bd1cfabcb1f1d63dd63a") {
+  findAllByUserId(userId: "6522bd1cfabcb1f1d63dd63a") {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
@@ -600,7 +633,7 @@ location(id: String)
 query {
   location(id: "6522bd1cfabcb1f1d63dd63a") {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
@@ -615,12 +648,12 @@ mutation {
   createLocation(
     createLocationInput: {
       address: "x"
-      uid: "xx"
+      userId: "xx"
     }
   ) {
     id
     address
-    uid
+    userId
     createdAt
     updatedAt
   }
@@ -638,12 +671,13 @@ mutation {
     }
   ) {
     id
-    uid
+    userId
     address
     createdAt
     updatedAt
   }
 }
+```
 
 ### removeLocation
 
@@ -654,13 +688,24 @@ mutation {
 ```
 
 ## Mail
-### sendEmailToNewEmployeeById(id)
 
-sendEmailToNewEmployeeById(id: String)
+```object
+{
+  id
+  token
+  expirationDate
+  userId
+  createdAt
+}
+```	
+
+### sendEmailToNewEmployeeById(userId)
+
+sendEmailToNewEmployeeById(userId: String)
 
 ```graphql
 query {
-  sendEmailToNewEmployeeById(id: "6522bd1cfabcb1f1d63dd63a")
+  sendEmailToNewEmployeeById(userId: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
 
@@ -672,8 +717,11 @@ query {
   user{
     # everything from user
   }
+  description
+  type
   startDate
   endDate
+  totalDays
   createdAt
   updatedAt
 }
@@ -696,22 +744,25 @@ Order can be:
 
 ```graphql
 query {
-  absences {
+  absences(filters: ['S'], order: { field: "startDate", direction: ASC }) {
     id
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
 }
 ```
 
-### absencesByPersonId(filters: , order: { field, direction })
+### absencesByUserId(filters: , order: { field, direction })
 
-absencesByPersonId(personId: String, filters: [String], order: { field: String, direction: String })
+absencesByUserId(personId: String, filters: [String], order: { field: String, direction: String })
 
 Filters can be:
 - `S` - Sick
@@ -724,13 +775,20 @@ Order can be:
 
 ```graphql
 query {
-  absencesByPersonId(personId: "6522bd1cfabcb1f1d63dd63a") {
+  absencesByUserId(
+    personId: "6522bd1cfabcb1f1d63dd63a", 
+    filters: ['S'], 
+    order: { field: "startDate", direction: ASC }) 
+  {
     id
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -748,8 +806,11 @@ query {
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -758,6 +819,11 @@ query {
 
 ### createAbsence
 
+Type:
+- Sick
+- Vacation
+- Other
+
 ```graphql
 mutation {
   createAbsence(
@@ -765,7 +831,7 @@ mutation {
       userId: "6522bd1cfabcb1f1d63dd63a"
       startDate: "2020-01-01" # YYYY-MM-DD
       endDate: "2020-01-01" # YYYY-MM-DD
-      type: "S"
+      type: "Sick"
       description: "x" # optional
     }
   ) {
@@ -773,8 +839,11 @@ mutation {
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -788,19 +857,22 @@ mutation {
   updateAbsence(
     updateAbsenceInput: {
       id: "6522bd1cfabcb1f1d63dd63a"
-      userId: "6522bd1cfabcb1f1d63dd63a"
-      startDate: "2020-01-01" # YYYY-MM-DD
-      endDate: "2020-01-01" # YYYY-MM-DD
-      type: "S"
-      description: "x"
+      userId: "6522bd1cfabcb1f1d63dd63a" # optional
+      startDate: "2020-01-01" # YYYY-MM-DD # optional
+      endDate: "2020-01-01" # YYYY-MM-DD # optional
+      type: "S" # optional
+      description: "x" # optional
     }
   ) {
     id
     user{
       # everything from user
     }
+    description
+    type
     startDate
     endDate
+    totalDays
     createdAt
     updatedAt
   }
@@ -815,7 +887,354 @@ mutation {
 }
 ```
 
-TODO: update location, appointment
+## Schedules
+
+```object
+{
+  id
+  appointments{
+    # everything from appointment
+  }
+  employees{
+    # everything from user
+  }
+  materials{
+    # everything from material
+  }
+  finalDate
+  createdBy
+  createdAt
+  updatedAt
+}
+```
+
+### schedules(filters: , order: { field, direction })
+
+schedules(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+
+- `FD` - Final date
+- `NFD` - Not final date
+- `P` - Past
+- `F` - Future
+- `T` - Today
+
+Order can be:
+
+- field = all fields from schedule model
+- direction = `ASC` or `DESC`
+
+
+```graphql
+query {
+  schedules(filters: ['P'], order: { field: "startDate", direction: ASC }) {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### schedule(id)
+
+schedule(id: String)
+
+```graphql
+query {
+  schedule(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createSchedule
+
+```graphql
+mutation {
+  createSchedule(
+    createScheduleInput: {
+      appointmentIds: ["xx", "xx"]
+      employeeIds: ["xx", "xx"]
+      materialIds: ["xx", "xx"]
+      finalDate: "2020-01-01" # YYYY-MM-DD
+      createdBy: "xx" 
+    }
+  ) {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateSchedule
+
+```graphql
+mutation {
+  updateSchedule(
+    updateScheduleInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      appointmentIds: ["xx", "xx"] # optional
+      employeeIds: ["xx", "xx"] # optional
+      materialIds: ["xx", "xx"] # optional
+      finalDate: "2020-01-01" # YYYY-MM-DD # optional
+      createdBy: "xx" # optional
+    }
+  ) {
+    id
+    appointments{
+      # everything from appointment
+    }
+    employees{
+      # everything from user
+    }
+    materials{
+      # everything from material
+    }
+    finalDate
+    createdBy
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### removeSchedule
+
+```graphql
+mutation {
+  removeSchedule(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+## Appointments
+
+```object
+{
+  id
+  user{
+    # everything from user
+  }
+  location{
+    # everything from location
+  }
+  price
+  type
+  startProposedDate
+  endProposedDate
+  isScheduled
+  finalDate
+  isDone
+  description
+  priority
+  createdAt
+  updatedAt
+}
+```
+
+### appointments(filters: , order: { field, direction })
+
+appointments(filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+
+- `M` - Maintenance
+- `R` - Repair
+- `D` - Done
+- `ND` - Not Done
+- `S` - Scheduled
+- `NS` - Not Scheduled
+- `P` - Priority
+- `NP` - Not Priority
+
+Order can be:
+
+- field = all fields from appointment model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  appointments(filters: ['M'], order: { field: "startDate", direction: ASC }) {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### appointment(id)
+
+appointment(id: String)
+
+```graphql
+query {
+  appointment(id: "6522bd1cfabcb1f1d63dd63a") {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### createAppointment
+
+Type:
+- Maintenance
+- Repair
+
+```graphql
+mutation {
+  createAppointment(
+    createAppointmentInput: {
+      userId: "xx"
+      locationId: "xx"
+      type: "Maintenance"
+      startProposedDate: "2020-01-01" # YYYY-MM-DD
+      endProposedDate: "2020-01-01" # YYYY-MM-DD
+      isScheduled: true
+      isDone: true
+      description: "x" 
+      priority: true
+    }
+  ) {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### updateAppointment
+
+```graphql
+mutation {
+  updateAppointment(
+    updateAppointmentInput: {
+      id: "6522bd1cfabcb1f1d63dd63a"
+      locationId: "xx" # optional
+      price: 123 # optional
+      type: "Maintenance" # optional
+      startProposedDate: "2020-01-01" # YYYY-MM-DD # optional
+      endProposedDate: "2020-01-01" # YYYY-MM-DD # optional
+      finalDate: "2020-01-01" # YYYY-MM-DD # optional
+      isScheduled: true # optional
+      description: "x" # optional
+      priority: true # optional
+      isDone: true # optional
+    }
+  ) {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### removeAppointment
+
+```graphql
+mutation {
+  removeAppointment(id: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+
 
 
 

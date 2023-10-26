@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { IsDate, IsDateString } from 'class-validator'
+import { IsDate } from 'class-validator'
 
 @InputType()
 export class CreateAbsenceInput {

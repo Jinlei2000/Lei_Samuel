@@ -3,9 +3,6 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
-  Parent,
-  ResolveField,
 } from '@nestjs/graphql'
 import { AppointmentsService } from './appointments.service'
 import { Appointment } from './entities/appointment.entity'
@@ -13,7 +10,7 @@ import { CreateAppointmentInput } from './dto/create-appointment.input'
 import { UpdateAppointmentInput } from './dto/update-appointment.input'
 import { OrderByInput } from 'src/interfaces/order.input'
 import { UsersService } from 'src/users/users.service'
-import { Role, User } from 'src/users/entities/user.entity'
+import { Role } from 'src/users/entities/user.entity'
 import { UseGuards } from '@nestjs/common'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { AllowedRoles } from 'src/users/decorators/role.decorator'
@@ -54,7 +51,7 @@ export class AppointmentsResolver {
     return this.appointmentsService.create(createAppointmentInput)
   }
 
-  @AllowedRoles(Role.ADMIN, Role.CLIENT)
+  @AllowedRoles(Role.ADMIN, Role.CLIENT, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Appointment)
   updateAppointment(
@@ -66,8 +63,6 @@ export class AppointmentsResolver {
       updateAppointmentInput,
     )
   }
-
-  // TODO: update is done for employee
 
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)
