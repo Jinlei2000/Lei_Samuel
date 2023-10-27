@@ -1,8 +1,6 @@
 import { createApp } from 'vue'
 
 import '@unocss/reset/tailwind.css'
-// import '@unocss/reset/eric-meyer.css'
-// import '@unocss/reset/tailwind-compat.css'
 import 'virtual:uno.css'
 
 import App from './App.vue'
@@ -22,7 +20,6 @@ import 'primevue/resources/themes/lara-light-teal/theme.css'
 
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
 
 const app = createApp(App)
 const { restoreUser, firebaseUser } = useFirebase()
@@ -48,25 +45,12 @@ app.use(PrimeVue, {
         ],
       }),
     },
-    password: {
-      root: () => ({
-        class: [
-          'inline-flex relative',
-          'm-0',
-          'text-gray-900 sm:text-sm rounded-lg w-full transition-colors duration-200 appearance-none',
-          'focus:ring-primary-green-400/40 focus:ring-2',
-          'hover:border-primary-green-400 hover:border-primary-green-400',
-        ],
-      }),
-     
-    },
   },
 })
 
 app.component('Button', Button)
 app.component('Toast', Toast)
 app.component('InputText', InputText)
-app.component('Password', Password)
 
 app.use(ToastService)
 

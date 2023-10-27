@@ -1,100 +1,50 @@
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900">
+  <section class="bg-gray-50">
     <div
       class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
     >
-      <div
-        class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
-      >
+      <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
           <h1
-            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
-            Log in to your account
+            Welcome back!
           </h1>
-          <span v-if="errorMessages" class="text-red-600">{{
-            errorMessages
-          }}</span>
+          <span v-if="errorLogin" class="text-red-600">{{ errorLogin }}</span>
           <form @submit.prevent="handleLogin">
-            <div class="flex flex-col">
-              <label
-                class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
-                for="email"
-                >Email</label
-              >
-              <InputText
-                id="email"
-                type="text"
-                v-model="email"
-                placeholder="john@example.com"
-                :class="{
-                  'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
-                    errorEmail,
-                }"
-                aria-describedby="text-error"
-              />
-              <small class="p-error" id="text-error">{{
-                errorEmail || '&nbsp;'
-              }}</small>
-            </div>
-            <div class="flex flex-col">
-              <label
-                class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
-                for="password"
-                >Password</label
-              >
-              <Password
-                id="password"
-                type="text"
-                v-model="password"
-                placeholder="••••••••"
-                :feedback="false"
-                :class="{
-                  'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
-                    errorPassword,
-                }"
-                aria-describedby="text-error"
-                toggleMask
-              >
-                <template #hideicon="{ onClick }">
-                  <span
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  >
-                    <EyeOff @click="onClick()" />
-                  </span>
-                </template>
-                <template #showicon="{ onClick }">
-                  <span
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  >
-                    <Eye @click="onClick()" />
-                  </span>
-                </template>
-              </Password>
-
-              <small class="p-error" id="text-error">{{
-                errorPassword || '&nbsp;'
-              }}</small>
-            </div>
-
+            <InputText
+              name="Email"
+              placeholder="john@example.com"
+              type="text"
+              :errorMessage="errorMessages.email"
+              v-bind="email"
+            />
+            <InputText
+              name="Password"
+              placeholder="••••••••"
+              type="password"
+              inputType="password"
+              :errorMessage="errorMessages.password"
+              v-bind="password"
+            />
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
-                class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
+                class="text-sm font-medium text-primary-600 hover:underline"
                 >Forgot password?</RouterLink
               >
             </div>
             <button
               type="submit"
-              class="w-full text-white bg-green-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              class="w-full text-white bg-green-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
             >
               Login
             </button>
-            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+            <p class="text-sm font-light text-gray-500 pt-4">
               Don’t have an account yet?
               <RouterLink
                 to="/auth/register"
-                class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                class="font-medium text-primary-600 hover:underline"
               >
                 Register
               </RouterLink>
@@ -106,98 +56,83 @@
   </section>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
-import InputField from '@/components/generic/form/InputField.vue'
 import useCustomUser from '@/composables/useCustomUser'
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
-import { useField, useForm } from 'vee-validate'
-import { Eye, EyeOff } from 'lucide-vue-next'
+import InputText from '@/components/generic/form/InputText.vue'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 
-export default {
-  setup() {
-    // Composables
-    const { login } = useFirebase()
-    const { getDashboardPathForRole, restoreCustomUser } = useCustomUser()
+// Composables
+const { login } = useFirebase()
+const { getDashboardPathForRole, restoreCustomUser } = useCustomUser()
 
-    const { handleSubmit, resetForm } = useForm()
+const schema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(6),
+})
+const {
+  handleSubmit,
+  resetForm,
+  defineComponentBinds,
+  errors,
+  values,
+  validate,
+} = useForm({
+  validationSchema: schema,
+})
+const email = defineComponentBinds('email')
+const password = defineComponentBinds('password')
 
-    // TODO: fix not to validate on every keypress
+const errorLogin = ref<string | null>(null)
 
-    const validateField = (value: string, field: any) => {
-      if (!value) {
-        return `${field.name} is required`
-      }
-      if (field.name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        return 'Invalid email'
-      }
+// const handleLogin = handleSubmit(async values => {
+//   errorMessages.value = null
+//   console.log(values)
+//   login(values.email, values.password)
+//     .then(() => {
+//       console.log('login success')
+//       resetForm()
+//       restoreCustomUser().then(() => {
+//         // redirect to role based dashboard
+//         router.replace(getDashboardPathForRole())
+//       })
+//     })
+//     .catch(error => {
+//       console.log(error.message)
+//       errorMessages.value = error.message
+//     })
+// })
 
-      // password length 6
-      if (field.name === 'password' && value.length < 6) {
-        return 'Password must be at least 6 characters'
-      }
+const errorMessages = ref<{
+  email?: string
+  password?: string
+}>({
+  email: '',
+  password: '',
+})
 
-      return true
-    }
-
-    const { value: email, errorMessage: errorEmail } = useField(
-      'email',
-      validateField,
-    )
-    const { value: password, errorMessage: errorPassword } = useField(
-      'password',
-      validateField,
-    )
-
-    const errorMessages = ref<string | null>(null)
-
-    const hasFieldError = (fields: any) => {
-      let hasError = false
-      Object.keys(fields).forEach(key => {
-        if (fields[key].errorMessage) {
-          hasError = true
-        }
+const handleLogin = async () => {
+  await validate()
+  errorMessages.value = errors.value
+  errorLogin.value = null
+  console.log(values)
+  if (Object.keys(errors.value).length === 0) {
+    login(values.email, values.password)
+      .then(() => {
+        console.log('login success')
+        resetForm()
+        restoreCustomUser().then(() => {
+          // redirect to role based dashboard
+          router.replace(getDashboardPathForRole())
+        })
       })
-      return hasError
-    }
-
-    const handleLogin = handleSubmit(async values => {
-      console.log(values)
-      const fields = {
-        email,
-        password,
-      }
-
-      if (!hasFieldError(fields)) {
-        console.log('validation success')
-        login(email.value, password.value)
-          .then(() => {
-            console.log('login success')
-            resetForm()
-            restoreCustomUser().then(() => {
-              // redirect to role based dashboard
-              router.replace(getDashboardPathForRole())
-            })
-          })
-          .catch(error => {
-            console.log(error.message)
-            errorMessages.value = error.message
-          })
-      }
-    })
-
-    return {
-      errorMessages,
-      handleLogin,
-      email,
-      errorEmail,
-      password,
-      errorPassword,
-    }
-  },
-  components: { InputField, InputText, Password, Eye, EyeOff },
+      .catch(error => {
+        console.log(error.message)
+        errorLogin.value = error.message
+      })
+  }
 }
 </script>
