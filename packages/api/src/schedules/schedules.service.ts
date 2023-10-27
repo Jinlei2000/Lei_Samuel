@@ -72,10 +72,10 @@ export class SchedulesService {
   }
 
   // check if user is already scheduled on this date (return true or false)
-  async findOneByDateAndUserId(userId: string, date: Date): Promise<boolean> {
+  async findOneByDateAndUserId(userId: string, date: string): Promise<boolean> {
     const schedules = await this.scheduleRepository.find({
       where: {
-        finalDate: date,
+        finalDate: new Date(date),
         employees: {
           // @ts-ignore
           $elemMatch: { id: new ObjectId(userId) }, // $elemMatch is needed to search in array of objects
