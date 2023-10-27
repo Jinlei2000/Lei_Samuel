@@ -1,10 +1,10 @@
 <template>
   <Container
-    class="py-4 w-full bg-white backdrop-blur-2xl bg-opacity-50 fixed left-0 top-0 z-50"
+    class="left-0 fixed top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
   >
-    <header class="flex items-center justify-between max-w-7xl m-auto">
+    <header class="m-auto flex max-w-7xl items-center justify-between">
       <RouterLink
-        class="w-1/6 flex items-center space-x-4 focus:outline-none focus-visible:ring-4 ring-blue-400 hover:scale-105 transition-all rounded-lg"
+        class="flex w-1/6 items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
         to="/"
       >
         <Logo />
@@ -13,7 +13,7 @@
         <ul class="flex items-center justify-center gap-12">
           <li>
             <RouterLink
-              class="text-black py-1 hover:text-primary-orange transition-all"
+              class="hover:text-primary-orange py-1 text-black transition-all"
               active-class="border-b-[1px] border-black"
               :to="`/${role}/dashboard`"
               >Dashboard</RouterLink
@@ -21,13 +21,13 @@
           </li>
           <li>
             <RouterLink
-              class="text-black py-1 hover:text-primary-orange transition-all"
+              class="hover:text-primary-orange py-1 text-black transition-all"
               active-class=" border-b-[1px] border-black"
               :to="`/${role}/materials`"
               >Materials</RouterLink
             >
           </li>
-          <li class="pl-12 py-2 border-l-[1px] border-black">
+          <li class="border-l-[1px] border-black py-2 pl-12">
             <select
               class="block bg-transparent hover:cursor-pointer"
               name="language"
@@ -45,10 +45,10 @@
             </select>
           </li>
         </ul>
-        <div class="w-1/6 flex justify-end">
+        <div class="flex w-1/6 justify-end">
           <RouterLink class="rounded-full" to="/profile">
             <img
-              class="rounded-full w-12 h-12 hover:scale-105 transition-all"
+              class="h-12 w-12 rounded-full transition-all hover:scale-105"
               src="https://i.pravatar.cc/300"
               alt="Profile picture"
           /></RouterLink>
