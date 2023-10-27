@@ -69,7 +69,6 @@
 import { ref, watch } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
-import useCustomUser from '@/composables/useCustomUser'
 import InputText from '@/components/generic/form/InputText.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
@@ -80,7 +79,6 @@ import { useI18n } from 'vue-i18n'
 
 // Composables
 const { register } = useFirebase()
-const { customUser } = useCustomUser()
 const { mutate: addClient, error: addClientError } =
   useMutation<CustomUser>(CREATE_CLIENT)
 const { locale } = useI18n()
@@ -131,11 +129,7 @@ const handleRegister = async () => {
             // add the user's locale language to the database
             locale: locale.value,
           },
-        }).then(result => {
-          if (!result?.data) throw new Error('Custom user creation failed.')
-
-          customUser.value = result.data
-
+        }).then(() => {
           console.log('register success')
           resetForm()
           router.replace('/auth/login')
