@@ -30,10 +30,13 @@ export default () => {
     // save locale to user in database
     const { mutate: updateLocale } = useMutation<CustomUser>(UPDATE_LOCALE)
 
-    await updateLocale({
-      id: customUser.value?.id,
-      locale: targetLocale,
-    })
+    if (customUser.value) {
+      console.log('update locale', targetLocale)
+      await updateLocale({
+        id: customUser.value?.id,
+        locale: targetLocale,
+      })
+    }
   }
 
   return {

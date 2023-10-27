@@ -547,13 +547,14 @@ mutation {
 mutation {
   createClient(
     createClientInput: {
+      uid: "x" 
       firstname: "x"
       lastname: "xx"
       email: "x@x.x"
       locale: "en" # optional
     }
   ) {
-     id
+    id
     uid
     locale
     role

@@ -7,10 +7,12 @@ Short description of the project.
 - [Vue.js](https://vuejs.org/) for frontend
 - [UnoCSS](https://tailwindcss.com/) for styling
 - [TypeScript](https://www.typescriptlang.org/) for frontend
+- [PrimeVue](https://primefaces.org/primevue/showcase/#/) for frontend
 
 - [Firebase](https://firebase.google.com/) for authentication
 
 - [yup]() for validation frontend
+- [vee-validate](https://vee-validate.logaretm.com/v4/) for validation frontend
 
 - [Figma](https://www.figma.com/) for design
 
