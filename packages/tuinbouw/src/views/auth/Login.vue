@@ -30,7 +30,7 @@
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
-                class="text-sm font-medium text-primary-600 hover:underline"
+                class="text-sm pb-4 underline font-medium text-primary-600 hover:underline"
                 >Forgot password?</RouterLink
               >
             </div>
