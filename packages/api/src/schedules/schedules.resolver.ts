@@ -36,6 +36,14 @@ export class SchedulesResolver {
     return this.schedulesService.findOne(id)
   }
 
+  @Query(() => Schedule, { name: 'scheduleByDateAndUserId' })
+  findOneByDateAndUserId(
+    @Args('date', { type: () => String }) date: string,
+    @Args('userId', { type: () => String }) userId: string,
+  ) {
+    return this.schedulesService.findOneByDateAndUserId(userId, date)
+  }
+
   @Mutation(() => Schedule)
   createSchedule(
     @Args('createScheduleInput') createScheduleInput: CreateScheduleInput,
