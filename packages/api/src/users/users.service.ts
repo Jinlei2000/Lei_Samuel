@@ -116,7 +116,7 @@ export class UsersService {
     // check if user is scheduled today
     const isScheduled = await this.scheduleService.findOneByDateAndUserId(
       userId,
-      date,
+      date.toDateString(),
     )
 
     // if user is absent or scheduled, return false
