@@ -225,7 +225,6 @@ export class UsersService {
 
   // CREATECLIENT
   async createClient(
-    currentUserUid: string,
     createClientInput: CreateClientInput,
   ): Promise<User> {
     // Check if user already exists with email
@@ -235,7 +234,7 @@ export class UsersService {
     if (user) throw new GraphQLError('User already exists')
 
     const s = new User()
-    s.uid = currentUserUid
+    s.uid = createClientInput.uid
     s.locale = createClientInput.locale ?? 'en'
     s.role = Role.CLIENT
     s.firstname = createClientInput.firstname.toLowerCase()

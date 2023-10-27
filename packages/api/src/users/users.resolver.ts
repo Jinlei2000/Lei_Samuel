@@ -114,9 +114,8 @@ export class UsersResolver {
   @Mutation(() => User, { name: 'createClient' })
   createClient(
     @Args('createClientInput') createClientInput: CreateClientInput,
-    @FirebaseUser() currentUser: UserRecord,
   ) {
-    return this.usersService.createClient(currentUser.uid, createClientInput)
+    return this.usersService.createClient(createClientInput)
   }
 
   // Resolve fields
