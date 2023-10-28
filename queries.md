@@ -17,6 +17,7 @@
     - [userIsAvailableTodayByUserId(userId)](#userisavailabletodaybyuseriduserid)
     - [userUpgradeToAdmin(id)](#userupgradetoadminid)
     - [updateUser](#updateuser)
+    - [updateEmployeeRegister](#updateemployeeregister)
     - [removeUser](#removeuser)
     - [createStaff](#createstaff)
     - [createClient](#createclient)
@@ -28,6 +29,8 @@
     - [updateLocation](#updatelocation)
     - [removeLocation](#removelocation)
   - [Mail](#mail)
+    - [getMailTokenByToken(token)](#getmailtokenbytokentoken)
+    - [removeAllMailTokensByUserId](#removeallmailtokensbyuserid)
   - [Absences](#absences)
     - [absences(filters: , order: { field, direction })](#absencesfilters--order--field-direction-)
     - [absencesByUserId(filters: , order: { field, direction })](#absencesbyuseridfilters--order--field-direction-)
@@ -463,7 +466,6 @@ mutation {
       locationIds: ["xx"] # optional
       email: "xx" # optional
       telephone: "xx" # optional
-      availability: true # optional
       # CLIENT ONLY 
       invoiceOption: "xx"  # optional
       company: true # optional
@@ -491,6 +493,41 @@ mutation {
     invoiceOption
     company
     btwNumber
+  }
+}
+```
+
+### updateEmployeeRegister
+  
+```graphql
+mutation {
+  updateEmployeeRegister(
+    updateUserInput: {
+      id: "xx"
+      lastname: "xx" # optional
+      firstname: "xx" # optional
+      uid: "xx" # optional
+      locale: "xx" # optional
+      email: "xx" # optional
+    }
+  ) {
+    id
+    uid
+    locale
+    role
+    firstname
+    lastname
+    fullname
+    url
+    email
+    telephone
+    createdAt
+    updatedAt
+    locations {
+      # Include fields from the Location entity
+    }
+    # Additional fields for staff
+    absentCount
   }
 }
 ```
@@ -708,6 +745,30 @@ sendEmailToNewEmployeeById(userId: String)
 ```graphql
 query {
   sendEmailToNewEmployeeById(userId: "6522bd1cfabcb1f1d63dd63a")
+}
+```
+
+### getMailTokenByToken(token)
+
+getMailTokenByToken(token: String)
+
+```graphql
+ query {
+    getMailTokenByToken(token: "6522bd1cfabcb1f1d63dd63a") {
+      id
+      userId
+      token
+      expirationDate
+      createdAt
+    }
+  }
+```
+
+### removeAllMailTokensByUserId
+
+```graphql
+mutation {
+  removeAllMailTokensByUserId(userId: "6522bd1cfabcb1f1d63dd63a")
 }
 ```
 

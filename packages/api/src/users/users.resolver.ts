@@ -91,6 +91,7 @@ export class UsersResolver {
     )
   }
 // TODO: make documentation for this and for mail.service.ts
+
   @UseGuards(FirebaseGuard)
   @Mutation(() => User, { name: 'updateEmployeeRegister' })
   updateEmployeeRegister(
