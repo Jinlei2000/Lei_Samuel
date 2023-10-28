@@ -84,10 +84,13 @@ import useCustomUser from '@/composables/useCustomUser'
 import InputText from '@/components/generic/form/InputText.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
+import useLanguage from '@/composables/useLanguage'
 
 // Composables
 const { login } = useFirebase()
-const { getDashboardPathForRole, restoreCustomUser } = useCustomUser()
+const { getDashboardPathForRole, restoreCustomUser, customUser } =
+  useCustomUser()
+const { setLocale } = useLanguage()
 
 const schema = yup.object({
   email: yup.string().required().email(),
@@ -142,13 +145,14 @@ const handleLogin = async () => {
   console.log(values)
   if (Object.keys(errors.value).length === 0) {
     login(values.email, values.password)
-      .then(() => {
+      .then(async () => {
         console.log('login success')
         resetForm()
-        restoreCustomUser().then(() => {
+        await restoreCustomUser().then(() => {
           // redirect to role based dashboard
           router.replace(getDashboardPathForRole())
         })
+        await setLocale(customUser.value!.locale!)
       })
       .catch(error => {
         console.log(error.message)

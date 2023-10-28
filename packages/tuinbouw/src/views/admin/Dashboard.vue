@@ -8,7 +8,7 @@
       </h1>
       <p class="mt-2 text-xl text-gray-600 dark:text-gray-400">
         You are logged in as
-        <span class="font-semibold">{{ UserCredentials.email }}</span>
+        <span class="font-semibold">{{ userCredentials.email }}</span>
       </p>
       <button
         class="focus:shadow-outline-red my-4 block rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
@@ -27,7 +27,7 @@
         name="language"
         id="language"
         @change="setLanguage"
-        v-model="selectLocale"
+        v-model="locale"
       >
         <option
           v-for="(value, key) in SUPPORTED_LOCALES"
@@ -68,7 +68,7 @@ export default {
       'schedule-appointment',
     ])
     const { firebaseUser, logout } = useFirebase()
-    const { setLocale, locale: selectLocale } = useLanguage()
+    const { setLocale, locale } = useLanguage()
     const { customUser } = useCustomUser()
 
     const handleLogout = async () => {
@@ -79,12 +79,12 @@ export default {
       console.log('logout')
     }
 
-    const UserCredentials = ref<{ email: string | null }>({
+    const userCredentials = ref<{ email: string | null }>({
       email: '',
     })
 
     if (firebaseUser.value) {
-      UserCredentials.value.email = firebaseUser.value.email
+      userCredentials.value.email = firebaseUser.value.email
     }
 
     // Create brearer token
@@ -99,12 +99,12 @@ export default {
     }
 
     return {
-      UserCredentials,
+      userCredentials,
       handleLogout,
       listButtons,
       setLanguage,
       SUPPORTED_LOCALES,
-      selectLocale,
+      locale,
     }
   },
 }
