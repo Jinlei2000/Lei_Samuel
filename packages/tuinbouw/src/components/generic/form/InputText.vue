@@ -1,6 +1,6 @@
 <template>
   <label
-    class="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
+    class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
     :for="name"
     >{{ name }}</label
   >
