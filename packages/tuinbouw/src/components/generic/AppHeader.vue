@@ -1,6 +1,6 @@
 <template>
   <Container
-    class="left-0 fixed top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
+    class="fixed left-0 top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
   >
     <header class="m-auto flex max-w-7xl items-center justify-between">
       <RouterLink
@@ -33,6 +33,7 @@
               name="language"
               id="language"
               @change="setLanguage"
+              v-model="locale"
             >
               <option
                 v-for="(value, key) in SUPPORTED_LOCALES"
@@ -66,7 +67,7 @@ import Logo from '../Logo.vue'
 import useLanguage from '@/composables/useLanguage'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
-const { setLocale } = useLanguage()
+const { setLocale, locale } = useLanguage()
 
 const { customUser } = useCustomUser()
 

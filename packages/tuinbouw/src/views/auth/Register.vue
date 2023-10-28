@@ -94,13 +94,15 @@ import * as yup from 'yup'
 import { CREATE_CLIENT } from '@/graphql/user.mutation'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation } from '@vue/apollo-composable'
-import { useI18n } from 'vue-i18n'
+import useLanguage from '@/composables/useLanguage'
+import useCustomUser from '@/composables/useCustomUser'
 
 // Composables
 const { register } = useFirebase()
 const { mutate: addClient, error: addClientError } =
   useMutation<CustomUser>(CREATE_CLIENT)
-const { locale } = useI18n()
+const { locale,setLocale } = useLanguage()
+const {customUser} = useCustomUser()
 
 watch(addClientError, () => {
   if (!addClientError.value) return
@@ -153,6 +155,7 @@ const handleRegister = async () => {
         }).then(() => {
           console.log('register success')
           resetForm()
+          setLocale(customUser.value!.locale!)
           router.replace('/auth/login')
         })
       })
