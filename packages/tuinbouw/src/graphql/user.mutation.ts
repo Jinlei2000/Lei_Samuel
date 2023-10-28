@@ -39,3 +39,32 @@ export const UPDATE_LOCALE = gql`
     }
   }
 `
+export const UPDATE_EMPLOYEE_REGISTER = gql`
+  mutation updateEmployeeRegister($updateUserInput: UpdateUserInput!) {
+    updateEmployeeRegister(updateUserInput: $updateUserInput) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      email
+      telephone
+      createdAt
+      updatedAt
+      locations {
+        id
+        userId
+        address
+        createdAt
+        updatedAt
+      }
+      absentCount
+      invoiceOption
+      company
+      btwNumber
+    }
+  }
+`
