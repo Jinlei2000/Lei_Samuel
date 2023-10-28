@@ -28,6 +28,10 @@ const router = createRouter({
           path: 'forgot-password',
           component: () => import('../views/auth/ForgotPassword.vue'),
         },
+        {
+          path: 'register-employee/:token',
+          component: () => import('../views/auth/RegisterEmployee.vue'),
+        },
       ],
     },
 

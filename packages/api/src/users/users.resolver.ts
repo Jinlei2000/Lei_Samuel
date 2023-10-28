@@ -90,6 +90,18 @@ export class UsersResolver {
       updateUserInput,
     )
   }
+// TODO: make documentation for this and for mail.service.ts
+
+  @UseGuards(FirebaseGuard)
+  @Mutation(() => User, { name: 'updateEmployeeRegister' })
+  updateEmployeeRegister(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ) {
+    return this.usersService.updateEmployeeRegister(
+      updateUserInput.id,
+      updateUserInput,
+    )
+  }
 
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)
