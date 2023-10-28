@@ -167,7 +167,7 @@ const handleRegister = async () => {
     // console.log('token:', router.currentRoute.value.query.token)
     if (mailTokenResult.value) {
       const userId = mailTokenResult.value.getMailTokenByToken.userId
-      register(values.email, values.password)
+      await register(values.email, values.password)
         .then(async userData => {
           // Update employee in database
           await updateEmployee({

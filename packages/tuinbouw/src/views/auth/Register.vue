@@ -101,8 +101,8 @@ import useCustomUser from '@/composables/useCustomUser'
 const { register } = useFirebase()
 const { mutate: addClient, error: addClientError } =
   useMutation<CustomUser>(CREATE_CLIENT)
-const { locale,setLocale } = useLanguage()
-const {customUser} = useCustomUser()
+const { locale, setLocale } = useLanguage()
+const { customUser } = useCustomUser()
 
 watch(addClientError, () => {
   if (!addClientError.value) return
@@ -140,7 +140,7 @@ const handleRegister = async () => {
   errorRegister.value = null
   console.log(values)
   if (Object.keys(errors.value).length === 0) {
-    register(values.email, values.password)
+    await register(values.email, values.password)
       .then(async userData => {
         // Add user to database
         await addClient({

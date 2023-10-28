@@ -144,7 +144,7 @@ const handleLogin = async () => {
   errorLogin.value = null
   console.log(values)
   if (Object.keys(errors.value).length === 0) {
-    login(values.email, values.password)
+    await login(values.email, values.password)
       .then(async () => {
         console.log('login success')
         resetForm()
