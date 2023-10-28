@@ -90,7 +90,6 @@ export class UsersResolver {
       updateUserInput,
     )
   }
-// TODO: make documentation for this and for mail.service.ts
 
   @UseGuards(FirebaseGuard)
   @Mutation(() => User, { name: 'updateEmployeeRegister' })
