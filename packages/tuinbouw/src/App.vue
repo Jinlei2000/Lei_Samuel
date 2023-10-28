@@ -13,6 +13,9 @@ import { DefaultApolloClient } from '@vue/apollo-composable'
 import useGraphql from './composables/useGraphql'
 import { useI18n } from 'vue-i18n'
 import useLanguage from './composables/useLanguage'
+// import type AppHeaderVue from '../components/generic/AppHeader.vue'
+import AppHeader from './components/generic/AppHeader.vue'
+import useCustomUser from './composables/useCustomUser'
 
 export default {
   components: {
@@ -33,7 +36,4 @@ export default {
     return {}
   },
 }
-// import type AppHeaderVue from '../components/generic/AppHeader.vue'
-import AppHeader from './components/generic/AppHeader.vue'
-import useCustomUser from './composables/useCustomUser'
 </script>
