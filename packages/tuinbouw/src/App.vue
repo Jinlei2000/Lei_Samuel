@@ -1,6 +1,6 @@
 <template>
-  <Toast />
-  <div class="text-black mx-4">
+  <Toast position="bottom-right" />
+  <div class="mx-4 text-black">
     <AppHeader />
     <RouterView class="pt-12" />
   </div>
