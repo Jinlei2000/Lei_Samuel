@@ -6,6 +6,7 @@ export const GET_MATERIALS = gql`
       id
       name
       isLoan
+      fdfd
       user {
         id
         fullname
