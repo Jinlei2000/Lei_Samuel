@@ -13,7 +13,7 @@
           <span v-if="errorForgotPwd" class="text-red-600">{{
             errorForgotPwd
           }}</span>
-          <form @submit.prevent="handleLogin">
+          <form @submit.prevent="handleForgotPwd">
             <InputText
               name="Email"
               placeholder="john@example.com"
@@ -93,14 +93,14 @@ const errorMessages = ref<{
 
 const loading = ref(false)
 
-const handleLogin = async () => {
+const handleForgotPwd = async () => {
   loading.value = true
   await validate()
   errorMessages.value = errors.value
   errorForgotPwd.value = null
   // console.log(values)
   if (Object.keys(errors.value).length === 0) {
-    forgotPassword(values.email)
+    await forgotPassword(values.email)
       .then(() => {
         console.log('Reset password email sent')
         resetForm()
