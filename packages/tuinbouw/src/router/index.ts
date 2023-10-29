@@ -129,7 +129,7 @@ const router = createRouter({
           component: () => import('../views/client/Profile.vue'),
         },
         {
-          path: 'make-appointment',
+          path: 'add-appointment',
           component: () => import('../views/client/AddAppointment.vue'),
         },
         {

@@ -44,7 +44,7 @@ app.use(i18n) // ALTIJD VOOR DE ROUTER!
 ;(async () => {
   // Restore user session before mounting the app
   await restoreUser()
-  console.log('firebaseUser', firebaseUser.value)
+  // console.log('firebaseUser', firebaseUser.value)
   // Restore custom user session before mounting the app if firebaseUser is set
   if (firebaseUser.value) await restoreCustomUser()
 

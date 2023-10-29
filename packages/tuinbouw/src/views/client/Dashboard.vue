@@ -1,10 +1,19 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
+  <div class="flex min-h-screen flex-col items-center justify-center">
     <h1
-      class="text-transparent text-3xl font-extrabold md:text-5xl lg:text-6xl bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
+      class="mb-5 bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
     >
       Dashboard
     </h1>
+    <!-- make a list of buttons go to the right page -->
+    <div class="flex gap-2">
+      <Router-link
+        v-for="b in ['add-appointment', 'appointments']"
+        class="focus:shadow-outline-red mt-4 rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
+        :to="`/client/${b}`"
+        >{{ b }}</Router-link
+      >
+    </div>
   </div>
 </template>
 
