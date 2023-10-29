@@ -166,7 +166,10 @@ const {
       direction: 'ASC',
     },
   },
-  { pollInterval: 1000 },
+  {
+    // return result from cache first (if it exists), then return network result once it's available.
+    fetchPolicy: 'cache-and-network',
+  },
 )
 
 const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
