@@ -19,12 +19,20 @@
         :key="a.id"
       >
         <div
-          class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
-          @click="openModal(a)"
+          :class="[
+            'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
+            {
+              ' border border-red-400': isOverToday(a),
+            },
+          ]"
         >
           <div class="p-4">
             <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-            <p class="text-gray-600">{{ a.description }}</p>
+            <p class="mb-1 text-gray-600">{{ a.description }}</p>
+            <p class="mb-1 text-gray-600">{{ a.id }}</p>
+            <p class="text-gray-600" v-if="a.finalDate">
+              {{ formatDateTime(a.finalDate) }}
+            </p>
           </div>
           <div class="border-t border-gray-200 p-4">
             <div class="flex items-center justify-between">
@@ -45,14 +53,39 @@
               >
             </div>
           </div>
+          <div class="border-t border-gray-200 p-4">
+            <div class="flex items-center justify-between">
+              <!-- View More button -->
+              <button @click="openModalDetail(a)" class="ml-2 text-blue-500">
+                View More
+              </button>
+              <!-- Delete button (only if not done) -->
+              <button
+                v-if="!a.isDone"
+                @click.stop="deleteAppointmentBtn(a.id)"
+                class="ml-2 text-red-500"
+              >
+                Delete
+              </button>
+              <!-- Edit button (only if not done) -->
+              <button
+                v-if="!a.isDone"
+                @click.stop="openModalDetailEdit(a)"
+                class="ml-2 text-blue-500"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Teleport Modal -->
+    <!-- Detail Modal -->
     <Dialog
       v-model:visible="visible"
       modal
+      maximizable
       header="Appointment"
       :style="{ width: '50vw' }"
       v-if="selectedAppointment"
@@ -65,6 +98,26 @@
         {{ selectedAppointment.description }}
       </p>
     </Dialog>
+
+    <!-- Edit Modal -->
+    <Dialog
+      v-model:visible="visibleEdit"
+      modal
+      maximizable
+      header="Edit Appointment"
+      :style="{ width: '50vw' }"
+      v-if="selectedAppointment"
+      @click:close="closeModal"
+    >
+      <div class="p-4">
+        <h2 class="mb-2 text-xl font-semibold">
+          {{ selectedAppointment.type }}
+        </h2>
+        <p class="text-gray-600">
+          {{ selectedAppointment.description }}
+        </p>
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -75,12 +128,13 @@ defineOptions({
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
-import { useQuery } from '@vue/apollo-composable'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import { useToast } from 'primevue/usetoast'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 import { ArrowLeft } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
+import { DELETE_APPOINTMENT } from '@/graphql/appointment.mutation'
 
 const { customUser } = useCustomUser()
 const { firebaseUser } = useFirebase()
@@ -92,20 +146,23 @@ const order = ref({
 const filters = ref([])
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
+const visibleEdit = ref(false)
 
-const { result: allAppointment, error: allAppointmentError } = useQuery(
-  GET_ALL_APPOINTMENT_BY_CLIENT,
-  {
-    userId: customUser.value?.id,
-    filters: [],
-    order: {
-      field: 'createdAt',
-      direction: 'ASC',
-    },
+const {
+  result: allAppointment,
+  error: allAppointmentError,
+  refetch: allAppointmentRefectch,
+} = useQuery(GET_ALL_APPOINTMENT_BY_CLIENT, {
+  userId: customUser.value?.id,
+  filters: [],
+  order: {
+    field: 'createdAt',
+    direction: 'ASC',
   },
-)
+})
+const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
 
-const openModal = (appointment: Appointment) => {
+const openModalDetail = (appointment: Appointment) => {
   selectedAppointment.value = appointment
   visible.value = true
 }
@@ -113,6 +170,37 @@ const openModal = (appointment: Appointment) => {
 const closeModal = () => {
   selectedAppointment.value = null
   visible.value = false
+  visibleEdit.value = false
+}
+
+const deleteAppointmentBtn = (id: string) => {
+  deleteAppointment({
+    id,
+  })
+    .then(() => {
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Appointment deleted',
+        life: 10000,
+      })
+
+      // refetch
+      allAppointmentRefectch()
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: err.message,
+        life: 10000,
+      })
+    })
+}
+
+const openModalDetailEdit = (appointment: Appointment) => {
+  selectedAppointment.value = appointment
+  visibleEdit.value = true
 }
 
 const formatDateTime = (date: string) => {
@@ -120,9 +208,32 @@ const formatDateTime = (date: string) => {
   return `${d.toLocaleDateString()}`
 }
 
-watchEffect(() => {
-  console.log(allAppointment.value?.appointmentsByUserId)
-})
+// check if finalDate is over today and not done
+// also check if isScheduled is false and endProposedDate is over today
+const isOverToday = (appointment: Appointment) => {
+  if (appointment.isDone) return false
+  console.log('appointment', appointment.id)
+
+  const today = new Date().toISOString().split('T')[0]
+  const finalDate = appointment.finalDate
+    ? new Date(appointment.finalDate).toISOString().split('T')[0]
+    : null
+  const endProposedDate = new Date(appointment.endProposedDate)
+    .toISOString()
+    .split('T')[0]
+
+  console.log('dats', {
+    today,
+    finalDate,
+    endProposedDate,
+  })
+
+  if (finalDate && finalDate < today && !appointment.isDone) return true
+
+  if (!appointment.isScheduled && endProposedDate < today) return true
+
+  return false
+}
 
 watch(allAppointmentError, () => {
   if (!allAppointmentError.value) return
