@@ -143,6 +143,7 @@ const order = ref({
   field: 'createdAt',
   direction: 'ASC',
 })
+// TODO: use dynamic filters and orders
 const filters = ref([])
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
