@@ -99,6 +99,7 @@
       </p>
     </Dialog>
 
+    <!-- TODO: make edit functions -->
     <!-- Edit Modal -->
     <Dialog
       v-model:visible="visibleEdit"
@@ -120,7 +121,6 @@
     </Dialog>
   </div>
 </template>
-
 <script setup lang="ts">
 defineOptions({
   inheritAttrs: false,
@@ -152,14 +152,19 @@ const {
   result: allAppointment,
   error: allAppointmentError,
   refetch: allAppointmentRefectch,
-} = useQuery(GET_ALL_APPOINTMENT_BY_CLIENT, {
-  userId: customUser.value?.id,
-  filters: [],
-  order: {
-    field: 'createdAt',
-    direction: 'ASC',
+} = useQuery(
+  GET_ALL_APPOINTMENT_BY_CLIENT,
+  {
+    userId: customUser.value?.id,
+    filters: [],
+    order: {
+      field: 'createdAt',
+      direction: 'ASC',
+    },
   },
-})
+  { pollInterval: 1000 },
+)
+
 const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
 
 const openModalDetail = (appointment: Appointment) => {
@@ -203,16 +208,17 @@ const openModalDetailEdit = (appointment: Appointment) => {
   visibleEdit.value = true
 }
 
+// TODO: make a composables for this (useTimeUtilities)
 const formatDateTime = (date: string) => {
   const d = new Date(date)
   return `${d.toLocaleDateString()}`
 }
 
+// TODO: make a composables for this (useTimeUtilities)
 // check if finalDate is over today and not done
 // also check if isScheduled is false and endProposedDate is over today
 const isOverToday = (appointment: Appointment) => {
   if (appointment.isDone) return false
-  console.log('appointment', appointment.id)
 
   const today = new Date().toISOString().split('T')[0]
   const finalDate = appointment.finalDate
@@ -221,12 +227,6 @@ const isOverToday = (appointment: Appointment) => {
   const endProposedDate = new Date(appointment.endProposedDate)
     .toISOString()
     .split('T')[0]
-
-  console.log('dats', {
-    today,
-    finalDate,
-    endProposedDate,
-  })
 
   if (finalDate && finalDate < today && !appointment.isDone) return true
 
@@ -243,6 +243,15 @@ watch(allAppointmentError, () => {
     detail: allAppointmentError.value.message,
     life: 10000,
   })
+})
+
+//  log the allAppointment length
+watch(allAppointment, () => {
+  if (!allAppointment.value) return
+  console.log(
+    'allAppointment length: ',
+    allAppointment.value.appointmentsByUserId.length,
+  )
 })
 
 // Create brearer token
