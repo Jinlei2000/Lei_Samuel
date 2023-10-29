@@ -11,6 +11,10 @@
     AllAppointment
   </h1>
 
+  <div v-if="loading">
+    <p class="text-6xl font-black">Loading...</p>
+  </div>
+
   <div>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <div
@@ -160,6 +164,7 @@ const {
   result: allAppointment,
   error: allAppointmentError,
   refetch: allAppointmentRefectch,
+  loading,
 } = useQuery(GET_ALL_APPOINTMENT_BY_CLIENT, variables, {
   // return result from cache first (if it exists), then return network result once it's available.
   fetchPolicy: 'cache-and-network',
