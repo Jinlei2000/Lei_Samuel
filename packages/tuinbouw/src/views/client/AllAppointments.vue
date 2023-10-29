@@ -139,16 +139,20 @@ import { DELETE_APPOINTMENT } from '@/graphql/appointment.mutation'
 const { customUser } = useCustomUser()
 const { firebaseUser } = useFirebase()
 const toast = useToast()
-const order = ref({
-  field: 'createdAt',
-  direction: 'ASC',
-})
+
 // TODO: use dynamic filters and orders
 // https://apollo.vuejs.org/guide-composable/query.html
-const filters = ref([])
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
 const visibleEdit = ref(false)
+const variables = ref({
+  userId: customUser.value?.id,
+  filters: [],
+  order: {
+    field: 'createdAt',
+    direction: 'ASC',
+  },
+})
 
 // TODO: use fetchMore to load more appointments (add some kind of pagination in backend (limit, offset)))
 // https://apollo.vuejs.org/guide-composable/pagination.html
@@ -156,21 +160,10 @@ const {
   result: allAppointment,
   error: allAppointmentError,
   refetch: allAppointmentRefectch,
-} = useQuery(
-  GET_ALL_APPOINTMENT_BY_CLIENT,
-  {
-    userId: customUser.value?.id,
-    filters: [],
-    order: {
-      field: 'createdAt',
-      direction: 'ASC',
-    },
-  },
-  {
-    // return result from cache first (if it exists), then return network result once it's available.
-    fetchPolicy: 'cache-and-network',
-  },
-)
+} = useQuery(GET_ALL_APPOINTMENT_BY_CLIENT, variables, {
+  // return result from cache first (if it exists), then return network result once it's available.
+  fetchPolicy: 'cache-and-network',
+})
 
 const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
 
