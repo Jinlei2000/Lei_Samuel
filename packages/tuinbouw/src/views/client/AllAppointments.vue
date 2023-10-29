@@ -11,6 +11,133 @@
     AllAppointment
   </h1>
 
+  <div class="relative flex w-full items-center justify-between">
+    <!-- Filter -->
+    <div class="flex items-center gap-3">
+      <button
+        class="border-1 group flex h-12 items-center gap-[6px] rounded-2xl border-black bg-transparent p-3 text-black"
+        v-on:click="filter = !filter"
+      >
+        <Filter class="h-5 w-5" />
+        <p class="m-0 text-lg">Filter</p>
+        <ChevronDown
+          :class="filter ? 'rotate-180 transition-all' : 'transition-all'"
+          class="w-[22px]transition-all h-[22px]"
+        />
+      </button>
+    </div>
+    <!-- Filter dropdown -->
+    <div
+      :class="
+        filter
+          ? 'opacity-100 transition-all duration-200'
+          : 'opacity-0 transition-all duration-200'
+      "
+      class="border-1 absolute top-16 z-50 flex gap-12 rounded-2xl border-black bg-gray-200 px-12 py-6"
+    >
+      <div class="flex flex-col gap-3">
+        <h2 class="text-lg">Type</h2>
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-col gap-3">
+            <div class="flex gap-2">
+              <input
+                type="checkbox"
+                id="maintenance"
+                name="maintenance"
+                @change="updateFilters('M')"
+                className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+              />
+              <div
+                class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+              >
+                <Check class="h-3 w-3" />
+              </div>
+              <label for="maintenance">Maintenance</label>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <div class="flex gap-2">
+              <input
+                type="checkbox"
+                id="repair"
+                name="repair"
+                @change="updateFilters('R')"
+                className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+              />
+              <div
+                class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+              >
+                <Check class="h-3 w-3" />
+              </div>
+              <label for="repair">Repair</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-3">
+        <h2 class="text-lg">Status</h2>
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-col gap-3">
+            <div class="relative flex items-center gap-2">
+              <input
+                class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
+                type="radio"
+                id="all"
+                name="status"
+                value="all"
+                @change="updateFiltersRadio(['D', 'ND'], true)"
+                checked
+              />
+              <div
+                class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+              >
+                <Check class="h-3 w-3" />
+              </div>
+              <label for="all">All</label>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <div class="relative flex items-center gap-2">
+              <input
+                class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
+                type="radio"
+                id="done"
+                name="status"
+                value="done"
+                @change="updateFiltersRadio(['D'])"
+              />
+              <div
+                class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+              >
+                <Check class="h-3 w-3" />
+              </div>
+              <label for="done">Done</label>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <div class="relative flex items-center gap-2">
+              <input
+                class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
+                type="radio"
+                id="not-done"
+                name="status"
+                value="not-done"
+                @change="updateFiltersRadio(['ND'])"
+              />
+              <div
+                class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+              >
+                <Check class="h-3 w-3" />
+              </div>
+              <label for="not-done">Not Done</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End filter dropdown -->
+  </div>
+
   <div v-if="loading">
     <p class="text-6xl font-black">Loading...</p>
   </div>
@@ -135,7 +262,7 @@ import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { useToast } from 'primevue/usetoast'
 import { ref, watch } from 'vue'
-import { ArrowLeft } from 'lucide-vue-next'
+import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import { DELETE_APPOINTMENT } from '@/graphql/appointment.mutation'
@@ -149,7 +276,14 @@ const toast = useToast()
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
 const visibleEdit = ref(false)
-const variables = ref({
+const variables = ref<{
+  userId: string | undefined
+  filters: string[]
+  order: {
+    field: string
+    direction: string
+  }
+}>({
   userId: customUser.value?.id,
   filters: [],
   order: {
@@ -157,6 +291,7 @@ const variables = ref({
     direction: 'ASC',
   },
 })
+const filter = ref(false)
 
 // TODO: use fetchMore to load more appointments (add some kind of pagination in backend (limit, offset)))
 // https://apollo.vuejs.org/guide-composable/pagination.html
@@ -171,6 +306,39 @@ const {
 })
 
 const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
+
+const updateFilters = (filter: string) => {
+  const index = variables.value.filters.indexOf(filter)
+  if (index !== -1) {
+    // Remove the filter if it exists
+    variables.value.filters.splice(index, 1)
+  } else {
+    // Add the filter if it doesn't exist
+    variables.value.filters.push(filter)
+  }
+}
+
+const updateFiltersRadio = (filters: string[], reset: boolean = false) => {
+  if (reset) {
+    // delete all filters
+    for (let f of filters) {
+      const index = variables.value.filters.indexOf(f)
+      if (index !== -1) {
+        // Remove the filter if it exists
+        variables.value.filters.splice(index, 1)
+      }
+    }
+  } else {
+    // add all filters
+    for (let f of filters) {
+      const index = variables.value.filters.indexOf(f)
+      if (index === -1) {
+        // Add the filter if it doesn't exist
+        variables.value.filters.push(f)
+      }
+    }
+  }
+}
 
 const openModalDetail = (appointment: Appointment) => {
   selectedAppointment.value = appointment
