@@ -144,11 +144,14 @@ const order = ref({
   direction: 'ASC',
 })
 // TODO: use dynamic filters and orders
+// https://apollo.vuejs.org/guide-composable/query.html
 const filters = ref([])
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
 const visibleEdit = ref(false)
 
+// TODO: use fetchMore to load more appointments (add some kind of pagination in backend (limit, offset)))
+// https://apollo.vuejs.org/guide-composable/pagination.html
 const {
   result: allAppointment,
   error: allAppointmentError,
