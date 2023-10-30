@@ -28,6 +28,10 @@ const router = createRouter({
           path: 'forgot-password',
           component: () => import('../views/auth/ForgotPassword.vue'),
         },
+        {
+          path: 'register-employee/:token',
+          component: () => import('../views/auth/RegisterEmployee.vue'),
+        },
       ],
     },
 
@@ -125,7 +129,7 @@ const router = createRouter({
           component: () => import('../views/client/Profile.vue'),
         },
         {
-          path: 'make-appointment',
+          path: 'add-appointment',
           component: () => import('../views/client/AddAppointment.vue'),
         },
         {

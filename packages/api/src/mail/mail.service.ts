@@ -30,7 +30,11 @@ export class MailService {
     console.log('start sending email')
 
     // TODO: frontend make a page for employee to create account
-    const url = `${process.env.URL_FRONTEND}/auth/register-employee/?token=${token}`
+    const frontEndUrl =
+      process.env.NODE_ENV == 'production'
+        ? process.env.URL_FRONTEND
+        : 'http://localhost:5173'
+    const url = `${frontEndUrl}/auth/register-employee/token?token=${token}`
 
     const result = await this.mailerService
       .sendMail({
@@ -69,6 +73,24 @@ export class MailService {
     }
 
     return tokens
+  }
+
+  // Find token by token
+  async findOneByToken(token: string): Promise<Mail> {
+    const tokenFound = await this.mailRepository.findOne({
+      where: { token: token },
+    })
+
+    if (!tokenFound) {
+      throw new GraphQLError('Token not found!')
+    }
+
+    // Check if token is expired
+    if (tokenFound.expirationDate < new Date()) {
+      throw new GraphQLError('Token expired!')
+    }
+
+    return tokenFound
   }
 
   // Save token

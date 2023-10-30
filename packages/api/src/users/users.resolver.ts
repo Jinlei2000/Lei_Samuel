@@ -91,6 +91,17 @@ export class UsersResolver {
     )
   }
 
+  @UseGuards(FirebaseGuard)
+  @Mutation(() => User, { name: 'updateEmployeeRegister' })
+  updateEmployeeRegister(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ) {
+    return this.usersService.updateEmployeeRegister(
+      updateUserInput.id,
+      updateUserInput,
+    )
+  }
+
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => String, { name: 'removeUser' })

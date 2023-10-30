@@ -4,7 +4,6 @@ import { ref } from 'vue'
 import useFirebase from './useFirebase'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import useGraphql from './useGraphql'
-import useLanguage from './useLanguage'
 
 const customUser = ref<CustomUser | null>()
 
@@ -18,10 +17,10 @@ const restoreCustomUser = async () => {
     const { onResult } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     })
-    console.log('testtttttttttt', firebaseUser.value?.uid)
+    // console.log('testtttttttttt', firebaseUser.value?.uid)
     onResult(result => {
       if (result.data) {
-        console.log(result)
+        // console.log(result)
         customUser.value = result.data.userByUid
         resolve()
       }
