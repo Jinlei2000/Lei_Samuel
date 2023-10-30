@@ -26,6 +26,8 @@ export class SchedulesResolver {
     private readonly appointmentsService: AppointmentsService,
   ) {}
 
+  @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
+  @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Schedule], { name: 'schedules' })
   findAll(
     @Args('filters', { type: () => [String], nullable: true })
@@ -36,6 +38,8 @@ export class SchedulesResolver {
     return this.schedulesService.findAll(filters, order)
   }
 
+  @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
+  @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => Schedule, { name: 'schedule' })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.schedulesService.findOne(id)
@@ -52,7 +56,8 @@ export class SchedulesResolver {
     return this.schedulesService.findTodayScheduleByDateAndUserId(userId, date)
   }
 
-
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Schedule)
   createSchedule(
     @Args('createScheduleInput') createScheduleInput: CreateScheduleInput,
@@ -60,6 +65,8 @@ export class SchedulesResolver {
     return this.schedulesService.create(createScheduleInput)
   }
 
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Schedule)
   updateSchedule(
     @Args('updateScheduleInput') updateScheduleInput: UpdateScheduleInput,
@@ -70,6 +77,8 @@ export class SchedulesResolver {
     )
   }
 
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Schedule)
   removeSchedule(@Args('id', { type: () => String }) id: string) {
     return this.schedulesService.remove(id)
