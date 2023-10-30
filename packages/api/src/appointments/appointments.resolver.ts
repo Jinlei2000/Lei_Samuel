@@ -1,9 +1,4 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-} from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { AppointmentsService } from './appointments.service'
 import { Appointment } from './entities/appointment.entity'
 import { CreateAppointmentInput } from './dto/create-appointment.input'
@@ -33,6 +28,20 @@ export class AppointmentsResolver {
     order?: OrderByInput,
   ) {
     return this.appointmentsService.findAll(filters, order)
+  }
+
+  // TODO: add to documentation
+  @AllowedRoles(Role.CLIENT)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Appointment], { name: 'appointmentsByUserId' })
+  findAllByUserId(
+    @Args('userId', { type: () => String }) userId: string,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    return this.appointmentsService.findAllByUserId(userId, filters, order)
   }
 
   @UseGuards(FirebaseGuard)

@@ -31,7 +31,7 @@ export default () => {
     const { mutate: updateLocale } = useMutation<CustomUser>(UPDATE_LOCALE)
 
     if (customUser.value) {
-      console.log('update locale', targetLocale)
+      // console.log('update locale', targetLocale)
       await updateLocale({
         id: customUser.value?.id,
         locale: targetLocale,
