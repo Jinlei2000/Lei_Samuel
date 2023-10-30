@@ -1,4 +1,6 @@
 <template>
+  <div class="h-[80px]">
+  </div>
   <Container
     class="fixed left-0 top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
   >
