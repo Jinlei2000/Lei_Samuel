@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="bg-gray-200 flex flex-col p-3 rounded-2xl w-full gap-3">
-          <div class="bg-primary-green bg-opacity-10 outline-primary-green outline flex p-3 rounded w-full items-center relative">
+          <div v-for="location of allLocations" class="bg-primary-green bg-opacity-10 outline-primary-green outline flex p-3 rounded w-full items-center relative">
             <h3 class="text-lg w-1/5">Home</h3>
             <p>Hertogstraat 27, 8870 Izegem</p>
             <div class="bg-primary-green rounded-full p-[2px] absolute top-4 right-4">
@@ -67,7 +67,9 @@ const {
   loading,
   error,
 } = useQuery(GET_LOCATIONS, () => ({
-  userId: firebaseUser.value?.uid,
+  userId: "mFIC6ZoPCRVjhf9AqNBHb9Zzxkk2",
 }))
+
+console.log(allLocations.value)
 
 </script>

@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_LOCATIONS = gql`
-  query {
-  locationsByUserId(userId: String) {
+  query locationsByUserId($userId: String!) {
+  locationsByUserId(userId: $userId) {
     id
     userId
     address
