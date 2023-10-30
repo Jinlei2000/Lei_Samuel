@@ -72,10 +72,10 @@ export class SchedulesService {
   }
 
   // check if user is already scheduled on this date (return true or false)
-  async findOneByDateAndUserId(userId: string, date: Date): Promise<boolean> {
+  async findOneByDateAndUserId(userId: string, date: string): Promise<boolean> {
     const schedules = await this.scheduleRepository.find({
       where: {
-        finalDate: date,
+        finalDate: new Date(date),
         employees: {
           // @ts-ignore
           $elemMatch: { id: new ObjectId(userId) }, // $elemMatch is needed to search in array of objects
@@ -84,6 +84,23 @@ export class SchedulesService {
     })
 
     return schedules.length > 0
+  }
+
+  async findTodayScheduleByDateAndUserId(
+    userId: string,
+    date: string,
+  ): Promise<Schedule[]> {
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        finalDate: new Date(date),
+        employees: {
+          // @ts-ignore
+          $elemMatch: { id: new ObjectId(userId) }, // $elemMatch is needed to search in array of objects
+        },
+      },
+    })
+
+    return schedules
   }
 
   async create(createScheduleInput: CreateScheduleInput) {
@@ -226,7 +243,7 @@ export class SchedulesService {
         },
         // find all schedules that are between start and end date
         // @ts-ignore
-        finalDate: { $gte: startDate, $lte: endDate},
+        finalDate: { $gte: startDate, $lte: endDate },
       },
     })
 

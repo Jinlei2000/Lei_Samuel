@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: redesign page -->
   <section class="bg-white dark:bg-gray-900">
     <div class="container flex items-center min-h-screen px-6 py-12 mx-auto">
       <div class="flex flex-col items-center max-w-sm mx-auto text-center">

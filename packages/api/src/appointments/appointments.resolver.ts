@@ -1,19 +1,11 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  Parent,
-  ResolveField,
-} from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { AppointmentsService } from './appointments.service'
 import { Appointment } from './entities/appointment.entity'
 import { CreateAppointmentInput } from './dto/create-appointment.input'
 import { UpdateAppointmentInput } from './dto/update-appointment.input'
 import { OrderByInput } from 'src/interfaces/order.input'
 import { UsersService } from 'src/users/users.service'
-import { Role, User } from 'src/users/entities/user.entity'
+import { Role } from 'src/users/entities/user.entity'
 import { UseGuards } from '@nestjs/common'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { AllowedRoles } from 'src/users/decorators/role.decorator'
@@ -38,6 +30,20 @@ export class AppointmentsResolver {
     return this.appointmentsService.findAll(filters, order)
   }
 
+  // TODO: add to documentation
+  @AllowedRoles(Role.CLIENT)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Appointment], { name: 'appointmentsByUserId' })
+  findAllByUserId(
+    @Args('userId', { type: () => String }) userId: string,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    return this.appointmentsService.findAllByUserId(userId, filters, order)
+  }
+
   @UseGuards(FirebaseGuard)
   @Query(() => Appointment, { name: 'appointment' })
   findOne(@Args('id', { type: () => String }) id: string) {
@@ -54,7 +60,7 @@ export class AppointmentsResolver {
     return this.appointmentsService.create(createAppointmentInput)
   }
 
-  @AllowedRoles(Role.ADMIN, Role.CLIENT)
+  @AllowedRoles(Role.ADMIN, Role.CLIENT, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Appointment)
   updateAppointment(
@@ -66,8 +72,6 @@ export class AppointmentsResolver {
       updateAppointmentInput,
     )
   }
-
-  // TODO: update is done for employee
 
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)

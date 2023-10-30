@@ -1,9 +1,9 @@
 <template>
   <div
-    class="bg-gray-200 rounded-2xl max-h-32 w-full p-3 pl-6 relative overflow-hidden"
+    class="relative max-h-32 w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
   >
     <div
-      class="w-1 h-full absolute left-0 top-0"
+      class="absolute left-0 top-0 h-full w-1"
       :class="
         props.type === 'maintenance'
           ? 'bg-primary-green'
@@ -14,19 +14,19 @@
           : 'bg-transparent'
       "
     ></div>
-    <h2 class="text-xl mb-1">{{ props.title }}</h2>
-    <div class="flex gap-3 items-end justify-between">
-      <p class="text-base overflow-hidden">
+    <h2 class="mb-1 text-xl">{{ props.title }}</h2>
+    <div class="flex items-end justify-between gap-3">
+      <p class="overflow-hidden text-base">
         {{ props.description }}
       </p>
       <button
-        class="bg-primary-orange rounded-[8px] text-gray-200 pr-[7px] pl-3 py-[6px] flex gap-2 h-fit items-center"
+        class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
       >
-        Navigate <Navigation stroke-width="2" class="w-[17px] h-[17px]" />
+        Navigate <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
       </button>
     </div>
-    <button class="absolute top-3 right-3 hover:scale-105 transition-all">
-      <Info class="w-[24px] h-[24px]" />
+    <button class="absolute right-3 top-3 transition-all hover:scale-105">
+      <Info class="h-[24px] w-[24px]" />
     </button>
   </div>
 </template>

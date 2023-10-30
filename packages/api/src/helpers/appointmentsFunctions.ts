@@ -47,9 +47,9 @@ export const filterAppointments = (
 
     // type filter
     let selectTypes: Array<string> = []
-    if (filters?.includes('M')) selectTypes.push('MAINTENANCE')
-    if (filters?.includes('R')) selectTypes.push('REPAIR')
-    if (selectTypes.length > 0) whereQuery.role = { $in: selectTypes }
+    if (filters?.includes('M')) selectTypes.push('maintenance')
+    if (filters?.includes('R')) selectTypes.push('repair')
+    if (selectTypes.length > 0) whereQuery.type = { $in: selectTypes }
 
     // done filter
     if (filters?.includes('D')) whereQuery.isDone = true

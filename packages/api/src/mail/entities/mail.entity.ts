@@ -24,6 +24,7 @@ export class Mail {
   expirationDate: Date
 
   @Column()
+  @Field()
   userId: string
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })

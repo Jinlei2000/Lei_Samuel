@@ -37,13 +37,21 @@ export class UsersService {
     private readonly materialsService: MaterialsService,
   ) {}
 
-  findAll(filters?: Array<string>, order?: OrderByInput): Promise<User[]> {
+  findAll(
+    filters?: Array<string>,
+    order?: OrderByInput,
+    searchString?: string,
+  ): Promise<User[]> {
     // filter and order users
     const whereQuery = filterUsers(filters)
     const orderQuery = orderUsers(order)
 
     return this.userRepository.find({
-      where: whereQuery,
+      where: {
+        ...whereQuery,
+        // @ts-ignore
+        fullname: { $regex: new RegExp(searchString, 'i') },
+      },
       order: orderQuery,
     })
   }
@@ -70,18 +78,6 @@ export class UsersService {
     if (!user) throw new GraphQLError('User not found')
 
     return user
-  }
-
-  // TODO: use this in findAll
-  findUsersBySearchString(searchString: string): Promise<User[]> {
-    searchString = searchString.toLowerCase()
-
-    const users = this.userRepository.find({
-      // @ts-ignore
-      fullname: { $regex: new RegExp(searchString, 'i') },
-    })
-
-    return users
   }
 
   // find all employees that are available on a specific date (not absent && not scheduled)
@@ -120,7 +116,7 @@ export class UsersService {
     // check if user is scheduled today
     const isScheduled = await this.scheduleService.findOneByDateAndUserId(
       userId,
-      date,
+      date.toDateString(),
     )
 
     // if user is absent or scheduled, return false
@@ -145,8 +141,10 @@ export class UsersService {
 
     // Update the fullname if firstname or lastname is updated
     if (
-      updateUserInput.firstname.toLowerCase() != user.firstname ||
-      updateUserInput.lastname.toLowerCase() != user.lastname
+      (updateUserInput.firstname &&
+        updateUserInput.firstname.toLowerCase() != user.firstname) ||
+      (updateUserInput.lastname &&
+        updateUserInput.lastname.toLowerCase() != user.lastname)
     ) {
       updateUserInput.fullname = `${updateUserInput.firstname.toLowerCase()} ${updateUserInput.lastname.toLowerCase()}`
     }
@@ -154,6 +152,30 @@ export class UsersService {
     // Check that user is not trying to update someone else if not admin
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
       throw new GraphQLError('You are not allowed to update someone else')
+
+    // remove id and make a new variable with the rest of the data
+    const { id: _, ...updatedData } = updateUserInput
+
+    await this.userRepository.update(id, updatedData)
+
+    return this.findOne(id.toString())
+  }
+
+  async updateEmployeeRegister(
+    id: ObjectId,
+    updateUserInput: UpdateUserInput,
+  ): Promise<User> {
+    const user = await this.findOne(id.toString())
+
+    // Update the fullname if firstname or lastname is updated
+    if (
+      (updateUserInput.firstname &&
+        updateUserInput.firstname.toLowerCase() != user.firstname) ||
+      (updateUserInput.lastname &&
+        updateUserInput.lastname.toLowerCase() != user.lastname)
+    ) {
+      updateUserInput.fullname = `${updateUserInput.firstname.toLowerCase()} ${updateUserInput.lastname.toLowerCase()}`
+    }
 
     // remove id and make a new variable with the rest of the data
     const { id: _, ...updatedData } = updateUserInput
@@ -226,10 +248,7 @@ export class UsersService {
   }
 
   // CREATECLIENT
-  async createClient(
-    currentUserUid: string,
-    createClientInput: CreateClientInput,
-  ): Promise<User> {
+  async createClient(createClientInput: CreateClientInput): Promise<User> {
     // Check if user already exists with email
     const user = await this.userRepository.findOneBy({
       email: createClientInput.email,
@@ -237,7 +256,7 @@ export class UsersService {
     if (user) throw new GraphQLError('User already exists')
 
     const s = new User()
-    s.uid = currentUserUid
+    s.uid = createClientInput.uid
     s.locale = createClientInput.locale ?? 'en'
     s.role = Role.CLIENT
     s.firstname = createClientInput.firstname.toLowerCase()

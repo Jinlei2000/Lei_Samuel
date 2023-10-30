@@ -17,6 +17,9 @@ export class UpdateUserInput {
   firstname?: string
 
   @Field({ nullable: true }) // graphql
+  locale?: string
+
+  @Field({ nullable: true }) // graphql
   url?: string
 
   @Field({ nullable: true }) // graphql
@@ -34,13 +37,6 @@ export class UpdateUserInput {
   @IsMobilePhone() // validation
   @Field({ nullable: true }) // graphql
   telephone?: string
-
-  @Field({ nullable: true }) // graphql
-  availability?: boolean
-
-  // STAFF ONLY
-  @Field({ nullable: true }) // GraphQL type
-  absentCount?: number
 
   // CLIENT ONLY
   @Field({ nullable: true }) // GraphQL type

@@ -1,5 +1,4 @@
 <template>
-  <Toast />
   <div
     class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
   >
@@ -361,7 +360,7 @@ watch(error, () => {
     severity: 'error',
     summary: 'Error',
     detail: error.value.message,
-    life: 2000000000,
+    life: 2000,
   })
 })
 

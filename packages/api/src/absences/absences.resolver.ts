@@ -3,7 +3,6 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
   Parent,
   ResolveField,
 } from '@nestjs/graphql'
@@ -40,15 +39,15 @@ export class AbsencesResolver {
 
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
-  @Query(() => [Absence], { name: 'absencesByPersonId' })
+  @Query(() => [Absence], { name: 'absencesByUserId' })
   findAllByUserId(
-    @Args('id', { type: () => String }) id: string,
+    @Args('userId', { type: () => String }) userId: string,
     @Args('filters', { type: () => [String], nullable: true })
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
   ) {
-    return this.absencesService.findAllByUserId(id, filters, order)
+    return this.absencesService.findAllByUserId(userId, filters, order)
   }
 
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)

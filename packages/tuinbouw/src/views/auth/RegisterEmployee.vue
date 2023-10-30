@@ -1,5 +1,5 @@
 <template>
-  <section class="">
+  <section>
     <div
       class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0"
     >
@@ -8,7 +8,7 @@
           <h1
             class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
-            Create an account
+            Create an employee account
           </h1>
           <span v-if="errorRegister" class="text-red-600">{{
             errorRegister
@@ -85,29 +85,53 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import InputText from '@/components/generic/form/InputText.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { CREATE_CLIENT } from '@/graphql/user.mutation'
+import { UPDATE_EMPLOYEE_REGISTER } from '@/graphql/user.mutation'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
-import { useMutation } from '@vue/apollo-composable'
-import useLanguage from '@/composables/useLanguage'
+import { useMutation, useQuery } from '@vue/apollo-composable'
+import { useI18n } from 'vue-i18n'
+import {
+  DELETE_ALL_MAILTOKENS_BY_USERID,
+  GET_MAILTOKEN_BY_TOKEN,
+} from '@/graphql/mail.token.query'
 import useCustomUser from '@/composables/useCustomUser'
 
 // Composables
 const { register } = useFirebase()
-const { mutate: addClient, error: addClientError } =
-  useMutation<CustomUser>(CREATE_CLIENT)
-const { locale, setLocale } = useLanguage()
-const { customUser } = useCustomUser()
+const { restoreCustomUser } = useCustomUser()
+const { mutate: updateEmployee, error: addEmployeeError } =
+  useMutation<CustomUser>(UPDATE_EMPLOYEE_REGISTER)
+const {
+  mutate: deleteAllMailTokensByUserId,
+  error: deleteAllMailTokensByUserIdError,
+} = useMutation(DELETE_ALL_MAILTOKENS_BY_USERID)
+const { result: mailTokenResult, error: mailTokenError } = useQuery(
+  GET_MAILTOKEN_BY_TOKEN,
+  () => ({
+    token: router.currentRoute.value.query.token,
+  }),
+)
+const { locale } = useI18n()
 
-watch(addClientError, () => {
-  if (!addClientError.value) return
-  errorRegister.value = "Couldn't create user."
-})
+const setError = (
+  watchedValue: Ref<any | null>,
+  errorMessage: string,
+): void => {
+  watch(watchedValue, () => {
+    if (watchedValue.value) {
+      errorRegister.value = errorMessage
+    }
+  })
+}
+
+setError(addEmployeeError, "Couldn't create an account.")
+setError(mailTokenError, 'Invalid token.')
+setError(deleteAllMailTokensByUserIdError, 'Delete token failed.')
 
 const schema = yup.object({
   email: yup.string().required().email(),
@@ -138,31 +162,39 @@ const handleRegister = async () => {
   await validate()
   errorMessages.value = errors.value
   errorRegister.value = null
-  console.log(values)
+  // console.log(values)
   if (Object.keys(errors.value).length === 0) {
-    await register(values.email, values.password)
-      .then(async userData => {
-        // Add user to database
-        await addClient({
-          createClientInput: {
-            uid: userData.uid,
-            firstname: values.firstName,
-            lastname: values.lastName,
-            email: values.email,
-            // add the user's locale language to the database
-            locale: locale.value,
-          },
-        }).then(() => {
+    // console.log('token:', router.currentRoute.value.query.token)
+    if (mailTokenResult.value) {
+      const userId = mailTokenResult.value.getMailTokenByToken.userId
+      await register(values.email, values.password)
+        .then(async userData => {
+          // Update employee in database
+          await updateEmployee({
+            updateUserInput: {
+              id: userId,
+              uid: userData.uid,
+              firstname: values.firstName,
+              lastname: values.lastName,
+              email: values.email,
+              // add the user's locale language to the database
+              locale: locale.value,
+            },
+          })
+          await restoreCustomUser()
+          // remove all token with this userid
+          await deleteAllMailTokensByUserId({
+            userId: userId,
+          })
           console.log('register success')
           resetForm()
-          setLocale(customUser.value!.locale!)
           router.replace('/auth/login')
         })
-      })
-      .catch(error => {
-        console.log(error.message)
-        errorRegister.value = error.message
-      })
+        .catch(error => {
+          console.log(error.message)
+          errorRegister.value = error.message
+        })
+    }
   }
   loading.value = false
 }

@@ -36,8 +36,10 @@ export class UsersResolver {
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
+    @Args('searchString', { type: () => String, nullable: true })
+    searchString?: string,
   ) {
-    return this.usersService.findAll(filters, order)
+    return this.usersService.findAll(filters, order, searchString)
   }
 
   @UseGuards(FirebaseGuard)
@@ -54,15 +56,6 @@ export class UsersResolver {
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
-  @Query(() => [User], { name: 'usersBySearchString' })
-  findUsersBySearchString(
-    @Args('searchString', { type: () => String }) searchString: string,
-  ) {
-    return this.usersService.findUsersBySearchString(searchString)
-  }
-
-  @AllowedRoles(Role.ADMIN)
-  @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [User], { name: 'usersEmployeesAvailableByDate' })
   findEmployeesAvailableByDate(@Args('date', { type: () => Date }) date: Date) {
     return this.usersService.findAvailableEmployeesByDate(date)
@@ -71,7 +64,9 @@ export class UsersResolver {
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => Boolean, { name: 'userIsAvailableTodayByUserId' })
-  findStaffIsAvailableToday(@Args('userId', { type: () => String }) userId: string) {
+  findStaffIsAvailableToday(
+    @Args('userId', { type: () => String }) userId: string,
+  ) {
     return this.usersService.findStaffIsAvailableToday(userId)
   }
 
@@ -91,6 +86,17 @@ export class UsersResolver {
   ) {
     return this.usersService.updateUser(
       currentUser.uid,
+      updateUserInput.id,
+      updateUserInput,
+    )
+  }
+
+  @UseGuards(FirebaseGuard)
+  @Mutation(() => User, { name: 'updateEmployeeRegister' })
+  updateEmployeeRegister(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ) {
+    return this.usersService.updateEmployeeRegister(
       updateUserInput.id,
       updateUserInput,
     )
@@ -119,9 +125,8 @@ export class UsersResolver {
   @Mutation(() => User, { name: 'createClient' })
   createClient(
     @Args('createClientInput') createClientInput: CreateClientInput,
-    @FirebaseUser() currentUser: UserRecord,
   ) {
-    return this.usersService.createClient(currentUser.uid, createClientInput)
+    return this.usersService.createClient(createClientInput)
   }
 
   // Resolve fields

@@ -1,17 +1,17 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
+  <div class="flex min-h-screen items-center justify-center">
     <div class="text-center">
       <h1
-        class="text-transparent text-3xl font-extrabold md:text-5xl lg:text-6xl bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
+        class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
       >
         Dashboard
       </h1>
-      <p class="mt-2 text-gray-600 dark:text-gray-400 text-xl">
+      <p class="mt-2 text-xl text-gray-600 dark:text-gray-400">
         You are logged in as
-        <span class="font-semibold">{{ UserCredentials.email }}</span>
+        <span class="font-semibold">{{ userCredentials.email }}</span>
       </p>
       <button
-        class="block my-4 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
+        class="focus:shadow-outline-red my-4 block rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
         @click="handleLogout"
       >
         logout
@@ -23,10 +23,11 @@
 
       <label class="block" for="language">Select Language</label>
       <select
-        class="block mb-3"
+        class="mb-3 block"
         name="language"
         id="language"
         @change="setLanguage"
+        v-model="locale"
       >
         <option
           v-for="(value, key) in SUPPORTED_LOCALES"
@@ -41,7 +42,7 @@
       <!-- make a list of buttons go to the right page -->
       <Router-link
         v-for="b in listButtons"
-        class="mt-4 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
+        class="focus:shadow-outline-red mt-4 rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
         :to="`/admin/${b.toLowerCase()}`"
         >{{ b }}</Router-link
       >
@@ -55,7 +56,7 @@ import router from '@/router'
 import { ref } from 'vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useLanguage from '@/composables/useLanguage'
-import { useI18n } from 'vue-i18n'
+import useCustomUser from '@/composables/useCustomUser'
 
 export default {
   setup() {
@@ -67,22 +68,23 @@ export default {
       'schedule-appointment',
     ])
     const { firebaseUser, logout } = useFirebase()
-    const { setLocale } = useLanguage()
-    const { locale } = useI18n()
+    const { setLocale, locale } = useLanguage()
+    const { customUser } = useCustomUser()
 
     const handleLogout = async () => {
       await logout()
+      customUser.value = null
       // go to login page
-      router.push('/auth/login')
+      router.replace('/auth/login')
       console.log('logout')
     }
 
-    const UserCredentials = ref<{ email: string | null }>({
+    const userCredentials = ref<{ email: string | null }>({
       email: '',
     })
 
     if (firebaseUser.value) {
-      UserCredentials.value.email = firebaseUser.value.email
+      userCredentials.value.email = firebaseUser.value.email
     }
 
     // Create brearer token
@@ -97,7 +99,7 @@ export default {
     }
 
     return {
-      UserCredentials,
+      userCredentials,
       handleLogout,
       listButtons,
       setLanguage,

@@ -1,37 +1,40 @@
 <template>
-  <div class="text-black mx-4">
+  <Toast position="bottom-right">
+    <template #icon="slotProps">
+      <XCircle :class="slotProps.class" v-if="ToastSeverity.ERROR" />
+      <Info :class="slotProps.class" v-else-if="ToastSeverity.INFO" />
+      <AlertTriangle :class="slotProps.class" v-else-if="ToastSeverity.WARN" />
+      <Check :class="slotProps.class" v-else-if="ToastSeverity.SUCCESS" />
+    </template>
+    <template #closeicon="slotProps">
+      <X :class="slotProps.class" />
+    </template>
+  </Toast>
+  <div class="mx-4 text-black">
     <AppHeader />
-    <RouterView />
+    <RouterView class="pt-12" />
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { provide } from 'vue'
 import { DefaultApolloClient } from '@vue/apollo-composable'
-
+import { ToastSeverity } from 'primevue/api'
 import useGraphql from './composables/useGraphql'
 import { useI18n } from 'vue-i18n'
 import useLanguage from './composables/useLanguage'
-
-export default {
-  components: {
-    AppHeader,
-  },
-
-  setup() {
-    const { apolloClient } = useGraphql()
-    const { setLocale } = useLanguage()
-    const { locale } = useI18n()
-
-    // TODO: set locale from user settings in customUser
-
-    provide(DefaultApolloClient, apolloClient)
-
-    setLocale(locale.value)
-
-    return {}
-  },
-}
 // import type AppHeaderVue from '../components/generic/AppHeader.vue'
 import AppHeader from './components/generic/AppHeader.vue'
+import useCustomUser from './composables/useCustomUser'
+import { XCircle, Info, AlertTriangle, Check, X } from 'lucide-vue-next'
+
+const { apolloClient } = useGraphql()
+const { setLocale } = useLanguage()
+const { locale } = useI18n()
+const { customUser } = useCustomUser()
+
+provide(DefaultApolloClient, apolloClient)
+
+// set locale from user or default
+setLocale(customUser.value?.locale || locale.value)
 </script>
