@@ -86,6 +86,23 @@ export class SchedulesService {
     return schedules.length > 0
   }
 
+  async findTodayScheduleByDateAndUserId(
+    userId: string,
+    date: string,
+  ): Promise<Schedule[]> {
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        finalDate: new Date(date),
+        employees: {
+          // @ts-ignore
+          $elemMatch: { id: new ObjectId(userId) }, // $elemMatch is needed to search in array of objects
+        },
+      },
+    })
+
+    return schedules
+  }
+
   async create(createScheduleInput: CreateScheduleInput) {
     const s = new Schedule()
     s.appointmentIds = createScheduleInput.appointmentIds
@@ -226,7 +243,7 @@ export class SchedulesService {
         },
         // find all schedules that are between start and end date
         // @ts-ignore
-        finalDate: { $gte: startDate, $lte: endDate},
+        finalDate: { $gte: startDate, $lte: endDate },
       },
     })
 
