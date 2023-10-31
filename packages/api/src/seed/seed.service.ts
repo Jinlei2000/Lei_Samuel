@@ -109,6 +109,7 @@ export class SeedService {
         let userAppointments: Appointment[] = []
         for (let appointment of users[num].appointments) {
           const a = new Appointment()
+          // TODO: dont see locationIds in user in appointments 
           a.user = await this.usersService.findOne(user.id.toString())
           a.type = appointment.type
 

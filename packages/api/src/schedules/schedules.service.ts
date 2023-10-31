@@ -121,11 +121,10 @@ export class SchedulesService {
   async update(id: ObjectId, updateScheduleInput: UpdateScheduleInput) {
     const currentSchedule = await this.findOne(id.toString())
 
-    const updatedSchedule = {
-      ...currentSchedule,
-      // ...(updateScheduleInput.appointmentIds && {
-      //   appointmentIds: updateScheduleInput.appointmentIds,
-      // }),
+    // remove id from updateScheduleInput
+    delete updateScheduleInput.id
+
+    let updatedSchedule = {
       // update when not null (if null, keep current value)
       ...(updateScheduleInput.employeeIds && {
         employees: await this.usersService.findAllByIds(
@@ -137,12 +136,14 @@ export class SchedulesService {
           updateScheduleInput.materialIds,
         ),
       }),
-      // ...(updateScheduleInput.finalDate && {
-      //   finalDate: updateScheduleInput.finalDate,
-      // }),
-      // ...(updateScheduleInput.createdBy && {
-      //   createdBy: updateScheduleInput.createdBy,
-      // }),
+    }
+
+    delete updateScheduleInput.employeeIds
+    delete updateScheduleInput.materialIds
+
+    updatedSchedule = {
+      ...updateScheduleInput,
+      ...updatedSchedule,
     }
 
     await this.scheduleRepository.update(id, updatedSchedule)
