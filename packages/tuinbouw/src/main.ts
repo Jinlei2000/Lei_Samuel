@@ -21,6 +21,7 @@ import 'primevue/resources/themes/lara-light-teal/theme.css'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
+import Calendar from 'primevue/calendar'
 
 import MyDesignSystem from './presets/MyDesignSystem'
 
@@ -39,6 +40,7 @@ app.component('Button', Button)
 app.component('Toast', Toast)
 app.component('InputText', InputText)
 app.component('Dialog', Dialog)
+app.component('Calendar', Calendar)
 
 app.use(ToastService)
 
