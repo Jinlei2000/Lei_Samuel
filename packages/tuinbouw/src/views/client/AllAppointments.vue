@@ -145,6 +145,7 @@
     <p class="text-6xl font-black">Loading...</p>
   </div>
 
+  <!-- show all appointments -->
   <div>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <div
@@ -247,14 +248,89 @@
       v-if="selectedAppointment"
       @click:close="closeModal"
     >
-      <div class="p-4">
-        <h2 class="mb-2 text-xl font-semibold">
-          {{ selectedAppointment.type }}
-        </h2>
-        <p class="text-gray-600">
-          {{ selectedAppointment.description }}
-        </p>
-      </div>
+      <form @submit.prevent="handleUpdateAppointment()" class="p-4">
+        <!-- Location ID -->
+        <label for="locationId" class="block text-sm font-medium text-gray-700">
+          Address:
+        </label>
+        <select
+          v-if="locations && locations.locationsByUserId.length > 0"
+          id="locationId"
+          v-model="selectedAppointment.location.id"
+          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
+        >
+          <option
+            v-for="location of locations.locationsByUserId"
+            :key="location.id"
+            :value="location.id"
+            @change="selectedAppointment.location.id = location.id"
+          >
+            {{ location.address }}
+          </option>
+        </select>
+
+        <!-- Type -->
+        <label for="type" class="block text-sm font-medium text-gray-700">
+          Type:
+        </label>
+        <select
+          id="type"
+          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 text-black shadow-sm sm:text-sm"
+          v-model="selectedAppointment.type"
+        >
+          <option v-for="t of ['maintenance', 'repair']" :key="t" :value="t">
+            {{ t }}
+          </option>
+        </select>
+
+        <!-- Start Proposed Date -->
+        <label
+          for="startProposedDate"
+          class="block text-sm font-medium text-gray-700"
+        >
+          Start Proposed Date:
+        </label>
+        <input
+          type="date"
+          id="startProposedDate"
+          v-model="selectedAppointment.startProposedDate"
+          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
+        />
+
+        <!-- End Proposed Date -->
+        <label
+          for="endProposedDate"
+          class="block text-sm font-medium text-gray-700"
+        >
+          End Proposed Date:
+        </label>
+        <input
+          type="date"
+          id="endProposedDate"
+          v-model="selectedAppointment.endProposedDate"
+          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
+        />
+
+        <!-- Description -->
+        <label
+          for="description"
+          class="block text-sm font-medium text-gray-700"
+        >
+          Description:
+        </label>
+        <textarea
+          id="description"
+          v-model="selectedAppointment.description"
+          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
+        ></textarea>
+
+        <button
+          type="submit"
+          class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
+        >
+          Save
+        </button>
+      </form>
     </Dialog>
   </div>
 </template>
@@ -271,14 +347,16 @@ import { ref, watch } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
-import { DELETE_APPOINTMENT } from '@/graphql/appointment.mutation'
+import {
+  DELETE_APPOINTMENT,
+  UPDATE_APPOINTMENT,
+} from '@/graphql/appointment.mutation'
+import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
 
 const { customUser } = useCustomUser()
 const { firebaseUser } = useFirebase()
 const toast = useToast()
 
-// TODO: use dynamic filters and orders
-// https://apollo.vuejs.org/guide-composable/query.html
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
 const visibleEdit = ref(false)
@@ -300,6 +378,7 @@ const variables = ref<{
 const filter = ref(false)
 
 // TODO: use fetchMore to load more appointments (add some kind of pagination in backend (limit, offset)))
+// use a load more button
 // https://apollo.vuejs.org/guide-composable/pagination.html
 const {
   result: allAppointment,
@@ -311,7 +390,20 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
+const { mutate: deleteAppointment, error: deleteAppointmentError } =
+  useMutation(DELETE_APPOINTMENT)
+
+const { mutate: updateAppointment, error: updateAppointmentError } =
+  useMutation(UPDATE_APPOINTMENT)
+
+const {
+  result: locations,
+  error: locationsError,
+  loading: locationsLoading,
+} = useQuery(GET_LOCATIONS_BY_USERID, {
+  userId: customUser.value?.id,
+  fetchPolicy: 'cache-and-network',
+})
 
 const updateFilters = (filter: string) => {
   const index = variables.value.filters.indexOf(filter)
@@ -382,6 +474,39 @@ const deleteAppointmentBtn = (id: string) => {
     })
 }
 
+const handleUpdateAppointment = () => {
+  console.log('selectedAppointment: ', selectedAppointment.value)
+  // updateAppointment({
+  //   updateAppointmentInput: {
+  //     id: selectedAppointment.value?.id,
+  //     locationId: selectedAppointment.value?.location.id,
+  //     type: selectedAppointment.value?.type,
+  //     startProposedDate: selectedAppointment.value?.startProposedDate,
+  //     endProposedDate: selectedAppointment.value?.endProposedDate,
+  //     description: selectedAppointment.value?.description,
+  //   },
+  // })
+  //   .then(() => {
+  //     toast.add({
+  //       severity: 'success',
+  //       summary: 'Success',
+  //       detail: 'Appointment updated',
+  //       life: 10000,
+  //     })
+
+  //     // refetch
+  //     allAppointmentRefectch()
+  //   })
+  //   .catch(err => {
+  //     toast.add({
+  //       severity: 'error',
+  //       summary: 'Error',
+  //       detail: err.message,
+  //       life: 10000,
+  //     })
+  //   })
+}
+
 const openModalDetailEdit = (appointment: Appointment) => {
   selectedAppointment.value = appointment
   visibleEdit.value = true
@@ -433,8 +558,12 @@ watch(allAppointment, () => {
   )
 })
 
+watch(locations, () => {
+  console.log('locations: ', locations.value)
+})
+
 // Create brearer token
 firebaseUser.value?.getIdToken().then(token => {
-  // console.log(`{"Authorization": "Bearer ${token}"}`)
+  console.log(`{"Authorization": "Bearer ${token}"}`)
 })
 </script>

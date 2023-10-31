@@ -5,6 +5,7 @@ export interface Appointment {
   }
   location: {
     id: string
+    address: string
   }
   price: number
   type: string
