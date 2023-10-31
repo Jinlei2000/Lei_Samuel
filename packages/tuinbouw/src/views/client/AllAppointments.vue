@@ -203,7 +203,10 @@
               </button>
               <!-- Edit button (only if not done) -->
               <button
-                v-if="!a.isDone && !a.isScheduled"
+                v-if="
+                  // check if is not done and is over today or not done and not scheduled
+                  (!a.isDone && isOverToday(a)) || (!a.isDone && !a.isScheduled)
+                "
                 @click.stop="openModalDetailEdit(a)"
                 class="ml-2 text-blue-500"
               >
