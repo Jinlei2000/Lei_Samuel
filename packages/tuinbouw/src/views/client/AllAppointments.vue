@@ -11,6 +11,7 @@
     AllAppointment
   </h1>
 
+  <!-- TODO: make a filter component and use Accordion  -->
   <div class="relative flex w-full items-center justify-between">
     <!-- Filter -->
     <div class="flex items-center gap-3">
@@ -138,6 +139,8 @@
     <!-- End filter dropdown -->
   </div>
 
+  <!-- TODO: make a sort component -->
+
   <div v-if="loading">
     <p class="text-6xl font-black">Loading...</p>
   </div>
@@ -200,7 +203,7 @@
               </button>
               <!-- Edit button (only if not done) -->
               <button
-                v-if="!a.isDone"
+                v-if="!a.isDone && !a.isScheduled"
                 @click.stop="openModalDetailEdit(a)"
                 class="ml-2 text-blue-500"
               >
