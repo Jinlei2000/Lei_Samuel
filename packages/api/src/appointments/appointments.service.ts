@@ -126,10 +126,34 @@ export class AppointmentsService {
   ): Promise<Appointment> {
     const currentAppointment = await this.findOne(id.toString())
 
+    // TODO: add logic no update if done or (not dont & overdate)
+
     // remove id
     delete updateAppointmentInput.id
 
-    // TODO: fix all other update in backend
+    let updatedAppointment = {
+      // update when not null (if null, keep current value)
+      ...(updateAppointmentInput.userId && {
+        user: await this.usersService.findOne(updateAppointmentInput.userId),
+      }),
+      ...(updateAppointmentInput.locationId && {
+        location: await this.locationsService.findOne(
+          updateAppointmentInput.locationId,
+        ),
+      }),
+    }
+
+    delete updateAppointmentInput.userId
+    delete updateAppointmentInput.locationId
+
+    updatedAppointment = {
+      ...updatedAppointment,
+      ...updateAppointmentInput,
+    }
+
+    console.log(updatedAppointment)
+
+    await this.appointmentRepository.update(id, updatedAppointment)
 
     // const updatedAppointment = {
     //   ...updateAppointmentInput,

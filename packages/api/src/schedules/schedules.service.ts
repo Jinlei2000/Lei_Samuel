@@ -86,6 +86,23 @@ export class SchedulesService {
     return schedules.length > 0
   }
 
+  async findTodayScheduleByDateAndUserId(
+    userId: string,
+    date: string,
+  ): Promise<Schedule[]> {
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        finalDate: new Date(date),
+        employees: {
+          // @ts-ignore
+          $elemMatch: { id: new ObjectId(userId) }, // $elemMatch is needed to search in array of objects
+        },
+      },
+    })
+
+    return schedules
+  }
+
   async create(createScheduleInput: CreateScheduleInput) {
     const s = new Schedule()
     s.appointmentIds = createScheduleInput.appointmentIds
@@ -104,11 +121,10 @@ export class SchedulesService {
   async update(id: ObjectId, updateScheduleInput: UpdateScheduleInput) {
     const currentSchedule = await this.findOne(id.toString())
 
-    const updatedSchedule = {
-      ...currentSchedule,
-      // ...(updateScheduleInput.appointmentIds && {
-      //   appointmentIds: updateScheduleInput.appointmentIds,
-      // }),
+    // remove id from updateScheduleInput
+    delete updateScheduleInput.id
+
+    let updatedSchedule = {
       // update when not null (if null, keep current value)
       ...(updateScheduleInput.employeeIds && {
         employees: await this.usersService.findAllByIds(
@@ -120,12 +136,14 @@ export class SchedulesService {
           updateScheduleInput.materialIds,
         ),
       }),
-      // ...(updateScheduleInput.finalDate && {
-      //   finalDate: updateScheduleInput.finalDate,
-      // }),
-      // ...(updateScheduleInput.createdBy && {
-      //   createdBy: updateScheduleInput.createdBy,
-      // }),
+    }
+
+    delete updateScheduleInput.employeeIds
+    delete updateScheduleInput.materialIds
+
+    updatedSchedule = {
+      ...updateScheduleInput,
+      ...updatedSchedule,
     }
 
     await this.scheduleRepository.update(id, updatedSchedule)
@@ -226,7 +244,7 @@ export class SchedulesService {
         },
         // find all schedules that are between start and end date
         // @ts-ignore
-        finalDate: { $gte: startDate, $lte: endDate},
+        finalDate: { $gte: startDate, $lte: endDate },
       },
     })
 
