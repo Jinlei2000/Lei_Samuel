@@ -278,7 +278,12 @@
           class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 text-black shadow-sm sm:text-sm"
           v-model="selectedAppointment.type"
         >
-          <option v-for="t of ['maintenance', 'repair']" :key="t" :value="t">
+          <option
+            v-for="t of ['maintenance', 'repair']"
+            :key="t"
+            :value="t"
+            @change="selectedAppointment.type = t"
+          >
             {{ t }}
           </option>
         </select>
@@ -357,7 +362,7 @@ const { customUser } = useCustomUser()
 const { firebaseUser } = useFirebase()
 const toast = useToast()
 
-const selectedAppointment = ref<Appointment | null>(null)
+const selectedAppointment = ref<Appointment>({})
 const visible = ref(false)
 const visibleEdit = ref(false)
 const variables = ref<{
