@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="flex justify-end">
-          <button class="px-4 py-2 bg-primary-green rounded text-white">Afspraak maken</button>
+          <button class="px-4 py-2 bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all">Afspraak maken</button>
         </div>
       </div>
     </div>
