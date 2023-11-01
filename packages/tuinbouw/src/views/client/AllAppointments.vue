@@ -141,7 +141,7 @@
 
   <!-- TODO: make a sort component -->
 
-  <div v-if="loading">
+  <div v-if="appointmentsLoading && locationsLoading">
     <p class="text-6xl font-black">Loading...</p>
   </div>
 
@@ -149,8 +149,8 @@
   <div>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <div
-        v-if="allAppointment && allAppointment.appointmentsByUserId.length > 0"
-        v-for="a of allAppointment.appointmentsByUserId"
+        v-if="appointments && appointments.appointmentsByUserId.length > 0"
+        v-for="a of appointments.appointmentsByUserId"
         :key="a.id"
       >
         <div
@@ -191,13 +191,16 @@
           <div class="border-t border-gray-200 p-4">
             <div class="flex items-center justify-between">
               <!-- View More button -->
-              <button @click="openModalDetail(a)" class="ml-2 text-blue-500">
+              <button
+                @click="openModal(a, 'detail')"
+                class="ml-2 text-blue-500"
+              >
                 View More
               </button>
               <!-- Delete button (only if not done) -->
               <button
                 v-if="!a.isDone"
-                @click.stop="deleteAppointmentBtn(a.id)"
+                @click.stop="handleDelete(a.id)"
                 class="ml-2 text-red-500"
               >
                 Delete
@@ -208,7 +211,7 @@
                   // check if is not done and is over today or not done and not scheduled
                   (!a.isDone && isOverToday(a)) || (!a.isDone && !a.isScheduled)
                 "
-                @click.stop="openModalDetailEdit(a)"
+                @click.stop="openModal(a, 'edit')"
                 class="ml-2 text-blue-500"
               >
                 Edit
@@ -221,7 +224,7 @@
 
     <!-- Detail Modal -->
     <Dialog
-      v-model:visible="visible"
+      v-model:visible="visible.detail"
       modal
       maximizable
       header="Appointment"
@@ -237,10 +240,9 @@
       </p>
     </Dialog>
 
-    <!-- TODO: make edit functions -->
     <!-- Edit Modal -->
     <Dialog
-      v-model:visible="visibleEdit"
+      v-model:visible="visible.edit"
       modal
       maximizable
       header="Edit Appointment"
@@ -248,7 +250,7 @@
       v-if="selected"
       @click:close="closeModal"
     >
-      <form @submit.prevent="handleUpdateAppointment()" class="p-4">
+      <form @submit.prevent="handleUpdate()" class="p-4">
         <!-- Location ID -->
         <label for="locationId" class="block text-sm font-medium text-gray-700">
           Address:
@@ -339,11 +341,9 @@ defineOptions({
   inheritAttrs: false,
 })
 import useCustomUser from '@/composables/useCustomUser'
-import useFirebase from '@/composables/useFirebase'
 import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { useToast } from 'primevue/usetoast'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type {
@@ -359,14 +359,15 @@ import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 
 const { customUser } = useCustomUser()
-const toast = useToast()
 const { showToast } = useCustomToast()
 const { formatDateTime, isOverToday } = useTimeUtilities()
 
 const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
-const visible = ref(false)
-const visibleEdit = ref(false)
+const visible = ref({
+  detail: false,
+  edit: false,
+})
 const variables = ref<{
   userId: string
   filters: string[]
@@ -388,18 +389,20 @@ const filter = ref(false)
 // use a load more button
 // https://apollo.vuejs.org/guide-composable/pagination.html
 const {
-  result: allAppointment,
-  error: allAppointmentError,
-  refetch: allAppointmentRefetch,
-  loading,
+  result: appointments,
+  error: appointmentsError,
+  refetch: appointmentsRefetch,
+  loading: appointmentsLoading,
 } = useQuery(GET_ALL_APPOINTMENT_BY_CLIENT, variables, {
   // return result from cache first (if it exists), then return network result once it's available.
   fetchPolicy: 'cache-and-network',
 })
 
+// TODO: loading on something (button, etc)
 const { mutate: deleteAppointment, error: deleteAppointmentError } =
   useMutation(DELETE_APPOINTMENT)
 
+// TODO: loading on something (button, etc)
 const { mutate: updateAppointment, error: updateAppointmentError } =
   useMutation(UPDATE_APPOINTMENT)
 
@@ -417,6 +420,8 @@ const {
   },
 )
 
+// TODO: make a filter component and use Accordion  (https://primefaces.org/primevue/showcase/#/accordion)
+// also add a reset button
 const updateFilters = (filter: string) => {
   const index = variables.value.filters.indexOf(filter)
   if (index !== -1) {
@@ -450,30 +455,18 @@ const updateFiltersRadio = (filters: string[], reset: boolean = false) => {
   }
 }
 
-const openModalDetail = (appointment: Appointment) => {
-  selectedAppointment.value = { ...appointment }
-  visible.value = true
-}
-
-const closeModal = () => {
-  selectedAppointment.value = null
-  selected.value = null
-  visible.value = false
-  visibleEdit.value = false
-}
-
-const deleteAppointmentBtn = (id: string) => {
+const handleDelete = (id: string) => {
   deleteAppointment({
     id,
   }).then(() => {
     showToast('success', 'Success', 'Appointment deleted')
     // refetch
-    allAppointmentRefetch()
+    appointmentsRefetch()
   })
 }
 
-const handleUpdateAppointment = () => {
-  console.log('selected: ', selected.value)
+const handleUpdate = () => {
+  // console.log('selected: ', selected.value)
   updateAppointment({
     updateAppointmentInput: {
       ...selected.value,
@@ -481,28 +474,44 @@ const handleUpdateAppointment = () => {
   }).then(async () => {
     showToast('success', 'Success', 'Appointment updated')
     // refetch
-    await allAppointmentRefetch()
+    await appointmentsRefetch()
+    // close modal
+    closeModal()
   })
 }
 
-const openModalDetailEdit = (appointment: Appointment) => {
-  selected.value = {
-    id: appointment.id!,
-    type: appointment.type!,
-    locationId: appointment.location?.id!,
-    startProposedDate: formatDateTime(
-      appointment.startProposedDate!.toString(),
-    ),
-    endProposedDate: formatDateTime(appointment.endProposedDate!.toString()),
-    description: appointment.description!,
+const openModal = (appointment: Appointment, modalType: string) => {
+  if (modalType === 'detail') {
+    selectedAppointment.value = { ...appointment }
+    visible.value.detail = true
+  } else if (modalType === 'edit') {
+    selected.value = {
+      id: appointment.id!,
+      type: appointment.type!,
+      locationId: appointment.location?.id!,
+      startProposedDate: formatDateTime(
+        appointment.startProposedDate!.toString(),
+      ),
+      endProposedDate: formatDateTime(appointment.endProposedDate!.toString()),
+      description: appointment.description!,
+    }
+    visible.value.edit = true
   }
-  visibleEdit.value = true
+}
+
+const closeModal = () => {
+  selectedAppointment.value = null
+  selected.value = null
+  visible.value = {
+    detail: false,
+    edit: false,
+  }
 }
 
 // watch all errors
 watchEffect(() => {
   const errors = [
-    allAppointmentError.value,
+    appointmentsError.value,
     deleteAppointmentError.value,
     updateAppointmentError.value,
     locationsError.value,
@@ -517,7 +526,7 @@ watchEffect(() => {
 // // log the queries
 // watchEffect(() => {
 //   if (locations.value) console.log('locations: ', locations.value)
-//   if (allAppointment.value)
-//     console.log('allAppointment: ', allAppointment.value)
+//   if (appointments.value)
+//     console.log('appointments: ', appointments.value)
 // })
 </script>
