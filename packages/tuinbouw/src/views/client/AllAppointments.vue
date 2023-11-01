@@ -356,10 +356,12 @@ import {
 } from '@/graphql/appointment.mutation'
 import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
 import useCustomToast from '@/composables/useCustomToast'
+import useTimeUtilities from '@/composables/useTimeUtilities'
 
 const { customUser } = useCustomUser()
 const toast = useToast()
 const { showToast } = useCustomToast()
+const { formatDateTime, isOverToday } = useTimeUtilities()
 
 const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
@@ -495,34 +497,6 @@ const openModalDetailEdit = (appointment: Appointment) => {
     description: appointment.description!,
   }
   visibleEdit.value = true
-}
-
-// TODO: make a composables for this (useTimeUtilities)
-const formatDateTime = (date: string) => {
-  const d = new Date(date)
-  return `${d.toISOString().split('T')[0]}`
-}
-
-// TODO: make a composables for this (useTimeUtilities)
-// check if finalDate is over today and not done
-// also check if isScheduled is false and endProposedDate is over today
-const isOverToday = (appointment: Appointment) => {
-  if (appointment.isDone) return false
-
-  const today = new Date().toISOString().split('T')[0]
-  const finalDate = appointment.finalDate
-    ? new Date(appointment.finalDate).toISOString().split('T')[0]
-    : null
-  const endProposedDate = appointment.endProposedDate
-    ? new Date(appointment.endProposedDate).toISOString().split('T')[0]
-    : null
-
-  if (finalDate && finalDate < today && !appointment.isDone) return true
-
-  if (!appointment.isScheduled && endProposedDate && endProposedDate < today)
-    return true
-
-  return false
 }
 
 // watch all errors
