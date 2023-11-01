@@ -5,10 +5,6 @@ export interface Appointment {
   user?: {
     id?: string
   }
-  // location: {
-  //   id: string
-  //   address: string
-  // }
   location?: Location
   price?: number
   type?: string
@@ -21,4 +17,13 @@ export interface Appointment {
   priority?: number
   createdAt?: Date
   updatedAt?: Date
+}
+
+export interface AppointmentUpdate {
+  id: string
+  type?: string
+  locationId?: string
+  startProposedDate?: string
+  endProposedDate?: string
+  description?: string
 }

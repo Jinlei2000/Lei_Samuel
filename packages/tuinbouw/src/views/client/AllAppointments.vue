@@ -343,40 +343,37 @@ import useFirebase from '@/composables/useFirebase'
 import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { useToast } from 'primevue/usetoast'
-import { ref, watch } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
-import type { Appointment } from '@/interfaces/appointment.user.interface'
+import type {
+  Appointment,
+  AppointmentUpdate,
+} from '@/interfaces/appointment.user.interface'
 import {
   DELETE_APPOINTMENT,
   UPDATE_APPOINTMENT,
 } from '@/graphql/appointment.mutation'
 import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
+import useCustomToast from '@/composables/useCustomToast'
 
 const { customUser } = useCustomUser()
-const { firebaseUser } = useFirebase()
 const toast = useToast()
+const { showToast } = useCustomToast()
 
-const selected = ref<{
-  id: string
-  type: string | null
-  locationId: string | null
-  startProposedDate: string | null
-  endProposedDate: string | null
-  description: string | null
-} | null>(null)
+const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
 const visibleEdit = ref(false)
 const variables = ref<{
-  userId: string | undefined
+  userId: string
   filters: string[]
   order: {
     field: string
     direction: string
   }
 }>({
-  userId: customUser.value?.id,
+  userId: customUser.value?.id!,
   filters: [],
   order: {
     field: 'createdAt',
@@ -391,7 +388,7 @@ const filter = ref(false)
 const {
   result: allAppointment,
   error: allAppointmentError,
-  refetch: allAppointmentRefectch,
+  refetch: allAppointmentRefetch,
   loading,
 } = useQuery(GET_ALL_APPOINTMENT_BY_CLIENT, variables, {
   // return result from cache first (if it exists), then return network result once it's available.
@@ -408,10 +405,15 @@ const {
   result: locations,
   error: locationsError,
   loading: locationsLoading,
-} = useQuery(GET_LOCATIONS_BY_USERID, {
-  userId: customUser.value?.id,
-  fetchPolicy: 'cache-and-network',
-})
+} = useQuery(
+  GET_LOCATIONS_BY_USERID,
+  () => ({
+    userId: customUser.value?.id,
+  }),
+  {
+    fetchPolicy: 'cache-and-network',
+  },
+)
 
 const updateFilters = (filter: string) => {
   const index = variables.value.filters.indexOf(filter)
@@ -461,26 +463,11 @@ const closeModal = () => {
 const deleteAppointmentBtn = (id: string) => {
   deleteAppointment({
     id,
+  }).then(() => {
+    showToast('success', 'Success', 'Appointment deleted')
+    // refetch
+    allAppointmentRefetch()
   })
-    .then(() => {
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Appointment deleted',
-        life: 10000,
-      })
-
-      // refetch
-      allAppointmentRefectch()
-    })
-    .catch(err => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: err.message,
-        life: 10000,
-      })
-    })
 }
 
 const handleUpdateAppointment = () => {
@@ -489,26 +476,11 @@ const handleUpdateAppointment = () => {
     updateAppointmentInput: {
       ...selected.value,
     },
+  }).then(async () => {
+    showToast('success', 'Success', 'Appointment updated')
+    // refetch
+    await allAppointmentRefetch()
   })
-    .then(() => {
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Appointment updated',
-        life: 10000,
-      })
-
-      // refetch
-      allAppointmentRefectch()
-    })
-    .catch(err => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: err.message,
-        life: 10000,
-      })
-    })
 }
 
 const openModalDetailEdit = (appointment: Appointment) => {
@@ -541,42 +513,37 @@ const isOverToday = (appointment: Appointment) => {
   const finalDate = appointment.finalDate
     ? new Date(appointment.finalDate).toISOString().split('T')[0]
     : null
-  const endProposedDate = new Date(appointment.endProposedDate)
-    .toISOString()
-    .split('T')[0]
+  const endProposedDate = appointment.endProposedDate
+    ? new Date(appointment.endProposedDate).toISOString().split('T')[0]
+    : null
 
   if (finalDate && finalDate < today && !appointment.isDone) return true
 
-  if (!appointment.isScheduled && endProposedDate < today) return true
+  if (!appointment.isScheduled && endProposedDate && endProposedDate < today)
+    return true
 
   return false
 }
 
-watch(allAppointmentError, () => {
-  if (!allAppointmentError.value) return
-  toast.add({
-    severity: 'error',
-    summary: 'Error',
-    detail: allAppointmentError.value.message,
-    life: 10000,
+// watch all errors
+watchEffect(() => {
+  const errors = [
+    allAppointmentError.value,
+    deleteAppointmentError.value,
+    updateAppointmentError.value,
+    locationsError.value,
+  ]
+  errors.forEach(error => {
+    if (error) {
+      showToast('error', 'Error', error.message)
+    }
   })
 })
 
-//  log the allAppointment length
-watch(allAppointment, () => {
-  if (!allAppointment.value) return
-  console.log(
-    'allAppointment length: ',
-    allAppointment.value.appointmentsByUserId.length,
-  )
-})
-
-watch(locations, () => {
-  console.log('locations: ', locations.value)
-})
-
-// Create brearer token
-firebaseUser.value?.getIdToken().then(token => {
-  console.log(`{"Authorization": "Bearer ${token}"}`)
-})
+// // log the queries
+// watchEffect(() => {
+//   if (locations.value) console.log('locations: ', locations.value)
+//   if (allAppointment.value)
+//     console.log('allAppointment: ', allAppointment.value)
+// })
 </script>
