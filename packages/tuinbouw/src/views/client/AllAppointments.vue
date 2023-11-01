@@ -285,7 +285,11 @@
             optionLabel="name"
             optionValue="name"
             class="w-full"
-          />
+          >
+            <template #dropdownicon>
+              <ChevronDownIcon />
+            </template>
+          </Dropdown>
         </div>
 
         <!-- Start Proposed Date -->
@@ -381,7 +385,7 @@ import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import Textarea from 'primevue/textarea'
-import { Calendar as CalendarIcon } from 'lucide-vue-next'
+import { Calendar as CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
 
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()

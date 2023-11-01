@@ -32,10 +32,10 @@ const { restoreUser, firebaseUser } = useFirebase()
 const { restoreCustomUser } = useCustomUser()
 
 app.use(PrimeVue, {
+  pt: MyDesignSystem,
   ptOptions: {
     mergeProps: true,
   },
-  pt: MyDesignSystem,
 })
 
 app.component('Button', Button)
