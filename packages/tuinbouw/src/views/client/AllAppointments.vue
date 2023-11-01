@@ -256,16 +256,15 @@
         <select
           v-if="locations && locations.locationsByUserId.length > 0"
           id="locationId"
-          v-model="selectedAppointment.location.id"
+          v-model="selectedLocationId"
           class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
         >
           <option
-            v-for="location of locations.locationsByUserId"
-            :key="location.id"
-            :value="location.id"
-            @change="selectedAppointment.location.id = location.id"
+            v-for="l of locations.locationsByUserId"
+            :key="l.id"
+            :value="l.id"
           >
-            {{ location.address }}
+            {{ l.address }}
           </option>
         </select>
 
@@ -352,6 +351,7 @@ import { ref, watch } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
+import type { Location } from '@/interfaces/location.interface'
 import {
   DELETE_APPOINTMENT,
   UPDATE_APPOINTMENT,
@@ -362,7 +362,8 @@ const { customUser } = useCustomUser()
 const { firebaseUser } = useFirebase()
 const toast = useToast()
 
-const selectedAppointment = ref<Appointment>({})
+const selectedAppointment = ref<Appointment | null>()
+const selectedLocationId = ref<string | null>()
 const visible = ref(false)
 const visibleEdit = ref(false)
 const variables = ref<{
@@ -444,12 +445,13 @@ const updateFiltersRadio = (filters: string[], reset: boolean = false) => {
 }
 
 const openModalDetail = (appointment: Appointment) => {
-  selectedAppointment.value = appointment
+  selectedAppointment.value = { ...appointment }
   visible.value = true
 }
 
 const closeModal = () => {
   selectedAppointment.value = null
+  selectedLocationId.value = null
   visible.value = false
   visibleEdit.value = false
 }
@@ -480,7 +482,14 @@ const deleteAppointmentBtn = (id: string) => {
 }
 
 const handleUpdateAppointment = () => {
+  selectedAppointment.value = {
+    ...selectedAppointment.value,
+    location: locations.value?.locationsByUserId.find(
+      (l: Location) => l.id === selectedLocationId.value,
+    ),
+  }
   console.log('selectedAppointment: ', selectedAppointment.value)
+  console.log('selectedLocationId: ', selectedLocationId.value)
   // updateAppointment({
   //   updateAppointmentInput: {
   //     id: selectedAppointment.value?.id,
@@ -513,7 +522,8 @@ const handleUpdateAppointment = () => {
 }
 
 const openModalDetailEdit = (appointment: Appointment) => {
-  selectedAppointment.value = appointment
+  selectedAppointment.value = { ...appointment }
+  selectedLocationId.value = appointment.location?.id
   visibleEdit.value = true
 }
 
