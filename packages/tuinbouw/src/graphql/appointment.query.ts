@@ -13,6 +13,7 @@ export const GET_ALL_APPOINTMENT_BY_CLIENT = gql`
       }
       location {
         id
+        address
       }
       price
       type

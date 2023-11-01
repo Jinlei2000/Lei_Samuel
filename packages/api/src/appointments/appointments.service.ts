@@ -155,6 +155,23 @@ export class AppointmentsService {
 
     await this.appointmentRepository.update(id, updatedAppointment)
 
+    // const updatedAppointment = {
+    //   ...updateAppointmentInput,
+    //   // update when not null (if null, keep current value)
+    //   ...(updateAppointmentInput.userId && {
+    //     user: await this.usersService.findOne(updateAppointmentInput.userId),
+    //   }),
+    //   ...(updateAppointmentInput.locationId && {
+    //     location: await this.locationsService.findOne(
+    //       updateAppointmentInput.locationId,
+    //     ),
+    //   }),
+    // }
+
+    console.log(updateAppointmentInput)
+
+    // await this.appointmentRepository.update(id, updatedAppointment)
+
     return this.findOne(id.toString())
   }
 

@@ -656,7 +656,7 @@ locationsByUserId(userId: String)
 
 ```graphql
 query {
-  findAllByUserId(userId: "6522bd1cfabcb1f1d63dd63a") {
+  locationsByUserId(userId: "6522bd1cfabcb1f1d63dd63a") {
     id
     userId
     address
