@@ -29,6 +29,7 @@
     - [updateLocation](#updatelocation)
     - [removeLocation](#removelocation)
   - [Mail](#mail)
+    - [sendEmailToNewEmployeeById(userId)](#sendemailtonewemployeebyiduserid)
     - [getMailTokenByToken(token)](#getmailtokenbytokentoken)
     - [removeAllMailTokensByUserId](#removeallmailtokensbyuserid)
   - [Absences](#absences)
@@ -41,12 +42,13 @@
   - [Schedules](#schedules)
     - [schedules(filters: , order: { field, direction })](#schedulesfilters--order--field-direction-)
     - [schedule(id)](#scheduleid)
-    - [schedule(date, userId)](#scheduledate-string-userid-string)
+    - [schedule(date: String, userId: String)](#scheduledate-string-userid-string)
     - [createSchedule](#createschedule)
     - [updateSchedule](#updateschedule)
     - [removeSchedule](#removeschedule)
   - [Appointments](#appointments)
     - [appointments(filters: , order: { field, direction })](#appointmentsfilters--order--field-direction-)
+    - [appointmentsByUserId(userId, filters, order: { field, direction })](#appointmentsbyuseriduserid-filters-order--field-direction-)
     - [appointment(id)](#appointmentid)
     - [createAppointment](#createappointment)
     - [updateAppointment](#updateappointment)
@@ -1175,6 +1177,55 @@ Order can be:
 ```graphql
 query {
   appointments(filters: ['M'], order: { field: "startDate", direction: ASC }) {
+    id
+    user{
+      # everything from user
+    }
+    location{
+      # everything from location
+    }
+    price
+    type
+    startProposedDate
+    endProposedDate
+    isScheduled
+    finalDate
+    isDone
+    description
+    priority
+    createdAt
+    updatedAt
+  }
+}
+```
+
+### appointmentsByUserId(userId, filters, order: { field, direction })
+
+appointmentsByUserId(userId: String, filters: [String], order: { field: String, direction: String })
+
+Filters can be:
+
+- `M` - Maintenance
+- `R` - Repair
+- `D` - Done
+- `ND` - Not Done
+- `S` - Scheduled
+- `NS` - Not Scheduled
+- `P` - Priority
+- `NP` - Not Priority
+
+Order can be:
+
+- field = all fields from appointment model
+- direction = `ASC` or `DESC`
+
+```graphql
+query {
+  appointmentsByUserId(
+    userId: "6522bd1cfabcb1f1d63dd63a",
+    filters: ['M'],
+    order: { field: "startDate", direction: ASC })
+  {
     id
     user{
       # everything from user
