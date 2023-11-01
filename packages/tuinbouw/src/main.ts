@@ -23,6 +23,9 @@ import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
 
 import MyDesignSystem from './presets/MyDesignSystem'
+import Textarea from 'primevue/textarea'
+import Calendar from 'primevue/calendar'
+import Dropdown from 'primevue/dropdown'
 
 const app = createApp(App)
 const { restoreUser, firebaseUser } = useFirebase()
@@ -39,6 +42,9 @@ app.component('Button', Button)
 app.component('Toast', Toast)
 app.component('InputText', InputText)
 app.component('Dialog', Dialog)
+app.component('Textarea', Textarea)
+app.component('Calendar', Calendar)
+app.component('Dropdown', Dropdown)
 
 app.use(ToastService)
 

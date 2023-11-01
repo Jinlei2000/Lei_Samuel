@@ -37,4 +37,58 @@ export default {
       ],
     }),
   },
+  textarea: {
+    root: () => ({
+      class: [
+        'm-0',
+        'border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 transition-colors duration-200 appearance-none',
+        'focus:ring-primary-green-400/40 focus:ring-2',
+        'hover:border-primary-green-400 hover:border-primary-green-400',
+      ],
+    }),
+  },
+  calendar: {
+    root: () => ({
+      class: ['w-full relative'],
+    }),
+    input: {
+      class: [
+        'm-0',
+        'border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 transition-colors duration-200 appearance-none',
+        'focus:ring-primary-green-400/40 focus:ring-2',
+        'hover:border-primary-green-400 hover:border-primary-green-400',
+      ],
+    },
+    dropdownButton: {
+      root: {
+        class: [
+          'absolute right-0 top-1/2 transform -translate-y-1/2 ',
+          'appearance-none h-full',
+          'outline-none focus:outline-none hover:outline-none border-none ring-none',
+          'text-gray-900',
+        ],
+      },
+    },
+  },
+  dropdown: {
+    root: () => ({
+      class: [
+        'relative',
+        'border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg w-full transition-colors duration-200 appearance-none',
+        'focus:ring-primary-green-400/40 focus:ring-2',
+        'hover:border-primary-green-400 hover:border-primary-green-400',
+      ],
+    }),
+    input: () => ({
+      class: ['m-0', 'bg-gray-50 border-gray-300 text-gray-900 sm:text-sm '],
+    }),
+    trigger: {
+      class: [
+        'absolute right-0 top-1/2 transform -translate-y-1/2 ',
+        'rounded-lg appearance-none h-full',
+        'focus:ring-primary-green-400/40 focus:ring-2',
+        'text-gray-900',
+      ],
+    },
+  },
 }

@@ -231,6 +231,7 @@
       :style="{ width: '50vw' }"
       v-if="selectedAppointment"
       @click:close="closeModal"
+      class="max-w-lg"
     >
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedAppointment.type }}
@@ -249,82 +250,104 @@
       :style="{ width: '50vw' }"
       v-if="selected"
       @click:close="closeModal"
+      class="max-w-lg"
     >
-      <form @submit.prevent="handleUpdate()" class="p-4">
+      <form @submit.prevent="handleUpdate()" class="space-y-2 p-4">
         <!-- Location ID -->
-        <label for="locationId" class="block text-sm font-medium text-gray-700">
-          Address:
-        </label>
-        <select
-          v-if="locations && locations.locationsByUserId.length > 0"
-          id="locationId"
-          v-model="selected.locationId"
-          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
-        >
-          <option
-            v-for="l of locations.locationsByUserId"
-            :key="l.id"
-            :value="l.id"
-          >
-            {{ l.address }}
-          </option>
-        </select>
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="locationId"
+            >Start Proposed Date
+          </label>
+          <Dropdown
+            v-if="locations && locations.locationsByUserId.length > 0"
+            id="locationId"
+            v-model="selected.locationId"
+            :options="locations.locationsByUserId"
+            optionLabel="address"
+            optionValue="id"
+            class="w-full"
+          />
+        </div>
 
         <!-- Type -->
-        <label for="type" class="block text-sm font-medium text-gray-700">
-          Type:
-        </label>
-        <select
-          id="type"
-          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 text-black shadow-sm sm:text-sm"
-          v-model="selected.type"
-        >
-          <option v-for="t of ['maintenance', 'repair']" :key="t" :value="t">
-            {{ t }}
-          </option>
-        </select>
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="type"
+            >Start Proposed Date
+          </label>
+          <Dropdown
+            id="type"
+            v-model="selected.type"
+            :options="[{ name: 'maintenance' }, { name: 'repair' }]"
+            optionLabel="name"
+            optionValue="name"
+            class="w-full"
+          />
+        </div>
 
         <!-- Start Proposed Date -->
-        <label
-          for="startProposedDate"
-          class="block text-sm font-medium text-gray-700"
-        >
-          Start Proposed Date:
-        </label>
-        <input
-          type="date"
-          id="startProposedDate"
-          v-model="selected.startProposedDate"
-          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
-        />
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="startProposedDate"
+            >Start Proposed Date
+          </label>
+          <Calendar
+            id="startProposedDate"
+            v-model="selected.startProposedDate"
+            :manualInput="false"
+            :minDate="minDate"
+            showIcon
+            dateFormat="yy-mm-dd"
+          >
+            <template #dropdownicon>
+              <CalendarIcon />
+            </template>
+          </Calendar>
+        </div>
 
         <!-- End Proposed Date -->
-        <label
-          for="endProposedDate"
-          class="block text-sm font-medium text-gray-700"
-        >
-          End Proposed Date:
-        </label>
-        <input
-          type="date"
-          id="endProposedDate"
-          v-model="selected.endProposedDate"
-          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
-        />
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="endProposedDate"
+          >
+            End Proposed Date
+          </label>
+          <Calendar
+            id="endProposedDate"
+            v-model="selected.endProposedDate"
+            showIcon
+            dateFormat="yy-mm-dd"
+            :manualInput="false"
+            :minDate="minDate"
+          >
+            <template #dropdownicon>
+              <CalendarIcon />
+            </template>
+          </Calendar>
+        </div>
 
         <!-- Description -->
-        <label
-          for="description"
-          class="block text-sm font-medium text-gray-700"
-        >
-          Description:
-        </label>
-        <textarea
-          id="description"
-          v-if="selected.description"
-          v-model="selected.description"
-          class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
-        ></textarea>
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="description"
+          >
+            Description
+          </label>
+          <Textarea
+            id="description"
+            v-if="selected.description"
+            v-model="selected.description"
+            rows="5"
+            cols="30"
+            placeholder="Type your description here..."
+          />
+        </div>
 
         <button
           type="submit"
@@ -357,11 +380,14 @@ import {
 import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
+import Textarea from 'primevue/textarea'
+import { Calendar as CalendarIcon } from 'lucide-vue-next'
 
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
 const { formatDateTime, isOverToday } = useTimeUtilities()
 
+const minDate = ref<Date>(new Date(Date.now()))
 const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref({
@@ -466,7 +492,7 @@ const handleDelete = (id: string) => {
 }
 
 const handleUpdate = () => {
-  // console.log('selected: ', selected.value)
+  console.log('selected: ', selected.value)
   updateAppointment({
     updateAppointmentInput: {
       ...selected.value,
