@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)">
+  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -364,9 +364,6 @@
   </div>
 </template>
 <script setup lang="ts">
-defineOptions({
-  inheritAttrs: false,
-})
 import useCustomUser from '@/composables/useCustomUser'
 import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
