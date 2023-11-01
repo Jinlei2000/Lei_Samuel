@@ -30,7 +30,6 @@ export class AppointmentsResolver {
     return this.appointmentsService.findAll(filters, order)
   }
 
-  // TODO: add to documentation
   @AllowedRoles(Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Appointment], { name: 'appointmentsByUserId' })

@@ -40,6 +40,20 @@ export class LocationsService {
     return locations
   }
 
+  async findAllByUserIdAndGetIds(userId: string): Promise<string[]> {
+    const locations = await this.locationRepository.find({
+      where: { userId: userId },
+    })
+
+    if (!locations) {
+      return []
+    }
+
+    const ids = locations.map(location => location.id.toString())
+
+    return ids
+  }
+
   async findOne(id: string): Promise<Location> {
     const location = await this.locationRepository.findOne({
       // @ts-ignore
