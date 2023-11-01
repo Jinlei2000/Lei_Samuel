@@ -245,7 +245,7 @@
       maximizable
       header="Edit Appointment"
       :style="{ width: '50vw' }"
-      v-if="selectedAppointment"
+      v-if="selected"
       @click:close="closeModal"
     >
       <form @submit.prevent="handleUpdateAppointment()" class="p-4">
@@ -256,7 +256,7 @@
         <select
           v-if="locations && locations.locationsByUserId.length > 0"
           id="locationId"
-          v-model="selectedLocationId"
+          v-model="selected.locationId"
           class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
         >
           <option
@@ -275,14 +275,9 @@
         <select
           id="type"
           class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 text-black shadow-sm sm:text-sm"
-          v-model="selectedAppointment.type"
+          v-model="selected.type"
         >
-          <option
-            v-for="t of ['maintenance', 'repair']"
-            :key="t"
-            :value="t"
-            @change="selectedAppointment.type = t"
-          >
+          <option v-for="t of ['maintenance', 'repair']" :key="t" :value="t">
             {{ t }}
           </option>
         </select>
@@ -297,7 +292,7 @@
         <input
           type="date"
           id="startProposedDate"
-          v-model="selectedAppointment.startProposedDate"
+          v-model="selected.startProposedDate"
           class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
         />
 
@@ -311,7 +306,7 @@
         <input
           type="date"
           id="endProposedDate"
-          v-model="selectedAppointment.endProposedDate"
+          v-model="selected.endProposedDate"
           class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
         />
 
@@ -324,7 +319,8 @@
         </label>
         <textarea
           id="description"
-          v-model="selectedAppointment.description"
+          v-if="selected.description"
+          v-model="selected.description"
           class="focus:ring-primary-green focus:border-primary-green mt-1 block w-full rounded-md border p-2 shadow-sm sm:text-sm"
         ></textarea>
 
@@ -351,7 +347,6 @@ import { ref, watch } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
-import type { Location } from '@/interfaces/location.interface'
 import {
   DELETE_APPOINTMENT,
   UPDATE_APPOINTMENT,
@@ -362,8 +357,15 @@ const { customUser } = useCustomUser()
 const { firebaseUser } = useFirebase()
 const toast = useToast()
 
-const selectedAppointment = ref<Appointment | null>()
-const selectedLocationId = ref<string | null>()
+const selected = ref<{
+  id: string
+  type: string | null
+  locationId: string | null
+  startProposedDate: string | null
+  endProposedDate: string | null
+  description: string | null
+} | null>(null)
+const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref(false)
 const visibleEdit = ref(false)
 const variables = ref<{
@@ -451,7 +453,7 @@ const openModalDetail = (appointment: Appointment) => {
 
 const closeModal = () => {
   selectedAppointment.value = null
-  selectedLocationId.value = null
+  selected.value = null
   visible.value = false
   visibleEdit.value = false
 }
@@ -482,55 +484,51 @@ const deleteAppointmentBtn = (id: string) => {
 }
 
 const handleUpdateAppointment = () => {
-  selectedAppointment.value = {
-    ...selectedAppointment.value,
-    location: locations.value?.locationsByUserId.find(
-      (l: Location) => l.id === selectedLocationId.value,
-    ),
-  }
-  console.log('selectedAppointment: ', selectedAppointment.value)
-  console.log('selectedLocationId: ', selectedLocationId.value)
-  // updateAppointment({
-  //   updateAppointmentInput: {
-  //     id: selectedAppointment.value?.id,
-  //     locationId: selectedAppointment.value?.location.id,
-  //     type: selectedAppointment.value?.type,
-  //     startProposedDate: selectedAppointment.value?.startProposedDate,
-  //     endProposedDate: selectedAppointment.value?.endProposedDate,
-  //     description: selectedAppointment.value?.description,
-  //   },
-  // })
-  //   .then(() => {
-  //     toast.add({
-  //       severity: 'success',
-  //       summary: 'Success',
-  //       detail: 'Appointment updated',
-  //       life: 10000,
-  //     })
+  console.log('selected: ', selected.value)
+  updateAppointment({
+    updateAppointmentInput: {
+      ...selected.value,
+    },
+  })
+    .then(() => {
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Appointment updated',
+        life: 10000,
+      })
 
-  //     // refetch
-  //     allAppointmentRefectch()
-  //   })
-  //   .catch(err => {
-  //     toast.add({
-  //       severity: 'error',
-  //       summary: 'Error',
-  //       detail: err.message,
-  //       life: 10000,
-  //     })
-  //   })
+      // refetch
+      allAppointmentRefectch()
+    })
+    .catch(err => {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: err.message,
+        life: 10000,
+      })
+    })
 }
 
 const openModalDetailEdit = (appointment: Appointment) => {
-  selectedAppointment.value = { ...appointment }
-  selectedLocationId.value = appointment.location?.id
+  selected.value = {
+    id: appointment.id!,
+    type: appointment.type!,
+    locationId: appointment.location?.id!,
+    startProposedDate: formatDateTime(
+      appointment.startProposedDate!.toString(),
+    ),
+    endProposedDate: formatDateTime(appointment.endProposedDate!.toString()),
+    description: appointment.description!,
+  }
   visibleEdit.value = true
 }
 
 // TODO: make a composables for this (useTimeUtilities)
 const formatDateTime = (date: string) => {
   const d = new Date(date)
-  return `${d.toLocaleDateString()}`
+  return `${d.toISOString().split('T')[0]}`
 }
 
 // TODO: make a composables for this (useTimeUtilities)
