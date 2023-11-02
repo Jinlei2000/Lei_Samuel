@@ -31,16 +31,15 @@
       <div class="flex flex-col min-h-[300px] w-2/3 bg-gray-200 rounded-2xl pt-6 pb-3 px-3 gap-6">
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Type afspraak</label>
-          <select class="bg-gray-400 rounded w-fit p-3" name="" id="">
+          <select v-bind="appointmentType" class="bg-gray-400 rounded w-fit p-3" name="" id="">
             <option value="" disabled selected>Selecteer een type</option>
-            <option value="">Onderhoud</option>
-            <option value="">Herstelling</option>
-            <option value="">Nieuwe installatie</option>
+            <option value="Maintenance">Onderhoud</option>
+            <option value="Repair">Herstelling</option>
           </select>
         </div>
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Omschrijving</label>
-          <textarea class="bg-gray-400 rounded p-3" name="" id="" rows="5"></textarea>
+          <textarea v-bind="description" class="bg-gray-400 rounded p-3" name="" id="" rows="5"></textarea>
         </div>
         <div class="w-full flex flex-col gap-3">
           <div class="flex flex-col gap-2">
@@ -49,7 +48,7 @@
           </div>
           <div class="w-full flex justify-between items-center">
             <Calendar
-              v-model="startDate"
+              v-bind="startProposedDate"
               showIcon
               :pt="{
                   input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
@@ -60,7 +59,7 @@
             />
             <img src="../../../public/assets/doubleArrow.svg">
             <Calendar 
-              v-model="endDate"
+              v-bind="endProposedDate"
               showIcon
               :pt="{
                   input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
@@ -72,7 +71,7 @@
           </div>
         </div>
         <div class="flex justify-end">
-          <button class="px-4 py-2 bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all">Afspraak maken</button>
+          <button @click="handleFormSubmit" class="px-4 py-2 bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all">Afspraak maken</button>
         </div>
       </div>
     </div>
@@ -83,21 +82,59 @@
 import { ref, watchEffect } from 'vue';
 import { useQuery } from '@vue/apollo-composable'
 import { Check } from 'lucide-vue-next'
+import * as yup from 'yup'
+import { useMutation } from '@vue/apollo-composable'
+import type { Appointment } from '@/interfaces/appointment.user.interface';
+import { CREATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import useFirebase from '@/composables/useFirebase'
 import useCustomUser from '@/composables/useCustomUser'
 import {
   GET_LOCATIONS,
 } from '@/graphql/location.query'
+import { watch } from 'fs';
+import { useForm } from 'vee-validate';
 
+// composables
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
+const { mutate: addAppointment, error: addAppointmentError } =
+  useMutation<Appointment>(CREATE_APPOINTMENT)
 
-const startDate = ref(new Date())
-const endDate = ref(new Date())
 
 firebaseUser.value?.getIdToken().then(token => {
   console.log(`{"Authorization": "Bearer ${token}"}`)
 })
+
+// watch(addAppointmentError, () => {
+//   if (!addAppointmentError.value) return
+//   errorRegister.value = "Couldn't create appointment."
+// })
+
+const schema = yup.object({
+  startProposedDate: yup.date().required(),
+  endProposedDate: yup.date().required(),
+  // description: yup.string().required(),
+  // locationId: yup.string().required(),
+})
+
+const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
+  validationSchema: schema,
+})
+
+const startProposedDate = defineComponentBinds('startProposedDate')
+const endProposedDate = defineComponentBinds('endProposedDate')
+const description = defineComponentBinds('description')
+const appointmentType = defineComponentBinds('appointmentType')
+const errorRegister = ref<string | null>(null)
+const errorMessages = ref<{
+  [key: string]: string | undefined
+}>({
+  startProposedDate: '',
+  endProposedDate: '',
+  description: '',
+  appointmentType: '',
+})
+const createAppointmentLoading = ref(false)
 
 const {
   result: allLocations,
@@ -112,6 +149,38 @@ const selectedLocation = ref(allLocations.value?.locationsByUserId[0])
 watchEffect(() => {
   selectedLocation.value = allLocations.value?.locationsByUserId[0]
 })
+
+const handleFormSubmit = async () => {
+  createAppointmentLoading.value = true
+  console.log("description", values.description)
+  console.log("location", selectedLocation.value?.id)
+  await validate()
+  errorMessages.value = errors.value
+  errorRegister.value = null
+  console.log(values)
+  console.log(Object.keys(errors.value))
+  if (Object.keys(errors.value).length === 0) {
+    await addAppointment({
+      input: {
+        userId: customUser.value?.id,
+        locationId: selectedLocation.value?.id,
+        type: values.appointmentType,
+        startProposedDate: startProposedDate.value,
+        endProposedDate: endProposedDate.value,
+        isDone: false,
+        description: values.description,
+        priority: false,
+      },
+    }).then(() => {
+      console.log('register success')
+      resetForm()
+    })
+  }
+  loading.value = false
+  // await addAppointment(appointment)
+}
+
+
 
 
 
