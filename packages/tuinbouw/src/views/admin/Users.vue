@@ -10,6 +10,18 @@
     Users
   </h1>
 
+  <!-- add employee button -->
+  <button
+    class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
+    @click="openModal(null, 'create')"
+  >
+    Add Employee
+  </button>
+
+  <!-- filters & orders -->
+
+  <!-- search bar -->
+
   <!-- show loading -->
   <div v-if="usersLoading">
     <p class="text-6xl font-black">Loading Users...</p>
@@ -21,7 +33,7 @@
       <div
         v-for="user in users.users"
         :key="user.id"
-        class="transform overflow-hidden rounded-md bg-white shadow-md transition-transform hover:scale-105"
+        class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
       >
         <div class="p-6">
           <h2 class="mb-2 text-2xl font-semibold">
@@ -34,11 +46,17 @@
           class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
         >
           <!-- View More Button -->
-          <button @click="" class="text-green-500 hover:underline">
+          <button
+            @click="openModal(user, 'detail')"
+            class="text-green-500 hover:underline"
+          >
             <Eye />
           </button>
           <!-- Edit Button -->
-          <button @click="" class="text-blue-500 hover:underline">
+          <button
+            @click="openModal(user, 'edit')"
+            class="text-blue-500 hover:underline"
+          >
             <Pencil />
           </button>
           <!-- Delete Button -->
@@ -53,6 +71,50 @@
       </div>
     </div>
   </div>
+
+  <!-- Detail Modal -->
+  <Dialog
+    v-model:visible="visible.detail"
+    modal
+    maximizable
+    header="User Details"
+    :style="{ width: '50vw' }"
+    v-if="selectedUser"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <h2 class="mb-2 text-xl font-semibold">
+      {{ selectedUser.fullname }}
+    </h2>
+    <p class="text-gray-600">
+      {{ selectedUser.email }}
+    </p>
+  </Dialog>
+
+  <!-- Edit Modal -->
+  <Dialog
+    v-model:visible="visible.edit"
+    modal
+    maximizable
+    header="Edit User"
+    :style="{ width: '50vw' }"
+    v-if="selectedUser"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+  </Dialog>
+
+  <!-- Create Employee Modal -->
+  <Dialog
+    v-model:visible="visible.create"
+    modal
+    maximizable
+    header="Create Employee"
+    :style="{ width: '50vw' }"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -83,6 +145,12 @@ const variables = ref<{
   },
   searchString: '',
 })
+const visible = ref({
+  detail: false,
+  edit: false,
+  create: false,
+})
+const selectedUser = ref<CustomUser | null>(null)
 
 // graphql
 const {
@@ -110,11 +178,31 @@ const handleEdit = () => {
 const handleDelete = async (user: CustomUser) => {
   const email = user.email
   await deleteUserMutation({
-    id: "user.id",
+    id: user.id,
   }).then(() => {
     showToast('success', 'Success', `User ${email} has been deleted`)
     refetchUsers()
   })
+}
+
+const openModal = (user: CustomUser | null = null, type: string) => {
+  console.log(type)
+  selectedUser.value = user
+  if (type === 'detail') {
+    visible.value.detail = true
+  } else if (type === 'edit') {
+    visible.value.edit = true
+  } else if (type === 'create') {
+    visible.value.create = true
+  }
+}
+
+const closeModal = () => {
+  visible.value = {
+    detail: false,
+    edit: false,
+    create: false,
+  }
 }
 
 watchEffect(() => {
