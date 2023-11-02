@@ -47,6 +47,7 @@
             <p class="max-w-xs">We plannen de afspraak in tussen de data die je gekozen hebt</p>
           </div>
           <div class="w-full flex justify-between items-center">
+            <!-- TODO: fix styling -->
             <Calendar
               v-bind="startProposedDate"
               showIcon
@@ -56,6 +57,8 @@
                       root: { class: 'bg-gray-400 h-fit p-3' }
                   }
               }"
+              :minDate="minDate"
+              dateFormat="yy-mm-dd"
             />
             <img src="../../../public/assets/doubleArrow.svg">
             <Calendar 
@@ -67,6 +70,8 @@
                       root: { class: 'bg-gray-400 h-fit p-3' }
                   }
               }"
+              :minDate="startProposedDate.value"
+              dateFormat="yy-mm-dd"
             />
           </div>
         </div>
@@ -89,16 +94,21 @@ import { CREATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import useFirebase from '@/composables/useFirebase'
 import useCustomUser from '@/composables/useCustomUser'
 import {
-  GET_LOCATIONS,
+  GET_LOCATIONS_BY_USERID,
 } from '@/graphql/location.query'
 import { watch } from 'fs';
 import { useForm } from 'vee-validate';
+import useTimeUtilities from '@/composables/useTimeUtilities';
+import useCustomToast from '@/composables/useCustomToast';
+
 
 // composables
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 const { mutate: addAppointment, error: addAppointmentError } =
   useMutation<Appointment>(CREATE_APPOINTMENT)
+const { formatDateTime } = useTimeUtilities()
+const { showToast } = useCustomToast()
 
 
 firebaseUser.value?.getIdToken().then(token => {
@@ -113,8 +123,8 @@ firebaseUser.value?.getIdToken().then(token => {
 const schema = yup.object({
   startProposedDate: yup.date().required(),
   endProposedDate: yup.date().required(),
-  // description: yup.string().required(),
-  // locationId: yup.string().required(),
+  description: yup.string(),
+  appointmentType: yup.string().required(),
 })
 
 const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
@@ -140,33 +150,32 @@ const {
   result: allLocations,
   loading,
   error,
-} = useQuery(GET_LOCATIONS, () => ({
+} = useQuery(GET_LOCATIONS_BY_USERID, () => ({
   userId: customUser.value?.id,
 })
 )
 
 const selectedLocation = ref(allLocations.value?.locationsByUserId[0])
+
+// Automatically select first location
 watchEffect(() => {
   selectedLocation.value = allLocations.value?.locationsByUserId[0]
 })
 
 const handleFormSubmit = async () => {
   createAppointmentLoading.value = true
-  console.log("description", values.description)
-  console.log("location", selectedLocation.value?.id)
   await validate()
   errorMessages.value = errors.value
   errorRegister.value = null
-  console.log(values)
-  console.log(Object.keys(errors.value))
+  console.log(values.value)
   if (Object.keys(errors.value).length === 0) {
     await addAppointment({
       input: {
         userId: customUser.value?.id,
         locationId: selectedLocation.value?.id,
         type: values.appointmentType,
-        startProposedDate: startProposedDate.value,
-        endProposedDate: endProposedDate.value,
+        startProposedDate: formatDateTime(values.startProposedDate.toString()),
+        endProposedDate: formatDateTime(values.endProposedDate.toString()),
         isDone: false,
         description: values.description,
         priority: false,
@@ -180,11 +189,24 @@ const handleFormSubmit = async () => {
   // await addAppointment(appointment)
 }
 
+watchEffect(() => {
+  const errors = [
+    addAppointmentError.value,
+  ]
+  errors.forEach(error => {
+    if (error) {
+      showToast('error', 'Error', error.message)
+    }
+  })
+})
+
 
 
 
 
 console.log(selectedLocation.value)
+
+const minDate = new Date()
 
 
 </script>

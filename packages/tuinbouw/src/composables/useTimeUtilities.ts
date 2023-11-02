@@ -4,6 +4,7 @@ export default () => {
   // format date to yyyy-mm-dd
   const formatDateTime = (date: string) => {
     const d = new Date(date)
+    console.log('d', `${d.toISOString().split('T')[0]}`)
     return `${d.toISOString().split('T')[0]}`
   }
 
