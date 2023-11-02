@@ -210,6 +210,9 @@ const handleDelete = async (user: CustomUser) => {
 }
 
 // handle create employee
+const handleCreateEmployee = async () => {
+  console.log('create employee')
+}
 
 // handle send email to employee
 const handleSendMailToEmployee = async (user: CustomUser) => {
