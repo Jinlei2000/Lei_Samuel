@@ -222,7 +222,8 @@ export class SchedulesService {
       } else {
         await this.update(updatedSchedule.id, updatedSchedule)
       }
-      ids.push(updatedSchedule.id.toString())
+     
+      if (updatedSchedule.id) ids.push(updatedSchedule.id.toString())
     }
 
     return ids
@@ -271,7 +272,7 @@ export class SchedulesService {
   }
 
   async remove(id: string): Promise<string> {
-    await this.findOne(id.toString())
+    await this.findOne(id)
 
     await this.scheduleRepository.delete(id)
 

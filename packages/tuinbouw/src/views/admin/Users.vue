@@ -43,7 +43,8 @@
           </button>
           <!-- Delete Button -->
           <button
-            @click="handleDelete(user.id)"
+            v-if="user.role === 'EMPLOYEE'"
+            @click="handleDelete(user)"
             class="text-red-500 hover:underline"
           >
             <Trash2 />
@@ -56,10 +57,17 @@
 
 <script setup lang="ts">
 import { GET_USERS } from '@/graphql/user.query'
-import { useQuery } from '@vue/apollo-composable'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Trash2, Pencil, Eye } from 'lucide-vue-next'
+import useCustomToast from '@/composables/useCustomToast'
+import type { CustomUser } from '@/interfaces/custom.user.interface'
+import { DELETE_USER } from '@/graphql/user.mutation'
 
+// composables
+const { showToast } = useCustomToast()
+
+// variables
 const variables = ref<{
   filters: string[]
   order: {
@@ -76,29 +84,49 @@ const variables = ref<{
   searchString: '',
 })
 
+// graphql
 const {
   result: users,
   error: usersError,
   loading: usersLoading,
+  refetch: refetchUsers,
 } = useQuery(GET_USERS, variables, {
   fetchPolicy: 'cache-and-network',
 })
 
+const {
+  mutate: deleteUserMutation,
+  loading: deleteUserLoading,
+  error: deleteUserError,
+} = useMutation(DELETE_USER)
+
+// logics
 // handle edit
 const handleEdit = () => {
   console.log('edit user with id: ')
 }
 
 // handle delete
-const handleDelete = (id: string) => {
-  console.log('delete user with id: ', id)
+const handleDelete = async (user: CustomUser) => {
+  const email = user.email
+  await deleteUserMutation({
+    id: "user.id",
+  }).then(() => {
+    showToast('success', 'Success', `User ${email} has been deleted`)
+    refetchUsers()
+  })
 }
 
-// log the queries
 watchEffect(() => {
+  // log the queries
   if (users.value) console.log(users.value)
 
   // all errors
-  if (usersError.value) console.log(usersError.value)
+  const errors = [usersError.value, deleteUserError.value]
+  errors.forEach(error => {
+    if (error) {
+      showToast('error', 'Error', error.message)
+    }
+  })
 })
 </script>

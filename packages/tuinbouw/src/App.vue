@@ -1,11 +1,8 @@
 <template>
   <Toast position="bottom-right">
-    <template #icon="slotProps">
-      <XCircle :class="slotProps.class" v-if="ToastSeverity.ERROR" />
-      <Info :class="slotProps.class" v-else-if="ToastSeverity.INFO" />
-      <AlertTriangle :class="slotProps.class" v-else-if="ToastSeverity.WARN" />
-      <Check :class="slotProps.class" v-else-if="ToastSeverity.SUCCESS" />
-    </template>
+    <!-- <template #container="slotProps">
+      {{ slotProps.message }}
+    </template> -->
     <template #closeicon="slotProps">
       <X :class="slotProps.class" />
     </template>
@@ -19,7 +16,6 @@
 <script setup lang="ts">
 import { provide } from 'vue'
 import { DefaultApolloClient } from '@vue/apollo-composable'
-import { ToastSeverity } from 'primevue/api'
 import useGraphql from './composables/useGraphql'
 import { useI18n } from 'vue-i18n'
 import useLanguage from './composables/useLanguage'

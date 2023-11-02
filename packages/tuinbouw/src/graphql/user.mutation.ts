@@ -68,3 +68,9 @@ export const UPDATE_EMPLOYEE_REGISTER = gql`
     }
   }
 `
+
+export const DELETE_USER = gql`
+  mutation removeUser($id: String!) {
+    removeUser(id: $id)
+  }
+`
