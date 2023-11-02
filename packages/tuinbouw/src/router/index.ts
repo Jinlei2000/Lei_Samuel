@@ -120,10 +120,6 @@ const router = createRouter({
           path: 'appointments',
           component: () => import('../views/client/AllAppointments.vue'),
         },
-        {
-          path: 'appointment/:id',
-          component: () => import('../views/client/AppointmentDetail.vue'),
-        },
       ],
     },
 
