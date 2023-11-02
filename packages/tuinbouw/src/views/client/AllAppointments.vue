@@ -366,7 +366,7 @@
 import useCustomUser from '@/composables/useCustomUser'
 import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type {
@@ -389,11 +389,6 @@ const { formatDateTime, isOverToday } = useTimeUtilities()
 
 const minDate = new Date()
 const selected = ref<AppointmentUpdate | null>(null)
-watch(selected, () => {
-  if (selected.value) {
-    console.log('selected: ', selected.value)
-  }
-})
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref({
   detail: false,
