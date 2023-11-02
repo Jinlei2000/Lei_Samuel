@@ -21,6 +21,7 @@ import 'primevue/resources/themes/lara-light-teal/theme.css'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
+import Calendar from 'primevue/calendar'
 
 import MyDesignSystem from './presets/MyDesignSystem'
 import Textarea from 'primevue/textarea'

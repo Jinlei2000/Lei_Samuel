@@ -12,7 +12,7 @@
   </Toast>
   <div class="mx-4 text-black">
     <AppHeader />
-    <RouterView class="pt-12" />
+    <RouterView />
   </div>
 </template>
 

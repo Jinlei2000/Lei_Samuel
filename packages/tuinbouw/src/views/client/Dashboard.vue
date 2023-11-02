@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-col items-center justify-center">
+  <div class="flex min-h-full flex-col items-center justify-center">
     <h1
       class="mb-5 bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
     >
