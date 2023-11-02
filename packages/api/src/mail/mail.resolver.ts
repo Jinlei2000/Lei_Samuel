@@ -14,7 +14,7 @@ export class MailResolver {
   // Send email to new employee
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
-  @Query(() => String, { name: 'sendEmailToNewEmployeeById' })
+  @Mutation(() => String, { name: 'sendEmailToNewEmployeeById' })
   sendEmailToNewEmployeeById(
     @Args('userId', { type: () => String }) userId: string,
   ) {

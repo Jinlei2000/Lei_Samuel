@@ -74,3 +74,26 @@ export const DELETE_USER = gql`
     removeUser(id: $id)
   }
 `
+
+export const CREATE_EMPLOYEE = gql`
+  mutation createStaff($createStaffInput: CreateStaffInput!) {
+    createStaff(createStaffInput: $createStaffInput) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      email
+      telephone
+      createdAt
+      updatedAt
+      locations {
+        id
+      }
+      absentCount
+    }
+  }
+`

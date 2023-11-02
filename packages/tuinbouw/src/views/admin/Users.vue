@@ -34,12 +34,23 @@
         v-for="user in users.users"
         :key="user.id"
         class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+        :class="user.uid === null ?? 'border-red-500'"
       >
         <div class="p-6">
           <h2 class="mb-2 text-2xl font-semibold">
             {{ user.firstname }} {{ user.lastname }}
           </h2>
           <p class="text-gray-600">{{ user.email }}</p>
+          <p class="text-gray-600">{{ user.role }}</p>
+          <p class="text-gray-600">{{ user.uid }}</p>
+          <!-- send email button -->
+          <button
+            v-if="user.uid === null"
+            @click="handleSendMailToEmployee(user)"
+            class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
+          >
+            send email to create account
+          </button>
           <!-- Add other user information as needed -->
         </div>
         <div
@@ -124,7 +135,8 @@ import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Trash2, Pencil, Eye } from 'lucide-vue-next'
 import useCustomToast from '@/composables/useCustomToast'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
-import { DELETE_USER } from '@/graphql/user.mutation'
+import { DELETE_USER, CREATE_EMPLOYEE } from '@/graphql/user.mutation'
+import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
 
 // composables
 const { showToast } = useCustomToast()
@@ -163,7 +175,19 @@ const {
 })
 
 const {
-  mutate: deleteUserMutation,
+  mutate: sendMailToEmployee,
+  loading: sendMailToEmployeeLoading,
+  error: sendMailToEmployeeError,
+} = useMutation(SEND_MAIL_TO_EMPLOYEE)
+
+const {
+  mutate: createEmployee,
+  loading: createEmployeeLoading,
+  error: createEmployeeError,
+} = useMutation(CREATE_EMPLOYEE)
+
+const {
+  mutate: deleteUser,
   loading: deleteUserLoading,
   error: deleteUserError,
 } = useMutation(DELETE_USER)
@@ -177,7 +201,7 @@ const handleEdit = () => {
 // handle delete
 const handleDelete = async (user: CustomUser) => {
   const email = user.email
-  await deleteUserMutation({
+  await deleteUser({
     id: user.id,
   }).then(() => {
     showToast('success', 'Success', `User ${email} has been deleted`)
@@ -185,8 +209,14 @@ const handleDelete = async (user: CustomUser) => {
   })
 }
 
+// handle create employee
+
+// handle send email to employee
+const handleSendMailToEmployee = async (user: CustomUser) => {
+  console.log(`send email to employee with id: ${user.id}`)
+}
+
 const openModal = (user: CustomUser | null = null, type: string) => {
-  console.log(type)
   selectedUser.value = user
   if (type === 'detail') {
     visible.value.detail = true
@@ -210,7 +240,12 @@ watchEffect(() => {
   if (users.value) console.log(users.value)
 
   // all errors
-  const errors = [usersError.value, deleteUserError.value]
+  const errors = [
+    usersError.value,
+    deleteUserError.value,
+    createEmployeeError.value,
+    sendMailToEmployeeError.value,
+  ]
   errors.forEach(error => {
     if (error) {
       showToast('error', 'Error', error.message)
