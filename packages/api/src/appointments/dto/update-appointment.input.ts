@@ -38,7 +38,6 @@ export class UpdateAppointmentInput extends PartialType(
   finalDate?: Date
 
   @Field({
-    defaultValue: false,
     nullable: true,
     description: 'If the appointment is scheduled, it will be true',
   })
@@ -51,7 +50,6 @@ export class UpdateAppointmentInput extends PartialType(
   priority?: boolean
 
   @Field({
-    defaultValue: false,
     nullable: true,
     description: 'If the appointment is done, it will be true',
   })

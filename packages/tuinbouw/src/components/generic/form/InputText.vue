@@ -6,6 +6,7 @@
   >
   <div class="relative">
     <InputText
+      v-if="inputType === 'text' || inputType === 'password'"
       :id="name"
       :type="type === 'password' ? (visible ? 'text' : 'password') : type"
       :placeholder="placeholder"

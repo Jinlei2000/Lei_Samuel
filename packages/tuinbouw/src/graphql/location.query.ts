@@ -1,30 +1,13 @@
 import gql from 'graphql-tag'
 
-export const GET_LOCATIONS = gql`
-  query locationsByUserId($userId: String!) {
-  locationsByUserId(userId: $userId) {
-    id
-    userId
-    address
-    createdAt
-    updatedAt
+export const GET_LOCATIONS_BY_USERID = gql`
+  query getLocationsByUserId($userId: String!) {
+    locationsByUserId(userId: $userId) {
+      id
+      userId
+      address
+      createdAt
+      updatedAt
+    }
   }
-}
 `
-
-
-
-// query materials($filters: [String!], $searchString: String) {
-//     materials(filters: $filters, searchString: $searchString) {
-//       id
-//       name
-//       isLoan
-//       user {
-//         id
-//         fullname
-//       }
-//       serialNumber
-//       createdAt
-//       updatedAt
-//     }
-//   }

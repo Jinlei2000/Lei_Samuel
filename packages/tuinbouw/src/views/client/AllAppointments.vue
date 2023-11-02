@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)">
+  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -11,6 +11,7 @@
     AllAppointment
   </h1>
 
+  <!-- TODO: make a filter component and use Accordion  -->
   <div class="relative flex w-full items-center justify-between">
     <!-- Filter -->
     <div class="flex items-center gap-3">
@@ -138,15 +139,18 @@
     <!-- End filter dropdown -->
   </div>
 
-  <div v-if="loading">
+  <!-- TODO: make a sort component -->
+
+  <div v-if="appointmentsLoading && locationsLoading">
     <p class="text-6xl font-black">Loading...</p>
   </div>
 
+  <!-- show all appointments -->
   <div>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <div
-        v-if="allAppointment && allAppointment.appointmentsByUserId.length > 0"
-        v-for="a of allAppointment.appointmentsByUserId"
+        v-if="appointments && appointments.appointmentsByUserId.length > 0"
+        v-for="a of appointments.appointmentsByUserId"
         :key="a.id"
       >
         <div
@@ -187,21 +191,27 @@
           <div class="border-t border-gray-200 p-4">
             <div class="flex items-center justify-between">
               <!-- View More button -->
-              <button @click="openModalDetail(a)" class="ml-2 text-blue-500">
+              <button
+                @click="openModal(a, 'detail')"
+                class="ml-2 text-blue-500"
+              >
                 View More
               </button>
               <!-- Delete button (only if not done) -->
               <button
                 v-if="!a.isDone"
-                @click.stop="deleteAppointmentBtn(a.id)"
+                @click.stop="handleDelete(a.id)"
                 class="ml-2 text-red-500"
               >
                 Delete
               </button>
               <!-- Edit button (only if not done) -->
               <button
-                v-if="!a.isDone"
-                @click.stop="openModalDetailEdit(a)"
+                v-if="
+                  // check if is not done and is over today or not done and not scheduled
+                  (!a.isDone && isOverToday(a)) || (!a.isDone && !a.isScheduled)
+                "
+                @click.stop="openModal(a, 'edit')"
                 class="ml-2 text-blue-500"
               >
                 Edit
@@ -214,13 +224,14 @@
 
     <!-- Detail Modal -->
     <Dialog
-      v-model:visible="visible"
+      v-model:visible="visible.detail"
       modal
       maximizable
       header="Appointment"
       :style="{ width: '50vw' }"
       v-if="selectedAppointment"
       @click:close="closeModal"
+      class="max-w-lg"
     >
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedAppointment.type }}
@@ -230,61 +241,169 @@
       </p>
     </Dialog>
 
-    <!-- TODO: make edit functions -->
     <!-- Edit Modal -->
     <Dialog
-      v-model:visible="visibleEdit"
+      v-model:visible="visible.edit"
       modal
       maximizable
       header="Edit Appointment"
       :style="{ width: '50vw' }"
-      v-if="selectedAppointment"
+      v-if="selected"
       @click:close="closeModal"
+      class="max-w-lg"
     >
-      <div class="p-4">
-        <h2 class="mb-2 text-xl font-semibold">
-          {{ selectedAppointment.type }}
-        </h2>
-        <p class="text-gray-600">
-          {{ selectedAppointment.description }}
-        </p>
-      </div>
+      <form @submit.prevent="handleUpdate()" class="space-y-2 p-4">
+        <!-- Location ID -->
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="locationId"
+            >Start Proposed Date
+          </label>
+          <Dropdown
+            v-if="locations && locations.locationsByUserId.length > 0"
+            id="locationId"
+            v-model="selected.locationId"
+            :options="locations.locationsByUserId"
+            optionLabel="address"
+            optionValue="id"
+            class="w-full"
+          />
+        </div>
+
+        <!-- Type -->
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="type"
+            >Start Proposed Date
+          </label>
+          <Dropdown
+            id="type"
+            v-model="selected.type"
+            :options="[{ name: 'maintenance' }, { name: 'repair' }]"
+            optionLabel="name"
+            optionValue="name"
+            class="w-full"
+          >
+            <template #dropdownicon>
+              <ChevronDownIcon />
+            </template>
+          </Dropdown>
+        </div>
+
+        <!-- Start Proposed Date -->
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="startProposedDate"
+            >Start Proposed Date
+          </label>
+          <Calendar
+            id="startProposedDate"
+            v-model="selected.startProposedDate"
+            :manualInput="false"
+            :minDate="minDate"
+            showIcon
+            dateFormat="yy-mm-dd"
+          >
+            <template #dropdownicon>
+              <CalendarIcon />
+            </template>
+          </Calendar>
+        </div>
+
+        <!-- End Proposed Date -->
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="endProposedDate"
+          >
+            End Proposed Date
+          </label>
+          <Calendar
+            id="endProposedDate"
+            v-model="selected.endProposedDate"
+            showIcon
+            dateFormat="yy-mm-dd"
+            :manualInput="false"
+            :minDate="minDate"
+          >
+            <template #dropdownicon>
+              <CalendarIcon />
+            </template>
+          </Calendar>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="description"
+          >
+            Description
+          </label>
+          <Textarea
+            id="description"
+            v-if="selected.description"
+            v-model="selected.description"
+            rows="5"
+            cols="30"
+            placeholder="Type your description here..."
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
+        >
+          Save
+        </button>
+      </form>
     </Dialog>
   </div>
 </template>
 <script setup lang="ts">
-defineOptions({
-  inheritAttrs: false,
-})
 import useCustomUser from '@/composables/useCustomUser'
-import useFirebase from '@/composables/useFirebase'
 import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { useToast } from 'primevue/usetoast'
-import { ref, watch } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
-import type { Appointment } from '@/interfaces/appointment.user.interface'
-import { DELETE_APPOINTMENT } from '@/graphql/appointment.mutation'
+import type {
+  Appointment,
+  AppointmentUpdate,
+} from '@/interfaces/appointment.user.interface'
+import {
+  DELETE_APPOINTMENT,
+  UPDATE_APPOINTMENT,
+} from '@/graphql/appointment.mutation'
+import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
+import useCustomToast from '@/composables/useCustomToast'
+import useTimeUtilities from '@/composables/useTimeUtilities'
+import Textarea from 'primevue/textarea'
+import { Calendar as CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
 
 const { customUser } = useCustomUser()
-const { firebaseUser } = useFirebase()
-const toast = useToast()
+const { showToast } = useCustomToast()
+const { formatDateTime, isOverToday } = useTimeUtilities()
 
-// TODO: use dynamic filters and orders
-// https://apollo.vuejs.org/guide-composable/query.html
+const minDate = ref<Date>(new Date(Date.now()))
+const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
-const visible = ref(false)
-const visibleEdit = ref(false)
+const visible = ref({
+  detail: false,
+  edit: false,
+})
 const variables = ref<{
-  userId: string | undefined
+  userId: string
   filters: string[]
   order: {
     field: string
     direction: string
   }
 }>({
-  userId: customUser.value?.id,
+  userId: customUser.value?.id!,
   filters: [],
   order: {
     field: 'createdAt',
@@ -294,19 +413,42 @@ const variables = ref<{
 const filter = ref(false)
 
 // TODO: use fetchMore to load more appointments (add some kind of pagination in backend (limit, offset)))
+// use a load more button
 // https://apollo.vuejs.org/guide-composable/pagination.html
 const {
-  result: allAppointment,
-  error: allAppointmentError,
-  refetch: allAppointmentRefectch,
-  loading,
+  result: appointments,
+  error: appointmentsError,
+  refetch: appointmentsRefetch,
+  loading: appointmentsLoading,
 } = useQuery(GET_ALL_APPOINTMENT_BY_CLIENT, variables, {
   // return result from cache first (if it exists), then return network result once it's available.
   fetchPolicy: 'cache-and-network',
 })
 
-const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
+// TODO: loading on something (button, etc)
+const { mutate: deleteAppointment, error: deleteAppointmentError } =
+  useMutation(DELETE_APPOINTMENT)
 
+// TODO: loading on something (button, etc)
+const { mutate: updateAppointment, error: updateAppointmentError } =
+  useMutation(UPDATE_APPOINTMENT)
+
+const {
+  result: locations,
+  error: locationsError,
+  loading: locationsLoading,
+} = useQuery(
+  GET_LOCATIONS_BY_USERID,
+  () => ({
+    userId: customUser.value?.id,
+  }),
+  {
+    fetchPolicy: 'cache-and-network',
+  },
+)
+
+// TODO: make a filter component and use Accordion  (https://primefaces.org/primevue/showcase/#/accordion)
+// also add a reset button
 const updateFilters = (filter: string) => {
   const index = variables.value.filters.indexOf(filter)
   if (index !== -1) {
@@ -340,95 +482,78 @@ const updateFiltersRadio = (filters: string[], reset: boolean = false) => {
   }
 }
 
-const openModalDetail = (appointment: Appointment) => {
-  selectedAppointment.value = appointment
-  visible.value = true
+const handleDelete = (id: string) => {
+  deleteAppointment({
+    id,
+  }).then(() => {
+    showToast('success', 'Success', 'Appointment deleted')
+    // refetch
+    appointmentsRefetch()
+  })
+}
+
+const handleUpdate = () => {
+  console.log('selected: ', selected.value)
+  updateAppointment({
+    updateAppointmentInput: {
+      ...selected.value,
+    },
+  }).then(async () => {
+    showToast('success', 'Success', 'Appointment updated')
+    // refetch
+    await appointmentsRefetch()
+    // close modal
+    closeModal()
+  })
+}
+
+const openModal = (appointment: Appointment, modalType: string) => {
+  if (modalType === 'detail') {
+    selectedAppointment.value = { ...appointment }
+    visible.value.detail = true
+  } else if (modalType === 'edit') {
+    selected.value = {
+      id: appointment.id!,
+      type: appointment.type!,
+      locationId: appointment.location?.id!,
+      startProposedDate: formatDateTime(
+        appointment.startProposedDate!.toString(),
+      ),
+      endProposedDate: formatDateTime(appointment.endProposedDate!.toString()),
+      description: appointment.description!,
+    }
+    visible.value.edit = true
+  }
 }
 
 const closeModal = () => {
   selectedAppointment.value = null
-  visible.value = false
-  visibleEdit.value = false
+  selected.value = null
+  visible.value = {
+    detail: false,
+    edit: false,
+  }
 }
 
-const deleteAppointmentBtn = (id: string) => {
-  deleteAppointment({
-    id,
-  })
-    .then(() => {
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Appointment deleted',
-        life: 10000,
-      })
-
-      // refetch
-      allAppointmentRefectch()
-    })
-    .catch(err => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: err.message,
-        life: 10000,
-      })
-    })
-}
-
-const openModalDetailEdit = (appointment: Appointment) => {
-  selectedAppointment.value = appointment
-  visibleEdit.value = true
-}
-
-// TODO: make a composables for this (useTimeUtilities)
-const formatDateTime = (date: string) => {
-  const d = new Date(date)
-  return `${d.toLocaleDateString()}`
-}
-
-// TODO: make a composables for this (useTimeUtilities)
-// check if finalDate is over today and not done
-// also check if isScheduled is false and endProposedDate is over today
-const isOverToday = (appointment: Appointment) => {
-  if (appointment.isDone) return false
-
-  const today = new Date().toISOString().split('T')[0]
-  const finalDate = appointment.finalDate
-    ? new Date(appointment.finalDate).toISOString().split('T')[0]
-    : null
-  const endProposedDate = new Date(appointment.endProposedDate)
-    .toISOString()
-    .split('T')[0]
-
-  if (finalDate && finalDate < today && !appointment.isDone) return true
-
-  if (!appointment.isScheduled && endProposedDate < today) return true
-
-  return false
-}
-
-watch(allAppointmentError, () => {
-  if (!allAppointmentError.value) return
-  toast.add({
-    severity: 'error',
-    summary: 'Error',
-    detail: allAppointmentError.value.message,
-    life: 10000,
+// watch all errors
+watchEffect(() => {
+  const errors = [
+    appointmentsError.value,
+    deleteAppointmentError.value,
+    updateAppointmentError.value,
+    locationsError.value,
+  ]
+  errors.forEach(error => {
+    if (error) {
+      showToast('error', 'Error', error.message)
+    }
   })
 })
 
-//  log the allAppointment length
-watch(allAppointment, () => {
-  if (!allAppointment.value) return
-  console.log(
-    'allAppointment length: ',
-    allAppointment.value.appointmentsByUserId.length,
-  )
-})
-
-// Create brearer token
-firebaseUser.value?.getIdToken().then(token => {
-  // console.log(`{"Authorization": "Bearer ${token}"}`)
-})
+// // log the queries
+// watchEffect(() => {
+//   if (locations.value) console.log('locations: ', locations.value)
+//   if (appointments.value)
+//     console.log('appointments: ', appointments.value)
+// })
 </script>

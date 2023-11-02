@@ -109,7 +109,17 @@ export class SeedService {
         let userAppointments: Appointment[] = []
         for (let appointment of users[num].appointments) {
           const a = new Appointment()
-          a.user = await this.usersService.findOne(user.id.toString())
+          //  add locationIds to user (if not already added)
+          const userData = await this.usersService.findOne(user.id.toString())
+          const locationsIds =
+            await this.locationsService.findAllByUserIdAndGetIds(
+              user.id.toString(),
+            )
+          a.user = {
+            ...userData,
+            locationIds: locationsIds,
+          }
+          console.log('a.user', a.user)
           a.type = appointment.type
 
           // appointment in past

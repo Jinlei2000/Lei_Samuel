@@ -1,20 +1,29 @@
+import type { Location } from './location.interface'
+
 export interface Appointment {
+  id?: string
+  user?: {
+    id?: string
+  }
+  location?: Location
+  price?: number
+  type?: string
+  startProposedDate?: Date
+  endProposedDate?: Date
+  isScheduled?: boolean
+  finalDate?: Date
+  isDone?: boolean
+  description?: string
+  priority?: number
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+export interface AppointmentUpdate {
   id: string
-  user: {
-    id: string
-  }
-  location: {
-    id: string
-  }
-  price: number
-  type: string
-  startProposedDate: Date
-  endProposedDate: Date
-  isScheduled: boolean
-  finalDate: Date
-  isDone: boolean
-  description: string
-  priority: number
-  createdAt: Date
-  updatedAt: Date
+  type?: string
+  locationId?: string
+  startProposedDate?: string
+  endProposedDate?: string
+  description?: string
 }
