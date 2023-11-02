@@ -25,7 +25,6 @@ import Calendar from 'primevue/calendar'
 
 import MyDesignSystem from './presets/MyDesignSystem'
 import Textarea from 'primevue/textarea'
-import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 
 const app = createApp(App)
