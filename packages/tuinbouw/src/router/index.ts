@@ -89,29 +89,13 @@ const router = createRouter({
           component: () => import('../views/admin/ScheduleAppointment.vue'),
         },
         {
-          path: 'employees',
-          component: () => import('../views/admin/Employees.vue'),
-        },
-        {
-          path: 'employee/:id',
-          component: () => import('../views/admin/Employee.vue'),
-        },
-        {
-          path: 'clients',
-          component: () => import('../views/admin/Clients.vue'),
-        },
-        {
-          path: 'clients/:id',
-          component: () => import('../views/admin/Client.vue'),
+          path: 'users',
+          component: () => import('../views/admin/Users.vue'),
         },
         {
           path: 'materials',
           component: () => import('../views/admin/Materials.vue'),
         },
-        // {
-        //   path: 'materials/:id',
-        //   component: () => import('../views/admin/Material.vue'),
-        // },
       ],
     },
 
