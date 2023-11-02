@@ -327,7 +327,7 @@
             showIcon
             dateFormat="yy-mm-dd"
             :manualInput="false"
-            :minDate="minDate"
+            :minDate="new Date(selected.startProposedDate!)"
           >
             <template #dropdownicon>
               <CalendarIcon />
@@ -345,7 +345,6 @@
           </label>
           <Textarea
             id="description"
-            v-if="selected.description"
             v-model="selected.description"
             rows="5"
             cols="30"
@@ -367,7 +366,7 @@
 import useCustomUser from '@/composables/useCustomUser'
 import { GET_ALL_APPOINTMENT_BY_CLIENT } from '@/graphql/appointment.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ref, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import type {
@@ -388,8 +387,13 @@ const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
 const { formatDateTime, isOverToday } = useTimeUtilities()
 
-const minDate = ref<Date>(new Date(Date.now()))
+const minDate = new Date()
 const selected = ref<AppointmentUpdate | null>(null)
+watch(selected, () => {
+  if (selected.value) {
+    console.log('selected: ', selected.value)
+  }
+})
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref({
   detail: false,
