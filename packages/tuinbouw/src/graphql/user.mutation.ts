@@ -97,3 +97,31 @@ export const CREATE_EMPLOYEE = gql`
     }
   }
 `
+
+export const UPDATE_USER = gql`
+  mutation updateUserInput($updateUserInput: UpdateUserInput!) {
+    updateUser(updateUserInput: $updateUserInput) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      email
+      telephone
+      createdAt
+      updatedAt
+      locations {
+        id
+      }
+      # Additional fields for staff
+      absentCount
+      # Additional fields for clients
+      invoiceOption
+      company
+      btwNumber
+    }
+  }
+`

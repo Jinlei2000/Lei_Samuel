@@ -177,7 +177,7 @@
       <CustomButton
         type="submit"
         name="Create Employee"
-        :loading="loadingCreateEmployee"
+        :loading="loadingUpdate"
       />
     </form>
   </Dialog>
@@ -266,7 +266,11 @@ import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Trash2, Pencil, Eye } from 'lucide-vue-next'
 import useCustomToast from '@/composables/useCustomToast'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
-import { DELETE_USER, CREATE_EMPLOYEE } from '@/graphql/user.mutation'
+import {
+  DELETE_USER,
+  CREATE_EMPLOYEE,
+  UPDATE_USER,
+} from '@/graphql/user.mutation'
 import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
@@ -301,6 +305,7 @@ const visible = ref({
 })
 const selectedUser = ref<CustomUser | null>(null)
 
+// form
 const schema = yup.object({
   email: yup.string().required().email(),
   firstname: yup.string().required(),
@@ -310,7 +315,8 @@ const schema = yup.object({
     .matches(/^[0-9]+$/, 'Must be only digits')
     .min(10)
     .max(10)
-    .optional(),
+    .optional()
+    .nullable(),
 })
 
 const errorMessages = ref<{
@@ -321,6 +327,8 @@ const errorMessages = ref<{
   email: '',
   telephone: '',
 })
+
+// create form
 const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
   validationSchema: schema,
 })
@@ -330,9 +338,9 @@ const lastname = defineComponentBinds('lastname')
 const email = defineComponentBinds('email')
 const telephone = defineComponentBinds('telephone')
 const locale = ref('en')
-
 const loadingCreateEmployee = ref(false)
 
+// update form
 const {
   defineComponentBinds: defineComponentBindsUpdate,
   errors: errorsUpdate,
@@ -348,6 +356,7 @@ const lastnameUpdate = defineComponentBindsUpdate('lastname')
 const emailUpdate = defineComponentBindsUpdate('email')
 const telephoneUpdate = defineComponentBindsUpdate('telephone')
 const localeUpdate = ref('en')
+const loadingUpdate = ref(false)
 
 // graphql
 const {
@@ -374,10 +383,33 @@ const {
   error: deleteUserError,
 } = useMutation(DELETE_USER)
 
+const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
+
 // logics
 // handle edit
-const handleUpdate = () => {
-  console.log('edit user with id: ')
+const handleUpdate = async () => {
+  loadingUpdate.value = true
+  await validateUpdate()
+  errorMessages.value = errorsUpdate.value
+  if (Object.keys(errorsUpdate.value).length === 0) {
+    console.log('no errors', valuesUpdate)
+    await updateUser({
+      updateUserInput: {
+        id: selectedUser.value?.id!,
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+        locale: localeUpdate.value,
+      },
+    }).then(async () => {
+      showToast('success', 'Success', 'User has been updated')
+      await refetchUsers()
+      closeModal()
+      resetForm()
+    })
+  }
+  loadingUpdate.value = false
 }
 
 // handle delete
@@ -479,10 +511,12 @@ watchEffect(() => {
     deleteUserError.value,
     createEmployeeError.value,
     sendMailToEmployeeError.value,
+    updateUserError.value,
   ]
   errors.forEach(error => {
     if (error) {
       loadingCreateEmployee.value = false
+      loadingUpdate.value = false
 
       showToast('error', 'Error', error.message)
     }
