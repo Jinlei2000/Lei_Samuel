@@ -250,7 +250,6 @@
     maximizable
     header="Edit Appointment"
     :style="{ width: '50vw' }"
-    v-if="selected"
     @click:close="closeModal"
     class="max-w-lg"
   >
@@ -265,7 +264,7 @@
         <Dropdown
           v-if="locations && locations.locationsByUserId.length > 0"
           id="locationId"
-          v-model="locationId"
+          v-bind="locationId"
           :options="locations.locationsByUserId"
           optionLabel="address"
           optionValue="id"
@@ -282,7 +281,7 @@
         </label>
         <Dropdown
           id="type"
-          v-model="type"
+          v-bind="type"
           :options="[{ name: 'maintenance' }, { name: 'repair' }]"
           optionLabel="name"
           optionValue="name"
@@ -303,7 +302,7 @@
         </label>
         <Calendar
           id="startProposedDate"
-          v-model="startProposedDate"
+          v-bind="startProposedDate"
           :manualInput="false"
           :minDate="minDate"
           showIcon
@@ -325,11 +324,11 @@
         </label>
         <Calendar
           id="endProposedDate"
-          v-model="endProposedDate"
+          v-bind="endProposedDate"
           showIcon
           dateFormat="yy-mm-dd"
           :manualInput="false"
-          :minDate="new Date(selected.startProposedDate!)"
+          :minDate="new Date(startProposedDate.modelValue!)"
         >
           <template #dropdownicon>
             <CalendarIcon />
@@ -347,7 +346,7 @@
         </label>
         <Textarea
           id="description"
-          v-model="description"
+          v-bind="description"
           rows="5"
           cols="30"
           placeholder="Type your description here..."
@@ -394,7 +393,6 @@ const { showToast } = useCustomToast()
 const { formatDateTime, isOverToday } = useTimeUtilities()
 
 const minDate = new Date()
-const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref({
   detail: false,
@@ -438,10 +436,9 @@ const errorMessages = ref<{
 })
 
 // update form
-const { resetForm, defineComponentBinds, errors, values, validate, setValues } =
-  useForm({
-    validationSchema: schema,
-  })
+const { defineComponentBinds, errors, values, validate, setValues } = useForm({
+  validationSchema: schema,
+})
 
 const type = defineComponentBinds('type')
 const locationId = defineComponentBinds('locationId')
@@ -530,28 +527,20 @@ const handleDelete = (id: string) => {
   })
 }
 
-// TODO: add validation
 const handleUpdate = async () => {
-  // console.log('selected: ', selected.value)
-  // updateAppointment({
-  //   updateAppointmentInput: {
-  //     ...selected.value,
-  //   },
-  // }).then(async () => {
-  //   showToast('success', 'Success', 'Appointment updated')
-  //   // refetch
-  //   await appointmentsRefetch()
-  //   // close modal
-  //   closeModal()
-  // })
-
   loadingUpdate.value = true
   await validate()
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
+    // console.log('values: ', values)
     updateAppointment({
       updateAppointmentInput: {
-        ...selected.value,
+        id: selectedAppointment.value?.id!,
+        type: values.type,
+        locationId: values.locationId,
+        startProposedDate: formatDateTime(values.startProposedDate),
+        endProposedDate: formatDateTime(values.endProposedDate),
+        description: values.description,
       },
     }).then(async () => {
       loadingUpdate.value = false
@@ -570,16 +559,7 @@ const openModal = (appointment: Appointment, modalType: string) => {
     selectedAppointment.value = { ...appointment }
     visible.value.detail = true
   } else if (modalType === 'edit') {
-    // selected.value = {
-    //   id: appointment.id!,
-    //   type: appointment.type!,
-    //   locationId: appointment.location?.id!,
-    //   startProposedDate: formatDateTime(
-    //     appointment.startProposedDate!.toString(),
-    //   ),
-    //   endProposedDate: formatDateTime(appointment.endProposedDate!.toString()),
-    //   description: appointment.description!,
-    // }
+    selectedAppointment.value = { ...appointment }
     setValues({
       id: appointment.id,
       type: appointment.type,
@@ -596,7 +576,6 @@ const openModal = (appointment: Appointment, modalType: string) => {
 
 const closeModal = () => {
   selectedAppointment.value = null
-  selected.value = null
   visible.value = {
     detail: false,
     edit: false,
