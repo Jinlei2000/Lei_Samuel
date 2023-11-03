@@ -49,11 +49,6 @@
             />
           </template>
         </div>
-        <!-- <AppointmentCard
-          title="Mr. Johnsson"
-          description="Dit is een afspraak voor het snoeien van een berk."
-          type="inspection"
-        /> -->
       </div>
       <div class="col-span-2 col-start-2">
         <h2 class="mb-3 text-2xl">Weather</h2>
@@ -101,7 +96,6 @@ const appointments = ref<[Appointment]>()
 watch(schedule, () => {
   if (schedule.value.scheduleByDateAndUserId.length > 0) {
     appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
-    console.log(appointments.value)
   }
 })
 
@@ -155,42 +149,4 @@ watch(myDate, () => {
       break
   }
 })
-
-const clients = [
-  {
-    name: 'Appointment 1',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room A',
-    description: '2 berken snoeien',
-    type: 'repair',
-  },
-  {
-    name: 'Appointment 2',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room B',
-    description: 'Grasveld maaien',
-    type: 'maintenance',
-  },
-  {
-    name: 'Appointment 3',
-    date: '2023-10-12T00:00:00.000Z',
-    location: 'Room C',
-    description: 'Onderhoud aan zwemvijver',
-    type: 'maintenance',
-  },
-  {
-    name: 'Appointment 4',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room D',
-    description: 'Beplanting aanleggen',
-    type: 'inspection',
-  },
-  {
-    name: 'Appointment 5',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room D',
-    description: 'Beplanting aanleggen',
-    type: 'inspection',
-  },
-]
 </script>
