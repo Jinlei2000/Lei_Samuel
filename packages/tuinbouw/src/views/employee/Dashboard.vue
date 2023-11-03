@@ -5,10 +5,10 @@
         <h2 class="mb-3 text-2xl">Next Client</h2>
 
         <!-- for each client -->
-        <div class="flex flex-col" v-for="(item, index) in clients">
+        <div class="flex flex-col" v-for="(item, index) in appointments">
           <AppointmentCard
             v-if="index === 0"
-            :title="item.name"
+            :title="item.user!.fullname"
             :description="item.description"
             :type="item.type"
           />
