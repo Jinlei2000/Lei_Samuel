@@ -491,6 +491,7 @@ const handleDelete = (id: string) => {
   })
 }
 
+// TODO: add validation
 const handleUpdate = () => {
   console.log('selected: ', selected.value)
   updateAppointment({

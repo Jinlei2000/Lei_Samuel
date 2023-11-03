@@ -18,9 +18,9 @@
     Add Employee
   </button>
 
-  <!-- filters & orders -->
+  <!-- TODO: filters & orders -->
 
-  <!-- search bar -->
+  <!-- TODO: search bar -->
 
   <!-- show loading -->
   <div v-if="usersLoading">
@@ -304,6 +304,7 @@ const visible = ref({
   create: false,
 })
 const selectedUser = ref<CustomUser | null>(null)
+const sendMailCurrentUserId = ref<string | null>(null)
 
 // form
 const schema = yup.object({
@@ -319,6 +320,7 @@ const schema = yup.object({
     .nullable(),
 })
 
+// error messages of forms
 const errorMessages = ref<{
   [key: string]: string | undefined
 }>({
@@ -396,10 +398,10 @@ const handleUpdate = async () => {
     await updateUser({
       updateUserInput: {
         id: selectedUser.value?.id!,
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        telephone: values.telephone,
+        firstname: valuesUpdate.firstname,
+        lastname: valuesUpdate.lastname,
+        email: valuesUpdate.email,
+        telephone: valuesUpdate.telephone,
         locale: localeUpdate.value,
       },
     }).then(async () => {
@@ -448,7 +450,6 @@ const handleCreateEmployee = async () => {
   loadingCreateEmployee.value = false
 }
 
-const sendMailCurrentUserId = ref<string | null>(null)
 // handle send email to employee
 const handleSendMailToEmployee = async (user: CustomUser) => {
   sendMailCurrentUserId.value = user.id
@@ -490,6 +491,7 @@ const closeModal = () => {
   }
 }
 
+// get locales
 const getLocales = (): { name: string; value: string }[] => {
   let locales = []
   for (const [key, value] of Object.entries(SUPPORTED_LOCALES)) {
