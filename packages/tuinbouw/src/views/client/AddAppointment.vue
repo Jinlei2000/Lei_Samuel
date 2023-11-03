@@ -52,27 +52,31 @@
               v-model="startProposedDate"
               showIcon
               :pt="{
-                  input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
-                  dropdownButton: {
-                      root: { class: 'bg-gray-400 h-fit p-3' }
-                  }
+                  root: { class: 'w-1/3' },
+                  input: { class: 'h-fit p-3 bg-gray-400' },
               }"
               :minDate="minDate"
               dateFormat="yy-mm-dd"
-            />
+            >
+              <template #dropdownicon>
+                <CalendarIcon class="text-black h-5 w-5" />
+              </template>
+            </Calendar>
             <img src="../../../public/assets/doubleArrow.svg">
             <Calendar 
               v-model="endProposedDate"
               showIcon
               :pt="{
-                  input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
-                  dropdownButton: {
-                      root: { class: 'bg-gray-400 h-fit p-3' }
-                  }
+                  root: { class: 'w-1/3' },
+                  input: { class: 'w-5/6 h-fit p-3 bg-gray-400' },
               }"
               :minDate="startProposedDate"
               dateFormat="yy-mm-dd"
-            />
+            >
+              <template #dropdownicon>
+                <CalendarIcon class="text-black h-5 w-5" />
+              </template>
+            </Calendar>
           </div>
         </div>
         <div class="flex justify-end">
@@ -87,6 +91,7 @@
 import { ref, watchEffect } from 'vue';
 import { useQuery } from '@vue/apollo-composable'
 import { Check, Loader2 } from 'lucide-vue-next'
+import { Calendar as CalendarIcon } from 'lucide-vue-next'
 import * as yup from 'yup'
 import { useMutation } from '@vue/apollo-composable'
 import type { Appointment } from '@/interfaces/appointment.user.interface';
