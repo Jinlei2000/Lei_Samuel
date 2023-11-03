@@ -259,7 +259,7 @@
         <label
           class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
           for="locationId"
-          >Start Proposed Date
+          >Location
         </label>
         <Dropdown
           v-if="locations && locations.locationsByUserId.length > 0"
@@ -269,6 +269,7 @@
           optionLabel="address"
           optionValue="id"
           class="w-full"
+          placeholder="Select a location"
         />
       </div>
 
@@ -277,7 +278,7 @@
         <label
           class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
           for="type"
-          >Start Proposed Date
+          >Type
         </label>
         <Dropdown
           id="type"
@@ -286,6 +287,7 @@
           optionLabel="name"
           optionValue="name"
           class="w-full"
+          placeholder="Select a type"
         >
           <template #dropdownicon>
             <ChevronDownIcon />
@@ -356,12 +358,7 @@
         />
       </div>
 
-      <button
-        type="submit"
-        class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
-      >
-        Save
-      </button>
+      <CustomButton name="Save" :loading="loadingUpdate" type="submit" />
     </form>
   </Dialog>
 </template>
@@ -372,10 +369,7 @@ import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
-import type {
-  Appointment,
-  AppointmentUpdate,
-} from '@/interfaces/appointment.user.interface'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
 import {
   DELETE_APPOINTMENT,
   UPDATE_APPOINTMENT,
@@ -390,6 +384,7 @@ import { useForm } from 'vee-validate'
 import { Trash2 } from 'lucide-vue-next'
 import { Pencil } from 'lucide-vue-next'
 import { Eye } from 'lucide-vue-next'
+import CustomButton from '@/components/generic/CustomButton.vue'
 
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
@@ -419,24 +414,12 @@ const variables = ref<{
 const filter = ref(false)
 
 // form
-const schema = yup.object({
-  type: yup.string().required(),
-  locationId: yup.string().required(),
-  startProposedDate: yup.string().required(),
-  endProposedDate: yup.string().required(),
-  description: yup.string().optional(),
-})
+const schema = yup.object({})
 
 // error messages of forms
 const errorMessages = ref<{
   [key: string]: string | undefined
-}>({
-  type: '',
-  locationId: '',
-  startProposedDate: '',
-  endProposedDate: '',
-  description: '',
-})
+}>({})
 
 // update form
 const { defineComponentBinds, errors, values, validate, setValues } = useForm({
@@ -467,7 +450,6 @@ const {
 const { mutate: deleteAppointment, error: deleteAppointmentError } =
   useMutation(DELETE_APPOINTMENT)
 
-// TODO: loading on something (button, etc)
 const { mutate: updateAppointment, error: updateAppointmentError } =
   useMutation(UPDATE_APPOINTMENT)
 
@@ -538,7 +520,7 @@ const handleUpdate = async () => {
     // console.log('values: ', values)
     updateAppointment({
       updateAppointmentInput: {
-        id: selectedAppointment.value?.id!,
+        id: values.id,
         type: values.type,
         locationId: values.locationId,
         startProposedDate: formatDateTime(values.startProposedDate),
@@ -562,11 +544,10 @@ const openModal = (appointment: Appointment, modalType: string) => {
     selectedAppointment.value = { ...appointment }
     visible.value.detail = true
   } else if (modalType === 'edit') {
-    selectedAppointment.value = { ...appointment }
     setValues({
       id: appointment.id,
       type: appointment.type,
-      locationId: appointment.location?.id!,
+      locationId: appointment.location?.id,
       startProposedDate: formatDateTime(
         appointment.startProposedDate!.toString(),
       ),
