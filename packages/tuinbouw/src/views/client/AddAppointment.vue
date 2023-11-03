@@ -31,7 +31,7 @@
       <div class="flex flex-col min-h-[300px] w-2/3 bg-gray-200 rounded-2xl pt-6 pb-3 px-3 gap-6">
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Type afspraak</label>
-          <select v-bind="appointmentType" class="bg-gray-400 rounded w-fit p-3" name="" id="">
+          <select v-model="appointmentType" class="bg-gray-400 rounded w-fit p-3" name="" id="">
             <option value="" disabled selected>Selecteer een type</option>
             <option value="Maintenance">Onderhoud</option>
             <option value="Repair">Herstelling</option>
@@ -39,7 +39,7 @@
         </div>
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Omschrijving</label>
-          <textarea v-bind="description" class="bg-gray-400 rounded p-3" name="" id="" rows="5"></textarea>
+          <textarea v-model="description" class="bg-gray-400 rounded p-3" name="" id="" rows="5"></textarea>
         </div>
         <div class="w-full flex flex-col gap-3">
           <div class="flex flex-col gap-2">
@@ -49,7 +49,7 @@
           <div class="w-full flex justify-between items-center">
             <!-- TODO: fix styling -->
             <Calendar
-              v-bind="startProposedDate"
+              v-model="startProposedDate"
               showIcon
               :pt="{
                   input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
@@ -62,7 +62,7 @@
             />
             <img src="../../../public/assets/doubleArrow.svg">
             <Calendar 
-              v-bind="endProposedDate"
+              v-model="endProposedDate"
               showIcon
               :pt="{
                   input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
@@ -70,13 +70,14 @@
                       root: { class: 'bg-gray-400 h-fit p-3' }
                   }
               }"
-              :minDate="startProposedDate.value"
+              :minDate="startProposedDate"
               dateFormat="yy-mm-dd"
             />
           </div>
         </div>
         <div class="flex justify-end">
-          <button @click="handleFormSubmit" class="px-4 py-2 bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all">Afspraak maken</button>
+          <button @click="handleFormSubmit" class="px-4 py-2 bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all"
+          :class="submitting ? 'bg-red-600': ''">Afspraak maken</button>
         </div>
       </div>
     </div>
@@ -120,21 +121,21 @@ firebaseUser.value?.getIdToken().then(token => {
 //   errorRegister.value = "Couldn't create appointment."
 // })
 
-const schema = yup.object({
-  startProposedDate: yup.date().required(),
-  endProposedDate: yup.date().required(),
-  description: yup.string(),
-  appointmentType: yup.string().required(),
-})
+// const schema = yup.object({
+//   startProposedDate: yup.date().required(),
+//   endProposedDate: yup.date().required(),
+//   description: yup.string(),
+//   appointmentType: yup.string().required(),
+// })
 
-const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
-  validationSchema: schema,
-})
+// const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
+//   validationSchema: schema,
+// })
 
-const startProposedDate = defineComponentBinds('startProposedDate')
-const endProposedDate = defineComponentBinds('endProposedDate')
-const description = defineComponentBinds('description')
-const appointmentType = defineComponentBinds('appointmentType')
+// const startProposedDate = defineComponentBinds('startProposedDate')
+// const endProposedDate = defineComponentBinds('endProposedDate')
+// const description = defineComponentBinds('description')
+// const appointmentType = defineComponentBinds('appointmentType')
 const errorRegister = ref<string | null>(null)
 const errorMessages = ref<{
   [key: string]: string | undefined
@@ -155,6 +156,12 @@ const {
 })
 )
 
+const submitting = ref(false)
+
+const appointmentType = ref<string | null>(null)
+const description = ref<any | null>(null)
+const startProposedDate = ref<any>(null)
+const endProposedDate = ref<any>(null)
 const selectedLocation = ref(allLocations.value?.locationsByUserId[0])
 
 // Automatically select first location
@@ -163,29 +170,29 @@ watchEffect(() => {
 })
 
 const handleFormSubmit = async () => {
-  createAppointmentLoading.value = true
-  await validate()
-  errorMessages.value = errors.value
-  errorRegister.value = null
-  console.log(values.value)
-  if (Object.keys(errors.value).length === 0) {
+  submitting.value = true
+  // createAppointmentLoading.value = true
+  // await validate()
+  // errorMessages.value = errors.value
+  // errorRegister.value = null
+  // console.log(values)
+  // if (Object.keys(errors.value).length === 0) {
     await addAppointment({
       input: {
         userId: customUser.value?.id,
         locationId: selectedLocation.value?.id,
-        type: values.appointmentType,
-        startProposedDate: formatDateTime(values.startProposedDate.toString()),
-        endProposedDate: formatDateTime(values.endProposedDate.toString()),
+        type: appointmentType.value,
+        startProposedDate: formatDateTime(startProposedDate.value.toString()),
+        endProposedDate: formatDateTime(endProposedDate.value.toString()),
         isDone: false,
-        description: values.description,
+        description: description.value,
         priority: false,
       },
     }).then(() => {
       console.log('register success')
-      resetForm()
+      // resetForm()
     })
-  }
-  loading.value = false
+  submitting.value = false
   // await addAppointment(appointment)
 }
 
