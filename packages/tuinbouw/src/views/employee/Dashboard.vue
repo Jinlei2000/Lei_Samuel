@@ -36,14 +36,14 @@
           </button>
         </div>
         <div class="flex flex-col gap-3">
-          <template v-for="(item, index) in clients">
+          <template v-if="appointments" v-for="(item, index) in appointments">
             <AppointmentCard
               v-if="
-                index !== 0 &&
-                item.date.substring(0, 10) ===
+                // index !== 0 &&
+                item.finalDate!.substring(0, 10) ===
                   myDate.toISOString().substring(0, 10)
               "
-              :title="item.name"
+              :title="item.user!.fullname"
               :description="item.description"
               :type="item.type"
             />
@@ -79,6 +79,7 @@ import Button from 'primevue/button'
 
 import useFirebase from '@/composables/useFirebase'
 import useCustomUser from '@/composables/useCustomUser'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 
@@ -95,8 +96,13 @@ const {
   date: myDate.value.toISOString().substring(0, 10),
 }))
 
+const appointments = ref<[Appointment]>()
+
 watch(schedule, () => {
-  console.log(schedule.value)
+  if (schedule.value.scheduleByDateAndUserId.length > 0) {
+    appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
+    console.log(appointments.value)
+  }
 })
 
 firebaseUser.value?.getIdToken().then(token => {
