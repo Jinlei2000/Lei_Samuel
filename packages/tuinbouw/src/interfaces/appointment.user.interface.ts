@@ -18,12 +18,3 @@ export interface Appointment {
   createdAt?: Date
   updatedAt?: Date
 }
-
-export interface AppointmentUpdate {
-  id: string
-  type?: string
-  locationId?: string
-  startProposedDate?: string
-  endProposedDate?: string
-  description: string
-}

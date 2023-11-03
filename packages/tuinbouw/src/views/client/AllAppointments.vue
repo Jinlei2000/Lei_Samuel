@@ -356,12 +356,7 @@
         />
       </div>
 
-      <button
-        type="submit"
-        class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
-      >
-        Save
-      </button>
+      <CustomButton name="Save" :loading="loadingUpdate" type="submit" />
     </form>
   </Dialog>
 </template>
@@ -372,10 +367,7 @@ import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ref, watchEffect } from 'vue'
 import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
-import type {
-  Appointment,
-  AppointmentUpdate,
-} from '@/interfaces/appointment.user.interface'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
 import {
   DELETE_APPOINTMENT,
   UPDATE_APPOINTMENT,
@@ -390,6 +382,7 @@ import { useForm } from 'vee-validate'
 import { Trash2 } from 'lucide-vue-next'
 import { Pencil } from 'lucide-vue-next'
 import { Eye } from 'lucide-vue-next'
+import CustomButton from '@/components/generic/CustomButton.vue'
 
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
@@ -467,7 +460,6 @@ const {
 const { mutate: deleteAppointment, error: deleteAppointmentError } =
   useMutation(DELETE_APPOINTMENT)
 
-// TODO: loading on something (button, etc)
 const { mutate: updateAppointment, error: updateAppointmentError } =
   useMutation(UPDATE_APPOINTMENT)
 
