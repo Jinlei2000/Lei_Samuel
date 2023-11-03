@@ -307,6 +307,9 @@
           :minDate="minDate"
           showIcon
           dateFormat="yy-mm-dd"
+          @date-select="
+            setValues({ endProposedDate: startProposedDate.modelValue })
+          "
         >
           <template #dropdownicon>
             <CalendarIcon />

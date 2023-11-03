@@ -21,7 +21,6 @@ export default () => {
     const endProposedDate =
       appointment.endProposedDate &&
       formatDateTime(appointment.endProposedDate.toString())
-    console.log('endProposedDate', endProposedDate)
 
     if (finalDate && finalDate < today && !appointment.isDone) return true
 
