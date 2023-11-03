@@ -72,11 +72,32 @@ import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
 import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 
 import Button from 'primevue/button'
 
 import useFirebase from '@/composables/useFirebase'
+import useCustomUser from '@/composables/useCustomUser'
 const { firebaseUser } = useFirebase()
+const { customUser } = useCustomUser()
+
+const myDate = ref(new Date())
+const dateDisplay = ref('Today')
+
+const {
+  result: schedule,
+  error: scheduleError,
+  refetch: scheduleRefetch,
+  loading: scheduleLoading,
+} = useQuery(GET_SCHEDULE_BY_USER_AND_DATE, () => ({
+  userId: customUser.value?.id,
+  date: myDate.value.toISOString().substring(0, 10),
+}))
+
+watch(schedule, () => {
+  console.log(schedule.value)
+})
 
 firebaseUser.value?.getIdToken().then(token => {
   console.log(`{"Authorization": "Bearer ${token}"}`)
@@ -91,9 +112,6 @@ const days = [
   'Friday',
   'Saturday',
 ]
-
-const myDate = ref(new Date())
-const dateDisplay = ref('Today')
 
 // nextday function
 function nextDay() {
