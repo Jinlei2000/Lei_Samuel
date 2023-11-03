@@ -48,7 +48,9 @@
             v-if="user.uid === null"
             name="Send email to create account"
             @click="handleSendMailToEmployee(user)"
-            :loading="sendMailCurrentUserId === user.id && sendMailToEmployeeLoading"
+            :loading="
+              sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
+            "
             ownClass="block w-full"
           />
           <!-- Add other user information as needed -->
@@ -65,6 +67,7 @@
           </button>
           <!-- Edit Button -->
           <button
+            v-if="user.role === 'EMPLOYEE'"
             @click="openModal(user, 'edit')"
             class="text-blue-500 hover:underline"
           >
@@ -109,10 +112,74 @@
     maximizable
     header="Edit User"
     :style="{ width: '50vw' }"
-    v-if="selectedUser"
     @click:close="closeModal"
     class="max-w-lg"
   >
+    <form @submit.prevent="handleUpdate">
+      <!-- First Name -->
+      <InputText
+        name="First Name"
+        placeholder="John"
+        type="text"
+        :errorMessage="errorMessages.firstname"
+        v-bind="firstnameUpdate"
+      />
+
+      <!-- Last Name -->
+      <InputText
+        name="Last Name"
+        placeholder="Doe"
+        type="text"
+        :errorMessage="errorMessages.lastname"
+        v-bind="lastnameUpdate"
+      />
+
+      <!-- Email -->
+      <InputText
+        v-if="selectedUser?.uid === null"
+        name="Email"
+        placeholder="john@example.com"
+        type="text"
+        :errorMessage="errorMessages.email"
+        v-bind="emailUpdate"
+      />
+
+      <!-- Telephone -->
+      <InputText
+        name="Telephone (optional)"
+        placeholder="0412345678"
+        type="text"
+        :errorMessage="errorMessages.telephone"
+        v-bind="telephoneUpdate"
+      />
+
+      <!-- Locale -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="locale"
+          >Language
+        </label>
+        <Dropdown
+          id="locale"
+          v-model="localeUpdate"
+          :options="getLocales()"
+          optionLabel="name"
+          optionValue="value"
+          class="w-full"
+        >
+          <template #dropdownicon>
+            <ChevronDownIcon />
+          </template>
+        </Dropdown>
+      </div>
+
+      <CustomButton
+        type="submit"
+        name="Create Employee"
+        :loading="loadingCreateEmployee"
+      />
+    </form>
   </Dialog>
 
   <!-- Create Employee Modal -->
@@ -183,31 +250,11 @@
         </Dropdown>
       </div>
 
-      <button
+      <CustomButton
         type="submit"
-        class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
-      >
-        <span v-if="!loadingCreateEmployee">Create Employee</span>
-        <span v-else>
-          <svg
-            aria-hidden="true"
-            role="status"
-            class="mr-3 inline h-4 w-4 animate-spin text-white"
-            viewBox="0 0 100 101"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-              fill="#E5E7EB"
-            />
-            <path
-              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
-      </button>
+        name="Create Employee"
+        :loading="loadingCreateEmployee"
+      />
     </form>
   </Dialog>
 </template>
@@ -286,6 +333,22 @@ const locale = ref('en')
 
 const loadingCreateEmployee = ref(false)
 
+const {
+  defineComponentBinds: defineComponentBindsUpdate,
+  errors: errorsUpdate,
+  values: valuesUpdate,
+  validate: validateUpdate,
+  setValues: setValuesUpdate,
+} = useForm({
+  validationSchema: schema,
+})
+
+const firstnameUpdate = defineComponentBindsUpdate('firstname')
+const lastnameUpdate = defineComponentBindsUpdate('lastname')
+const emailUpdate = defineComponentBindsUpdate('email')
+const telephoneUpdate = defineComponentBindsUpdate('telephone')
+const localeUpdate = ref('en')
+
 // graphql
 const {
   result: users,
@@ -313,7 +376,7 @@ const {
 
 // logics
 // handle edit
-const handleEdit = () => {
+const handleUpdate = () => {
   console.log('edit user with id: ')
 }
 
@@ -369,10 +432,18 @@ const handleSendMailToEmployee = async (user: CustomUser) => {
 }
 
 const openModal = (user: CustomUser | null = null, type: string) => {
-  selectedUser.value = user
-  if (type === 'detail') {
+  if (type === 'detail' && user) {
+    selectedUser.value = { ...user }
     visible.value.detail = true
-  } else if (type === 'edit') {
+  } else if (type === 'edit' && user) {
+    selectedUser.value = { ...user }
+    setValuesUpdate({
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      telephone: user.telephone,
+    })
+    localeUpdate.value = user.locale!
     visible.value.edit = true
   } else if (type === 'create') {
     visible.value.create = true
