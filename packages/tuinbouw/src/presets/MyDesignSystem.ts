@@ -50,14 +50,14 @@ export default {
   calendar: {
     root: () => ({
       class: [
-        'relative w-full',
+        'relative',
         'focus:outline-none focus-visible:outline-none focus:ring-none focus:border-0',
       ],
     }),
     input: {
       class: [
         'm-0',
-        'border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 transition-colors duration-200 appearance-none',
+        'border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 transition-colors duration-200 appearance-none',
         'hover:border-primary-green-400 hover:border-primary-green-400',
         'focus:outline-none focus-visible:outline-none focus:ring-none focus:border-0',
       ],

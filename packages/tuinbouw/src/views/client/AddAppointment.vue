@@ -31,7 +31,7 @@
       <div class="flex flex-col min-h-[300px] w-2/3 bg-gray-200 rounded-2xl pt-6 pb-3 px-3 gap-6">
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Type afspraak</label>
-          <select v-bind="appointmentType" class="bg-gray-400 rounded w-fit p-3" name="" id="">
+          <select v-model="appointmentType" class="bg-gray-400 rounded w-fit p-3" name="" id="">
             <option value="" disabled selected>Selecteer een type</option>
             <option value="Maintenance">Onderhoud</option>
             <option value="Repair">Herstelling</option>
@@ -39,7 +39,7 @@
         </div>
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Omschrijving</label>
-          <textarea v-bind="description" class="bg-gray-400 rounded p-3" name="" id="" rows="5"></textarea>
+          <textarea v-model="description" class="bg-gray-400 rounded p-3" name="" id="" rows="5"></textarea>
         </div>
         <div class="w-full flex flex-col gap-3">
           <div class="flex flex-col gap-2">
@@ -47,31 +47,40 @@
             <p class="max-w-xs">We plannen de afspraak in tussen de data die je gekozen hebt</p>
           </div>
           <div class="w-full flex justify-between items-center">
+            <!-- TODO: fix styling -->
             <Calendar
-              v-bind="startProposedDate"
+              v-model="startProposedDate"
               showIcon
               :pt="{
-                  input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
-                  dropdownButton: {
-                      root: { class: 'bg-gray-400 h-fit p-3' }
-                  }
+                  root: { class: 'w-1/3' },
+                  input: { class: 'h-fit p-3 bg-gray-400' },
               }"
-            />
+              :minDate="minDate"
+              dateFormat="yy-mm-dd"
+            >
+              <template #dropdownicon>
+                <CalendarIcon class="text-black h-5 w-5" />
+              </template>
+            </Calendar>
             <img src="../../../public/assets/doubleArrow.svg">
             <Calendar 
-              v-bind="endProposedDate"
+              v-model="endProposedDate"
               showIcon
               :pt="{
-                  input: { class: 'w-1/3 h-fit p-3 bg-gray-400' },
-                  dropdownButton: {
-                      root: { class: 'bg-gray-400 h-fit p-3' }
-                  }
+                  root: { class: 'w-1/3' },
+                  input: { class: 'w-5/6 h-fit p-3 bg-gray-400' },
               }"
-            />
+              :minDate="startProposedDate"
+              dateFormat="yy-mm-dd"
+            >
+              <template #dropdownicon>
+                <CalendarIcon class="text-black h-5 w-5" />
+              </template>
+            </Calendar>
           </div>
         </div>
         <div class="flex justify-end">
-          <button @click="handleFormSubmit" class="px-4 py-2 bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all">Afspraak maken</button>
+          <button @click="handleFormSubmit" class="px-4 py-2 relative bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all"><div :class="submitting ? 'invisible' : ''">Afspraak maken</div><div v-if="submitting" class="rotate absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><Loader2 class="animate-spin"/></div></button>
         </div>
       </div>
     </div>
@@ -81,7 +90,8 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
 import { useQuery } from '@vue/apollo-composable'
-import { Check } from 'lucide-vue-next'
+import { Check, Loader2 } from 'lucide-vue-next'
+import { Calendar as CalendarIcon } from 'lucide-vue-next'
 import * as yup from 'yup'
 import { useMutation } from '@vue/apollo-composable'
 import type { Appointment } from '@/interfaces/appointment.user.interface';
@@ -89,16 +99,21 @@ import { CREATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import useFirebase from '@/composables/useFirebase'
 import useCustomUser from '@/composables/useCustomUser'
 import {
-  GET_LOCATIONS,
+  GET_LOCATIONS_BY_USERID,
 } from '@/graphql/location.query'
 import { watch } from 'fs';
 import { useForm } from 'vee-validate';
+import useTimeUtilities from '@/composables/useTimeUtilities';
+import useCustomToast from '@/composables/useCustomToast';
+
 
 // composables
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 const { mutate: addAppointment, error: addAppointmentError } =
   useMutation<Appointment>(CREATE_APPOINTMENT)
+const { formatDateTime } = useTimeUtilities()
+const { showToast } = useCustomToast()
 
 
 firebaseUser.value?.getIdToken().then(token => {
@@ -110,21 +125,21 @@ firebaseUser.value?.getIdToken().then(token => {
 //   errorRegister.value = "Couldn't create appointment."
 // })
 
-const schema = yup.object({
-  startProposedDate: yup.date().required(),
-  endProposedDate: yup.date().required(),
-  // description: yup.string().required(),
-  // locationId: yup.string().required(),
-})
+// const schema = yup.object({
+//   startProposedDate: yup.date().required(),
+//   endProposedDate: yup.date().required(),
+//   description: yup.string(),
+//   appointmentType: yup.string().required(),
+// })
 
-const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
-  validationSchema: schema,
-})
+// const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
+//   validationSchema: schema,
+// })
 
-const startProposedDate = defineComponentBinds('startProposedDate')
-const endProposedDate = defineComponentBinds('endProposedDate')
-const description = defineComponentBinds('description')
-const appointmentType = defineComponentBinds('appointmentType')
+// const startProposedDate = defineComponentBinds('startProposedDate')
+// const endProposedDate = defineComponentBinds('endProposedDate')
+// const description = defineComponentBinds('description')
+// const appointmentType = defineComponentBinds('appointmentType')
 const errorRegister = ref<string | null>(null)
 const errorMessages = ref<{
   [key: string]: string | undefined
@@ -140,51 +155,79 @@ const {
   result: allLocations,
   loading,
   error,
-} = useQuery(GET_LOCATIONS, () => ({
+} = useQuery(GET_LOCATIONS_BY_USERID, () => ({
   userId: customUser.value?.id,
-})
-)
+}))
 
+// Waiting for query to finish
+const submitting = ref(false)
+
+// Form values
+const appointmentType = ref<string | null>(null)
+const description = ref<any | null>(null)
+const startProposedDate = ref<any>(null)
+const endProposedDate = ref<any>(null)
 const selectedLocation = ref(allLocations.value?.locationsByUserId[0])
+
+// Automatically select first location
 watchEffect(() => {
   selectedLocation.value = allLocations.value?.locationsByUserId[0]
 })
 
+// Reset form
+const resetForm = () => {
+  appointmentType.value = null
+  description.value = null
+  startProposedDate.value = null
+  endProposedDate.value = null
+  selectedLocation.value = allLocations.value?.locationsByUserId[0]
+}
+
 const handleFormSubmit = async () => {
-  createAppointmentLoading.value = true
-  console.log("description", values.description)
-  console.log("location", selectedLocation.value?.id)
-  await validate()
-  errorMessages.value = errors.value
-  errorRegister.value = null
-  console.log(values)
-  console.log(Object.keys(errors.value))
-  if (Object.keys(errors.value).length === 0) {
+  submitting.value = true
+  // createAppointmentLoading.value = true
+  // await validate()
+  // errorMessages.value = errors.value
+  // errorRegister.value = null
+  // console.log(values)
+  // if (Object.keys(errors.value).length === 0) {
     await addAppointment({
       input: {
         userId: customUser.value?.id,
         locationId: selectedLocation.value?.id,
-        type: values.appointmentType,
-        startProposedDate: startProposedDate.value,
-        endProposedDate: endProposedDate.value,
+        type: appointmentType.value,
+        startProposedDate: formatDateTime(startProposedDate.value.toString()),
+        endProposedDate: formatDateTime(endProposedDate.value.toString()),
         isDone: false,
-        description: values.description,
+        description: description.value,
         priority: false,
       },
     }).then(() => {
-      console.log('register success')
+      showToast('success', 'Success', 'Afspraak is gemaakt')
       resetForm()
     })
-  }
-  loading.value = false
+  submitting.value = false
   // await addAppointment(appointment)
 }
+
+watchEffect(() => {
+  const errors = [
+    addAppointmentError.value,
+  ]
+  errors.forEach(error => {
+    if (error) {
+      showToast('error', 'Error', error.message)
+    }
+  })
+})
 
 
 
 
 
 console.log(selectedLocation.value)
+
+const minDate = new Date()
 
 
 </script>
