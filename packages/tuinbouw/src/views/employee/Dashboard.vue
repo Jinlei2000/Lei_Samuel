@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col items-center justify-center mt-12">
-    <div class="grid grid-cols-4 mx-32 gap-3">
+  <div class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12">
+    <div class="grid grid-cols-4 w-full gap-3">
       <div class="col-start-1 col-span-1">
         <h2 class="mb-3 text-2xl">Next Client</h2>
 
