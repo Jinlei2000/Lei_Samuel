@@ -25,5 +25,5 @@ export interface AppointmentUpdate {
   locationId?: string
   startProposedDate?: string
   endProposedDate?: string
-  description?: string
+  description: string
 }

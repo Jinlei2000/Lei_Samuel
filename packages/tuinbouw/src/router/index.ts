@@ -81,37 +81,25 @@ const router = createRouter({
           component: () => import('../views/admin/AllAppointments.vue'),
         },
         {
-          path: 'appointment/:id',
-          component: () => import('../views/admin/AppointmentDetail.vue'),
+          path: 'schedules',
+          component: () => import('../views/admin/Schedules.vue'),
         },
         {
-          path: 'schedule-appointment',
-          component: () => import('../views/admin/ScheduleAppointment.vue'),
+          path: 'schedules/:id',
+          component: () => import('../views/admin/ScheduleDetail.vue'),
         },
         {
-          path: 'employees',
-          component: () => import('../views/admin/Employees.vue'),
+          path: 'add-schedule',
+          component: () => import('../views/admin/AddSchedule.vue'),
         },
         {
-          path: 'employee/:id',
-          component: () => import('../views/admin/Employee.vue'),
-        },
-        {
-          path: 'clients',
-          component: () => import('../views/admin/Clients.vue'),
-        },
-        {
-          path: 'clients/:id',
-          component: () => import('../views/admin/Client.vue'),
+          path: 'users',
+          component: () => import('../views/admin/Users.vue'),
         },
         {
           path: 'materials',
           component: () => import('../views/admin/Materials.vue'),
         },
-        // {
-        //   path: 'materials/:id',
-        //   component: () => import('../views/admin/Material.vue'),
-        // },
       ],
     },
 
@@ -135,10 +123,6 @@ const router = createRouter({
         {
           path: 'appointments',
           component: () => import('../views/client/AllAppointments.vue'),
-        },
-        {
-          path: 'appointment/:id',
-          component: () => import('../views/client/AppointmentDetail.vue'),
         },
       ],
     },

@@ -19,7 +19,6 @@ export interface CustomUser {
   locations?: Location[]
   email: string
   telephone?: string
-  availability: boolean
   createdAt?: Date
   updatedAt?: Date
   // STAFF ONLY

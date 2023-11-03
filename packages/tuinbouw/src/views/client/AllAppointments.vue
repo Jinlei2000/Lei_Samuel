@@ -327,7 +327,7 @@
             showIcon
             dateFormat="yy-mm-dd"
             :manualInput="false"
-            :minDate="minDate"
+            :minDate="new Date(selected.startProposedDate!)"
           >
             <template #dropdownicon>
               <CalendarIcon />
@@ -345,7 +345,6 @@
           </label>
           <Textarea
             id="description"
-            v-if="selected.description"
             v-model="selected.description"
             rows="5"
             cols="30"
@@ -388,7 +387,7 @@ const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
 const { formatDateTime, isOverToday } = useTimeUtilities()
 
-const minDate = ref<Date>(new Date(Date.now()))
+const minDate = new Date()
 const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref({
@@ -492,6 +491,7 @@ const handleDelete = (id: string) => {
   })
 }
 
+// TODO: add validation
 const handleUpdate = () => {
   console.log('selected: ', selected.value)
   updateAppointment({

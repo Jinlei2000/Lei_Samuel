@@ -62,8 +62,7 @@ export default {
   setup() {
     const listButtons = ref([
       'Appointments',
-      'Clients',
-      'Employees',
+      'Users',
       'Profile',
       'schedule-appointment',
     ])

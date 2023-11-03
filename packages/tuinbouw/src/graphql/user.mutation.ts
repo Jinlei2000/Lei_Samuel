@@ -68,3 +68,60 @@ export const UPDATE_EMPLOYEE_REGISTER = gql`
     }
   }
 `
+
+export const DELETE_USER = gql`
+  mutation removeUser($id: String!) {
+    removeUser(id: $id)
+  }
+`
+
+export const CREATE_EMPLOYEE = gql`
+  mutation createStaff($createStaffInput: CreateStaffInput!) {
+    createStaff(createStaffInput: $createStaffInput) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      email
+      telephone
+      createdAt
+      updatedAt
+      locations {
+        id
+      }
+      absentCount
+    }
+  }
+`
+
+export const UPDATE_USER = gql`
+  mutation updateUserInput($updateUserInput: UpdateUserInput!) {
+    updateUser(updateUserInput: $updateUserInput) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      email
+      telephone
+      createdAt
+      updatedAt
+      locations {
+        id
+      }
+      # Additional fields for staff
+      absentCount
+      # Additional fields for clients
+      invoiceOption
+      company
+      btwNumber
+    }
+  }
+`

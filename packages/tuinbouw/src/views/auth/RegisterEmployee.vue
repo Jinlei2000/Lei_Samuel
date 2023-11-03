@@ -95,11 +95,9 @@ import { UPDATE_EMPLOYEE_REGISTER } from '@/graphql/user.mutation'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { useI18n } from 'vue-i18n'
-import {
-  DELETE_ALL_MAILTOKENS_BY_USERID,
-  GET_MAILTOKEN_BY_TOKEN,
-} from '@/graphql/mail.token.query'
+import { GET_MAILTOKEN_BY_TOKEN } from '@/graphql/mail.token.query'
 import useCustomUser from '@/composables/useCustomUser'
+import { DELETE_ALL_MAILTOKENS_BY_USERID } from '@/graphql/mail.token.mutation'
 
 // Composables
 const { register } = useFirebase()

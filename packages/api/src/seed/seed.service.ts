@@ -119,7 +119,7 @@ export class SeedService {
             ...userData,
             locationIds: locationsIds,
           }
-          console.log('a.user', a.user)
+          // console.log('a.user', a.user)
           a.type = appointment.type
 
           // appointment in past
