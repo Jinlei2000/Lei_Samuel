@@ -4,7 +4,10 @@ export default () => {
   // format date to yyyy-mm-dd
   const formatDateTime = (date: string) => {
     const d = new Date(date)
-    return `${d.toISOString().split('T')[0]}`
+    var DD = String(d.getDate()).padStart(2, '0')
+    var MM = String(d.getMonth() + 1).padStart(2, '0') //January is 0!
+    var YYYY = d.getFullYear()
+    return `${YYYY}-${MM}-${DD}`
   }
 
   // check if finalDate is over today and not done
@@ -21,7 +24,7 @@ export default () => {
 
     if (finalDate && finalDate < today && !appointment.isDone) return true
 
-    if (!appointment.isScheduled && endProposedDate && endProposedDate < today)
+    if (!appointment.isDone && endProposedDate && endProposedDate < today)
       return true
 
     return false

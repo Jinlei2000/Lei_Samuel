@@ -188,179 +188,182 @@
               >
             </div>
           </div>
-          <div class="border-t border-gray-200 p-4">
-            <div class="flex items-center justify-between">
-              <!-- View More button -->
-              <button
-                @click="openModal(a, 'detail')"
-                class="ml-2 text-blue-500"
-              >
-                View More
-              </button>
-              <!-- Delete button (only if not done) -->
-              <button
-                v-if="!a.isDone"
-                @click.stop="handleDelete(a.id)"
-                class="ml-2 text-red-500"
-              >
-                Delete
-              </button>
-              <!-- Edit button (only if not done) -->
-              <button
-                v-if="
-                  // check if is not done and is over today or not done and not scheduled
-                  (!a.isDone && isOverToday(a)) || (!a.isDone && !a.isScheduled)
-                "
-                @click.stop="openModal(a, 'edit')"
-                class="ml-2 text-blue-500"
-              >
-                Edit
-              </button>
-            </div>
+
+          <div
+            class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
+          >
+            <!-- View More Button -->
+            <button
+              @click="openModal(a, 'detail')"
+              class="text-green-500 hover:underline"
+            >
+              <Eye />
+            </button>
+            <!-- Edit button (only if not done) -->
+            <button
+              v-if="
+                // check if is not done and is over today or not done and not scheduled
+                (!a.isDone && isOverToday(a)) || (!a.isDone && !a.isScheduled)
+              "
+              @click.stop="openModal(a, 'edit')"
+              class="text-blue-500 hover:underline"
+            >
+              <Pencil />
+            </button>
+            <!-- Delete button (only if not done) -->
+            <button
+              v-if="!a.isDone"
+              @click.stop="handleDelete(a.id)"
+              class="text-red-500 hover:underline"
+            >
+              <Trash2 />
+            </button>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Detail Modal -->
-    <Dialog
-      v-model:visible="visible.detail"
-      modal
-      maximizable
-      header="Appointment"
-      :style="{ width: '50vw' }"
-      v-if="selectedAppointment"
-      @click:close="closeModal"
-      class="max-w-lg"
-    >
-      <h2 class="mb-2 text-xl font-semibold">
-        {{ selectedAppointment.type }}
-      </h2>
-      <p class="text-gray-600">
-        {{ selectedAppointment.description }}
-      </p>
-    </Dialog>
-
-    <!-- Edit Modal -->
-    <Dialog
-      v-model:visible="visible.edit"
-      modal
-      maximizable
-      header="Edit Appointment"
-      :style="{ width: '50vw' }"
-      v-if="selected"
-      @click:close="closeModal"
-      class="max-w-lg"
-    >
-      <form @submit.prevent="handleUpdate()" class="space-y-2 p-4">
-        <!-- Location ID -->
-        <div>
-          <label
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            for="locationId"
-            >Start Proposed Date
-          </label>
-          <Dropdown
-            v-if="locations && locations.locationsByUserId.length > 0"
-            id="locationId"
-            v-model="selected.locationId"
-            :options="locations.locationsByUserId"
-            optionLabel="address"
-            optionValue="id"
-            class="w-full"
-          />
-        </div>
-
-        <!-- Type -->
-        <div>
-          <label
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            for="type"
-            >Start Proposed Date
-          </label>
-          <Dropdown
-            id="type"
-            v-model="selected.type"
-            :options="[{ name: 'maintenance' }, { name: 'repair' }]"
-            optionLabel="name"
-            optionValue="name"
-            class="w-full"
-          >
-            <template #dropdownicon>
-              <ChevronDownIcon />
-            </template>
-          </Dropdown>
-        </div>
-
-        <!-- Start Proposed Date -->
-        <div>
-          <label
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            for="startProposedDate"
-            >Start Proposed Date
-          </label>
-          <Calendar
-            id="startProposedDate"
-            v-model="selected.startProposedDate"
-            :manualInput="false"
-            :minDate="minDate"
-            showIcon
-            dateFormat="yy-mm-dd"
-          >
-            <template #dropdownicon>
-              <CalendarIcon />
-            </template>
-          </Calendar>
-        </div>
-
-        <!-- End Proposed Date -->
-        <div>
-          <label
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            for="endProposedDate"
-          >
-            End Proposed Date
-          </label>
-          <Calendar
-            id="endProposedDate"
-            v-model="selected.endProposedDate"
-            showIcon
-            dateFormat="yy-mm-dd"
-            :manualInput="false"
-            :minDate="new Date(selected.startProposedDate!)"
-          >
-            <template #dropdownicon>
-              <CalendarIcon />
-            </template>
-          </Calendar>
-        </div>
-
-        <!-- Description -->
-        <div>
-          <label
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            for="description"
-          >
-            Description
-          </label>
-          <Textarea
-            id="description"
-            v-model="selected.description"
-            rows="5"
-            cols="30"
-            placeholder="Type your description here..."
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
-        >
-          Save
-        </button>
-      </form>
-    </Dialog>
   </div>
+
+  <!-- Detail Modal -->
+  <Dialog
+    v-model:visible="visible.detail"
+    modal
+    maximizable
+    header="Appointment"
+    :style="{ width: '50vw' }"
+    v-if="selectedAppointment"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <h2 class="mb-2 text-xl font-semibold">
+      {{ selectedAppointment.type }}
+    </h2>
+    <p class="text-gray-600">
+      {{ selectedAppointment.description }}
+    </p>
+  </Dialog>
+
+  <!-- Edit Modal -->
+  <Dialog
+    v-model:visible="visible.edit"
+    modal
+    maximizable
+    header="Edit Appointment"
+    :style="{ width: '50vw' }"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <form @submit.prevent="handleUpdate()" class="space-y-2 p-4">
+      <!-- Location ID -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="locationId"
+          >Start Proposed Date
+        </label>
+        <Dropdown
+          v-if="locations && locations.locationsByUserId.length > 0"
+          id="locationId"
+          v-bind="locationId"
+          :options="locations.locationsByUserId"
+          optionLabel="address"
+          optionValue="id"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="type"
+          >Start Proposed Date
+        </label>
+        <Dropdown
+          id="type"
+          v-bind="type"
+          :options="[{ name: 'maintenance' }, { name: 'repair' }]"
+          optionLabel="name"
+          optionValue="name"
+          class="w-full"
+        >
+          <template #dropdownicon>
+            <ChevronDownIcon />
+          </template>
+        </Dropdown>
+      </div>
+
+      <!-- Start Proposed Date -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="startProposedDate"
+          >Start Proposed Date
+        </label>
+        <Calendar
+          id="startProposedDate"
+          v-bind="startProposedDate"
+          :manualInput="false"
+          :minDate="minDate"
+          showIcon
+          dateFormat="yy-mm-dd"
+          @date-select="
+            setValues({ endProposedDate: startProposedDate.modelValue })
+          "
+        >
+          <template #dropdownicon>
+            <CalendarIcon />
+          </template>
+        </Calendar>
+      </div>
+
+      <!-- End Proposed Date -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="endProposedDate"
+        >
+          End Proposed Date
+        </label>
+        <Calendar
+          id="endProposedDate"
+          v-bind="endProposedDate"
+          showIcon
+          dateFormat="yy-mm-dd"
+          :manualInput="false"
+          :minDate="new Date(startProposedDate.modelValue!)"
+        >
+          <template #dropdownicon>
+            <CalendarIcon />
+          </template>
+        </Calendar>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="description"
+        >
+          Description
+        </label>
+        <Textarea
+          id="description"
+          v-bind="description"
+          rows="5"
+          cols="30"
+          placeholder="Type your description here..."
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
+      >
+        Save
+      </button>
+    </form>
+  </Dialog>
 </template>
 <script setup lang="ts">
 import useCustomUser from '@/composables/useCustomUser'
@@ -382,13 +385,17 @@ import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import Textarea from 'primevue/textarea'
 import { Calendar as CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
+import * as yup from 'yup'
+import { useForm } from 'vee-validate'
+import { Trash2 } from 'lucide-vue-next'
+import { Pencil } from 'lucide-vue-next'
+import { Eye } from 'lucide-vue-next'
 
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
 const { formatDateTime, isOverToday } = useTimeUtilities()
 
 const minDate = new Date()
-const selected = ref<AppointmentUpdate | null>(null)
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref({
   detail: false,
@@ -410,6 +417,38 @@ const variables = ref<{
   },
 })
 const filter = ref(false)
+
+// form
+const schema = yup.object({
+  type: yup.string().required(),
+  locationId: yup.string().required(),
+  startProposedDate: yup.string().required(),
+  endProposedDate: yup.string().required(),
+  description: yup.string().optional(),
+})
+
+// error messages of forms
+const errorMessages = ref<{
+  [key: string]: string | undefined
+}>({
+  type: '',
+  locationId: '',
+  startProposedDate: '',
+  endProposedDate: '',
+  description: '',
+})
+
+// update form
+const { defineComponentBinds, errors, values, validate, setValues } = useForm({
+  validationSchema: schema,
+})
+
+const type = defineComponentBinds('type')
+const locationId = defineComponentBinds('locationId')
+const startProposedDate = defineComponentBinds('startProposedDate')
+const endProposedDate = defineComponentBinds('endProposedDate')
+const description = defineComponentBinds('description')
+const loadingUpdate = ref(false)
 
 // TODO: use fetchMore to load more appointments (add some kind of pagination in backend (limit, offset)))
 // use a load more button
@@ -491,20 +530,31 @@ const handleDelete = (id: string) => {
   })
 }
 
-// TODO: add validation
-const handleUpdate = () => {
-  console.log('selected: ', selected.value)
-  updateAppointment({
-    updateAppointmentInput: {
-      ...selected.value,
-    },
-  }).then(async () => {
-    showToast('success', 'Success', 'Appointment updated')
-    // refetch
-    await appointmentsRefetch()
-    // close modal
-    closeModal()
-  })
+const handleUpdate = async () => {
+  loadingUpdate.value = true
+  await validate()
+  errorMessages.value = errors.value
+  if (Object.keys(errors.value).length === 0) {
+    // console.log('values: ', values)
+    updateAppointment({
+      updateAppointmentInput: {
+        id: selectedAppointment.value?.id!,
+        type: values.type,
+        locationId: values.locationId,
+        startProposedDate: formatDateTime(values.startProposedDate),
+        endProposedDate: formatDateTime(values.endProposedDate),
+        description: values.description,
+      },
+    }).then(async () => {
+      loadingUpdate.value = false
+      showToast('success', 'Success', 'Appointment updated')
+      // refetch
+      await appointmentsRefetch()
+      // close modal
+      closeModal()
+    })
+  }
+  loadingUpdate.value = false
 }
 
 const openModal = (appointment: Appointment, modalType: string) => {
@@ -512,23 +562,23 @@ const openModal = (appointment: Appointment, modalType: string) => {
     selectedAppointment.value = { ...appointment }
     visible.value.detail = true
   } else if (modalType === 'edit') {
-    selected.value = {
-      id: appointment.id!,
-      type: appointment.type!,
+    selectedAppointment.value = { ...appointment }
+    setValues({
+      id: appointment.id,
+      type: appointment.type,
       locationId: appointment.location?.id!,
       startProposedDate: formatDateTime(
         appointment.startProposedDate!.toString(),
       ),
       endProposedDate: formatDateTime(appointment.endProposedDate!.toString()),
-      description: appointment.description!,
-    }
+      description: appointment.description,
+    })
     visible.value.edit = true
   }
 }
 
 const closeModal = () => {
   selectedAppointment.value = null
-  selected.value = null
   visible.value = {
     detail: false,
     edit: false,
@@ -545,6 +595,7 @@ watchEffect(() => {
   ]
   errors.forEach(error => {
     if (error) {
+      loadingUpdate.value = false
       showToast('error', 'Error', error.message)
     }
   })
