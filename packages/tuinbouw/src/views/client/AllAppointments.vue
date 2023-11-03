@@ -259,7 +259,7 @@
         <label
           class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
           for="locationId"
-          >Start Proposed Date
+          >Location
         </label>
         <Dropdown
           v-if="locations && locations.locationsByUserId.length > 0"
@@ -269,6 +269,7 @@
           optionLabel="address"
           optionValue="id"
           class="w-full"
+          placeholder="Select a location"
         />
       </div>
 
@@ -277,7 +278,7 @@
         <label
           class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
           for="type"
-          >Start Proposed Date
+          >Type
         </label>
         <Dropdown
           id="type"
@@ -286,6 +287,7 @@
           optionLabel="name"
           optionValue="name"
           class="w-full"
+          placeholder="Select a type"
         >
           <template #dropdownicon>
             <ChevronDownIcon />
@@ -412,24 +414,12 @@ const variables = ref<{
 const filter = ref(false)
 
 // form
-const schema = yup.object({
-  type: yup.string().required(),
-  locationId: yup.string().required(),
-  startProposedDate: yup.string().required(),
-  endProposedDate: yup.string().required(),
-  description: yup.string().optional(),
-})
+const schema = yup.object({})
 
 // error messages of forms
 const errorMessages = ref<{
   [key: string]: string | undefined
-}>({
-  type: '',
-  locationId: '',
-  startProposedDate: '',
-  endProposedDate: '',
-  description: '',
-})
+}>({})
 
 // update form
 const { defineComponentBinds, errors, values, validate, setValues } = useForm({
@@ -530,7 +520,7 @@ const handleUpdate = async () => {
     // console.log('values: ', values)
     updateAppointment({
       updateAppointmentInput: {
-        id: selectedAppointment.value?.id!,
+        id: values.id,
         type: values.type,
         locationId: values.locationId,
         startProposedDate: formatDateTime(values.startProposedDate),
@@ -554,11 +544,10 @@ const openModal = (appointment: Appointment, modalType: string) => {
     selectedAppointment.value = { ...appointment }
     visible.value.detail = true
   } else if (modalType === 'edit') {
-    selectedAppointment.value = { ...appointment }
     setValues({
       id: appointment.id,
       type: appointment.type,
-      locationId: appointment.location?.id!,
+      locationId: appointment.location?.id,
       startProposedDate: formatDateTime(
         appointment.startProposedDate!.toString(),
       ),
