@@ -76,8 +76,7 @@
           </div>
         </div>
         <div class="flex justify-end">
-          <button @click="handleFormSubmit" class="px-4 py-2 bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all"
-          :class="submitting ? 'bg-red-600': ''">Afspraak maken</button>
+          <button @click="handleFormSubmit" class="px-4 py-2 relative bg-primary-green rounded text-white hover:cursor-pointer hover:outline hover:outline-primary-green hover:bg-transparent hover:text-primary-green transition-all"><div :class="submitting ? 'invisible' : ''">Afspraak maken</div><div v-if="submitting" class="rotate absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><Loader2 class="animate-spin"/></div></button>
         </div>
       </div>
     </div>
@@ -87,7 +86,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
 import { useQuery } from '@vue/apollo-composable'
-import { Check } from 'lucide-vue-next'
+import { Check, Loader2 } from 'lucide-vue-next'
 import * as yup from 'yup'
 import { useMutation } from '@vue/apollo-composable'
 import type { Appointment } from '@/interfaces/appointment.user.interface';
