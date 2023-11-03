@@ -153,11 +153,12 @@ const {
   error,
 } = useQuery(GET_LOCATIONS_BY_USERID, () => ({
   userId: customUser.value?.id,
-})
-)
+}))
 
+// Waiting for query to finish
 const submitting = ref(false)
 
+// Form values
 const appointmentType = ref<string | null>(null)
 const description = ref<any | null>(null)
 const startProposedDate = ref<any>(null)
@@ -168,6 +169,15 @@ const selectedLocation = ref(allLocations.value?.locationsByUserId[0])
 watchEffect(() => {
   selectedLocation.value = allLocations.value?.locationsByUserId[0]
 })
+
+// Reset form
+const resetForm = () => {
+  appointmentType.value = null
+  description.value = null
+  startProposedDate.value = null
+  endProposedDate.value = null
+  selectedLocation.value = allLocations.value?.locationsByUserId[0]
+}
 
 const handleFormSubmit = async () => {
   submitting.value = true
@@ -189,8 +199,8 @@ const handleFormSubmit = async () => {
         priority: false,
       },
     }).then(() => {
-      console.log('register success')
-      // resetForm()
+      showToast('success', 'Success', 'Afspraak is gemaakt')
+      resetForm()
     })
   submitting.value = false
   // await addAppointment(appointment)
