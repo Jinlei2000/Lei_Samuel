@@ -48,7 +48,7 @@
             v-if="user.uid === null"
             name="Send email to create account"
             @click="handleSendMailToEmployee(user)"
-            :loading="sendMailToEmployeeLoading"
+            :loading="sendMailCurrentUserId === user.id && sendMailToEmployeeLoading"
             ownClass="block w-full"
           />
           <!-- Add other user information as needed -->
@@ -274,14 +274,7 @@ const errorMessages = ref<{
   email: '',
   telephone: '',
 })
-const {
-  handleSubmit,
-  resetForm,
-  defineComponentBinds,
-  errors,
-  values,
-  validate,
-} = useForm({
+const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
   validationSchema: schema,
 })
 
@@ -360,9 +353,19 @@ const handleCreateEmployee = async () => {
   loadingCreateEmployee.value = false
 }
 
+const sendMailCurrentUserId = ref<string | null>(null)
 // handle send email to employee
 const handleSendMailToEmployee = async (user: CustomUser) => {
-  console.log(`send email to employee with id: ${user.id}`)
+  sendMailCurrentUserId.value = user.id
+  await sendMailToEmployee({
+    userId: user.id,
+  }).then(() => {
+    showToast(
+      'success',
+      'Success',
+      `Email has been sent to ${user.email} to create an account`,
+    )
+  })
 }
 
 const openModal = (user: CustomUser | null = null, type: string) => {

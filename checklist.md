@@ -2,12 +2,12 @@
 
 ## Backend API
 
-- [ ] De API is gebouwd met NestJS en wordt lokaal gehost via Docker.
+- [x] De API is gebouwd met NestJS en wordt lokaal gehost via Docker.
 - [ ] Er is een bonuspunt als de API extern wordt gehost.
 
 ## Database
 
-- [ ] Gegevens worden persistent opgeslagen in de meest geschikte datastructuur, bijvoorbeeld MongoDB.
+- [x] Gegevens worden persistent opgeslagen in de meest geschikte datastructuur, bijvoorbeeld MongoDB.
 
 ## Realtime
 
@@ -15,26 +15,26 @@
 
 ## Autorisatie en Authenticatie
 
-- [ ] Firebase of een vergelijkbare service wordt gebruikt voor autorisatie en authenticatie.
-- [ ] De PKCE-flow wordt toegepast voor beveiligde autorisatie.
-- [ ] Er zijn minimaal twee rollen: gebruiker en administrator.
-- [ ] Een admin-account met e-mail "docent@howest.be" en wachtwoord "P@ssword123" is voorzien.
+- [x] Firebase of een vergelijkbare service wordt gebruikt voor autorisatie en authenticatie.
+- [x] De PKCE-flow wordt toegepast voor beveiligde autorisatie.
+- [x] Er zijn minimaal twee rollen: gebruiker en administrator.
+- [x] Een admin-account met e-mail "docent@howest.be" en wachtwoord "P@ssword123" is voorzien.
 
 ## Kwetsbaarheid
 
-- [ ] CORS is ingeschakeld.
+- [x] CORS is ingeschakeld.
 - [ ] Er zijn extra beveiligingsmaatregelen tegen Cross Site Forgery (CSRF) en Cross Site Scripting (XSS).
 
 ## API Docs
 
-- [ ] GraphQL wordt voornamelijk gebruikt, met beperkt gebruik van REST API.
-- [ ] De API documenteert zichzelf met behulp van een self-documenting library zoals Swagger of GraphiQL / Apollo Playground.
+- [x] GraphQL wordt voornamelijk gebruikt, met beperkt gebruik van REST API.
+- [x] De API documenteert zichzelf met behulp van een self-documenting library zoals Swagger of GraphiQL / Apollo Playground.
 - [ ] Ook statuscodes bij foutcondities worden gedocumenteerd.
 
 ## Framework
 
 - [ ] Een geschikte projectstructuur is gekozen.
-- [ ] Een seeder maakt de database automatisch aan bij het opstarten van de applicatie.
+- [x] Een seeder maakt de database automatisch aan bij het opstarten van de applicatie.
 
 ## Foutcontrole
 
@@ -43,7 +43,7 @@
 
 ## Source Controle
 
-- [ ] Source controle wordt beheerd via GitHub door regelmatig te pushen.
+- [x] Source controle wordt beheerd via GitHub door regelmatig te pushen.
 
 ## Staging / Deployment
 
@@ -72,7 +72,7 @@
 
 ## Framework
 
-- [ ] Vue.js wordt gebruikt in combinatie met TypeScript.
+- [x] Vue.js wordt gebruikt in combinatie met TypeScript.
 
 ## Testing
 
@@ -81,13 +81,13 @@
 
 ## Styling
 
-- [ ] Tailwind CSS of UnoCSS wordt gebruikt voor styling.
+- [x] Tailwind CSS of UnoCSS wordt gebruikt voor styling.
 - [ ] Er zijn ghosts, skeletons of loading states voor een betere gebruikerservaring.
-- [ ] Input-validatie en foutmeldingen zijn geïmplementeerd.
+- [x] Input-validatie en foutmeldingen zijn geïmplementeerd.
 
 ## PWA (Progressive Web App)
 
-- [ ] De web-app kan fullscreen worden gelanceerd en heeft een correcte PWA-setup.
+- [x] De web-app kan fullscreen worden gelanceerd en heeft een correcte PWA-setup.
 - [ ] Er is een relevante service-worker geïmplementeerd.
 
 ## Multi-language
