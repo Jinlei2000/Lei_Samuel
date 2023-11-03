@@ -405,6 +405,7 @@ const handleUpdate = async () => {
         locale: localeUpdate.value,
       },
     }).then(async () => {
+      loadingUpdate.value = false
       showToast('success', 'Success', 'User has been updated')
       await refetchUsers()
       closeModal()
@@ -441,6 +442,7 @@ const handleCreateEmployee = async () => {
         locale: locale.value,
       },
     }).then(async () => {
+      loadingCreateEmployee.value = false
       showToast('success', 'Success', 'Employee has been created')
       await refetchUsers()
       closeModal()
