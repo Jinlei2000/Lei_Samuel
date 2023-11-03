@@ -75,6 +75,13 @@ import { ref, watch } from 'vue'
 
 import Button from 'primevue/button'
 
+import useFirebase from '@/composables/useFirebase'
+const { firebaseUser } = useFirebase()
+
+firebaseUser.value?.getIdToken().then(token => {
+  console.log(`{"Authorization": "Bearer ${token}"}`)
+})
+
 const days = [
   'Sunday',
   'Monday',
