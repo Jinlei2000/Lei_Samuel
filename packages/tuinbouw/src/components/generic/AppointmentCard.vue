@@ -19,7 +19,7 @@
       <p class="overflow-hidden text-base">
         {{ props.description }}
       </p>
-      <button
+      <button @click="navigateToLocation(location!.address)"
         class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
       >
         Navigate <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
@@ -34,9 +34,20 @@
 <script setup lang="ts">
 import { Navigation, Info } from 'lucide-vue-next'
 
+// Open location in google maps
+function navigateToLocation(location: any) {
+  console.log(location)
+  const latitude = 37.7749; // Replace with the latitude of your location
+  const longitude = -122.4194; // Replace with the longitude of your location
+  
+  const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  window.open(googleMapsUrl, '_blank');
+}
+
 const props = defineProps({
   title: String,
   description: String,
   type: String,
+  location: Object,
 })
 </script>

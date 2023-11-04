@@ -46,10 +46,8 @@
               :title="item.user!.fullname"
               :description="item.description"
               :type="item.type"
+              :location="item.location"
             />
-            <button @click="navigateToLocation(item.location?.address)">
-              navigate
-            </button>
           </template>
         </div>
       </div>
@@ -127,16 +125,6 @@ function prevDay() {
   const currentDate = myDate.value
   const prevDay = new Date(currentDate.setDate(currentDate.getDate() - 1))
   myDate.value = prevDay
-}
-
-
-function navigateToLocation(location: any) {
-  console.log(location)
-  const latitude = 37.7749; // Replace with the latitude of your location
-  const longitude = -122.4194; // Replace with the longitude of your location
-  
-  const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-  window.open(googleMapsUrl, '_blank');
 }
 
 // @ts-ignore
