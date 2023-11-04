@@ -5,12 +5,12 @@
         <h2 class="mb-3 text-2xl">Next Client</h2>
 
         <!-- for each client -->
-        <div class="flex flex-col" v-for="(item, index) in appointments">
+        <div class="flex flex-col">
           <AppointmentCard
-            v-if="index === 0"
-            :title="item.user!.fullname"
-            :description="item.description"
-            :type="item.type"
+            v-if="nextAppointment"
+            :title="nextAppointment.user!.fullname"
+            :description="nextAppointment.description"
+            :type="nextAppointment.type"
           />
         </div>
         <div class="flex justify-between items-center mb-3 mt-6">
@@ -38,11 +38,7 @@
         <div class="flex flex-col gap-3">
           <template v-if="appointments" v-for="(item, index) in appointments">
             <AppointmentCard
-              v-if="
-                // index !== 0 &&
-                item.finalDate!.substring(0, 10) ===
-                  myDate.toISOString().substring(0, 10)
-              "
+              v-if="item !== nextAppointment"
               :title="item.user!.fullname"
               :description="item.description"
               :type="item.type"
@@ -76,6 +72,7 @@ import Button from 'primevue/button'
 import useFirebase from '@/composables/useFirebase'
 import useCustomUser from '@/composables/useCustomUser'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
+import Materials from './Materials.vue'
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 
@@ -93,10 +90,42 @@ const {
 }))
 
 const appointments = ref<[Appointment]>()
+const nextAppointment = ref<Appointment>()
 
 watch(schedule, () => {
   if (schedule.value.scheduleByDateAndUserId.length > 0) {
+    // // check if there is an appointment that has finalDate withing 30 minutes of current time
+    const now = new Date()
+    // log finaldate of each appointment
+    schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
+      (appointment: Appointment) => {
+        // check if finaldate is within 30 minutes of current time
+        const finalDate = new Date(appointment.finalDate!)
+        finalDate.setHours(finalDate.getHours() - 1)
+        const diff = Math.abs(finalDate.getTime() - now.getTime())
+        const minutes = Math.floor(diff / 1000 / 60)
+        console.log(minutes)
+        if (minutes < 30) {
+          nextAppointment.value = appointment
+        }
+
+      }
+    )
+
+    console.log(nextAppointment.value)
+
+    console.log(schedule.value.scheduleByDateAndUserId[0].appointments)
     appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
+
+    // if object in appointments has finaldate that has passed remove it from appointments
+    appointments.value?.forEach((appointment: Appointment) => {
+      const finalDate = new Date(appointment.finalDate!)
+      finalDate.setHours(finalDate.getHours() - 1)
+      const now = new Date()
+      if (finalDate < now) {
+        appointments.value?.splice(appointments.value.indexOf(appointment), 1)
+      }
+    })
   }
 })
 
