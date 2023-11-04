@@ -1,17 +1,11 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
+  <div class="flex min-h-screen items-center justify-center">
     <h1
-      class="text-transparent text-3xl font-extrabold md:text-5xl lg:text-6xl bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
+      class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
     >
-      ScheduleAppointment
+      Add Schedule
     </h1>
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  setup() {
-    return {}
-  },
-}
-</script>
+<script setup lang="ts"></script>
