@@ -5,6 +5,9 @@
     >
       SchedulesDetail
     </h1>
+
+    <!-- TODO: change between edit and detail -->
+    <!-- can only edit if not in the past & today cant not edit -->
   </div>
 </template>
 
