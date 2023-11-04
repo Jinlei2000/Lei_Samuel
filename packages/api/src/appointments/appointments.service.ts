@@ -65,14 +65,15 @@ export class AppointmentsService {
   // find all appointments by date (between startProposedDate and endProposedDate)
   // not done & final date is passed (now) or null
   async findAllAvailableByDate(date: Date): Promise<Appointment[]> {
+    const selectedDate = new Date(date)
     const appointments = await this.appointmentRepository.find({
       where: {
         isDone: false,
         // date is between startProposedDate and endProposedDate
         // @ts-ignore
-        startProposedDate: { $lte: date },
+        startProposedDate: { $lte: selectedDate },
         // @ts-ignore
-        endProposedDate: { $gte: date },
+        endProposedDate: { $gte: selectedDate },
         // @ts-ignore
         $or: [
           {
