@@ -12,12 +12,32 @@
 
   <!-- form -->
   <form @submit.prevent="handleCreateSchedule">
+    <!-- show schedule -->
+    <div>
+      <div
+        v-if="selectedAppointments.length > 0"
+        v-for="a of selectedAppointments"
+        :key="a.id"
+      >
+        {{ a.id }}
+      </div>
+    </div>
+
     <!-- Final Date -->
     <div v-if="next === 0">
+      <h1>Final Date</h1>
+      <CustomButton name="Next" type="button" @click="handleNext()" />
       <div class="flex flex-col">
         <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">
           Choose a date
         </h1>
+
+        <!-- loading appointments & employees -->
+        <div v-if="loadingAppointments || loadingEmployees">
+          <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+        </div>
+
+        <!-- show calendar -->
         <Calendar
           id="finalDate"
           inline
@@ -25,18 +45,27 @@
           :manualInput="false"
           :minDate="minDate"
           dateFormat="yy-mm-dd"
+          @date-select="checkAvailability()"
         >
         </Calendar>
         <small class="p-error" id="text-error">{{
           errorMessages.finalDate || '&nbsp;'
         }}</small>
       </div>
-      <!-- next + 1 -->
-      <CustomButton name="Next" type="button" @click="handleNext()" />
     </div>
 
     <!-- Appointments -->
     <div v-if="next === 1">
+      <h1>Appointments</h1>
+      <CustomButton name="Back" type="button" @click="handleBack()" />
+      <CustomButton name="Next" type="button" @click="handleNext()" />
+
+      <!-- loading appointments -->
+      <div v-if="loadingAppointments">
+        <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+      </div>
+
+      <!-- show appointments -->
       <div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div
@@ -58,7 +87,7 @@
                 <input
                   type="checkbox"
                   class="mr-2"
-                  @click="addIdInAppointmentIds(a)"
+                  @click="addSelectedAppointment(a)"
                   :checked="IsAppointmentSelected(a.id)"
                 />
                 <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
@@ -119,14 +148,14 @@
           errorMessages.appointmentsIds || '&nbsp;'
         }}</small>
       </div>
-      <CustomButton name="Back" type="button" @click="next--" />
-      <CustomButton name="Next" type="button" @click="handleNext()" />
     </div>
 
     <!-- Fill in price of appointments -->
     <div v-if="next === 2">
+      <h1>Fill in price of appointments</h1>
+      <CustomButton name="Back" type="button" @click="handleBack()" />
+      <CustomButton name="Next" type="button" @click="handleNext()" />
       <div>
-        <h1>Fill in price of appointments</h1>
         <div v-for="a of selectedAppointments" :key="a.id">
           <div
             class="mx-auto mb-3 max-w-md overflow-hidden rounded-md bg-white shadow-md"
@@ -181,18 +210,48 @@
           errorMessages.prices || '&nbsp;'
         }}</small>
       </div>
-
-      <CustomButton name="Back" type="button" @click="next--" />
-      <CustomButton name="Next" type="button" @click="handleNext()" />
     </div>
 
     <!-- Employees -->
     <div v-if="next === 3">
-      <div>
-        <h1>Employees</h1>
-      </div>
-      <CustomButton name="Back" type="button" @click="next--" />
+      <h1>Employees</h1>
+      <CustomButton name="Back" type="button" @click="handleBack()" />
       <CustomButton name="Next" type="button" @click="handleNext()" />
+
+      <!-- loading employees -->
+      <div v-if="loadingEmployees">
+        <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+      </div>
+
+      <!-- show employees -->
+      <div
+        v-if="employees && employees.usersEmployeesAvailableByDate.length > 0"
+      >
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-for="user in employees.usersEmployeesAvailableByDate"
+            :key="user.id"
+            class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+            :class="IsUserSelected(user.id) ? 'border border-green-500' : ''"
+          >
+            <!-- Add checkbox for selection -->
+            <input
+              type="checkbox"
+              class="mr-2"
+              @click="addSelectedUser(user)"
+              :checked="IsUserSelected(user.id)"
+            />
+            <div class="p-6">
+              <h2 class="mb-2 text-2xl font-semibold">
+                {{ user.firstname }} {{ user.lastname }}
+              </h2>
+              <p class="text-gray-600">{{ user.email }}</p>
+              <p class="text-gray-600">{{ user.role }}</p>
+              <p class="text-gray-600">{{ user.uid }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- <CustomButton
@@ -205,12 +264,13 @@
 
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
-import InputText from '@/components/generic/form/InputText.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE } from '@/graphql/appointment.query'
 import { CREATE_SCHEDULE } from '@/graphql/schedule.mutation'
+import { GET_EMPLOYEES_AVAILABLE_BY_DATE } from '@/graphql/user.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
+import type { CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, Eye } from 'lucide-vue-next'
 import Calendar from 'primevue/calendar'
@@ -250,10 +310,9 @@ const errorMessages = ref<{
 })
 
 // create form
-const { resetForm, defineComponentBinds, errors, values, validate, setValues } =
-  useForm({
-    validationSchema: schema,
-  })
+const { defineComponentBinds, errors, values, validate, setValues } = useForm({
+  validationSchema: schema,
+})
 
 const finalDate = defineComponentBinds('finalDate')
 const appointmentsIds = defineComponentBinds('appointmentsIds')
@@ -262,6 +321,7 @@ const materialsIds = defineComponentBinds('materialsIds')
 
 const next = ref(0)
 const selectedAppointments = ref<Appointment[]>([])
+const selectedEmployees = ref<CustomUser[]>([])
 
 // graphql
 const { mutate: createSchedule, error: errorCreateSchedule } =
@@ -274,6 +334,21 @@ const {
   refetch: refetchAppointments,
 } = useQuery(
   GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE,
+  () => ({
+    date: values.finalDate ? formatDateTime(values.finalDate) : '',
+  }),
+  {
+    fetchPolicy: 'cache-and-network',
+  },
+)
+
+const {
+  result: employees,
+  loading: loadingEmployees,
+  error: errorEmployees,
+  refetch: refetchEmployees,
+} = useQuery(
+  GET_EMPLOYEES_AVAILABLE_BY_DATE,
   () => ({
     date: values.finalDate ? formatDateTime(values.finalDate) : '',
   }),
@@ -338,18 +413,47 @@ const handleNext = async () => {
       }
     }
     errorMessages.value.prices = priceError
-    console.log(errorMessages.value.prices)
     if (errorMessages.value.prices === '') {
       next.value++
     }
   }
   // validate fourth step (employees)
   else if (next.value === 2) {
+  }
 }
 
-// add appointment id in array or remove it
-// also add selected appointment in array
-const addIdInAppointmentIds = (appointment: Appointment) => {
+// go to previous step
+const handleBack = async () => {
+  if (next.value === 1) {
+    // reset values
+    setValues({
+      appointmentsIds: [],
+      employeesIds: [],
+      materialsIds: [],
+    })
+    selectedAppointments.value = []
+  } else if (next.value === 3) {
+    // reset values
+    setValues({
+      employeesIds: [],
+    })
+    selectedEmployees.value = []
+  }
+
+  // reset errors
+  errorMessages.value = {
+    finalDate: '',
+    appointmentsIds: '',
+    employeesIds: '',
+    materialsIds: '',
+    prices: '',
+  }
+  next.value--
+}
+
+// add appointment id in appointmentsIds array and add appointment in selectedAppointments array
+// remove appointment id in appointmentsIds array and remove appointment in selectedAppointments array
+const addSelectedAppointment = (appointment: Appointment) => {
   // check if appointment is already selected
   const index = values.appointmentsIds.indexOf(appointment.id!)
 
@@ -361,7 +465,9 @@ const addIdInAppointmentIds = (appointment: Appointment) => {
       appointmentsIds: newValues,
     })
     // remove appointment from selected appointments
-    const indexAppointment = selectedAppointments.value.indexOf(appointment)
+    const indexAppointment = selectedAppointments.value.findIndex(
+      a => a.id === appointment.id,
+    )
     if (indexAppointment > -1)
       selectedAppointments.value.splice(indexAppointment, 1)
   } else {
@@ -379,16 +485,71 @@ const addIdInAppointmentIds = (appointment: Appointment) => {
 // check if appointment is selected
 const IsAppointmentSelected = (id: string) => {
   if (values.appointmentsIds.includes(id)) return true
+  return false
+}
 
+// check if there are appointments and employees available for the selected date
+const checkAvailability = async () => {
+  // reset error messages
+  errorMessages.value.finalDate = ''
+  let error = ''
+  await refetchAppointments()
+  await refetchEmployees()
+  if (
+    appointments.value.appointmentsAvailableByDate.length === 0 &&
+    employees.value.usersEmployeesAvailableByDate.length === 0
+  ) {
+    error = 'No appointments and employees available for this date'
+  }
+  // check if there are appointments available for the selected date
+  else if (appointments.value.appointmentsAvailableByDate.length === 0) {
+    error = 'No appointments available for this date'
+  }
+  // check if there are employees available for the selected date
+  else if (employees.value.usersEmployeesAvailableByDate.length === 0) {
+    error = 'No employees available for this date'
+  }
+
+  errorMessages.value.finalDate = error
+}
+
+const addSelectedUser = (user: CustomUser) => {
+  // check if user is already selected
+  const index = values.employeesIds.indexOf(user.id)
+
+  // if user is already selected, remove it
+  if (index > -1) {
+    const newValues = [...values.employeesIds]
+    newValues.splice(index, 1)
+    setValues({
+      employeesIds: newValues,
+    })
+  } else {
+    // if user is not selected, add it
+    const newValues = [...values.employeesIds]
+    newValues.push(user.id)
+    setValues({
+      employeesIds: newValues,
+    })
+  }
+}
+
+const IsUserSelected = (id: string) => {
+  if (values.employeesIds.includes(id)) return true
   return false
 }
 
 watchEffect(() => {
   // log the queries
-  if (appointments.value) console.log(appointments.value)
+  // if (appointments.value) console.log(appointments.value)
+  // if (employees.value) console.log(employees.value)
 
   // all errors
-  const errors = [errorCreateSchedule.value, errorAppointments.value]
+  const errors = [
+    errorCreateSchedule.value,
+    errorAppointments.value,
+    errorEmployees.value,
+  ]
   errors.forEach(error => {
     if (error) {
       loadingCreate.value = false
