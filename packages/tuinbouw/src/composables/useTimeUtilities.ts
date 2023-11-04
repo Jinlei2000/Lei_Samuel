@@ -30,8 +30,17 @@ export default () => {
     return false
   }
 
+  // check if finalDate is not over today or in the past
+  const isNotInPastOrToday = (finalDate: string) => {
+    const today = formatDateTime(new Date().toString())
+    const finalDateFormatted = formatDateTime(finalDate)
+    if (finalDateFormatted <= today) return false
+    return true
+  }
+
   return {
     formatDateTime,
     isOverToday,
+    isNotInPastOrToday,
   }
 }
