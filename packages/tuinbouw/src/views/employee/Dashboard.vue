@@ -2,9 +2,7 @@
   <div class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12">
     <div class="grid grid-cols-4 w-full gap-3">
       <div class="col-start-1 col-span-1">
-        <h2 class="mb-3 text-2xl">Next Client</h2>
-
-        <!-- for each client -->
+        <h2 class="mb-3 text-2xl">Next Appointment</h2>
         <div class="flex flex-col">
           <AppointmentCard
             v-if="nextAppointment"
@@ -94,17 +92,14 @@ const nextAppointment = ref<Appointment>()
 
 watch(schedule, () => {
   if (schedule.value.scheduleByDateAndUserId.length > 0) {
-    // // check if there is an appointment that has finalDate withing 30 minutes of current time
     const now = new Date()
-    // log finaldate of each appointment
+    // // check if there is an appointment that has finalDate withing 30 minutes of current time
     schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
       (appointment: Appointment) => {
-        // check if finaldate is within 30 minutes of current time
         const finalDate = new Date(appointment.finalDate!)
         finalDate.setHours(finalDate.getHours() - 1)
         const diff = Math.abs(finalDate.getTime() - now.getTime())
         const minutes = Math.floor(diff / 1000 / 60)
-        console.log(minutes)
         if (minutes < 30) {
           nextAppointment.value = appointment
         }
@@ -112,12 +107,10 @@ watch(schedule, () => {
       }
     )
 
-    console.log(nextAppointment.value)
-
-    console.log(schedule.value.scheduleByDateAndUserId[0].appointments)
+    // set appointments to appointments of schedule
     appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
 
-    // if object in appointments has finaldate that has passed remove it from appointments
+    // if appointment has finaldate that has passed remove it from appointments
     appointments.value?.forEach((appointment: Appointment) => {
       const finalDate = new Date(appointment.finalDate!)
       finalDate.setHours(finalDate.getHours() - 1)
