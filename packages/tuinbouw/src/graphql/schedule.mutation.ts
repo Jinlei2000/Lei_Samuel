@@ -5,3 +5,24 @@ export const DELETE_SCHEDULE = gql`
     removeSchedule(id: $id)
   }
 `
+
+export const CREATE_SCHEDULE = gql`
+  mutation createSchedule($createScheduleInput: CreateScheduleInput!) {
+    createSchedule(createScheduleInput: $createScheduleInput) {
+      id
+      appointments {
+        id
+      }
+      employees {
+        id
+      }
+      materials {
+        id
+      }
+      finalDate
+      createdBy
+      createdAt
+      updatedAt
+    }
+  }
+`

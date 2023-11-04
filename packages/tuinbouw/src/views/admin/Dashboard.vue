@@ -65,6 +65,8 @@ export default {
       'Users',
       'Profile',
       'Schedules',
+      'Materials',
+      'Add-Schedule',
     ])
     const { firebaseUser, logout } = useFirebase()
     const { setLocale, locale } = useLanguage()

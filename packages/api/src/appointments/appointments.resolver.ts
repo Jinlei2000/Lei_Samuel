@@ -49,6 +49,14 @@ export class AppointmentsResolver {
     return this.appointmentsService.findOne(id)
   }
 
+  // TODO: add to documentation
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Appointment], { name: 'appointmentsAvailableByDate' })
+  findAllAvailableByDate(@Args('date', { type: () => String }) date: Date) {
+    return this.appointmentsService.findAllAvailableByDate(date)
+  }
+
   @AllowedRoles(Role.ADMIN, Role.CLIENT)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Appointment)

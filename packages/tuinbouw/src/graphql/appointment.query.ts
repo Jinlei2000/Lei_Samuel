@@ -29,3 +29,29 @@ export const GET_ALL_APPOINTMENT_BY_CLIENT = gql`
     }
   }
 `
+
+export const GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE = gql`
+  query appointmentsAvailableByDate($date: String!) {
+    appointmentsAvailableByDate(date: $date) {
+      id
+      user {
+        id
+      }
+      location {
+        id
+        address
+      }
+      price
+      type
+      startProposedDate
+      endProposedDate
+      isScheduled
+      finalDate
+      isDone
+      description
+      priority
+      createdAt
+      updatedAt
+    }
+  }
+`
