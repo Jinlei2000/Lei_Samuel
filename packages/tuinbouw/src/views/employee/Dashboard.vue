@@ -42,6 +42,7 @@
               :type="item.type"
               :location="item.location"
             />
+            <button @click="openModal(item)">modal</button>
           </template>
         </div>
       </div>
@@ -55,6 +56,37 @@
       </div>
     </div>
   </div>
+
+  <!-- Appointment Detail Modal -->
+  <Dialog
+    v-model:visible="showModal"
+    modal
+    :header="selectedAppointment.user!.fullname"
+    :style="{ width: '50vw', position: 'relative', overflow: 'hidden'}"
+    v-if="selectedAppointment"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+  <div
+      class="absolute left-0 top-0 h-full w-1"
+      :class="
+        selectedAppointment.type === 'maintenance'
+          ? 'bg-primary-green'
+          : selectedAppointment.type === 'repair'
+          ? 'bg-primary-orange'
+          : selectedAppointment.type === 'inspection'
+          ? 'bg-primary-blue'
+          : 'bg-transparent'
+      "
+    ></div>
+    <h2 class="mb-2 text-xl font-semibold">
+      {{ selectedAppointment.user!.fullname }}
+    </h2>
+    <p class="text-gray-600">
+      {{ selectedAppointment.description }}
+    </p>
+  </Dialog>
+  <!-- End Appointment Detail Modal -->
 </template>
 
 <script setup lang="ts">
@@ -89,6 +121,11 @@ const {
 
 const appointments = ref<[Appointment]>()
 const nextAppointment = ref<Appointment>()
+
+const showModal = ref(false)
+const selectedAppointment = ref<Appointment | null>(null)
+
+
 
 watch(schedule, () => {
   if (schedule.value.scheduleByDateAndUserId.length > 0) {
@@ -137,13 +174,13 @@ const days = [
 ]
 
 // nextday function
-function nextDay() {
+const nextDay = () => {
   const currentDate = myDate.value
   const nextDay = new Date(currentDate.setDate(currentDate.getDate() + 1))
   myDate.value = nextDay
 }
 
-function prevDay() {
+const prevDay = () => {
   const currentDate = myDate.value
   const prevDay = new Date(currentDate.setDate(currentDate.getDate() - 1))
   myDate.value = prevDay
@@ -172,4 +209,30 @@ watch(myDate, () => {
       break
   }
 })
+
+const openModal = (appointment: Appointment | null = null) => {
+  selectedAppointment.value = appointment
+  showModal.value = true
+
+  // if (type === 'detail' && user) {
+  //   selectedUser.value = { ...user }
+  //   visible.value.detail = true
+  // } else if (type === 'edit' && user) {
+  //   selectedUser.value = { ...user }
+  //   setValuesUpdate({
+  //     firstname: user.firstname,
+  //     lastname: user.lastname,
+  //     email: user.email,
+  //     telephone: user.telephone,
+  //   })
+  //   localeUpdate.value = user.locale!
+  //   visible.value.edit = true
+  // } else if (type === 'create') {
+  //   visible.value.create = true
+  // }
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
 </script>
