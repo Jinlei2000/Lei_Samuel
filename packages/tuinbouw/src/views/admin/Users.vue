@@ -103,6 +103,14 @@
     <p class="text-gray-600">
       {{ selectedUser.email }}
     </p>
+    <!-- upgrade to admin button -->
+    <CustomButton
+      v-if="selectedUser.role === 'EMPLOYEE'"
+      name="Upgrade to Admin"
+      @click="handleUpgradeToAdmin(selectedUser)"
+      :loading="upgradeToAdminLoading"
+      ownClass="block w-full"
+    />
   </Dialog>
 
   <!-- Edit Modal -->
@@ -270,6 +278,7 @@ import {
   DELETE_USER,
   CREATE_EMPLOYEE,
   UPDATE_USER,
+  UPDATE_USER_TO_ADMIN,
 } from '@/graphql/user.mutation'
 import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
 import * as yup from 'yup'
@@ -278,8 +287,6 @@ import InputText from '@/components/generic/form/InputText.vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import { ChevronDownIcon } from 'lucide-vue-next'
 import CustomButton from '@/components/generic/CustomButton.vue'
-
-// TODO: upgrade to admin button for employee
 
 // composables
 const { showToast } = useCustomToast()
@@ -389,6 +396,12 @@ const {
 
 const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
+const {
+  mutate: upgradeToAdmin,
+  loading: upgradeToAdminLoading,
+  error: upgradeToAdminError,
+} = useMutation(UPDATE_USER_TO_ADMIN)
+
 // logics
 // handle edit
 const handleUpdate = async () => {
@@ -468,6 +481,21 @@ const handleSendMailToEmployee = async (user: CustomUser) => {
   })
 }
 
+// handle upgrade to admin
+const handleUpgradeToAdmin = async (user: CustomUser) => {
+  await upgradeToAdmin({
+    id: user.id,
+  }).then(() => {
+    showToast(
+      'success',
+      'Success',
+      `User ${user.email} has been upgraded to admin`,
+    )
+    refetchUsers()
+    closeModal()
+  })
+}
+
 const openModal = (user: CustomUser | null = null, type: string) => {
   if (type === 'detail' && user) {
     selectedUser.value = { ...user }
@@ -518,6 +546,7 @@ watchEffect(() => {
     createEmployeeError.value,
     sendMailToEmployeeError.value,
     updateUserError.value,
+    upgradeToAdminError.value,
   ]
   errors.forEach(error => {
     if (error) {

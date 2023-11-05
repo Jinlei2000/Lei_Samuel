@@ -431,7 +431,7 @@ userUpgradeToAdmin(id: String)
 can be used only by admin user to upgrade staff to admin
 
 ```graphql
-query {
+mutation {
   userUpgradeToAdmin(id: "6522bd1cfabcb1f1d63dd63a") {
     id
     uid
