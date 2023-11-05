@@ -20,3 +20,29 @@ export const GET_ALL_SCHEDULES = gql`
     }
   }
 `
+
+export const GET_SCHEDULE_BY_ID = gql`
+  query schedule($id: String!) {
+    schedule(id: $id) {
+      id
+      appointments {
+        id
+        type
+      }
+      employees {
+        id
+        email
+        fullname
+      }
+      materials {
+        id
+        name
+        serialNumber
+      }
+      finalDate
+      createdBy
+      createdAt
+      updatedAt
+    }
+  }
+`
