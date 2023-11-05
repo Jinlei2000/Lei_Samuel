@@ -283,7 +283,7 @@
         <Dropdown
           id="type"
           v-bind="type"
-          :options="[{ name: 'maintenance' }, { name: 'repair' }]"
+          :options="[{ name: 'maintenance' }, { name: 'repair' }, { name: 'other' }]"
           optionLabel="name"
           optionValue="name"
           class="w-full"
