@@ -90,7 +90,7 @@ import { GET_ALL_SCHEDULES } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, Eye, Trash2 } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
-import type { Schedule } from '@/interfaces/schedule.user.interface'
+import type { Schedule } from '@/interfaces/schedule.interface'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_SCHEDULE } from '@/graphql/schedule.mutation'
 
@@ -153,3 +153,4 @@ watchEffect(() => {
   })
 })
 </script>
+@/interfaces/schedule.interface

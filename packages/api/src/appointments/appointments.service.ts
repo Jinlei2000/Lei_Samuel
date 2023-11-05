@@ -65,14 +65,15 @@ export class AppointmentsService {
   // find all appointments by date (between startProposedDate and endProposedDate)
   // not done & final date is passed (now) or null
   async findAllAvailableByDate(date: Date): Promise<Appointment[]> {
+    const selectedDate = new Date(date)
     const appointments = await this.appointmentRepository.find({
       where: {
         isDone: false,
         // date is between startProposedDate and endProposedDate
         // @ts-ignore
-        startProposedDate: { $lte: date },
+        startProposedDate: { $lte: selectedDate },
         // @ts-ignore
-        endProposedDate: { $gte: date },
+        endProposedDate: { $gte: selectedDate },
         // @ts-ignore
         $or: [
           {
@@ -151,29 +152,12 @@ export class AppointmentsService {
       ...updateAppointmentInput,
     }
 
-    console.log(updatedAppointment)
-
     await this.appointmentRepository.update(id, updatedAppointment)
-
-    // const updatedAppointment = {
-    //   ...updateAppointmentInput,
-    //   // update when not null (if null, keep current value)
-    //   ...(updateAppointmentInput.userId && {
-    //     user: await this.usersService.findOne(updateAppointmentInput.userId),
-    //   }),
-    //   ...(updateAppointmentInput.locationId && {
-    //     location: await this.locationsService.findOne(
-    //       updateAppointmentInput.locationId,
-    //     ),
-    //   }),
-    // }
-
-    console.log(updateAppointmentInput)
-
-    // await this.appointmentRepository.update(id, updatedAppointment)
 
     return this.findOne(id.toString())
   }
+
+  // TODO: update done or not done
 
   // remove appointment only if not done & remove appointment id from schedules
   async remove(id: string): Promise<string> {

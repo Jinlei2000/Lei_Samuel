@@ -57,7 +57,7 @@ export class UsersResolver {
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [User], { name: 'usersEmployeesAvailableByDate' })
-  findEmployeesAvailableByDate(@Args('date', { type: () => Date }) date: Date) {
+  findEmployeesAvailableByDate(@Args('date', { type: () => String }) date: Date) {
     return this.usersService.findAvailableEmployeesByDate(date)
   }
 

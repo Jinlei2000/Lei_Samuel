@@ -50,4 +50,3 @@ export const CREATE_APPOINTMENT = gql`
     }
   }
 `
-  
