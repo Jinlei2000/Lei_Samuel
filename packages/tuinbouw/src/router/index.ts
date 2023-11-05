@@ -53,12 +53,12 @@ const router = createRouter({
           component: () => import('../views/employee/Profile.vue'),
         },
         {
-          path: 'appointments',
-          component: () => import('../views/employee/AllAppointments.vue'),
+          path: 'schedules',
+          component: () => import('../views/employee/Schedules.vue'),
         },
         {
-          path: 'appointment/:id',
-          component: () => import('../views/employee/AppointmentDetail.vue'),
+          path: 'schedules/:id',
+          component: () => import('../views/employee/ScheduleDetail.vue'),
         },
       ],
     },
