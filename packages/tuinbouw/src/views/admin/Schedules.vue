@@ -153,4 +153,3 @@ watchEffect(() => {
   })
 })
 </script>
-@/interfaces/schedule.interface
