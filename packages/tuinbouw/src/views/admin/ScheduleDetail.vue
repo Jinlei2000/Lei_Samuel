@@ -30,7 +30,7 @@
         <Pencil class="h-6 w-6" />
       </button>
     </Router-link>
-    
+
     <div class="rounded-md bg-white p-6 shadow-md">
       <p><strong>Created By:</strong> {{ schedule.schedule.createdBy }}</p>
       <p>
@@ -111,10 +111,6 @@ const {
 )
 
 // logics
-// go to edit page
-const goToEditPage = () => {
-  return `edit/${currentRoute.value.params.id}`
-}
 
 watchEffect(() => {
   // log the queries

@@ -27,7 +27,23 @@ export const GET_SCHEDULE_BY_ID = gql`
       id
       appointments {
         id
+        user {
+          id
+        }
+        location {
+          id
+        }
+        price
         type
+        startProposedDate
+        endProposedDate
+        isScheduled
+        finalDate
+        isDone
+        description
+        priority
+        createdAt
+        updatedAt
       }
       employees {
         id
