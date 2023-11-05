@@ -644,11 +644,6 @@ const addSelectedAppointment = (appointment: Appointment) => {
   }
 }
 
-// check if item is selected
-const isItemSelected = (id: string, itemIds: string[]) => {
-  return itemIds.includes(id)
-}
-
 const addSelectedEmployee = (user: CustomUser) => {
   // check if user is already selected
   const index = values.employeesIds.indexOf(user.id)
@@ -703,9 +698,11 @@ const addSelectedMaterial = (material: Material) => {
     // add material in selected materials
     selectedMaterials.value.push({ ...material })
   }
+}
 
-  console.log(values.materialsIds)
-  console.log(selectedMaterials.value)
+// check if item is selected
+const isItemSelected = (id: string, itemIds: string[]) => {
+  return itemIds.includes(id)
 }
 
 // check if there are appointments and employees available for the selected date
