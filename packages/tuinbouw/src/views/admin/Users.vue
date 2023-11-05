@@ -279,6 +279,8 @@ import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import { ChevronDownIcon } from 'lucide-vue-next'
 import CustomButton from '@/components/generic/CustomButton.vue'
 
+// TODO: upgrade to admin button for employee
+
 // composables
 const { showToast } = useCustomToast()
 

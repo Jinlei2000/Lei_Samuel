@@ -12,21 +12,16 @@
 
   <!-- form -->
   <form @submit.prevent="handleCreateSchedule">
-    <!-- show schedule -->
-    <div>
-      <div
-        v-if="selectedAppointments.length > 0"
-        v-for="a of selectedAppointments"
-        :key="a.id"
-      >
-        {{ a.id }}
-      </div>
-    </div>
-
     <!-- Final Date -->
     <div v-if="next === 0">
       <h1>Final Date</h1>
       <CustomButton name="Next" type="button" @click="handleNext()" />
+
+      <!-- validation -->
+      <small class="p-error block" id="text-error">{{
+        errorMessages.finalDate || '&nbsp;'
+      }}</small>
+
       <div class="flex flex-col">
         <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">
           Choose a date
@@ -48,9 +43,6 @@
           @date-select="checkAvailability()"
         >
         </Calendar>
-        <small class="p-error" id="text-error">{{
-          errorMessages.finalDate || '&nbsp;'
-        }}</small>
       </div>
     </div>
 
@@ -59,6 +51,11 @@
       <h1>Appointments</h1>
       <CustomButton name="Back" type="button" @click="handleBack()" />
       <CustomButton name="Next" type="button" @click="handleNext()" />
+
+      <!-- validation -->
+      <small class="p-error block" id="text-error">{{
+        errorMessages.appointmentsIds || '&nbsp;'
+      }}</small>
 
       <!-- loading appointments -->
       <div v-if="loadingAppointments">
@@ -79,7 +76,9 @@
             <div
               :class="[
                 'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
-                IsAppointmentSelected(a.id) ? 'border-2 border-green-500' : '',
+                isItemSelected(a.id, appointmentsIds.modelValue)
+                  ? 'border-2 border-green-500'
+                  : '',
               ]"
             >
               <div class="p-4">
@@ -88,7 +87,7 @@
                   type="checkbox"
                   class="mr-2"
                   @click="addSelectedAppointment(a)"
-                  :checked="IsAppointmentSelected(a.id)"
+                  :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
                 />
                 <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
                 <p class="mb-1 text-gray-600">{{ a.description }}</p>
@@ -123,6 +122,7 @@
                 class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
               >
                 <!-- View More Button -->
+                <!-- TODO: make only if design need it? -->
                 <!-- @click="openModal(a, 'detail')" -->
                 <button class="text-green-500 hover:underline">
                   <Eye />
@@ -144,9 +144,6 @@
             </div>
           </div>
         </div>
-        <small class="p-error" id="text-error">{{
-          errorMessages.appointmentsIds || '&nbsp;'
-        }}</small>
       </div>
     </div>
 
@@ -155,6 +152,13 @@
       <h1>Fill in price of appointments</h1>
       <CustomButton name="Back" type="button" @click="handleBack()" />
       <CustomButton name="Next" type="button" @click="handleNext()" />
+
+      <!-- validation -->
+      <small class="p-error block" id="text-error">{{
+        errorMessages.prices || '&nbsp;'
+      }}</small>
+
+      <!-- show appointments with price input -->
       <div>
         <div v-for="a of selectedAppointments" :key="a.id">
           <div
@@ -206,9 +210,6 @@
             </div>
           </div>
         </div>
-        <small class="p-error" id="text-error">{{
-          errorMessages.prices || '&nbsp;'
-        }}</small>
       </div>
     </div>
 
@@ -217,6 +218,11 @@
       <h1>Employees</h1>
       <CustomButton name="Back" type="button" @click="handleBack()" />
       <CustomButton name="Next" type="button" @click="handleNext()" />
+
+      <!-- validation -->
+      <small class="p-error block" id="text-error">{{
+        errorMessages.employeesIds || '&nbsp;'
+      }}</small>
 
       <!-- loading employees -->
       <div v-if="loadingEmployees">
@@ -232,14 +238,18 @@
             v-for="user in employees.usersEmployeesAvailableByDate"
             :key="user.id"
             class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
-            :class="IsUserSelected(user.id) ? 'border border-green-500' : ''"
+            :class="
+              isItemSelected(user.id, employeesIds.modelValue)
+                ? 'border border-green-500'
+                : ''
+            "
           >
             <!-- Add checkbox for selection -->
             <input
               type="checkbox"
               class="mr-2"
-              @click="addSelectedUser(user)"
-              :checked="IsUserSelected(user.id)"
+              @click="addSelectedEmployee(user)"
+              :checked="isItemSelected(user.id, employeesIds.modelValue)"
             />
             <div class="p-6">
               <h2 class="mb-2 text-2xl font-semibold">
@@ -254,23 +264,126 @@
       </div>
     </div>
 
-    <!-- <CustomButton
-      name="Create Schedule"
-      :loading="loadingCreate"
-      type="submit"
-    /> -->
+    <!-- Materials -->
+    <div v-if="next === 4">
+      <h1>Materials</h1>
+      <CustomButton name="Back" type="button" @click="handleBack()" />
+      <CustomButton name="Next" type="button" @click="handleNext()" />
+
+      <!-- loading -->
+      <div v-if="loadingMaterials">
+        <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+      </div>
+
+      <!-- show materials -->
+      <div
+        class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+      >
+        <div
+          v-if="materials && materials.materials.length > 0"
+          v-for="material of materials.materials"
+          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+          :key="material.id"
+          :class="
+            isItemSelected(material.id, materialsIds.modelValue)
+              ? 'border-2 border-green-500'
+              : ''
+          "
+        >
+          <!-- Add checkbox for selection -->
+          <input
+            type="checkbox"
+            class="mr-2"
+            @click="addSelectedMaterial(material)"
+            :checked="isItemSelected(material.id, materialsIds.modelValue)"
+          />
+          <img
+            class="w-full rounded-2xl rounded-b-3xl"
+            src="https://picsum.photos/200"
+            alt="random picture"
+          />
+          <div
+            class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
+          >
+            <h2 class="truncate text-lg">{{ material.name }}</h2>
+            <p class="m-0">Loanable: {{ material.isLoan }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- See All -->
+    <div v-if="next === 5">
+      <h1>See All</h1>
+      <CustomButton name="Back" type="button" @click="handleBack()" />
+      <CustomButton
+        name="Create Schedule"
+        :loading="loadingCreate"
+        type="submit"
+      />
+
+      <!-- show schedule detail -->
+      <!-- show selected final date -->
+      <div>
+        <h1>Final Date</h1>
+        <div>{{ formatDateTime(values.finalDate) }}</div>
+      </div>
+      <!-- show selected appointments -->
+      <div>
+        <h1>Appointments</h1>
+        <div
+          v-if="selectedAppointments.length > 0"
+          v-for="a of selectedAppointments"
+          :key="a.id"
+        >
+          {{ a.id }}
+        </div>
+      </div>
+
+      <!-- show selected employees -->
+      <div>
+        <h1>Employees</h1>
+        <div
+          v-if="selectedEmployees.length > 0"
+          v-for="user of selectedEmployees"
+          :key="user.id"
+        >
+          {{ user.id }}
+        </div>
+      </div>
+
+      <!-- show selected materials -->
+      <div>
+        <h1>Materials</h1>
+        <div
+          v-if="selectedMaterials.length > 0"
+          v-for="material of selectedMaterials"
+          :key="material.id"
+        >
+          {{ material.id }}
+        </div>
+
+        <!-- no selected materials -->
+        <div v-else>No materials selected</div>
+      </div>
+    </div>
   </form>
 </template>
 
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
 import useCustomToast from '@/composables/useCustomToast'
+import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
+import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import { GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE } from '@/graphql/appointment.query'
+import { GET_MATERIALS_AVAILABLE } from '@/graphql/material.query'
 import { CREATE_SCHEDULE } from '@/graphql/schedule.mutation'
 import { GET_EMPLOYEES_AVAILABLE_BY_DATE } from '@/graphql/user.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
+import type { Material } from '@/interfaces/material.interface'
+import type { Schedule } from '@/interfaces/schedule.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, Eye } from 'lucide-vue-next'
 import Calendar from 'primevue/calendar'
@@ -284,6 +397,7 @@ import * as yup from 'yup'
 const { showToast } = useCustomToast()
 const { replace } = useRouter()
 const { formatDateTime } = useTimeUtilities()
+const { customUser } = useCustomUser()
 
 // variables
 // today + 1 day
@@ -322,10 +436,14 @@ const materialsIds = defineComponentBinds('materialsIds')
 const next = ref(0)
 const selectedAppointments = ref<Appointment[]>([])
 const selectedEmployees = ref<CustomUser[]>([])
+const selectedMaterials = ref<Material[]>([])
 
 // graphql
 const { mutate: createSchedule, error: errorCreateSchedule } =
   useMutation(CREATE_SCHEDULE)
+
+const { mutate: updateAppointment, error: errorUpdateAppointment } =
+  useMutation(UPDATE_APPOINTMENT)
 
 const {
   result: appointments,
@@ -357,6 +475,14 @@ const {
   },
 )
 
+const {
+  result: materials,
+  loading: loadingMaterials,
+  error: errorMaterials,
+} = useQuery(GET_MATERIALS_AVAILABLE, null, {
+  fetchPolicy: 'cache-and-network',
+})
+
 // logics
 // create schedule
 const handleCreateSchedule = async () => {
@@ -365,16 +491,33 @@ const handleCreateSchedule = async () => {
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
     console.log('no errors', values)
-    // await createSchedule({
-    //   createScheduleInput: {
-    //     finalDate: values.finalDate,
-    //   },
-    // }).then(async () => {
-    //   loadingCreate.value = false
-    //   showToast('success', 'Success', 'Schedule created')
-    //   // redirect to schedule page
-    //   replace('/admin/schedules')
-    // })
+
+    // update appointments with price
+    for (const a of selectedAppointments.value) {
+      await updateAppointment({
+        updateAppointmentInput: {
+          id: a.id,
+          price: a.price,
+          isScheduled: true,
+          finalDate: formatDateTime(values.finalDate),
+        },
+      })
+    }
+    // create schedule
+    await createSchedule({
+      createScheduleInput: {
+        finalDate: formatDateTime(values.finalDate),
+        appointmentIds: values.appointmentsIds,
+        employeeIds: values.employeesIds,
+        materialIds: values.materialsIds,
+        createdBy: customUser.value?.fullname,
+      },
+    }).then(async ({ data }: any) => {
+      loadingCreate.value = false
+      showToast('success', 'Success', 'Schedule created')
+      // redirect to schedule detail page
+      replace(`/admin/schedules/${data?.createSchedule.id}`)
+    })
   }
   loadingCreate.value = false
 }
@@ -418,7 +561,21 @@ const handleNext = async () => {
     }
   }
   // validate fourth step (employees)
-  else if (next.value === 2) {
+  else if (next.value === 3) {
+    await validate()
+    errorMessages.value.employeesIds = errors.value.employeesIds
+    if (!errors.value.employeesIds) {
+      next.value++
+    }
+  }
+
+  // validate fifth step (materials)
+  else if (next.value === 4) {
+    await validate()
+    errorMessages.value.materialsIds = errors.value.materialsIds
+    if (!errors.value.materialsIds) {
+      next.value++
+    }
   }
 }
 
@@ -438,6 +595,11 @@ const handleBack = async () => {
       employeesIds: [],
     })
     selectedEmployees.value = []
+  } else if (next.value === 4) {
+    // reset values
+    setValues({
+      materialsIds: [],
+    })
   }
 
   // reset errors
@@ -482,10 +644,68 @@ const addSelectedAppointment = (appointment: Appointment) => {
   }
 }
 
-// check if appointment is selected
-const IsAppointmentSelected = (id: string) => {
-  if (values.appointmentsIds.includes(id)) return true
-  return false
+// check if item is selected
+const isItemSelected = (id: string, itemIds: string[]) => {
+  return itemIds.includes(id)
+}
+
+const addSelectedEmployee = (user: CustomUser) => {
+  // check if user is already selected
+  const index = values.employeesIds.indexOf(user.id)
+
+  // if user is already selected, remove it
+  if (index > -1) {
+    const newValues = [...values.employeesIds]
+    newValues.splice(index, 1)
+    setValues({
+      employeesIds: newValues,
+    })
+    // remove user from selected employees
+    const indexUser = selectedEmployees.value.findIndex(u => u.id === user.id)
+    if (indexUser > -1) selectedEmployees.value.splice(indexUser, 1)
+  } else {
+    // if user is not selected, add it
+    const newValues = [...values.employeesIds]
+    newValues.push(user.id)
+    setValues({
+      employeesIds: newValues,
+    })
+
+    // add user in selected employees
+    selectedEmployees.value.push({ ...user })
+  }
+}
+
+const addSelectedMaterial = (material: Material) => {
+  // check if material is already selected
+  const index = values.materialsIds.indexOf(material.id)
+
+  // if material is already selected, remove it
+  if (index > -1) {
+    const newValues = [...values.materialsIds]
+    newValues.splice(index, 1)
+    setValues({
+      materialsIds: newValues,
+    })
+    // remove material from selected materials
+    const indexMaterial = selectedMaterials.value.findIndex(
+      m => m.id === material.id,
+    )
+    if (indexMaterial > -1) selectedMaterials.value.splice(indexMaterial, 1)
+  } else {
+    // if material is not selected, add it
+    const newValues = [...values.materialsIds]
+    newValues.push(material.id)
+    setValues({
+      materialsIds: newValues,
+    })
+
+    // add material in selected materials
+    selectedMaterials.value.push({ ...material })
+  }
+
+  console.log(values.materialsIds)
+  console.log(selectedMaterials.value)
 }
 
 // check if there are appointments and employees available for the selected date
@@ -513,42 +733,19 @@ const checkAvailability = async () => {
   errorMessages.value.finalDate = error
 }
 
-const addSelectedUser = (user: CustomUser) => {
-  // check if user is already selected
-  const index = values.employeesIds.indexOf(user.id)
-
-  // if user is already selected, remove it
-  if (index > -1) {
-    const newValues = [...values.employeesIds]
-    newValues.splice(index, 1)
-    setValues({
-      employeesIds: newValues,
-    })
-  } else {
-    // if user is not selected, add it
-    const newValues = [...values.employeesIds]
-    newValues.push(user.id)
-    setValues({
-      employeesIds: newValues,
-    })
-  }
-}
-
-const IsUserSelected = (id: string) => {
-  if (values.employeesIds.includes(id)) return true
-  return false
-}
-
 watchEffect(() => {
   // log the queries
   // if (appointments.value) console.log(appointments.value)
   // if (employees.value) console.log(employees.value)
+  // if (materials.value) console.log(materials.value)
 
   // all errors
   const errors = [
     errorCreateSchedule.value,
     errorAppointments.value,
     errorEmployees.value,
+    errorMaterials.value,
+    errorUpdateAppointment.value,
   ]
   errors.forEach(error => {
     if (error) {
