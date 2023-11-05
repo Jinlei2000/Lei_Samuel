@@ -79,12 +79,35 @@
           : 'bg-transparent'
       "
     ></div>
-    <h2 class="mb-2 text-xl font-semibold">
-      {{ selectedAppointment.user!.fullname }}
-    </h2>
-    <p class="text-gray-600">
+    <p class="text-gray-900">
       {{ selectedAppointment.description }}
     </p>
+    <div class="my-6 flex flex-col gap-3">
+      <div class="flex gap-3">
+        <Clock />
+        <p class="">
+          {{ selectedAppointment.finalDate!.substring(11, 16) }}
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <MapPin />
+        <p class="">
+          {{ selectedAppointment.location!.address }}
+        </p>
+      </div>
+    </div>
+    <div class="flex gap-3 justify-end w-full">
+      <button
+        class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+      >
+        Cancel <XCircle stroke-width="2" class="h-[17px] w-[17px]" />
+      </button>
+      <button
+        class="bg-primary-green flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+      >
+        Finished <CheckCircle stroke-width="2" class="h-[17px] w-[17px]" />
+      </button>
+    </div>
   </Dialog>
   <!-- End Appointment Detail Modal -->
 </template>
@@ -92,7 +115,7 @@
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
-import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, ChevronRight, Clock, MapPin, CheckCircle, XCircle } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
