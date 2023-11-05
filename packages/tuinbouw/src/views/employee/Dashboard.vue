@@ -6,9 +6,7 @@
         <div class="flex flex-col">
           <AppointmentCard
             v-if="nextAppointment"
-            :title="nextAppointment.user!.fullname"
-            :description="nextAppointment.description"
-            :type="nextAppointment.type"
+            :appointment="nextAppointment"
           />
         </div>
         <div class="flex justify-between items-center mb-3 mt-6">
@@ -37,12 +35,9 @@
           <template v-if="appointments" v-for="(item, index) in appointments">
             <AppointmentCard
               v-if="item !== nextAppointment"
-              :title="item.user!.fullname"
-              :description="item.description"
-              :type="item.type"
-              :location="item.location"
+              :appointment="item"
             />
-            <button @click="openModal(item)">modal</button>
+            <!-- <button @click="openModal(item)">modal</button> -->
           </template>
         </div>
       </div>
@@ -57,65 +52,12 @@
     </div>
   </div>
 
-  <!-- Appointment Detail Modal -->
-  <Dialog
-    v-model:visible="showModal"
-    modal
-    :header="selectedAppointment.user!.fullname"
-    :style="{ width: '50vw', position: 'relative', overflow: 'hidden'}"
-    v-if="selectedAppointment"
-    @click:close="closeModal"
-    class="max-w-lg"
-  >
-  <div
-      class="absolute left-0 top-0 h-full w-1"
-      :class="
-        selectedAppointment.type === 'maintenance'
-          ? 'bg-primary-green'
-          : selectedAppointment.type === 'repair'
-          ? 'bg-primary-orange'
-          : selectedAppointment.type === 'inspection'
-          ? 'bg-primary-blue'
-          : 'bg-transparent'
-      "
-    ></div>
-    <p class="text-gray-900">
-      {{ selectedAppointment.description }}
-    </p>
-    <div class="my-6 flex flex-col gap-3">
-      <div class="flex gap-3">
-        <Clock />
-        <p class="">
-          {{ selectedAppointment.finalDate!.substring(11, 16) }}
-        </p>
-      </div>
-      <div class="flex gap-3">
-        <MapPin />
-        <p class="">
-          {{ selectedAppointment.location!.address }}
-        </p>
-      </div>
-    </div>
-    <div class="flex gap-3 justify-end w-full">
-      <button
-        class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
-      >
-        Cancel <XCircle stroke-width="2" class="h-[17px] w-[17px]" />
-      </button>
-      <button
-        class="bg-primary-green flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
-      >
-        Finished <CheckCircle stroke-width="2" class="h-[17px] w-[17px]" />
-      </button>
-    </div>
-  </Dialog>
-  <!-- End Appointment Detail Modal -->
 </template>
 
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
-import { ArrowLeft, ArrowRight, ChevronRight, Clock, MapPin, CheckCircle, XCircle } from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, ChevronRight} from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
@@ -161,7 +103,10 @@ watch(schedule, () => {
         const diff = Math.abs(finalDate.getTime() - now.getTime())
         const minutes = Math.floor(diff / 1000 / 60)
         if (minutes < 30) {
+          console.log('next appointment found', appointment)
           nextAppointment.value = appointment
+        } else {
+          console.log('no appointment found')
         }
 
       }
@@ -170,15 +115,15 @@ watch(schedule, () => {
     // set appointments to appointments of schedule
     appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
 
-    // if appointment has finaldate that has passed remove it from appointments
-    appointments.value?.forEach((appointment: Appointment) => {
-      const finalDate = new Date(appointment.finalDate!)
-      finalDate.setHours(finalDate.getHours() - 1)
-      const now = new Date()
-      if (finalDate < now) {
-        appointments.value?.splice(appointments.value.indexOf(appointment), 1)
-      }
-    })
+    // // if appointment has finaldate that has passed remove it from appointments
+    // appointments.value?.forEach((appointment: Appointment) => {
+    //   const finalDate = new Date(appointment.finalDate!)
+    //   finalDate.setHours(finalDate.getHours() - 1)
+    //   const now = new Date()
+    //   if (finalDate < now) {
+    //     appointments.value?.splice(appointments.value.indexOf(appointment), 1)
+    //   }
+    // })
   }
 })
 
@@ -232,30 +177,4 @@ watch(myDate, () => {
       break
   }
 })
-
-const openModal = (appointment: Appointment | null = null) => {
-  selectedAppointment.value = appointment
-  showModal.value = true
-
-  // if (type === 'detail' && user) {
-  //   selectedUser.value = { ...user }
-  //   visible.value.detail = true
-  // } else if (type === 'edit' && user) {
-  //   selectedUser.value = { ...user }
-  //   setValuesUpdate({
-  //     firstname: user.firstname,
-  //     lastname: user.lastname,
-  //     email: user.email,
-  //     telephone: user.telephone,
-  //   })
-  //   localeUpdate.value = user.locale!
-  //   visible.value.edit = true
-  // } else if (type === 'create') {
-  //   visible.value.create = true
-  // }
-}
-
-const closeModal = () => {
-  showModal.value = false
-}
 </script>
