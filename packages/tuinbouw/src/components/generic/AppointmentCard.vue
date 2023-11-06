@@ -51,9 +51,15 @@
           : 'bg-transparent'
       "
     ></div>
-    <p class="text-gray-900">
-      {{ props.appointment.description }}
-    </p>
+    <div class="flex flex-col gap-3">
+      <p class="text-gray-900">
+        {{ props.appointment.description }}
+      </p>
+      <p class="capitalize" :class="props.appointment.type == 'maintenance' ? 'text-primary-green' : props.appointment.type == 'repair' ? 'text-primary-orange' : ''">
+        {{ props.appointment.type }}
+      </p>
+    </div>
+    
     <div class="my-6 flex flex-col gap-3">
       <div class="flex gap-3">
         <Clock />
