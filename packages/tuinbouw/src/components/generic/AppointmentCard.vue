@@ -1,5 +1,6 @@
 <template>
   <div
+    @click="openModal()"
     class="relative max-h-32 w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
   >
     <div
@@ -19,7 +20,7 @@
       <p class="overflow-hidden text-base">
         {{ props.appointment?.description }}
       </p>
-      <button @click="navigateToLocation(props.appointment?.location!.address)"
+      <button @click="navigateToLocation(props.appointment?.location!.address)" v-on:click.stop
         class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
       >
         Navigate <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
