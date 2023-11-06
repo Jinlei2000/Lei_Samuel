@@ -76,14 +76,17 @@
     </div>
     <div class="flex gap-3 justify-between w-full">
       <button
-        class="bg-transparent outline outline-[1px] flex h-fit items-center gap-2 rounded-[8px] py-[6px] px-3 hover:bg-black hover:text-gray-200"
+        @click="closeModal()"
+        class="bg-transparent outline outline-[1px] flex h-fit items-center gap-2 rounded-[4px] py-[6px] px-3 hover:bg-black hover:text-gray-200"
       >
         Cancel
       </button>
       <button
-        class="bg-primary-green flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        @click="handleAppointmentUpdate()"
+        class="bg-primary-green flex h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        :class="appointmentIsDone ? 'bg-primary-green' : 'bg-primary-orange'"
       >
-        Finished <CheckCircle stroke-width="2" class="h-[17px] w-[17px]" />
+        {{ appointmentIsDone ? 'Finish' : 'Unfinish' }} <CheckCircle v-if="appointmentIsDone" stroke-width="2" class="h-[17px] w-[17px]" /> <XCircle v-else stroke-width="2" class="h-[17px] w-[17px]" />
       </button>
     </div>
   </Dialog>
@@ -95,6 +98,11 @@ import { Navigation, Info } from 'lucide-vue-next'
 import { Clock, MapPin, CheckCircle, XCircle } from 'lucide-vue-next'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import { ref, type PropType } from 'vue';
+import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation';
+import { useMutation } from '@vue/apollo-composable'
+
+const { mutate: updateAppointment, error: updateAppointmentError } =
+  useMutation<Appointment>(UPDATE_APPOINTMENT)
 
 const showModal = ref(false)
 
@@ -106,12 +114,28 @@ const props = defineProps({
   appointment: Object as PropType<Appointment>,
 })
 
+const appointmentIsDone = ref(false)
+
+// const updatedAppointment = ref<Appointment>(props.appointment)
+
 const openModal = () => {
   showModal.value = true
 }
 
 const closeModal = () => {
   showModal.value = false
+}
+
+const handleAppointmentUpdate = () => {
+  console.log('mark as finished')
+  console.log(appointmentIsDone.value)
+  updateAppointment({
+    updateAppointmentInput: {
+      id: props.appointment!.id,
+      isDone: appointmentIsDone.value
+    },
+  })
+  appointmentIsDone.value = !appointmentIsDone.value
 }
 
 // TODO: add support for appointment location
