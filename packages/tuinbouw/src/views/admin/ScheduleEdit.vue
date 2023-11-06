@@ -10,6 +10,9 @@
     Schedules Edit
   </h1>
 
+  <!-- reset all values back -->
+  <CustomButton @click="reset()" type="button" name="Reset" />
+
   <!-- loading -->
   <div
     v-if="
@@ -77,6 +80,7 @@
       </div>
 
       <!-- show selected appointments -->
+      <h1>Your selected</h1>
       <div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div
@@ -134,6 +138,7 @@
       </div>
 
       <!-- show appointments -->
+      <h1>Available appointments</h1>
       <div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div
@@ -293,7 +298,41 @@
         <h1 class="flex animate-pulse space-x-4">Loading...</h1>
       </div>
 
+      <!-- show selected employees -->
+      <h1>Your selected</h1>
+      <div v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-for="user in selectedEmployeesEdit"
+            :key="user.id"
+            class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+            :class="
+              isItemSelected(user.id, employeesIds.modelValue)
+                ? 'border border-green-500'
+                : ''
+            "
+          >
+            <!-- Add checkbox for selection -->
+            <input
+              type="checkbox"
+              class="mr-2"
+              @click="addSelectedEmployee(user)"
+              :checked="isItemSelected(user.id, employeesIds.modelValue)"
+            />
+            <div class="p-6">
+              <h2 class="mb-2 text-2xl font-semibold">
+                {{ user.firstname }} {{ user.lastname }}
+              </h2>
+              <p class="text-gray-600">{{ user.email }}</p>
+              <p class="text-gray-600">{{ user.role }}</p>
+              <p class="text-gray-600">{{ user.uid }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- show employees -->
+      <h1>Available employees</h1>
       <div
         v-if="employees && employees.usersEmployeesAvailableByDate.length > 0"
       >
@@ -339,7 +378,45 @@
         <h1 class="flex animate-pulse space-x-4">Loading...</h1>
       </div>
 
+      <!-- show selected materials -->
+      <h1>Your selected</h1>
+      <div
+        class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+      >
+        <div
+          v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
+          v-for="material of selectedMaterialsEdit"
+          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+          :key="material.id"
+          :class="
+            isItemSelected(material.id, materialsIds.modelValue)
+              ? 'border-2 border-green-500'
+              : ''
+          "
+        >
+          <!-- Add checkbox for selection -->
+          <input
+            type="checkbox"
+            class="mr-2"
+            @click="addSelectedMaterial(material)"
+            :checked="isItemSelected(material.id, materialsIds.modelValue)"
+          />
+          <img
+            class="w-full rounded-2xl rounded-b-3xl"
+            src="https://picsum.photos/200"
+            alt="random picture"
+          />
+          <div
+            class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
+          >
+            <h2 class="truncate text-lg">{{ material.name }}</h2>
+            <p class="m-0">Loanable: {{ material.isLoan }}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- show materials -->
+      <h1>Available materials</h1>
       <div
         class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
@@ -455,7 +532,7 @@ import * as yup from 'yup'
 // composables
 const { showToast } = useCustomToast()
 const { formatDateTime } = useTimeUtilities()
-const { currentRoute, go } = useRouter()
+const { currentRoute } = useRouter()
 
 // variables
 const minDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
@@ -581,46 +658,46 @@ const handleNext = async () => {
       next.value++
     }
   }
-  // // validate second step (appointments)
-  // else if (next.value === 1) {
-  //   await validate()
-  //   errorMessages.value.appointmentsIds = errors.value.appointmentsIds
-  //   if (!errors.value.appointmentsIds) {
-  //     next.value++
-  //   }
-  // }
-  // // validate third step (fill in price of appointments)
-  // else if (next.value === 2) {
-  //   errorMessages.value.prices = ''
-  //   let priceError = ''
-  //   for (const a of selectedAppointments.value) {
-  //     if (!a.price) {
-  //       priceError = 'Fill in price of all appointments'
-  //       break
-  //     }
-  //   }
-  //   errorMessages.value.prices = priceError
-  //   if (errorMessages.value.prices === '') {
-  //     next.value++
-  //   }
-  // }
-  // // validate fourth step (employees)
-  // else if (next.value === 3) {
-  //   await validate()
-  //   errorMessages.value.employeesIds = errors.value.employeesIds
-  //   if (!errors.value.employeesIds) {
-  //     next.value++
-  //   }
-  // }
+  // validate second step (appointments)
+  else if (next.value === 1) {
+    await validate()
+    errorMessages.value.appointmentsIds = errors.value.appointmentsIds
+    if (!errors.value.appointmentsIds) {
+      next.value++
+    }
+  }
+  // validate third step (fill in price of appointments)
+  else if (next.value === 2) {
+    errorMessages.value.prices = ''
+    let priceError = ''
+    for (const a of selectedAppointments.value) {
+      if (!a.price) {
+        priceError = 'Fill in price of all appointments'
+        break
+      }
+    }
+    errorMessages.value.prices = priceError
+    if (errorMessages.value.prices === '') {
+      next.value++
+    }
+  }
+  // validate fourth step (employees)
+  else if (next.value === 3) {
+    await validate()
+    errorMessages.value.employeesIds = errors.value.employeesIds
+    if (!errors.value.employeesIds) {
+      next.value++
+    }
+  }
 
-  // // validate fifth step (materials)
-  // else if (next.value === 4) {
-  //   await validate()
-  //   errorMessages.value.materialsIds = errors.value.materialsIds
-  //   if (!errors.value.materialsIds) {
-  //     next.value++
-  //   }
-  // }
+  // validate fifth step (materials)
+  else if (next.value === 4) {
+    await validate()
+    errorMessages.value.materialsIds = errors.value.materialsIds
+    if (!errors.value.materialsIds) {
+      next.value++
+    }
+  }
 }
 
 const handleBack = () => {
@@ -778,11 +855,45 @@ const setAllValues = () => {
 
   // set selected appointments
   selectedAppointmentsEdit.value = schedule.value?.schedule.appointments.map(
-    (a: Appointment) => a,
+    (a: Appointment) => ({ ...a }),
   )
   selectedAppointments.value = schedule.value?.schedule.appointments.map(
-    (a: Appointment) => a,
+    (a: Appointment) => ({ ...a }),
   )
+
+  // set selected employees
+  selectedEmployeesEdit.value = schedule.value?.schedule.employees.map(
+    (e: CustomUser) => ({ ...e }),
+  )
+  selectedEmployees.value = schedule.value?.schedule.employees.map(
+    (e: CustomUser) => ({ ...e }),
+  )
+
+  // set selected materials
+  selectedMaterialsEdit.value = schedule.value?.schedule.materials.map(
+    (m: Material) => ({ ...m }),
+  )
+  selectedMaterials.value = schedule.value?.schedule.materials.map(
+    (m: Material) => ({ ...m }),
+  )
+}
+
+// reset all values back
+const reset = () => {
+  // reset all values
+  setAllValues()
+
+  // reset errors
+  errorMessages.value = {
+    finalDate: '',
+    appointmentsIds: '',
+    employeesIds: '',
+    materialsIds: '',
+    prices: '',
+  }
+
+  // reset next
+  next.value = 0
 }
 
 watchEffect(() => {

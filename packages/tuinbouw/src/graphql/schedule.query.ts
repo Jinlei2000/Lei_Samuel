@@ -47,13 +47,37 @@ export const GET_SCHEDULE_BY_ID = gql`
       }
       employees {
         id
-        email
+        uid
+        locale
+        role
+        firstname
+        lastname
         fullname
+        url
+        locations {
+          id
+          userId
+          address
+          createdAt
+          updatedAt
+        }
+        email
+        telephone
+        createdAt
+        updatedAt
+        absentCount
       }
       materials {
         id
         name
+        isLoan
+        user {
+          id
+          fullname
+        }
         serialNumber
+        createdAt
+        updatedAt
       }
       finalDate
       createdBy
