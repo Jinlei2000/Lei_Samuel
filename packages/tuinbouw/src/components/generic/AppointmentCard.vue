@@ -101,25 +101,7 @@ const props = defineProps({
 })
 
 const openModal = () => {
-  // selectedAppointment.value = appointment
   showModal.value = true
-
-  // if (type === 'detail' && user) {
-  //   selectedUser.value = { ...user }
-  //   visible.value.detail = true
-  // } else if (type === 'edit' && user) {
-  //   selectedUser.value = { ...user }
-  //   setValuesUpdate({
-  //     firstname: user.firstname,
-  //     lastname: user.lastname,
-  //     email: user.email,
-  //     telephone: user.telephone,
-  //   })
-  //   localeUpdate.value = user.locale!
-  //   visible.value.edit = true
-  // } else if (type === 'create') {
-  //   visible.value.create = true
-  // }
 }
 
 const closeModal = () => {
