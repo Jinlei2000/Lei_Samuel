@@ -515,6 +515,7 @@
 import CustomButton from '@/components/generic/CustomButton.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
+import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import { GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE } from '@/graphql/appointment.query'
 import { GET_MATERIALS_AVAILABLE } from '@/graphql/material.query'
 import { GET_SCHEDULE_BY_ID } from '@/graphql/schedule.query'
@@ -528,6 +529,8 @@ import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as yup from 'yup'
+
+// TODO: add steps (next.value) to the url as query params (e.g. /schedules/edit?step=1)
 
 // composables
 const { showToast } = useCustomToast()
@@ -575,6 +578,9 @@ const employeesIds = defineComponentBinds('employeesIds')
 const materialsIds = defineComponentBinds('materialsIds')
 
 // graphql
+const { mutate: updateAppointment, error: errorUpdateAppointment } =
+  useMutation(UPDATE_APPOINTMENT)
+
 const {
   result: schedule,
   loading: scheduleLoading,
@@ -629,7 +635,32 @@ const {
 })
 
 // logics
-const handleUpdateSchedule = async () => {}
+const handleUpdateSchedule = async () => {
+  loadingUpdate.value = true
+  await validate()
+  errorMessages.value = errors.value
+  if (Object.keys(errors.value).length === 0) {
+    console.log('no errors', values)
+
+    // update appointments with price
+    for (const a of selectedAppointments.value) {
+      await updateAppointment({
+        updateAppointmentInput: {
+          id: a.id,
+          price: a.price,
+          isScheduled: true,
+          finalDate: formatDateTime(values.finalDate),
+        },
+      })
+    }
+
+    // update appointments that unselected from schedule (isScheduled = false, finalDate = null)
+
+    // update schedule
+  }
+
+  loadingUpdate.value = false
+}
 
 const handleNext = async () => {
   // validate first step (final date)
@@ -913,6 +944,7 @@ watchEffect(() => {
     errorAppointments.value,
     errorEmployees.value,
     errorMaterials.value,
+    errorUpdateAppointment.value,
   ]
   errors.forEach(error => {
     if (error) {
