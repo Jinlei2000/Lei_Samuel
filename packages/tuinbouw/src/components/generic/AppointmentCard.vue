@@ -127,8 +127,6 @@ const closeModal = () => {
 }
 
 const handleAppointmentUpdate = () => {
-  console.log('mark as finished')
-  console.log(appointmentIsDone.value)
   updateAppointment({
     updateAppointmentInput: {
       id: props.appointment!.id,
