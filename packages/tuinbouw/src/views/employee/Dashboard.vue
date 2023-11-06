@@ -37,7 +37,6 @@
               v-if="item !== nextAppointment"
               :appointment="item"
             />
-            <!-- <button @click="openModal(item)">modal</button> -->
           </template>
         </div>
       </div>
