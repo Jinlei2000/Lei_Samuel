@@ -68,11 +68,11 @@
         </p>
       </div>
     </div>
-    <div class="flex gap-3 justify-end w-full">
+    <div class="flex gap-3 justify-between w-full">
       <button
-        class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        class="bg-transparent outline outline-[1px] flex h-fit items-center gap-2 rounded-[8px] py-[6px] px-3 hover:bg-black hover:text-gray-200"
       >
-        Cancel <XCircle stroke-width="2" class="h-[17px] w-[17px]" />
+        Cancel
       </button>
       <button
         class="bg-primary-green flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
