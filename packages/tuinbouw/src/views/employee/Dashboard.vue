@@ -46,7 +46,12 @@
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
-        <ChecklistItem />
+        <div class="flex flex-col gap-3">
+          <ChecklistItem v-for="item in materials"
+            :key="item.id"
+            :material="item"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -67,6 +72,7 @@ import useFirebase from '@/composables/useFirebase'
 import useCustomUser from '@/composables/useCustomUser'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import Materials from './Materials.vue'
+import type { Material } from '@/interfaces/material.interface'
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 
@@ -85,6 +91,8 @@ const {
 
 const appointments = ref<[Appointment]>()
 const nextAppointment = ref<Appointment>()
+
+const materials = ref<[Material]>()
 
 const showModal = ref(false)
 const selectedAppointment = ref<Appointment | null>(null)
@@ -123,6 +131,9 @@ watch(schedule, () => {
     //     appointments.value?.splice(appointments.value.indexOf(appointment), 1)
     //   }
     // })
+
+    materials.value = schedule.value.scheduleByDateAndUserId[0].materials
+    console.log('materials', materials.value)
   }
 })
 

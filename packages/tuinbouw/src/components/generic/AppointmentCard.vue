@@ -108,10 +108,6 @@ const { mutate: updateAppointment, error: updateAppointmentError } =
 const showModal = ref(false)
 
 const props = defineProps({
-  // title: String,
-  // description: String,
-  // type: String,
-  // location: Object,
   appointment: Object as PropType<Appointment>,
 })
 
