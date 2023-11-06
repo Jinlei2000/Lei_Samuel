@@ -108,6 +108,7 @@ const closeModal = () => {
   showModal.value = false
 }
 
+// TODO: add support for appointment location
 // Open location in google maps
 const navigateToLocation = (location: any) => {
   console.log(location)
