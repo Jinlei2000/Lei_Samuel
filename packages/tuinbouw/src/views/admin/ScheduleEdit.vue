@@ -627,6 +627,7 @@ const {
   }),
   {
     fetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'network-only',
   },
 )
 

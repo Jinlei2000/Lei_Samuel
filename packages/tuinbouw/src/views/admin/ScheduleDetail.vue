@@ -114,7 +114,7 @@ const {
 
 watchEffect(() => {
   // log the queries
-  if (schedule.value) console.log(schedule.value)
+  // if (schedule.value) console.log(schedule.value)
 
   // all errors
   const errors = [scheduleError.value]
