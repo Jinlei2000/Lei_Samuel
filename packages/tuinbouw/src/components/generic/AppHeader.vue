@@ -1,6 +1,5 @@
 <template>
-  <div class="h-[80px]">
-  </div>
+  <div class="h-[80px]"></div>
   <Container
     class="fixed left-0 top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
   >
@@ -13,7 +12,10 @@
       </RouterLink>
       <nav class="flex gap-24">
         <ul class="flex items-center justify-center gap-12">
-          <div v-if="customUser" class="flex items-center justify-center gap-12">
+          <div
+            v-if="customUser"
+            class="flex items-center justify-center gap-12"
+          >
             <li v-if="role == 'admin' || role == 'employee'">
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
@@ -27,7 +29,8 @@
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/users`"
-                >Users</RouterLink>
+                >Users</RouterLink
+              >
             </li>
             <li v-if="role == 'admin'">
               <RouterLink
@@ -62,7 +65,10 @@
               >
             </li>
           </div>
-          <li :class="customUser ? 'border-l-[1px]' : ''" class="border-black py-2 pl-12">
+          <li
+            :class="customUser ? 'border-l-[1px]' : ''"
+            class="border-black py-2 pl-12"
+          >
             <select
               class="block bg-transparent hover:cursor-pointer"
               name="language"
@@ -81,28 +87,43 @@
             </select>
           </li>
         </ul>
-        <div v-if="customUser" class="flex w-1/6 justify-end relative">
+        <div v-if="customUser" class="relative flex w-1/6 justify-end">
           <div @click="showProfileDropdown()" class="hover:cursor-pointer">
             <img
               class="h-12 w-12 rounded-full"
               src="https://i.pravatar.cc/300"
               alt="Profile picture"
-          /></div>
+            />
+          </div>
           <div v-if="profileDropdown" class="absolute -z-10">
-            <div class="h-12 w-12 -z-50 rounded-full relative"></div>
-            <div class="mt-3 pl-3 pr-6 py-3 border-black border-1 border-opacity-10 rounded-2xl flex flex-col gap-4 bg-gray-200">
-              <button class="flex gap-3 hover:text-primary-green"><User /> Profile</button>
-              <button @click="handleLogout()" class="flex gap-3 hover:text-primary-green"><LogOut /> Logout</button>
+            <div class="relative -z-50 h-12 w-12 rounded-full"></div>
+            <div
+              class="border-1 mt-3 flex flex-col gap-4 rounded-2xl border-black border-opacity-10 bg-gray-200 py-3 pl-3 pr-6"
+            >
+              <button class="hover:text-primary-green flex gap-3">
+                <User /> Profile
+              </button>
+              <button
+                @click="handleLogout()"
+                class="hover:text-primary-green flex gap-3"
+              >
+                <LogOut /> Logout
+              </button>
             </div>
           </div>
         </div>
-        <RouterLink :to="'auth/login'" v-else class="px-4 py-2 bg-primary-green text-gray-200 rounded-md flex gap-2 hover:text-primary-green hover:bg-transparent hover:outline-primary-green hover:outline hover:outline-[1px]">Login<LogIn /></RouterLink>
+        <RouterLink
+          :to="'auth/login'"
+          v-else
+          class="bg-primary-green hover:text-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
+          >Login<LogIn
+        /></RouterLink>
       </nav></header
   ></Container>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { User, LogOut, LogIn } from 'lucide-vue-next'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
@@ -119,7 +140,9 @@ const { setLocale, locale } = useLanguage()
 
 const { customUser } = useCustomUser()
 
-const role = customUser.value?.role.toLowerCase()
+// const role = customUser.value?.role.toLowerCase()
+
+const role = ref('')
 
 const profileDropdown = ref(false)
 
@@ -143,6 +166,12 @@ const handleLogout = async () => {
 
   showProfileDropdown()
 }
+
+watchEffect(() => {
+  if (customUser.value) {
+    role.value = customUser.value.role.toLowerCase()
+  }
+})
 
 const user = ref<Object | null>(null)
 </script>
