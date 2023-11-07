@@ -13,23 +13,48 @@
       </RouterLink>
       <nav class="flex gap-24">
         <ul class="flex items-center justify-center gap-12">
-          <li>
-            <RouterLink
-              class="hover:text-primary-orange py-1 text-black transition-all"
-              active-class="border-b-[1px] border-black"
-              :to="`/${role}/dashboard`"
-              >Dashboard</RouterLink
-            >
-          </li>
-          <li>
-            <RouterLink
-              class="hover:text-primary-orange py-1 text-black transition-all"
-              active-class=" border-b-[1px] border-black"
-              :to="`/${role}/materials`"
-              >Materials</RouterLink
-            >
-          </li>
-          <li class="border-l-[1px] border-black py-2 pl-12">
+          <div v-if="user" class="flex items-center justify-center gap-12">
+            <li>
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class="border-b-[1px] border-black"
+                :to="`/${role}/dashboard`"
+                >Dashboard</RouterLink
+              >
+            </li>
+            <li>
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/users`"
+                >Users</RouterLink>
+            </li>
+            <li>
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/appointments`"
+                >Appointments</RouterLink
+              >
+            </li>
+            <li>
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/schedules`"
+                >Schedules</RouterLink
+              >
+            </li>
+            <li>
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/materials`"
+                >Materials</RouterLink
+              >
+            </li>
+          </div>
+          <li :class="user ? 'border-l-[1px]' : ''" class="border-black py-2 pl-12">
             <select
               class="block bg-transparent hover:cursor-pointer"
               name="language"
@@ -48,7 +73,7 @@
             </select>
           </li>
         </ul>
-        <div class="flex w-1/6 justify-end relative">
+        <div v-if="user" class="flex w-1/6 justify-end relative">
           <div @click="showProfileDropdown()" class="hover:cursor-pointer">
             <img
               class="h-12 w-12 rounded-full"
@@ -63,13 +88,14 @@
             </div>
           </div>
         </div>
+        <button v-else class="px-4 py-2 bg-primary-green text-gray-200 rounded-md flex gap-2 hover:text-primary-green hover:bg-transparent hover:outline-primary-green hover:outline hover:outline-[1px]">Login<LogIn /></button>
       </nav></header
   ></Container>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { User, LogOut } from 'lucide-vue-next'
+import { User, LogOut, LogIn } from 'lucide-vue-next'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 
