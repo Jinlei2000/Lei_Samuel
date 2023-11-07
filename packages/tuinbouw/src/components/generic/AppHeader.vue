@@ -115,7 +115,7 @@
 
         <RouterLink
           to="auth/login"
-          v-if="$route.path !== '/auth/login'"
+          v-if="$route.path === '/'"
           class="bg-primary-green hover:text-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >Login<LogIn
         /></RouterLink>
