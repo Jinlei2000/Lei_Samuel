@@ -131,6 +131,8 @@ export class UsersService {
   async upgradeToAdmin(id: string): Promise<User> {
     await this.userRepository.update(id, { role: Role.ADMIN })
 
+    // TODO: delete this empleyeee from all schedules in the future
+
     return this.findOne(id)
   }
 
