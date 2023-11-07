@@ -13,23 +13,56 @@
       </RouterLink>
       <nav class="flex gap-24">
         <ul class="flex items-center justify-center gap-12">
-          <li>
-            <RouterLink
-              class="hover:text-primary-orange py-1 text-black transition-all"
-              active-class="border-b-[1px] border-black"
-              :to="`/${role}/dashboard`"
-              >Dashboard</RouterLink
-            >
-          </li>
-          <li>
-            <RouterLink
-              class="hover:text-primary-orange py-1 text-black transition-all"
-              active-class=" border-b-[1px] border-black"
-              :to="`/${role}/materials`"
-              >Materials</RouterLink
-            >
-          </li>
-          <li class="border-l-[1px] border-black py-2 pl-12">
+          <div v-if="customUser" class="flex items-center justify-center gap-12">
+            <li v-if="role == 'admin' || role == 'employee'">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class="border-b-[1px] border-black"
+                :to="`/${role}/dashboard`"
+                >Dashboard</RouterLink
+              >
+            </li>
+            <li v-if="role == 'admin'">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/users`"
+                >Users</RouterLink>
+            </li>
+            <li v-if="role == 'admin'">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/appointments`"
+                >Appointments</RouterLink
+              >
+            </li>
+            <li v-if="role == 'admin'">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/schedules`"
+                >Schedules</RouterLink
+              >
+            </li>
+            <li v-if="role == 'admin' || role == 'employee'">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/materials`"
+                >Materials</RouterLink
+              >
+            </li>
+            <li v-if="role == 'employee'">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/calendar`"
+                >Calendar</RouterLink
+              >
+            </li>
+          </div>
+          <li :class="customUser ? 'border-l-[1px]' : ''" class="border-black py-2 pl-12">
             <select
               class="block bg-transparent hover:cursor-pointer"
               name="language"
@@ -48,37 +81,67 @@
             </select>
           </li>
         </ul>
-        <div class="flex w-1/6 justify-end">
-          <RouterLink class="rounded-full" to="/profile">
+        <div v-if="customUser" class="flex w-1/6 justify-end relative">
+          <div @click="showProfileDropdown()" class="hover:cursor-pointer">
             <img
-              class="h-12 w-12 rounded-full transition-all hover:scale-105"
+              class="h-12 w-12 rounded-full"
               src="https://i.pravatar.cc/300"
               alt="Profile picture"
-          /></RouterLink>
+          /></div>
+          <div v-if="profileDropdown" class="absolute -z-10">
+            <div class="h-12 w-12 -z-50 rounded-full relative"></div>
+            <div class="mt-3 pl-3 pr-6 py-3 border-black border-1 border-opacity-10 rounded-2xl flex flex-col gap-4 bg-gray-200">
+              <button class="flex gap-3 hover:text-primary-green"><User /> Profile</button>
+              <button @click="handleLogout()" class="flex gap-3 hover:text-primary-green"><LogOut /> Logout</button>
+            </div>
+          </div>
         </div>
+        <button v-else class="px-4 py-2 bg-primary-green text-gray-200 rounded-md flex gap-2 hover:text-primary-green hover:bg-transparent hover:outline-primary-green hover:outline hover:outline-[1px]">Login<LogIn /></button>
       </nav></header
   ></Container>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Plus } from 'lucide-vue-next'
+import { User, LogOut, LogIn } from 'lucide-vue-next'
+import useFirebase from '@/composables/useFirebase'
+import router from '@/router'
 
 import Container from '../wrapper/Container.vue'
 import Logo from '../Logo.vue'
 import useLanguage from '@/composables/useLanguage'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
+
+const { firebaseUser, logout } = useFirebase()
+
 const { setLocale, locale } = useLanguage()
 
 const { customUser } = useCustomUser()
 
 const role = customUser.value?.role.toLowerCase()
 
+const profileDropdown = ref(false)
+
+const showProfileDropdown = () => {
+  profileDropdown.value = !profileDropdown.value
+  console.log(profileDropdown.value)
+}
+
 const setLanguage = (e: Event) => {
   const target = e.target as HTMLSelectElement
   setLocale(target.value)
   console.log(target.value)
+}
+
+const handleLogout = async () => {
+  await logout()
+  customUser.value = null
+  // go to login page
+  router.replace('/auth/login')
+  console.log('logout')
+
+  showProfileDropdown()
 }
 
 const user = ref<Object | null>(null)

@@ -3,7 +3,7 @@
     class="w-full p-1 pl-4 bg-gray-200 rounded-2xl flex justify-between items-center"
     @click="toggleChecked"
   >
-    <p class="text-lg">ChecklistItem</p>
+    <p class="text-lg">{{ material?.name }}</p>
     <div
       class="bg-white rounded-xl h-9 w-9 hover:cursor-pointer"
       v-if="!checked"
@@ -18,12 +18,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, type PropType } from 'vue'
 import { Check } from 'lucide-vue-next'
+import type { Material } from '@/interfaces/material.interface';
 
 const checked = ref(false)
 
-function toggleChecked() {
+const props = defineProps({
+  material: Object as PropType<Material>,
+})
+
+const toggleChecked = () => {
   checked.value = !checked.value
   console.log(checked.value)
 }
