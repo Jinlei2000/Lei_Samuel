@@ -96,7 +96,7 @@
             </div>
           </div>
         </div>
-        <button v-else class="px-4 py-2 bg-primary-green text-gray-200 rounded-md flex gap-2 hover:text-primary-green hover:bg-transparent hover:outline-primary-green hover:outline hover:outline-[1px]">Login<LogIn /></button>
+        <RouterLink :to="'auth/login'" v-else class="px-4 py-2 bg-primary-green text-gray-200 rounded-md flex gap-2 hover:text-primary-green hover:bg-transparent hover:outline-primary-green hover:outline hover:outline-[1px]">Login<LogIn /></RouterLink>
       </nav></header
   ></Container>
 </template>
