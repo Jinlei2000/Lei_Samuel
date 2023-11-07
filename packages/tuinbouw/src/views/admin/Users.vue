@@ -303,7 +303,7 @@ const variables = ref<{
   filters: [],
   order: {
     field: 'createdAt',
-    direction: 'ASC',
+    direction: 'DESC',
   },
   searchString: '',
 })
