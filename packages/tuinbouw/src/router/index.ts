@@ -104,6 +104,10 @@ const router = createRouter({
           path: 'materials',
           component: () => import('../views/admin/Materials.vue'),
         },
+        {
+          path: 'absences',
+          component: () => import('../views/admin/Absences.vue'),
+        },
       ],
     },
 

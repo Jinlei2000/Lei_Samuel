@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 import useCustomUser from '@/composables/useCustomUser'
@@ -152,6 +152,7 @@ const handleLogin = async () => {
           // redirect to role based dashboard
           router.replace(getDashboardPathForRole())
         })
+
         await setLocale(customUser.value!.locale!)
       })
       .catch(error => {

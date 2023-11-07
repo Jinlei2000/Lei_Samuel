@@ -103,6 +103,11 @@
               <button class="hover:text-primary-green flex gap-3">
                 <User /> Profile
               </button>
+              <Router-link v-if="role === 'employee'" to="employee/absences">
+                <button class="hover:text-primary-green flex gap-3">
+                  <Hourglass /> Absences
+                </button>
+              </Router-link>
               <button
                 @click="handleLogout()"
                 class="hover:text-primary-green flex gap-3"
@@ -125,7 +130,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { User, LogOut, LogIn } from 'lucide-vue-next'
+import { User, LogOut, LogIn, Hourglass } from 'lucide-vue-next'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 
