@@ -13,7 +13,7 @@
       </RouterLink>
       <nav class="flex gap-24">
         <ul class="flex items-center justify-center gap-12">
-          <div v-if="user" class="flex items-center justify-center gap-12">
+          <div v-if="customUser" class="flex items-center justify-center gap-12">
             <li>
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
@@ -54,7 +54,7 @@
               >
             </li>
           </div>
-          <li :class="user ? 'border-l-[1px]' : ''" class="border-black py-2 pl-12">
+          <li :class="customUser ? 'border-l-[1px]' : ''" class="border-black py-2 pl-12">
             <select
               class="block bg-transparent hover:cursor-pointer"
               name="language"
@@ -73,7 +73,7 @@
             </select>
           </li>
         </ul>
-        <div v-if="user" class="flex w-1/6 justify-end relative">
+        <div v-if="customUser" class="flex w-1/6 justify-end relative">
           <div @click="showProfileDropdown()" class="hover:cursor-pointer">
             <img
               class="h-12 w-12 rounded-full"
