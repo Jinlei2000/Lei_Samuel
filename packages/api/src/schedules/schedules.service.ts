@@ -222,7 +222,7 @@ export class SchedulesService {
       } else {
         await this.update(updatedSchedule.id, updatedSchedule)
       }
-     
+
       if (updatedSchedule.id) ids.push(updatedSchedule.id.toString())
     }
 
@@ -272,6 +272,7 @@ export class SchedulesService {
   }
 
   async remove(id: string): Promise<string> {
+    // TODO: check if schedule is not in the past or today
     await this.findOne(id)
 
     await this.scheduleRepository.delete(id)

@@ -79,7 +79,7 @@ export class SchedulesResolver {
 
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
-  @Mutation(() => Schedule)
+  @Mutation(() => String)
   removeSchedule(@Args('id', { type: () => String }) id: string) {
     return this.schedulesService.remove(id)
   }
