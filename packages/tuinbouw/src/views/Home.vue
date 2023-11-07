@@ -1,37 +1,24 @@
 <template>
-  <div class="flex min-h-screen flex-col">
-    <!-- Header -->
-    <header
-      class="flex items-center justify-between bg-green-600 p-4 text-white"
-    >
-      <div>
-        <span class="text-xl font-semibold tracking-tight"
-          >Your App Name Or Logo</span
-        >
-      </div>
-      <RouterLink to="/auth/login" class="">
-        <button
-          class="rounded-full bg-white px-4 py-2 font-semibold text-green-600"
-        >
-          Login
-        </button>
-      </RouterLink>
-    </header>
+  <div class="flex max-w-7xl m-auto flex-col">
+    
 
     <!-- Main Content -->
-    <main class="flex-grow p-4">
-      <div class="rounded-lg bg-white p-8 shadow-lg">
-        <h1 class="mb-4 text-3xl font-semibold">
-          Welcome to your horticultural company🏡🧑‍🌾
+    <main class="flex mt-52 gap-24 items-center">
+      <div class="w-3/5">
+        <img src="../../public/assets/homepage/hero-image.png" alt="logo" class="rounded-2xl" />
+      </div>
+      <div class="flex flex-col gap-6 w-2/5">
+        <h1 class="mb-4 text-6xl font-light">
+          Welkom bij Tuinbouw
         </h1>
-        <p class="text-gray-600">Please log in to continue:</p>
+        <p class="text-gray-900 max-w-">
+          Uw vertrouwde partner in tuinbouw. Ontdek onze hoogwaardige tuinbouwproducten en -diensten, ontworpen om uw groene projecten te laten bloeien. Met onze expertise en focus op duurzaamheid streven we ernaar om uw tuinbouwdoelen te realiseren.
+        </p>
+        <router-link to="/auth/login" class="bg-primary-orange text-white py-2 px-4 rounded-lg w-fit">
+          Begin nu
+        </router-link>
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-green-600 p-4 text-center text-white">
-      &copy; 2023 Your App Name
-    </footer>
   </div>
 </template>
 
