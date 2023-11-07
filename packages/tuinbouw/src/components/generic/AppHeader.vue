@@ -49,12 +49,15 @@
           </li>
         </ul>
         <div class="flex w-1/6 justify-end">
-          <RouterLink class="rounded-full" to="/profile">
+          <div @click="profileDropdown = !profileDropdown" class="hover:cursor-pointer">
             <img
-              class="h-12 w-12 rounded-full transition-all hover:scale-105"
+              class="h-12 w-12 rounded-full"
               src="https://i.pravatar.cc/300"
               alt="Profile picture"
-          /></RouterLink>
+          /></div>
+          <div v-if="profileDropdown" class="w-9 h-9 border-black border-1">
+            <h1>test</h1>
+          </div>
         </div>
       </nav></header
   ></Container>
@@ -74,6 +77,8 @@ const { setLocale, locale } = useLanguage()
 const { customUser } = useCustomUser()
 
 const role = customUser.value?.role.toLowerCase()
+
+const profileDropdown = ref(false)
 
 const setLanguage = (e: Event) => {
   const target = e.target as HTMLSelectElement
