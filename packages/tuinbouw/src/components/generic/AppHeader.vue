@@ -14,7 +14,7 @@
       <nav class="flex gap-24">
         <ul class="flex items-center justify-center gap-12">
           <div v-if="customUser" class="flex items-center justify-center gap-12">
-            <li>
+            <li v-if="role == 'admin' || role == 'employee'">
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class="border-b-[1px] border-black"
@@ -22,14 +22,14 @@
                 >Dashboard</RouterLink
               >
             </li>
-            <li>
+            <li v-if="role == 'admin'">
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/users`"
                 >Users</RouterLink>
             </li>
-            <li>
+            <li v-if="role == 'admin'">
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
@@ -37,7 +37,7 @@
                 >Appointments</RouterLink
               >
             </li>
-            <li>
+            <li v-if="role == 'admin'">
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
@@ -45,12 +45,20 @@
                 >Schedules</RouterLink
               >
             </li>
-            <li>
+            <li v-if="role == 'admin' || role == 'employee'">
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/materials`"
                 >Materials</RouterLink
+              >
+            </li>
+            <li v-if="role == 'employee'">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/calendar`"
+                >Calendar</RouterLink
               >
             </li>
           </div>
