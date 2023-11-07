@@ -34,7 +34,7 @@ export class MailService {
       process.env.NODE_ENV == 'production'
         ? process.env.URL_FRONTEND
         : 'http://localhost:5173'
-    const url = `${frontEndUrl}/auth/register-employee/token?token=${token}`
+    const url = `${frontEndUrl}/auth/register-employee/${token}`
 
     const result = await this.mailerService
       .sendMail({

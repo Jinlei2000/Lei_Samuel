@@ -103,6 +103,11 @@
               <button class="hover:text-primary-green flex gap-3">
                 <User /> Profile
               </button>
+              <Router-link v-if="role === 'employee'" to="employee/absences">
+                <button class="hover:text-primary-green flex gap-3">
+                  <Hourglass /> Absences
+                </button>
+              </Router-link>
               <button
                 @click="handleLogout()"
                 class="hover:text-primary-green flex gap-3"
@@ -112,9 +117,10 @@
             </div>
           </div>
         </div>
+
         <RouterLink
-          :to="'auth/login'"
-          v-else
+          to="auth/login"
+          v-if="$route.path === '/'"
           class="bg-primary-green hover:text-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >Login<LogIn
         /></RouterLink>
@@ -124,7 +130,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { User, LogOut, LogIn } from 'lucide-vue-next'
+import { User, LogOut, LogIn, Hourglass } from 'lucide-vue-next'
 import useFirebase from '@/composables/useFirebase'
 import router from '@/router'
 
@@ -139,8 +145,6 @@ const { firebaseUser, logout } = useFirebase()
 const { setLocale, locale } = useLanguage()
 
 const { customUser } = useCustomUser()
-
-// const role = customUser.value?.role.toLowerCase()
 
 const role = ref('')
 

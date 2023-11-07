@@ -110,7 +110,7 @@ export class AppointmentsService {
     a.location = await this.locationsService.findOne(
       createAppointmentInput.locationId,
     )
-    a.type = createAppointmentInput.type
+    a.type = createAppointmentInput.type.toLocaleLowerCase()
     a.endProposedDate = createAppointmentInput.endProposedDate
     a.startProposedDate = createAppointmentInput.startProposedDate
     a.isDone = false
