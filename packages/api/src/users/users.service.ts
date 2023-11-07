@@ -216,8 +216,11 @@ export class UsersService {
       await this.scheduleService.updateAllByEmployee(user)
       // remove user from all materials
       await this.materialsService.updateAllByUserId(id)
+    }
 
-      // TODO: delete all absences of user in the future
+    if (user.role === Role.ADMIN || user.role === Role.EMPLOYEE) {
+      // delete all absences of user in the future
+      await this.absenceService.removeAllByUserId(id)
     }
 
     // delete user
