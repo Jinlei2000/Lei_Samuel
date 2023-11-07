@@ -59,7 +59,7 @@
             <div class="h-12 w-12 -z-50 rounded-full relative"></div>
             <div class="mt-3 pl-3 pr-6 py-3 border-black border-1 border-opacity-10 rounded-2xl flex flex-col gap-4 bg-gray-200">
               <button class="flex gap-3 hover:text-primary-green"><User /> Profile</button>
-              <button class="flex gap-3 hover:text-primary-green"><LogOut /> Logout</button>
+              <button @click="handleLogout()" class="flex gap-3 hover:text-primary-green"><LogOut /> Logout</button>
             </div>
           </div>
         </div>
@@ -70,12 +70,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { User, LogOut } from 'lucide-vue-next'
+import useFirebase from '@/composables/useFirebase'
+import router from '@/router'
 
 import Container from '../wrapper/Container.vue'
 import Logo from '../Logo.vue'
 import useLanguage from '@/composables/useLanguage'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
+
+const { firebaseUser, logout } = useFirebase()
+
 const { setLocale, locale } = useLanguage()
 
 const { customUser } = useCustomUser()
@@ -93,6 +98,16 @@ const setLanguage = (e: Event) => {
   const target = e.target as HTMLSelectElement
   setLocale(target.value)
   console.log(target.value)
+}
+
+const handleLogout = async () => {
+  await logout()
+  customUser.value = null
+  // go to login page
+  router.replace('/auth/login')
+  console.log('logout')
+
+  showProfileDropdown()
 }
 
 const user = ref<Object | null>(null)
