@@ -26,3 +26,24 @@ export const CREATE_SCHEDULE = gql`
     }
   }
 `
+
+export const UPDATE_SCHEDULE = gql`
+  mutation updateSchedule($updateScheduleInput: UpdateScheduleInput!) {
+    updateSchedule(updateScheduleInput: $updateScheduleInput) {
+      id
+      appointments {
+        id
+      }
+      employees {
+        id
+      }
+      materials {
+        id
+      }
+      finalDate
+      createdBy
+      createdAt
+      updatedAt
+    }
+  }
+`

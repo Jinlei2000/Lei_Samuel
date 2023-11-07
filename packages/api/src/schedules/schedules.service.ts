@@ -273,6 +273,7 @@ export class SchedulesService {
 
   async remove(id: string): Promise<string> {
     // TODO: check if schedule is not in the past or today
+    // TODO: set all appointments to isScheduled = false & finalDate = null
     await this.findOne(id)
 
     await this.scheduleRepository.delete(id)
