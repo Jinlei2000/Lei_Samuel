@@ -1,16 +1,12 @@
 <template>
-  <div class="flex flex-col items-center justify-center mt-12">
-    <div class="grid grid-cols-4 mx-32 gap-3">
+  <div class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12">
+    <div class="grid grid-cols-4 w-full gap-3">
       <div class="col-start-1 col-span-1">
-        <h2 class="mb-3 text-2xl">Next Client</h2>
-
-        <!-- for each client -->
-        <div class="flex flex-col" v-for="(item, index) in clients">
+        <h2 class="mb-3 text-2xl">Next Appointment</h2>
+        <div class="flex flex-col">
           <AppointmentCard
-            v-if="index === 0"
-            :title="item.name"
-            :description="item.description"
-            :type="item.type"
+            v-if="nextAppointment"
+            :appointment="nextAppointment"
           />
         </div>
         <div class="flex justify-between items-center mb-3 mt-6">
@@ -36,24 +32,13 @@
           </button>
         </div>
         <div class="flex flex-col gap-3">
-          <template v-for="(item, index) in clients">
+          <template v-if="appointments" v-for="(item, index) in appointments">
             <AppointmentCard
-              v-if="
-                index !== 0 &&
-                item.date.substring(0, 10) ===
-                  myDate.toISOString().substring(0, 10)
-              "
-              :title="item.name"
-              :description="item.description"
-              :type="item.type"
+              v-if="item !== nextAppointment"
+              :appointment="item"
             />
           </template>
         </div>
-        <!-- <AppointmentCard
-          title="Mr. Johnsson"
-          description="Dit is een afspraak voor het snoeien van een berk."
-          type="inspection"
-        /> -->
       </div>
       <div class="col-span-2 col-start-2">
         <h2 class="mb-3 text-2xl">Weather</h2>
@@ -61,19 +46,100 @@
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
-        <ChecklistItem />
+        <div class="flex flex-col gap-3">
+          <ChecklistItem v-for="item in materials"
+            :key="item.id"
+            :material="item"
+          />
+        </div>
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
-import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, ChevronRight} from 'lucide-vue-next'
 import { ref, watch } from 'vue'
+import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 
 import Button from 'primevue/button'
+
+import useFirebase from '@/composables/useFirebase'
+import useCustomUser from '@/composables/useCustomUser'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
+import Materials from './Materials.vue'
+import type { Material } from '@/interfaces/material.interface'
+const { firebaseUser } = useFirebase()
+const { customUser } = useCustomUser()
+
+const myDate = ref(new Date())
+const dateDisplay = ref('Today')
+
+const {
+  result: schedule,
+  error: scheduleError,
+  refetch: scheduleRefetch,
+  loading: scheduleLoading,
+} = useQuery(GET_SCHEDULE_BY_USER_AND_DATE, () => ({
+  userId: customUser.value?.id,
+  date: myDate.value.toISOString().substring(0, 10),
+}))
+
+const appointments = ref<[Appointment]>()
+const nextAppointment = ref<Appointment>()
+
+const materials = ref<[Material]>()
+
+const showModal = ref(false)
+const selectedAppointment = ref<Appointment | null>(null)
+
+
+
+watch(schedule, () => {
+  if (schedule.value.scheduleByDateAndUserId.length > 0) {
+    const now = new Date()
+    // // check if there is an appointment that has finalDate withing 30 minutes of current time
+    schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
+      (appointment: Appointment) => {
+        const finalDate = new Date(appointment.finalDate!)
+        finalDate.setHours(finalDate.getHours() - 1)
+        const diff = Math.abs(finalDate.getTime() - now.getTime())
+        const minutes = Math.floor(diff / 1000 / 60)
+        if (minutes < 30) {
+          console.log('next appointment found', appointment)
+          nextAppointment.value = appointment
+        } else {
+          console.log('no appointment found')
+        }
+
+      }
+    )
+
+    // set appointments to appointments of schedule
+    appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
+
+    // // if appointment has finaldate that has passed remove it from appointments
+    // appointments.value?.forEach((appointment: Appointment) => {
+    //   const finalDate = new Date(appointment.finalDate!)
+    //   finalDate.setHours(finalDate.getHours() - 1)
+    //   const now = new Date()
+    //   if (finalDate < now) {
+    //     appointments.value?.splice(appointments.value.indexOf(appointment), 1)
+    //   }
+    // })
+
+    materials.value = schedule.value.scheduleByDateAndUserId[0].materials
+    console.log('materials', materials.value)
+  }
+})
+
+firebaseUser.value?.getIdToken().then(token => {
+  console.log(`{"Authorization": "Bearer ${token}"}`)
+})
 
 const days = [
   'Sunday',
@@ -85,17 +151,14 @@ const days = [
   'Saturday',
 ]
 
-const myDate = ref(new Date())
-const dateDisplay = ref('Today')
-
 // nextday function
-function nextDay() {
+const nextDay = () => {
   const currentDate = myDate.value
   const nextDay = new Date(currentDate.setDate(currentDate.getDate() + 1))
   myDate.value = nextDay
 }
 
-function prevDay() {
+const prevDay = () => {
   const currentDate = myDate.value
   const prevDay = new Date(currentDate.setDate(currentDate.getDate() - 1))
   myDate.value = prevDay
@@ -124,42 +187,4 @@ watch(myDate, () => {
       break
   }
 })
-
-const clients = [
-  {
-    name: 'Appointment 1',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room A',
-    description: '2 berken snoeien',
-    type: 'repair',
-  },
-  {
-    name: 'Appointment 2',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room B',
-    description: 'Grasveld maaien',
-    type: 'maintenance',
-  },
-  {
-    name: 'Appointment 3',
-    date: '2023-10-12T00:00:00.000Z',
-    location: 'Room C',
-    description: 'Onderhoud aan zwemvijver',
-    type: 'maintenance',
-  },
-  {
-    name: 'Appointment 4',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room D',
-    description: 'Beplanting aanleggen',
-    type: 'inspection',
-  },
-  {
-    name: 'Appointment 5',
-    date: '2023-10-13T00:00:00.000Z',
-    location: 'Room D',
-    description: 'Beplanting aanleggen',
-    type: 'inspection',
-  },
-]
 </script>

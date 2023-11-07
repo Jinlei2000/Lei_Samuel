@@ -4,6 +4,7 @@ export interface Appointment {
   id?: string
   user?: {
     id?: string
+    fullname?: string
   }
   location?: Location
   price?: number
@@ -11,7 +12,7 @@ export interface Appointment {
   startProposedDate?: Date
   endProposedDate?: Date
   isScheduled?: boolean
-  finalDate?: Date
+  finalDate?: string
   isDone?: boolean
   description?: string
   priority?: number
