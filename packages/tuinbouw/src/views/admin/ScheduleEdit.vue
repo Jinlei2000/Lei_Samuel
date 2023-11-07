@@ -518,6 +518,7 @@ import useTimeUtilities from '@/composables/useTimeUtilities'
 import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import { GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE } from '@/graphql/appointment.query'
 import { GET_MATERIALS_AVAILABLE } from '@/graphql/material.query'
+import { UPDATE_SCHEDULE } from '@/graphql/schedule.mutation'
 import { GET_SCHEDULE_BY_ID } from '@/graphql/schedule.query'
 import { GET_EMPLOYEES_AVAILABLE_BY_DATE } from '@/graphql/user.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
@@ -535,7 +536,7 @@ import * as yup from 'yup'
 // composables
 const { showToast } = useCustomToast()
 const { formatDateTime } = useTimeUtilities()
-const { currentRoute } = useRouter()
+const { currentRoute, go } = useRouter()
 
 // variables
 const minDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
@@ -580,6 +581,9 @@ const materialsIds = defineComponentBinds('materialsIds')
 // graphql
 const { mutate: updateAppointment, error: errorUpdateAppointment } =
   useMutation(UPDATE_APPOINTMENT)
+
+const { mutate: updateschedule, error: errorUpdateschedule } =
+  useMutation(UPDATE_SCHEDULE)
 
 const {
   result: schedule,
@@ -640,7 +644,8 @@ const handleUpdateSchedule = async () => {
   await validate()
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
-    console.log('no errors', values)
+    // console.log('no errors', values)
+    const { finalDate, appointmentsIds, employeesIds, materialsIds } = values
 
     // update appointments with price
     for (const a of selectedAppointments.value) {
@@ -655,8 +660,33 @@ const handleUpdateSchedule = async () => {
     }
 
     // update appointments that unselected from schedule (isScheduled = false, finalDate = null)
+    const unselectedAppointmentsIds = selectedAppointmentsEdit.value
+      .map(a => a.id)
+      .filter(id => !appointmentsIds.includes(id))
+    for (const id of unselectedAppointmentsIds) {
+      await updateAppointment({
+        updateAppointmentInput: {
+          id: id,
+          isScheduled: false,
+          finalDate: null,
+        },
+      })
+    }
 
     // update schedule
+    await updateschedule({
+      updateScheduleInput: {
+        id: schedule.value?.schedule.id,
+        finalDate: formatDateTime(finalDate),
+        appointmentIds: appointmentsIds,
+        employeeIds: employeesIds,
+        materialIds: materialsIds,
+      },
+    }).then(() => {
+      loadingUpdate.value = false
+      showToast('success', 'Success', 'Schedule updated')
+      go(-1)
+    })
   }
 
   loadingUpdate.value = false
@@ -945,6 +975,7 @@ watchEffect(() => {
     errorEmployees.value,
     errorMaterials.value,
     errorUpdateAppointment.value,
+    errorUpdateschedule.value,
   ]
   errors.forEach(error => {
     if (error) {
