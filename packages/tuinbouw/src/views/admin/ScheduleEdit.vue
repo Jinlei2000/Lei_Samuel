@@ -532,6 +532,7 @@ import { useRouter } from 'vue-router'
 import * as yup from 'yup'
 
 // TODO: add steps (next.value) to the url as query params (e.g. /schedules/edit?step=1)
+// TODO: use useLazyQuery for materials and (employees or users) to prevent loading all materials and (employees or appointments)
 
 // composables
 const { showToast } = useCustomToast()
@@ -627,7 +628,6 @@ const {
   }),
   {
     fetchPolicy: 'cache-and-network',
-    nextFetchPolicy: 'network-only',
   },
 )
 
