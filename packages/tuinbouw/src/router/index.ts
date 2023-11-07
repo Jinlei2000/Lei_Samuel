@@ -60,6 +60,10 @@ const router = createRouter({
           path: 'schedules/:id',
           component: () => import('../views/employee/ScheduleDetail.vue'),
         },
+        {
+          path: 'absences',
+          component: () => import('../views/employee/Absences.vue'),
+        },
       ],
     },
 
