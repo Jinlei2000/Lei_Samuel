@@ -111,7 +111,7 @@ const props = defineProps({
   appointment: Object as PropType<Appointment>,
 })
 
-const appointmentIsDone = ref(false)
+const appointmentIsDone = ref(props.appointment?.isDone)
 
 // const updatedAppointment = ref<Appointment>(props.appointment)
 
