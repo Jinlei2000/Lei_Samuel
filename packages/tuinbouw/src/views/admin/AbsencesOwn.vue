@@ -10,6 +10,14 @@
     Absences
   </h1>
 
+  <!-- add absence button -->
+  <button
+    class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
+    @click="openModal(null, 'create')"
+  >
+    Add Absence
+  </button>
+
   <!-- TODO: filters & orders -->
 
   <!-- show loading -->
@@ -65,6 +73,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- show no absences -->
+  <div v-if="absences && absences.absencesByUserId.length === 0">
+    <p class="text-6xl font-black">No Absences</p>
   </div>
 
   <!-- Detail Modal -->
@@ -190,6 +203,119 @@
   </Dialog>
 
   <!-- Create Modal -->
+  <Dialog
+    v-model:visible="visible.create"
+    modal
+    maximizable
+    header="Create Absence"
+    :style="{ width: '50vw' }"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <form @submit.prevent="handleCreate">
+      <!-- Type -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="type"
+          >Type
+        </label>
+        <Dropdown
+          id="type"
+          v-bind="type"
+          :options="[{ name: 'sick' }, { name: 'vacation' }, { name: 'other' }]"
+          optionLabel="name"
+          optionValue="name"
+          class="w-full"
+          placeholder="Select a type"
+        >
+          <template #dropdownicon>
+            <ChevronDownIcon />
+          </template>
+        </Dropdown>
+        <small class="p-error" id="text-error">{{
+          errorMessages.type || '&nbsp;'
+        }}</small>
+      </div>
+
+      <!-- Start Date -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="startDate"
+          >Start Date
+        </label>
+        <Calendar
+          id="startDate"
+          v-bind="startDate"
+          :manualInput="false"
+          :minDate="minDate"
+          showIcon
+          dateFormat="yy-mm-dd"
+          @date-select="setValues({ endDate: startDate.modelValue })"
+          placeholder="Select a start date"
+        >
+          <template #dropdownicon>
+            <CalendarIcon />
+          </template>
+        </Calendar>
+        <small class="p-error block" id="date-error">{{
+          errorMessages.startDate || '&nbsp;'
+        }}</small>
+      </div>
+
+      <!-- End Date -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="endDate"
+          >End Date
+        </label>
+        <Calendar
+          id="endDate"
+          v-bind="endDate"
+          :manualInput="false"
+          :minDate="new Date(startDate.modelValue!)"
+          showIcon
+          dateFormat="yy-mm-dd"
+          placeholder="Select an end date"
+        >
+          <template #dropdownicon>
+            <CalendarIcon />
+          </template>
+        </Calendar>
+        <small class="p-error block" id="date-error">{{
+          errorMessages.endDate || '&nbsp;'
+        }}</small>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="description"
+        >
+          Description
+        </label>
+        <Textarea
+          id="description"
+          v-bind="description"
+          rows="5"
+          cols="30"
+          placeholder="Type your description here..."
+        />
+        <small class="p-error" id="text-error">{{
+          errorMessages.description || '&nbsp;'
+        }}</small>
+      </div>
+
+      <CustomButton
+        type="submit"
+        name="Create Absence"
+        :loading="loadingCreate"
+      />
+    </form>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -218,6 +344,8 @@ import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import * as yup from 'yup'
 
+// TODO: useComputed for queries result (documentations)
+
 // composables
 const { showToast } = useCustomToast()
 const { formatDateTime } = useTimeUtilities()
@@ -244,8 +372,8 @@ const loadingCreate = ref(false)
 
 // form
 const schema = yup.object({
-  startDate: yup.date().required(),
-  endDate: yup.date().required(),
+  startDate: yup.string().required(),
+  endDate: yup.string().required(),
   type: yup.string().required(),
   description: yup.string().optional(),
 })
@@ -292,7 +420,31 @@ const { mutate: createAbsence, error: createAbsenceError } =
 
 // logics
 // handle create
-const handleCreate = async () => {}
+const handleCreate = async () => {
+  loadingCreate.value = true
+  await validate()
+  errorMessages.value = errors.value
+  if (Object.keys(errors.value).length === 0) {
+    // console.log('values: ', values)
+    createAbsence({
+      createAbsenceInput: {
+        userId: customUser.value?.id,
+        type: values.type,
+        startDate: formatDateTime(values.startDate),
+        endDate: formatDateTime(values.endDate),
+        description: values.description,
+      },
+    }).then(async () => {
+      loadingCreate.value = false
+      showToast('success', 'Success', 'Absence has been created')
+      // refetch
+      await refetchAbsences()
+      // close modal
+      closeModal()
+    })
+  }
+  loadingCreate.value = false
+}
 
 // handle update
 const handleUpdate = async () => {

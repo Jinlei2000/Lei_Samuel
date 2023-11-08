@@ -25,8 +25,8 @@ export const UPDATE_ABSENCE = gql`
 `
 
 export const CREATE_ABSENCE = gql`
-  mutation createAbsence($input: CreateAbsenceInput!) {
-    createAbsence(createAbsenceInput: $input) {
+  mutation createAbsence($createAbsenceInput: CreateAbsenceInput!) {
+    createAbsence(createAbsenceInput: $createAbsenceInput) {
       id
       user {
         id
