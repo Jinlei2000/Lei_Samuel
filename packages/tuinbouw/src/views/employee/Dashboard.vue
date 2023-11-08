@@ -99,10 +99,27 @@ const selectedAppointment = ref<Appointment | null>(null)
 
 
 
+
 watch(schedule, () => {
   if (schedule.value.scheduleByDateAndUserId.length > 0) {
     const now = new Date()
     // // check if there is an appointment that has finalDate withing 30 minutes of current time
+    // schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
+    //   (appointment: Appointment) => {
+    //     const finalDate = new Date(appointment.finalDate!)
+    //     finalDate.setHours(finalDate.getHours() - 1)
+    //     const diff = Math.abs(finalDate.getTime() - now.getTime())
+    //     const minutes = Math.floor(diff / 1000 / 60)
+    //     if (minutes < 30) {
+    //       console.log('next appointment found', appointment)
+    //       nextAppointment.value = appointment
+    //     } else {
+    //       console.log('no appointment found')
+    //     }
+
+    //   }
+    // )
+
     schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
       (appointment: Appointment) => {
         const finalDate = new Date(appointment.finalDate!)
@@ -115,8 +132,12 @@ watch(schedule, () => {
         } else {
           console.log('no appointment found')
         }
-
       }
+    )
+
+    // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
+    nextAppointment.value = schedule.value.scheduleByDateAndUserId[0].appointments.find(
+      (appointment: Appointment) => appointment.isDone === false
     )
 
     // set appointments to appointments of schedule
