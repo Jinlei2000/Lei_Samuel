@@ -119,6 +119,13 @@ const setAppointments = () => {
     )
 }
 
+const setFinishedAppointments = () => {
+    // set appointments to appointments of schedule where isDone is true
+    finishedAppointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+      (appointment: Appointment) => appointment.isDone === true
+    )
+}
+
 
 
 watch(schedule, () => {
@@ -143,13 +150,7 @@ watch(schedule, () => {
 
     setNextAppointment()
     setAppointments()
-    
-    // set appointments to appointments of schedule where isDone is true
-    finishedAppointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
-      (appointment: Appointment) => appointment.isDone === true
-    )
-
-
+    setFinishedAppointments()
 
     // set appointments to appointments of schedule
     // appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
