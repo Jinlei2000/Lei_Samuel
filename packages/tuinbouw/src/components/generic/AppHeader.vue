@@ -100,9 +100,14 @@
             <div
               class="border-1 mt-3 flex flex-col gap-4 rounded-2xl border-black border-opacity-10 bg-gray-200 py-3 pl-3 pr-6"
             >
-              <button class="hover:text-primary-green flex gap-3">
-                <User /> Profile
-              </button>
+              <Router-link
+                v-if="role === 'employee' || role === 'admin'"
+                :to="`/${role}/profile`"
+              >
+                <button class="hover:text-primary-green flex gap-3">
+                  <User /> Profile
+                </button>
+              </Router-link>
               <Router-link
                 v-if="role === 'employee' || role === 'admin'"
                 :to="goToAbsences()"
