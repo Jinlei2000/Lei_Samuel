@@ -18,3 +18,26 @@ export const GET_ALL_ABSENCES = gql`
     }
   }
 `
+
+export const GET_ALL_ABSENCES_BY_USERID = gql`
+  query absencesByUserId(
+    $userId: String!
+    $filters: [String!]
+    $order: OrderByInput
+  ) {
+    absencesByUserId(userId: $userId, filters: $filters, order: $order) {
+      id
+      user {
+        id
+        firstname
+      }
+      description
+      type
+      startDate
+      endDate
+      totalDays
+      createdAt
+      updatedAt
+    }
+  }
+`
