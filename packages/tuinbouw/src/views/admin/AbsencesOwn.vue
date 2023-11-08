@@ -361,6 +361,7 @@ const openModal = (absence: Absence | null = null, type: string) => {
 }
 
 const closeModal = () => {
+  selectedAbsence.value = null
   visible.value = {
     detail: false,
     edit: false,
@@ -381,6 +382,9 @@ watchEffect(() => {
   ]
   errors.forEach(error => {
     if (error) {
+      loadingUpdate.value = false
+      loadingCreate.value = false
+
       showToast('error', 'Error', error.message)
     }
   })
