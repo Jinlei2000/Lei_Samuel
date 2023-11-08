@@ -13,7 +13,7 @@
       <nav class="flex gap-24">
         <ul class="flex items-center justify-center gap-12">
           <div
-            v-if="customUser"
+            v-if="checkPath()"
             class="flex items-center justify-center gap-12"
           >
             <li v-if="role == 'admin' || role == 'employee'">
@@ -66,7 +66,7 @@
             </li>
           </div>
           <li
-            :class="customUser ? 'border-l-[1px]' : ''"
+            :class="checkPath() ? 'border-l-[1px]' : ''"
             class="border-black py-2 pl-12"
           >
             <select
@@ -87,7 +87,7 @@
             </select>
           </li>
         </ul>
-        <div v-if="customUser" class="relative flex w-1/6 justify-end">
+        <div v-if="checkPath()" class="relative flex w-1/6 justify-end">
           <div @click="showProfileDropdown()" class="hover:cursor-pointer">
             <img
               class="h-12 w-12 rounded-full"
@@ -103,7 +103,10 @@
               <button class="hover:text-primary-green flex gap-3">
                 <User /> Profile
               </button>
-              <Router-link v-if="role === 'employee'" to="employee/absences">
+              <Router-link
+                v-if="role === 'employee' || role === 'admin'"
+                :to="goToAbsences()"
+              >
                 <button class="hover:text-primary-green flex gap-3">
                   <Hourglass /> Absences
                 </button>
@@ -121,7 +124,7 @@
         <RouterLink
           to="auth/login"
           v-if="$route.path === '/'"
-          class="bg-primary-green hover:text-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
+          class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >Login<LogIn
         /></RouterLink>
       </nav></header
@@ -146,6 +149,8 @@ const { setLocale, locale } = useLanguage()
 
 const { customUser } = useCustomUser()
 
+const { currentRoute } = router
+
 const role = ref('')
 
 const profileDropdown = ref(false)
@@ -169,6 +174,25 @@ const handleLogout = async () => {
   console.log('logout')
 
   showProfileDropdown()
+}
+
+const checkPath = () => {
+  const paths = ['/auth/login', '/auth/register', '/auth/forgot-password', '/']
+  const routePath = currentRoute.value.path
+
+  if (customUser.value && !paths.includes(routePath)) {
+    return true
+  }
+
+  return false
+}
+
+const goToAbsences = () => {
+  let path = ''
+  if (role.value === 'employee') path = '/employee/absences'
+  else if (role.value === 'admin') path = '/admin/absences-own'
+
+  return path
 }
 
 watchEffect(() => {
