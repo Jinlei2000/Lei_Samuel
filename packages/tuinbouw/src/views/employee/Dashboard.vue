@@ -113,6 +113,7 @@ const setNextAppointment = () => {
 
 const setAppointments = () => {
     // set appointments to appointments of schedule where isDone is false
+    console.log('schedule', schedule.value.scheduleByDateAndUserId[0].appointments)
     appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
       (appointment: Appointment) => appointment.isDone === false
     )
@@ -121,7 +122,7 @@ const setAppointments = () => {
 
 
 watch(schedule, () => {
-  if (schedule.value.scheduleByDateAndUserId.length > 0) {
+  if (schedule.value && schedule.value.scheduleByDateAndUserId.length > 0) {
     const now = new Date()
     // // check if there is an appointment that has finalDate withing 30 minutes of current time
     // schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
