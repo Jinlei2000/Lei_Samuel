@@ -41,10 +41,45 @@
             Created At: {{ formatDateTime(a.createdAt) }}
           </p>
         </div>
+        <div
+          class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
+        >
+          <!-- View More Button -->
+          <button
+            @click="openModal(a, 'detail')"
+            class="text-green-500 hover:underline"
+          >
+            <Eye />
+          </button>
+
+          <!-- Delete Button -->
+          <button @click="handleDelete(a)" class="text-red-500 hover:underline">
+            <Trash2 />
+          </button>
+        </div>
       </div>
     </div>
   </div>
+
   <!-- Detail Modal -->
+  <Dialog
+    v-model:visible="visible.detail"
+    modal
+    maximizable
+    header="Absence Details"
+    :style="{ width: '50vw' }"
+    v-if="selectedAbsence"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <h2 class="mb-2 text-xl font-semibold">
+      user id:
+      {{ selectedAbsence.user?.id }}
+    </h2>
+    <p class="text-gray-600">
+      {{ selectedAbsence.description }}
+    </p>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -55,6 +90,8 @@ import { GET_ALL_ABSENCES } from '@/graphql/absence.query'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import { Eye } from 'lucide-vue-next'
+import { Trash2 } from 'lucide-vue-next'
 import { ArrowLeft } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
 
@@ -73,8 +110,6 @@ const variables = ref<VariablesProps>({
 })
 const visible = ref({
   detail: false,
-  edit: false,
-  create: false,
 })
 const selectedAbsence = ref<Absence | null>(null)
 
@@ -92,15 +127,20 @@ const { mutate: deleteAbsence, error: deleteAbsenceError } =
 
 // logics
 // handle delete
-const handleDelete = async () => {}
+const handleDelete = async (absence: Absence) => {
+  console.log('delete absence')
+}
 
-const openModal = (absence: Absence | null = null, type: string) => {}
+const openModal = (absence: Absence | null = null, type: string) => {
+  if (type === 'detail' && absence) {
+    selectedAbsence.value = { ...absence }
+    visible.value.detail = true
+  }
+}
 
 const closeModal = () => {
   visible.value = {
     detail: false,
-    edit: false,
-    create: false,
   }
 }
 
