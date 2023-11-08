@@ -103,7 +103,10 @@
               <button class="hover:text-primary-green flex gap-3">
                 <User /> Profile
               </button>
-              <Router-link v-if="role === 'employee' || role === 'admin'" to="employee/absences">
+              <Router-link
+                v-if="role === 'employee' || role === 'admin'"
+                :to="goToAbsences()"
+              >
                 <button class="hover:text-primary-green flex gap-3">
                   <Hourglass /> Absences
                 </button>
@@ -182,6 +185,14 @@ const checkPath = () => {
   }
 
   return false
+}
+
+const goToAbsences = () => {
+  let path = ''
+  if (role.value === 'employee') path = '/employee/absences'
+  else if (role.value === 'admin') path = '/admin/absences-own'
+
+  return path
 }
 
 watchEffect(() => {
