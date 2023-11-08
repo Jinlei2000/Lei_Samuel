@@ -38,6 +38,12 @@
               :appointment="item"
             />
           </template>
+          <template v-if="finishedAppointments" v-for="(item, index) in finishedAppointments">
+            <AppointmentCard
+              v-if="item !== nextAppointment"
+              :appointment="item"
+            />
+          </template>
         </div>
       </div>
       <div class="col-span-2 col-start-2">
@@ -91,12 +97,26 @@ const {
 
 const appointments = ref<[Appointment]>()
 const nextAppointment = ref<Appointment>()
+const finishedAppointments = ref<[Appointment]>()
 
 const materials = ref<[Material]>()
 
 const showModal = ref(false)
 const selectedAppointment = ref<Appointment | null>(null)
 
+const setNextAppointment = () => {
+    // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
+    nextAppointment.value = schedule.value.scheduleByDateAndUserId[0].appointments.find(
+      (appointment: Appointment) => appointment.isDone === false
+    )
+}
+
+const setAppointments = () => {
+    // set appointments to appointments of schedule where isDone is false
+    appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+      (appointment: Appointment) => appointment.isDone === false
+    )
+}
 
 
 
@@ -120,28 +140,18 @@ watch(schedule, () => {
     //   }
     // )
 
-    schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
-      (appointment: Appointment) => {
-        const finalDate = new Date(appointment.finalDate!)
-        finalDate.setHours(finalDate.getHours() - 1)
-        const diff = Math.abs(finalDate.getTime() - now.getTime())
-        const minutes = Math.floor(diff / 1000 / 60)
-        if (minutes < 30) {
-          console.log('next appointment found', appointment)
-          nextAppointment.value = appointment
-        } else {
-          console.log('no appointment found')
-        }
-      }
+    setNextAppointment()
+    setAppointments()
+    
+    // set appointments to appointments of schedule where isDone is true
+    finishedAppointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+      (appointment: Appointment) => appointment.isDone === true
     )
 
-    // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
-    nextAppointment.value = schedule.value.scheduleByDateAndUserId[0].appointments.find(
-      (appointment: Appointment) => appointment.isDone === false
-    )
+
 
     // set appointments to appointments of schedule
-    appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
+    // appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
 
     // // if appointment has finaldate that has passed remove it from appointments
     // appointments.value?.forEach((appointment: Appointment) => {
