@@ -6,6 +6,7 @@ export const GET_ALL_ABSENCES = gql`
       id
       user {
         id
+        firstname
       }
       description
       type

@@ -93,24 +93,25 @@
     maximizable
     header="User Details"
     :style="{ width: '50vw' }"
-    v-if="selectedUser"
     @click:close="closeModal"
     class="max-w-lg"
   >
-    <h2 class="mb-2 text-xl font-semibold">
-      {{ selectedUser.fullname }}
-    </h2>
-    <p class="text-gray-600">
-      {{ selectedUser.email }}
-    </p>
-    <!-- upgrade to admin button -->
-    <CustomButton
-      v-if="selectedUser.role === 'EMPLOYEE'"
-      name="Upgrade to Admin"
-      @click="handleUpgradeToAdmin(selectedUser)"
-      :loading="upgradeToAdminLoading"
-      ownClass="block w-full"
-    />
+    <div v-if="selectedUser">
+      <h2 class="mb-2 text-xl font-semibold">
+        {{ selectedUser.fullname }}
+      </h2>
+      <p class="text-gray-600">
+        {{ selectedUser.email }}
+      </p>
+      <!-- upgrade to admin button -->
+      <CustomButton
+        v-if="selectedUser.role === 'EMPLOYEE'"
+        name="Upgrade to Admin"
+        @click="handleUpgradeToAdmin(selectedUser)"
+        :loading="upgradeToAdminLoading"
+        ownClass="block w-full"
+      />
+    </div>
   </Dialog>
 
   <!-- Edit Modal -->

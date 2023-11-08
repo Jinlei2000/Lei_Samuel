@@ -68,17 +68,18 @@
     maximizable
     header="Absence Details"
     :style="{ width: '50vw' }"
-    v-if="selectedAbsence"
     @click:close="closeModal"
     class="max-w-lg"
   >
-    <h2 class="mb-2 text-xl font-semibold">
-      user id:
-      {{ selectedAbsence.user?.id }}
-    </h2>
-    <p class="text-gray-600">
-      {{ selectedAbsence.description }}
-    </p>
+    <div v-if="selectedAbsence">
+      <h2 class="mb-2 text-xl font-semibold">
+        user id:
+        {{ selectedAbsence.user?.id }}
+      </h2>
+      <p class="text-gray-600">
+        {{ selectedAbsence.description }}
+      </p>
+    </div>
   </Dialog>
 </template>
 
@@ -90,9 +91,7 @@ import { GET_ALL_ABSENCES } from '@/graphql/absence.query'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { Eye } from 'lucide-vue-next'
-import { Trash2 } from 'lucide-vue-next'
-import { ArrowLeft } from 'lucide-vue-next'
+import { Eye, ArrowLeft, Trash2 } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
 
 // composables
@@ -118,6 +117,7 @@ const {
   result: absences,
   loading: absencesLoading,
   error: absencesError,
+  refetch: refetchAbsences,
 } = useQuery(GET_ALL_ABSENCES, variables, {
   fetchPolicy: 'cache-and-network',
 })
@@ -128,7 +128,16 @@ const { mutate: deleteAbsence, error: deleteAbsenceError } =
 // logics
 // handle delete
 const handleDelete = async (absence: Absence) => {
-  console.log('delete absence')
+  await deleteAbsence({
+    id: absence.id,
+  }).then(() => {
+    showToast(
+      'success',
+      'Success',
+      `Absence of ${absence.user?.firstname} has been deleted`,
+    )
+    refetchAbsences()
+  })
 }
 
 const openModal = (absence: Absence | null = null, type: string) => {
