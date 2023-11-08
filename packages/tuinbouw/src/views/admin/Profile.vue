@@ -10,13 +10,13 @@
     <p class="text-6xl font-black">Loading User...</p>
   </div>
 
+  <!-- show user -->
   <div v-if="!isEditing">
     <!-- edit button -->
     <button class="flex" @click="isEditing = true">
       <Pencil class="h-6 w-6" />
     </button>
 
-    <!-- show user -->
     <div v-if="user">
       <div class="overflow-hidden rounded-lg bg-white p-6 shadow">
         <h2 class="text-2xl font-semibold text-gray-900">
@@ -93,6 +93,7 @@
     </div>
   </div>
 
+  <!-- show edit form -->
   <div v-if="isEditing">
     <!-- go back button -->
     <button class="flex" @click="isEditing = false">
@@ -100,6 +101,98 @@
       Go back
     </button>
     <form @submit.prevent="handleUpdateUser">
+      <!-- lastname: "xx" # optional
+      firstname: "xx" # optional
+      url: "xx" # optional
+      uid: "xx" # optional
+      locale: "xx" # optional
+      locationIds: ["xx"] # optional
+      email: "xx" # optional
+      telephone: "xx" # optional
+      availability: true # optional
+      # CLIENT ONLY
+      invoiceOption: "xx"  # optional
+      company: true # optional
+      btwNumber: "xx" # optional -->
+      <!-- First Name -->
+      <InputText
+        name="First Name"
+        placeholder="John"
+        type="text"
+        :errorMessage="errorMessages.firstname"
+        v-bind="firstname"
+      />
+
+      <!-- Last Name -->
+      <InputText
+        name="Last Name"
+        placeholder="Doe"
+        type="text"
+        :errorMessage="errorMessages.lastname"
+        v-bind="lastname"
+      />
+
+      <!-- Email -->
+      <InputText
+        name="Email"
+        placeholder="john@example.com"
+        type="text"
+        :errorMessage="errorMessages.email"
+        v-bind="email"
+      />
+
+      <!-- Telephone -->
+      <InputText
+        name="Telephone (optional)"
+        placeholder="0412345678"
+        type="text"
+        :errorMessage="errorMessages.telephone"
+        v-bind="telephone"
+      />
+
+      <!-- Client Only -->
+      <div v-if="user?.role === Role.CLIENT">
+        <!-- Invoice Option -->
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="invoiceOption"
+            >Invoice Option (optional)
+          </label>
+          <Dropdown
+            id="invoiceOption"
+            v-model="invoiceOption"
+            :options="[{ name: 'post' }, { name: 'email' }]"
+            optionLabel="name"
+            optionValue="name"
+            class="w-full"
+            placeholder="Select Invoice Option"
+          >
+            <template #dropdownicon>
+              <ChevronDownIcon />
+            </template>
+          </Dropdown>
+        </div>
+        <!-- Company -->
+        <div>
+          <label
+            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+            for="company"
+            >Company (optional)
+          </label>
+          <InputSwitch id="company" v-bind="company" />
+        </div>
+
+        <InputText
+          v-if="company.modelValue"
+          name="BTW Number (optional)"
+          placeholder="BE0123456789"
+          type="text"
+          :errorMessage="errorMessages.btwNumber"
+          v-bind="btwNumber"
+        />
+      </div>
+
       <CustomButton
         type="submit"
         name="Update User"
@@ -119,9 +212,12 @@ import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
 import { GET_USER_BY_ID } from '@/graphql/user.query'
 import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { Pencil, Trash2, ArrowLeft } from 'lucide-vue-next'
+import { Pencil, Trash2, ArrowLeft, ChevronDownIcon } from 'lucide-vue-next'
+import { useForm } from 'vee-validate'
 import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
+import * as yup from 'yup'
+import InputText from '@/components/generic/form/InputText.vue'
 
 // composables
 const { customUser } = useCustomUser()
@@ -134,6 +230,44 @@ const { replace } = useRouter()
 const isEditing = ref(false)
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
 const loadingCreateLocation = ref(false)
+const loadingUpdateUser = ref(false)
+
+// form
+const schema = yup.object({
+  email: yup.string().required().email(),
+  firstname: yup.string().required(),
+  lastname: yup.string().required(),
+  telephone: yup
+    .string()
+    .matches(/^[0-9]+$/, 'Must be only digits')
+    .min(10)
+    .max(10)
+    .optional()
+    .nullable(),
+})
+
+// error messages of forms
+const errorMessages = ref<{
+  [key: string]: string | undefined
+}>({
+  firstname: '',
+  lastname: '',
+  email: '',
+  telephone: '',
+})
+
+// create form
+const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
+  validationSchema: schema,
+})
+
+const firstname = defineComponentBinds('firstname')
+const lastname = defineComponentBinds('lastname')
+const email = defineComponentBinds('email')
+const telephone = defineComponentBinds('telephone')
+const invoiceOption = defineComponentBinds('invoiceOption')
+const company = defineComponentBinds('company')
+const btwNumber = defineComponentBinds('btwNumber')
 
 // graphql
 const {

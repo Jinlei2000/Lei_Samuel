@@ -469,7 +469,6 @@ mutation {
       locationIds: ["xx"] # optional
       email: "xx" # optional
       telephone: "xx" # optional
-      availability: true # optional
       # CLIENT ONLY
       invoiceOption: "xx"  # optional
       company: true # optional
