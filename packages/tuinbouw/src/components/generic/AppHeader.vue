@@ -103,7 +103,7 @@
               <button class="hover:text-primary-green flex gap-3">
                 <User /> Profile
               </button>
-              <Router-link v-if="role === 'employee'" to="employee/absences">
+              <Router-link v-if="role === 'employee' || role === 'admin'" to="employee/absences">
                 <button class="hover:text-primary-green flex gap-3">
                   <Hourglass /> Absences
                 </button>
