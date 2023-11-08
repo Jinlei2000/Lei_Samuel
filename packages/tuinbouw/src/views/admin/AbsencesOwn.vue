@@ -89,11 +89,111 @@
   </Dialog>
 
   <!-- Edit Modal -->
-  
+  <Dialog
+    v-model:visible="visible.edit"
+    modal
+    maximizable
+    header="Edit Absence"
+    :style="{ width: '50vw' }"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <form @submit.prevent="handleUpdate">
+      <!-- Type -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="type"
+          >Type
+        </label>
+        <Dropdown
+          id="type"
+          v-bind="type"
+          :options="[{ name: 'sick' }, { name: 'vacation' }, { name: 'other' }]"
+          optionLabel="name"
+          optionValue="name"
+          class="w-full"
+          placeholder="Select a type"
+        >
+          <template #dropdownicon>
+            <ChevronDownIcon />
+          </template>
+        </Dropdown>
+      </div>
+
+      <!-- Start Date -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="startDate"
+          >Start Date
+        </label>
+        <Calendar
+          id="startDate"
+          v-bind="startDate"
+          :manualInput="false"
+          :minDate="minDate"
+          showIcon
+          dateFormat="yy-mm-dd"
+          @date-select="setValues({ endDate: startDate.modelValue })"
+        >
+          <template #dropdownicon>
+            <CalendarIcon />
+          </template>
+        </Calendar>
+      </div>
+
+      <!-- End Date -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="endDate"
+          >End Date
+        </label>
+        <Calendar
+          id="endDate"
+          v-bind="endDate"
+          :manualInput="false"
+          :minDate="new Date(startDate.modelValue!)"
+          showIcon
+          dateFormat="yy-mm-dd"
+        >
+          <template #dropdownicon>
+            <CalendarIcon />
+          </template>
+        </Calendar>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label
+          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+          for="description"
+        >
+          Description
+        </label>
+        <Textarea
+          id="description"
+          v-bind="description"
+          rows="5"
+          cols="30"
+          placeholder="Type your description here..."
+        />
+      </div>
+
+      <CustomButton
+        type="submit"
+        name="Update Absence"
+        :loading="loadingUpdate"
+      />
+    </form>
+  </Dialog>
+
   <!-- Create Modal -->
 </template>
 
 <script setup lang="ts">
+import CustomButton from '@/components/generic/CustomButton.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -106,7 +206,14 @@ import { GET_ALL_ABSENCES_BY_USERID } from '@/graphql/absence.query'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { Eye, ArrowLeft, Trash2, Pencil } from 'lucide-vue-next'
+import {
+  Eye,
+  ArrowLeft,
+  Trash2,
+  Pencil,
+  ChevronDownIcon,
+  CalendarIcon,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import * as yup from 'yup'
@@ -117,6 +224,7 @@ const { formatDateTime } = useTimeUtilities()
 const { customUser } = useCustomUser()
 
 // variables
+const minDate = new Date()
 const variables = ref<VariablesProps>({
   userId: customUser.value?.id,
   filters: [],
@@ -153,30 +261,15 @@ const errorMessages = ref<{
 })
 
 // create form
-const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
-  validationSchema: schema,
-})
+const { resetForm, defineComponentBinds, errors, values, validate, setValues } =
+  useForm({
+    validationSchema: schema,
+  })
 
 const startDate = defineComponentBinds('startDate')
 const endDate = defineComponentBinds('endDate')
 const type = defineComponentBinds('type')
 const description = defineComponentBinds('description')
-
-// // update form
-// const {
-//   defineComponentBinds: defineComponentBindsUpdate,
-//   errors: errorsUpdate,
-//   values: valuesUpdate,
-//   validate: validateUpdate,
-//   setValues: setValuesUpdate,
-// } = useForm({
-//   validationSchema: schema,
-// })
-
-// const startDateUpdate = defineComponentBindsUpdate('startDate')
-// const endDateUpdate = defineComponentBindsUpdate('endDate')
-// const typeUpdate = defineComponentBindsUpdate('type')
-// const descriptionUpdate = defineComponentBindsUpdate('description')
 
 // graphql
 const {
@@ -199,9 +292,35 @@ const { mutate: createAbsence, error: createAbsenceError } =
 
 // logics
 // handle create
-const handleCreate = async (absence: Absence) => {}
+const handleCreate = async () => {}
+
 // handle update
-const handleUpdate = async (absence: Absence) => {}
+const handleUpdate = async () => {
+  loadingUpdate.value = true
+  await validate()
+  errorMessages.value = errors.value
+  if (Object.keys(errors.value).length === 0) {
+    // console.log('values: ', values)
+    updateAbsence({
+      updateAbsenceInput: {
+        id: values.id,
+        type: values.type,
+        startDate: formatDateTime(values.startDate),
+        endDate: formatDateTime(values.endDate),
+        description: values.description,
+      },
+    }).then(async () => {
+      loadingUpdate.value = false
+      showToast('success', 'Success', 'Absence has been updated')
+      // refetch
+      await refetchAbsences()
+      // close modal
+      closeModal()
+    })
+  }
+  loadingUpdate.value = false
+}
+
 // handle delete
 const handleDelete = async (absence: Absence) => {
   await deleteAbsence({
@@ -222,8 +341,21 @@ const openModal = (absence: Absence | null = null, type: string) => {
     visible.value.detail = true
   } else if (type === 'edit' && absence) {
     selectedAbsence.value = { ...absence }
+    setValues({
+      id: absence.id,
+      startDate: formatDateTime(absence.startDate!),
+      endDate: formatDateTime(absence.endDate!),
+      type: absence.type,
+      description: absence.description,
+    })
     visible.value.edit = true
   } else if (type === 'create') {
+    setValues({
+      startDate: '',
+      endDate: '',
+      type: '',
+      description: '',
+    })
     visible.value.create = true
   }
 }
