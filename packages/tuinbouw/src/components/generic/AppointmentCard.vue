@@ -113,10 +113,7 @@ const props = defineProps({
   appointment: Object as PropType<Appointment>,
 })
 
-console.log("current appointment", props.appointment)
-
 const appointmentIsDone = ref(props.appointment?.isDone)
-console.log(appointmentIsDone.value)
 
 // const updatedAppointment = ref<Appointment>(props.appointment)
 
@@ -129,7 +126,6 @@ const closeModal = () => {
 }
 
 const handleAppointmentUpdate = () => {
-  console.log("appointment is done", appointmentIsDone.value)
   updateAppointment({
     updateAppointmentInput: {
       id: props.appointment!.id,
