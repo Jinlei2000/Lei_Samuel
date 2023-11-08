@@ -18,10 +18,10 @@
   </div>
 
   <!-- show absences -->
-  <div v-if="absences && absences.absences.length > 0">
+  <div v-if="absences && absences.absencesByUserId.length > 0">
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div
-        v-for="a in absences.absences"
+        v-for="a in absences.absencesByUserId"
         :key="a.id"
         class="overflow-hidden rounded-lg bg-white shadow"
       >
@@ -89,11 +89,13 @@
   </Dialog>
 
   <!-- Edit Modal -->
+  
   <!-- Create Modal -->
 </template>
 
 <script setup lang="ts">
 import useCustomToast from '@/composables/useCustomToast'
+import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import {
   CREATE_ABSENCE,
@@ -112,9 +114,11 @@ import * as yup from 'yup'
 // composables
 const { showToast } = useCustomToast()
 const { formatDateTime } = useTimeUtilities()
+const { customUser } = useCustomUser()
 
 // variables
 const variables = ref<VariablesProps>({
+  userId: customUser.value?.id,
   filters: [],
   order: {
     field: 'createdAt',
@@ -142,10 +146,10 @@ const schema = yup.object({
 const errorMessages = ref<{
   [key: string]: string | undefined
 }>({
-  startDate: undefined,
-  endDate: undefined,
-  type: undefined,
-  description: undefined,
+  startDate: '',
+  endDate: '',
+  type: '',
+  description: '',
 })
 
 // create form

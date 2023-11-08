@@ -34,7 +34,7 @@
     - [removeAllMailTokensByUserId](#removeallmailtokensbyuserid)
   - [Absences](#absences)
     - [absences(filters: , order: { field, direction })](#absencesfilters--order--field-direction-)
-    - [absencesByUserId(filters: , order: { field, direction })](#absencesbyuseridfilters--order--field-direction-)
+    - [absencesByUserId(userId ,filters , order: { field, direction })](#absencesbyuseriduserid-filters--order--field-direction-)
     - [absence(id)](#absenceid)
     - [createAbsence](#createabsence)
     - [updateAbsence](#updateabsence)
@@ -821,9 +821,9 @@ query {
 }
 ```
 
-### absencesByUserId(filters: , order: { field, direction })
+### absencesByUserId(userId ,filters , order: { field, direction })
 
-absencesByUserId(personId: String, filters: [String], order: { field: String, direction: String })
+absencesByUserId(userId: String, filters: [String], order: { field: String, direction: String })
 
 Filters can be:
 
