@@ -82,9 +82,12 @@ export class UsersService {
 
   // find all employees that are available on a specific date (not absent && not scheduled)
   async findAvailableEmployeesByDate(date: Date): Promise<User[]> {
-    const absentIds = await this.absenceService.findAllUsersByDate(date)
+    const selectedDate = new Date(date)
+    // return empty array if date is invalid
+    if (isNaN(selectedDate.getTime())) return []
+    const absentIds = await this.absenceService.findAllUsersByDate(selectedDate)
     const scheduledIds =
-      await this.scheduleService.findAllScheduledUsersByDate(date)
+      await this.scheduleService.findAllScheduledUsersByDate(selectedDate)
 
     // dont show users that are absent or scheduled or null or empty (account not made yet)
     const ids = [...absentIds, ...scheduledIds, null, '']
@@ -213,6 +216,11 @@ export class UsersService {
       await this.scheduleService.updateAllByEmployee(user)
       // remove user from all materials
       await this.materialsService.updateAllByUserId(id)
+    }
+
+    if (user.role === Role.ADMIN || user.role === Role.EMPLOYEE) {
+      // delete all absences of user in the future
+      await this.absenceService.removeAllByUserId(id)
     }
 
     // delete user

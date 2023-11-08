@@ -7,11 +7,26 @@
   <h1
     class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
   >
-    Add Schedule
+    Schedules Edit
   </h1>
 
-  <!-- form -->
-  <form @submit.prevent="handleCreateSchedule">
+  <!-- reset all values back -->
+  <CustomButton @click="reset()" type="button" name="Reset" />
+
+  <!-- loading -->
+  <div
+    v-if="
+      scheduleLoading &&
+      loadingAppointments &&
+      loadingEmployees &&
+      loadingMaterials
+    "
+  >
+    <p class="text-6xl font-black">Loading Schedule...</p>
+  </div>
+
+  <!-- show schedule -->
+  <form v-if="schedule" @submit.prevent="handleUpdateSchedule">
     <!-- Final Date -->
     <div v-if="next === 0">
       <h1>Final Date</h1>
@@ -24,7 +39,9 @@
 
       <div class="flex flex-col">
         <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">
-          Choose a date
+          Your selected date is: {{ formatDateTime(values.finalDate) }}
+          <hr />
+          Do you want to change it?
         </h1>
 
         <!-- loading appointments & employees -->
@@ -36,8 +53,8 @@
         <Calendar
           id="finalDate"
           inline
-          v-bind="finalDate"
           :manualInput="false"
+          v-bind="finalDate"
           :minDate="minDate"
           dateFormat="yy-mm-dd"
           @date-select="checkAvailability()"
@@ -62,7 +79,66 @@
         <h1 class="flex animate-pulse space-x-4">Loading...</h1>
       </div>
 
+      <!-- show selected appointments -->
+      <h1>Your selected</h1>
+      <div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-if="selectedAppointmentsEdit.length > 0"
+            v-for="a of selectedAppointmentsEdit"
+            :key="a.id"
+          >
+            <div
+              :class="[
+                'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
+                isItemSelected(a.id!, appointmentsIds.modelValue)
+                  ? 'border-2 border-green-500'
+                  : '',
+              ]"
+            >
+              <div class="p-4">
+                <!-- Add checkbox for selection -->
+                <input
+                  type="checkbox"
+                  class="mr-2"
+                  @click="addSelectedAppointment(a)"
+                  :checked="isItemSelected(a.id!, appointmentsIds.modelValue)"
+                />
+                <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
+                <p class="mb-1 text-gray-600">{{ a.description }}</p>
+                <p class="mb-1 text-gray-600">{{ a.id }}</p>
+                <p class="text-gray-600" v-if="a.finalDate">
+                  {{ formatDateTime(a.finalDate.toString()) }}
+                </p>
+              </div>
+              <div class="border-t border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-500"
+                    >{{ formatDateTime(a.startProposedDate!.toString()) }} -
+                    {{ formatDateTime(a.endProposedDate!.toString()) }}</span
+                  >
+                  <span v-if="a.isScheduled" class="text-green-500"
+                    >Scheduled</span
+                  >
+                  <span v-else class="text-gray-500">Not Scheduled</span>
+                </div>
+              </div>
+              <div class="border-t border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                  <span v-if="a.isDone" class="text-green-500">Done</span>
+                  <span v-else class="text-gray-500">Not Done</span>
+                  <span class="text-sm text-gray-500"
+                    >Priority: {{ a.priority }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- show appointments -->
+      <h1>Available appointments</h1>
       <div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div
@@ -117,32 +193,25 @@
                   >
                 </div>
               </div>
-
-              <div
-                class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-              >
-                <!-- View More Button -->
-                <!-- TODO: make only if design need it? -->
-                <!-- @click="openModal(a, 'detail')" -->
-                <button class="text-green-500 hover:underline">
-                  <Eye />
-                </button>
-              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- no appointments -->
-          <div
-            v-else
-            class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
-          >
-            <div class="p-4">
-              <h2 class="mb-2 text-xl font-semibold">No appointments</h2>
-              <p class="mb-1 text-gray-600">
-                There are no appointments available for this date
-              </p>
-            </div>
-          </div>
+      <!-- no appointments -->
+      <div
+        v-if="
+          appointments &&
+          appointments.appointmentsAvailableByDate.length === 0 &&
+          selectedAppointmentsEdit.length === 0
+        "
+        class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
+      >
+        <div class="p-4">
+          <h2 class="mb-2 text-xl font-semibold">No appointments</h2>
+          <p class="mb-1 text-gray-600">
+            There are no appointments available for this date
+          </p>
         </div>
       </div>
     </div>
@@ -229,7 +298,41 @@
         <h1 class="flex animate-pulse space-x-4">Loading...</h1>
       </div>
 
+      <!-- show selected employees -->
+      <h1>Your selected</h1>
+      <div v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-for="user in selectedEmployeesEdit"
+            :key="user.id"
+            class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+            :class="
+              isItemSelected(user.id, employeesIds.modelValue)
+                ? 'border border-green-500'
+                : ''
+            "
+          >
+            <!-- Add checkbox for selection -->
+            <input
+              type="checkbox"
+              class="mr-2"
+              @click="addSelectedEmployee(user)"
+              :checked="isItemSelected(user.id, employeesIds.modelValue)"
+            />
+            <div class="p-6">
+              <h2 class="mb-2 text-2xl font-semibold">
+                {{ user.firstname }} {{ user.lastname }}
+              </h2>
+              <p class="text-gray-600">{{ user.email }}</p>
+              <p class="text-gray-600">{{ user.role }}</p>
+              <p class="text-gray-600">{{ user.uid }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- show employees -->
+      <h1>Available employees</h1>
       <div
         v-if="employees && employees.usersEmployeesAvailableByDate.length > 0"
       >
@@ -275,7 +378,45 @@
         <h1 class="flex animate-pulse space-x-4">Loading...</h1>
       </div>
 
+      <!-- show selected materials -->
+      <h1>Your selected</h1>
+      <div
+        class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+      >
+        <div
+          v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
+          v-for="material of selectedMaterialsEdit"
+          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+          :key="material.id"
+          :class="
+            isItemSelected(material.id, materialsIds.modelValue)
+              ? 'border-2 border-green-500'
+              : ''
+          "
+        >
+          <!-- Add checkbox for selection -->
+          <input
+            type="checkbox"
+            class="mr-2"
+            @click="addSelectedMaterial(material)"
+            :checked="isItemSelected(material.id, materialsIds.modelValue)"
+          />
+          <img
+            class="w-full rounded-2xl rounded-b-3xl"
+            src="https://picsum.photos/200"
+            alt="random picture"
+          />
+          <div
+            class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
+          >
+            <h2 class="truncate text-lg">{{ material.name }}</h2>
+            <p class="m-0">Loanable: {{ material.isLoan }}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- show materials -->
+      <h1>Available materials</h1>
       <div
         class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
@@ -317,8 +458,8 @@
       <h1>See All</h1>
       <CustomButton name="Back" type="button" @click="handleBack()" />
       <CustomButton
-        name="Create Schedule"
-        :loading="loadingCreate"
+        name="Update Schedule"
+        :loading="loadingUpdate"
         type="submit"
       />
 
@@ -373,35 +514,41 @@
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
 import useCustomToast from '@/composables/useCustomToast'
-import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import { GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE } from '@/graphql/appointment.query'
 import { GET_MATERIALS_AVAILABLE } from '@/graphql/material.query'
-import { CREATE_SCHEDULE } from '@/graphql/schedule.mutation'
+import { UPDATE_SCHEDULE } from '@/graphql/schedule.mutation'
+import { GET_SCHEDULE_BY_ID } from '@/graphql/schedule.query'
 import { GET_EMPLOYEES_AVAILABLE_BY_DATE } from '@/graphql/user.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, Eye } from 'lucide-vue-next'
-import Calendar from 'primevue/calendar'
-import InputNumber from 'primevue/inputnumber'
+import { ArrowLeft } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as yup from 'yup'
 
+// TODO: add steps (next.value) to the url as query params (e.g. /schedules/edit?step=1)
+// TODO: use useLazyQuery for materials and (employees or users) to prevent loading all materials and (employees or appointments)
+
 // composables
 const { showToast } = useCustomToast()
-const { replace } = useRouter()
 const { formatDateTime } = useTimeUtilities()
-const { customUser } = useCustomUser()
+const { currentRoute, go } = useRouter()
 
 // variables
-// today + 1 day
 const minDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
-const loadingCreate = ref(false)
+const next = ref(0)
+const selectedAppointments = ref<Appointment[]>([])
+const selectedAppointmentsEdit = ref<Appointment[]>([])
+const selectedEmployees = ref<CustomUser[]>([])
+const selectedEmployeesEdit = ref<CustomUser[]>([])
+const selectedMaterials = ref<Material[]>([])
+const selectedMaterialsEdit = ref<Material[]>([])
+const loadingUpdate = ref(false)
 
 // form
 const schema = yup.object({
@@ -422,7 +569,7 @@ const errorMessages = ref<{
   prices: '',
 })
 
-// create form
+// update form
 const { defineComponentBinds, errors, values, validate, setValues } = useForm({
   validationSchema: schema,
 })
@@ -432,17 +579,27 @@ const appointmentsIds = defineComponentBinds('appointmentsIds')
 const employeesIds = defineComponentBinds('employeesIds')
 const materialsIds = defineComponentBinds('materialsIds')
 
-const next = ref(0)
-const selectedAppointments = ref<Appointment[]>([])
-const selectedEmployees = ref<CustomUser[]>([])
-const selectedMaterials = ref<Material[]>([])
-
 // graphql
-const { mutate: createSchedule, error: errorCreateSchedule } =
-  useMutation(CREATE_SCHEDULE)
-
 const { mutate: updateAppointment, error: errorUpdateAppointment } =
   useMutation(UPDATE_APPOINTMENT)
+
+const { mutate: updateschedule, error: errorUpdateschedule } =
+  useMutation(UPDATE_SCHEDULE)
+
+const {
+  result: schedule,
+  loading: scheduleLoading,
+  error: scheduleError,
+} = useQuery(
+  GET_SCHEDULE_BY_ID,
+  () => ({
+    // get id out of params
+    id: currentRoute.value.params.id,
+  }),
+  {
+    fetchPolicy: 'cache-and-network',
+  },
+)
 
 const {
   result: appointments,
@@ -483,13 +640,13 @@ const {
 })
 
 // logics
-// create schedule
-const handleCreateSchedule = async () => {
-  loadingCreate.value = true
+const handleUpdateSchedule = async () => {
+  loadingUpdate.value = true
   await validate()
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
-    console.log('no errors', values)
+    // console.log('no errors', values)
+    const { finalDate, appointmentsIds, employeesIds, materialsIds } = values
 
     // update appointments with price
     for (const a of selectedAppointments.value) {
@@ -502,37 +659,64 @@ const handleCreateSchedule = async () => {
         },
       })
     }
-    // create schedule
-    await createSchedule({
-      createScheduleInput: {
-        finalDate: formatDateTime(values.finalDate),
-        appointmentIds: values.appointmentsIds,
-        employeeIds: values.employeesIds,
-        materialIds: values.materialsIds,
-        createdBy: customUser.value?.fullname,
+
+    // update appointments that unselected from schedule (isScheduled = false, finalDate = null)
+    const unselectedAppointmentsIds = selectedAppointmentsEdit.value
+      .map(a => a.id)
+      .filter(id => !appointmentsIds.includes(id))
+    for (const id of unselectedAppointmentsIds) {
+      await updateAppointment({
+        updateAppointmentInput: {
+          id: id,
+          isScheduled: false,
+          finalDate: null,
+        },
+      })
+    }
+
+    // update schedule
+    await updateschedule({
+      updateScheduleInput: {
+        id: schedule.value?.schedule.id,
+        finalDate: formatDateTime(finalDate),
+        appointmentIds: appointmentsIds,
+        employeeIds: employeesIds,
+        materialIds: materialsIds,
       },
-    }).then(async ({ data }: any) => {
-      loadingCreate.value = false
-      showToast('success', 'Success', 'Schedule created')
-      // redirect to schedule detail page
-      replace(`/admin/schedules/${data?.createSchedule.id}`)
+    }).then(() => {
+      loadingUpdate.value = false
+      showToast('success', 'Success', 'Schedule updated')
+      go(-1)
     })
   }
-  loadingCreate.value = false
+
+  loadingUpdate.value = false
 }
 
-// go to next step
 const handleNext = async () => {
   // validate first step (final date)
   if (next.value === 0) {
     await validate()
     errorMessages.value.finalDate = errors.value.finalDate
     if (!errors.value.finalDate) {
-      setValues({
-        appointmentsIds: [],
-        employeesIds: [],
-        materialsIds: [],
-      })
+      // reset if final date is changed
+      if (
+        formatDateTime(schedule.value?.schedule.finalDate) !==
+        formatDateTime(values.finalDate)
+      ) {
+        selectedAppointments.value = []
+        selectedEmployees.value = []
+        selectedMaterials.value = []
+        selectedAppointmentsEdit.value = []
+        selectedEmployeesEdit.value = []
+        selectedMaterialsEdit.value = []
+
+        setValues({
+          appointmentsIds: [],
+          employeesIds: [],
+          materialsIds: [],
+        })
+      }
       next.value++
     }
   }
@@ -578,29 +762,11 @@ const handleNext = async () => {
   }
 }
 
-// go to previous step
-const handleBack = async () => {
+const handleBack = () => {
   if (next.value === 1) {
-    // reset values
-    setValues({
-      appointmentsIds: [],
-      employeesIds: [],
-      materialsIds: [],
-    })
-    selectedAppointments.value = []
-  } else if (next.value === 3) {
-    // reset values
-    setValues({
-      employeesIds: [],
-    })
-    selectedEmployees.value = []
-  } else if (next.value === 4) {
-    // reset values
-    setValues({
-      materialsIds: [],
-    })
+    // set all values to the original values
+    setAllValues()
   }
-
   // reset errors
   errorMessages.value = {
     finalDate: '',
@@ -709,24 +875,87 @@ const checkAvailability = async () => {
   // reset error messages
   errorMessages.value.finalDate = ''
   let error = ''
-  await refetchAppointments()
-  await refetchEmployees()
+
+  // if final date is changed, reset selected appointments and employees
   if (
-    appointments.value.appointmentsAvailableByDate.length === 0 &&
-    employees.value.usersEmployeesAvailableByDate.length === 0
+    formatDateTime(schedule.value?.schedule.finalDate) !==
+    formatDateTime(values.finalDate)
   ) {
-    error = 'No appointments and employees available for this date'
+    await refetchAppointments()
+    await refetchEmployees()
+    if (
+      appointments.value.appointmentsAvailableByDate.length === 0 &&
+      employees.value.usersEmployeesAvailableByDate.length === 0
+    ) {
+      error = 'No appointments and employees available for this date'
+    }
+    // check if there are appointments available for the selected date
+    else if (appointments.value.appointmentsAvailableByDate.length === 0) {
+      error = 'No appointments available for this date'
+    }
+    // check if there are employees available for the selected date
+    else if (employees.value.usersEmployeesAvailableByDate.length === 0) {
+      error = 'No employees available for this date'
+    }
+
+    errorMessages.value.finalDate = error
   }
-  // check if there are appointments available for the selected date
-  else if (appointments.value.appointmentsAvailableByDate.length === 0) {
-    error = 'No appointments available for this date'
-  }
-  // check if there are employees available for the selected date
-  else if (employees.value.usersEmployeesAvailableByDate.length === 0) {
-    error = 'No employees available for this date'
+}
+
+// set all values for edit
+const setAllValues = () => {
+  setValues({
+    finalDate: schedule.value?.schedule.finalDate,
+    appointmentsIds: schedule.value?.schedule.appointments.map(
+      (a: Appointment) => a.id,
+    ),
+    employeesIds: schedule.value?.schedule.employees.map(
+      (e: CustomUser) => e.id,
+    ),
+    materialsIds: schedule.value?.schedule.materials.map((m: Material) => m.id),
+  })
+
+  // set selected appointments
+  selectedAppointmentsEdit.value = schedule.value?.schedule.appointments.map(
+    (a: Appointment) => ({ ...a }),
+  )
+  selectedAppointments.value = schedule.value?.schedule.appointments.map(
+    (a: Appointment) => ({ ...a }),
+  )
+
+  // set selected employees
+  selectedEmployeesEdit.value = schedule.value?.schedule.employees.map(
+    (e: CustomUser) => ({ ...e }),
+  )
+  selectedEmployees.value = schedule.value?.schedule.employees.map(
+    (e: CustomUser) => ({ ...e }),
+  )
+
+  // set selected materials
+  selectedMaterialsEdit.value = schedule.value?.schedule.materials.map(
+    (m: Material) => ({ ...m }),
+  )
+  selectedMaterials.value = schedule.value?.schedule.materials.map(
+    (m: Material) => ({ ...m }),
+  )
+}
+
+// reset all values back
+const reset = () => {
+  // reset all values
+  setAllValues()
+
+  // reset errors
+  errorMessages.value = {
+    finalDate: '',
+    appointmentsIds: '',
+    employeesIds: '',
+    materialsIds: '',
+    prices: '',
   }
 
-  errorMessages.value.finalDate = error
+  // reset next
+  next.value = 0
 }
 
 watchEffect(() => {
@@ -735,17 +964,22 @@ watchEffect(() => {
   // if (employees.value) console.log(employees.value)
   // if (materials.value) console.log(materials.value)
 
+  // set all values
+  if (schedule.value) {
+    setAllValues()
+  }
+
   // all errors
   const errors = [
-    errorCreateSchedule.value,
+    scheduleError.value,
     errorAppointments.value,
     errorEmployees.value,
     errorMaterials.value,
     errorUpdateAppointment.value,
+    errorUpdateschedule.value,
   ]
   errors.forEach(error => {
     if (error) {
-      loadingCreate.value = false
       showToast('error', 'Error', error.message)
     }
   })

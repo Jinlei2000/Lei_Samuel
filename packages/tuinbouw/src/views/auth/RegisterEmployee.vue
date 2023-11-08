@@ -98,23 +98,31 @@ import { useI18n } from 'vue-i18n'
 import { GET_MAILTOKEN_BY_TOKEN } from '@/graphql/mail.token.query'
 import useCustomUser from '@/composables/useCustomUser'
 import { DELETE_ALL_MAILTOKENS_BY_USERID } from '@/graphql/mail.token.mutation'
+import { useRouter } from 'vue-router'
 
 // Composables
 const { register } = useFirebase()
-const { restoreCustomUser } = useCustomUser()
+const { restoreCustomUser, customUser } = useCustomUser()
+const { replace } = useRouter()
+
+// GraphQL
 const { mutate: updateEmployee, error: addEmployeeError } =
   useMutation<CustomUser>(UPDATE_EMPLOYEE_REGISTER)
+
 const {
   mutate: deleteAllMailTokensByUserId,
   error: deleteAllMailTokensByUserIdError,
 } = useMutation(DELETE_ALL_MAILTOKENS_BY_USERID)
+
 const { result: mailTokenResult, error: mailTokenError } = useQuery(
   GET_MAILTOKEN_BY_TOKEN,
   () => ({
-    token: router.currentRoute.value.query.token,
+    token: router.currentRoute.value.params.token,
   }),
 )
 const { locale } = useI18n()
+
+customUser.value = null
 
 const setError = (
   watchedValue: Ref<any | null>,
@@ -137,9 +145,11 @@ const schema = yup.object({
   firstName: yup.string().required(),
   lastName: yup.string().required(),
 })
+
 const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
   validationSchema: schema,
 })
+
 const email = defineComponentBinds('email')
 const password = defineComponentBinds('password')
 const firstName = defineComponentBinds('firstName')
@@ -186,7 +196,7 @@ const handleRegister = async () => {
           })
           console.log('register success')
           resetForm()
-          router.replace('/auth/login')
+          replace('/auth/login')
         })
         .catch(error => {
           console.log(error.message)

@@ -64,7 +64,10 @@ export default {
       'Appointments',
       'Users',
       'Profile',
-      'schedule-appointment',
+      'Schedules',
+      'Materials',
+      'Add-Schedule',
+      'Absences'
     ])
     const { firebaseUser, logout } = useFirebase()
     const { setLocale, locale } = useLanguage()

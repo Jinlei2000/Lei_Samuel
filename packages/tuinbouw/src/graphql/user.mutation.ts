@@ -39,6 +39,7 @@ export const UPDATE_LOCALE = gql`
     }
   }
 `
+
 export const UPDATE_EMPLOYEE_REGISTER = gql`
   mutation updateEmployeeRegister($updateUserInput: UpdateUserInput!) {
     updateEmployeeRegister(updateUserInput: $updateUserInput) {
@@ -122,6 +123,30 @@ export const UPDATE_USER = gql`
       invoiceOption
       company
       btwNumber
+    }
+  }
+`
+
+export const UPDATE_USER_TO_ADMIN = gql`
+  mutation userUpgradeToAdmin($id: String!) {
+    userUpgradeToAdmin(id: $id) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      email
+      telephone
+      createdAt
+      updatedAt
+      locations {
+        id
+      }
+      # Additional fields for staff
+      absentCount
     }
   }
 `

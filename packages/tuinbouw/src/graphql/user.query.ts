@@ -63,3 +63,30 @@ export const GET_USERS = gql`
     }
   }
 `
+
+export const GET_EMPLOYEES_AVAILABLE_BY_DATE = gql`
+  query usersEmployeesAvailableByDate($date: String!) {
+    usersEmployeesAvailableByDate(date: $date) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      locations {
+        id
+        userId
+        address
+        createdAt
+        updatedAt
+      }
+      email
+      telephone
+      createdAt
+      updatedAt
+      absentCount
+    }
+  }
+`

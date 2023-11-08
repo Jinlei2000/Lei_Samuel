@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
+  <div class="flex min-h-screen items-center justify-center">
     <div class="text-center">
       <h1
-        class="text-transparent mb-4 text-3xl font-extrabold md:text-5xl lg:text-6xl bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400"
+        class="mb-4 bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
       >
         AllAppointments
       </h1>
@@ -10,7 +10,7 @@
       <!-- list of 10 buttons -->
       <RouterLink
         v-for="i in 5"
-        class="mt-4 mr-2 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
+        class="focus:shadow-outline-red mr-2 mt-4 rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
         :to="`/admin/appointment/${i}`"
       >
         {{ i }}
@@ -19,10 +19,4 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  setup() {
-    return {}
-  },
-}
-</script>
+<script setup lang="ts"></script>
