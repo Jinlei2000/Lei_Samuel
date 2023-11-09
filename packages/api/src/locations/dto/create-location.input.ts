@@ -7,4 +7,10 @@ export class CreateLocationInput {
 
   @Field() // graphql
   userId: string
+
+  @Field() // graphql
+  lat: number
+
+  @Field() // graphql
+  lng: number
 }

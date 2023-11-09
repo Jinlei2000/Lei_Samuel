@@ -414,7 +414,7 @@ const {
   validate: validateLocation,
 } = useForm({
   validationSchema: yup.object({
-    searchAdressInput: yup.string().required(),
+    searchAdressInput: yup.string().required().trim(),
     selectedAddress: yup.object().required(),
   }),
 })
@@ -459,11 +459,8 @@ const {
   error: updateLocationError,
 } = useMutation(UPDATE_LOCATION)
 
-const {
-  mutate: deleteLocation,
-  loading: deleteLocationLoading,
-  error: deleteLocationError,
-} = useMutation(DELETE_LOCATION)
+const { mutate: deleteLocation, error: deleteLocationError } =
+  useMutation(DELETE_LOCATION)
 
 // logics
 // handle delete user

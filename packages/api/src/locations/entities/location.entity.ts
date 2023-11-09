@@ -23,6 +23,14 @@ export class Location {
   @Field() // GraphQL type
   address: string
 
+  @Column() // Database link - Typeorm
+  @Field() // GraphQL type
+  lat: number
+
+  @Column() // Database link - Typeorm
+  @Field() // GraphQL type
+  lng: number
+
   @CreateDateColumn({ type: 'timestamp', nullable: true }) // Database link - Typeorm
   @Field({ nullable: true }) // GraphQL type
   createdAt?: Date
