@@ -197,8 +197,9 @@ export class AbsencesService {
           userId: currentAbsence.userId,
         },
       })
-      console.log(absences)
-      if (absences.length > 0)
+      // console.log(absences)
+      // because the current absence is also in the array, we need to check if the array length is greater than 1
+      if (absences.length > 1)
         throw new GraphQLError('User already has an absence on the same date!')
 
       // calculate total days
