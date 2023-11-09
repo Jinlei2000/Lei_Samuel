@@ -47,39 +47,46 @@
           </p>
         </div>
         <!-- Locations -->
-        <div v-if="user.locations && user.locations.length > 0" class="mt-4">
+        <div>
           <h3 class="text-lg font-semibold text-gray-900">Locations</h3>
           <!-- Button for adding a new location -->
-          <!-- v-if="user.locations.length === 0 || user.role === Role.CLIENT" -->
           <CustomButton
+            v-if="user.locations?.length === 0 || user.role === Role.CLIENT"
             name="Add New Location"
             :loading="loadingCreateLocation"
-            @click="addNewLocation()"
+            @click="openModal(null, 'create')"
           />
-
-          <!-- show all locations -->
-          <div v-for="location in user.locations" :key="location.id">
-            <div class="mt-4 overflow-hidden rounded-lg bg-white p-4 shadow">
-              <h3 class="text-lg font-semibold text-gray-900">
-                {{ location.id }}
-              </h3>
-              <p class="mt-2 text-sm font-medium text-gray-600">
-                Address: {{ location.address }}
-              </p>
-              <!-- Edit and Delete buttons -->
-              <div class="mt-2 flex">
-                <button
-                  @click="editLocation(location.id)"
-                  class="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                >
-                  <Pencil />
-                </button>
-                <button
-                  @click="deleteLocation(location.id)"
-                  class="rounded-md bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                >
-                  <Trash2 />
-                </button>
+          <div v-if="user.locations && user.locations.length > 0" class="mt-4">
+            <!-- show all locations -->
+            <div v-for="location in user.locations" :key="location.id">
+              <div class="mt-4 overflow-hidden rounded-lg bg-white p-4 shadow">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  {{ location.id }}
+                </h3>
+                <p class="mt-2 text-sm font-medium text-gray-600">
+                  Address: {{ location.address }}
+                </p>
+                <!-- Edit and Delete buttons -->
+                <div class="mt-2 flex">
+                  <button
+                    @click="handleDeleteLocation(location.id)"
+                    class="rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                  >
+                    <Eye />
+                  </button>
+                  <button
+                    @click="openModal(location, 'detail')"
+                    class="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                  >
+                    <Pencil />
+                  </button>
+                  <button
+                    @click="handleDeleteLocation(location.id)"
+                    class="rounded-md bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                  >
+                    <Trash2 />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -186,6 +193,64 @@
       />
     </form>
   </div>
+
+  <!-- Detail Location Modal -->
+  <Dialog
+    v-model:visible="visibleLocation.detail"
+    modal
+    maximizable
+    header="Location Details"
+    :style="{ width: '50vw' }"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <div v-if="selectedLocation">
+      <h2 class="mb-2 text-xl font-semibold">
+        {{ selectedLocation.id }}
+      </h2>
+      <p class="text-gray-600">
+        {{ selectedLocation.address }}
+      </p>
+    </div>
+  </Dialog>
+
+  <!-- Edit Location Modal -->
+  <Dialog
+    v-model:visible="visibleLocation.edit"
+    modal
+    maximizable
+    header="Edit Location"
+    :style="{ width: '50vw' }"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <form @submit.prevent="handleUpdateUser">
+      <CustomButton
+        type="submit"
+        name="Update Location"
+        :loading="loadingUpdateLocation"
+      />
+    </form>
+  </Dialog>
+
+  <!-- Create Location Modal -->
+  <Dialog
+    v-model:visible="visibleLocation.create"
+    modal
+    maximizable
+    header="Create Location"
+    :style="{ width: '50vw' }"
+    @click:close="closeModal"
+    class="max-w-lg"
+  >
+    <form @submit.prevent="handleCreateLocation">
+      <CustomButton
+        type="submit"
+        name="Create Location"
+        :loading="loadingCreateLocation"
+      />
+    </form>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -195,15 +260,27 @@ import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
-import { GET_USER_BY_ID } from '@/graphql/user.query'
 import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { Pencil, Trash2, ArrowLeft, ChevronDownIcon } from 'lucide-vue-next'
+import {
+  Pencil,
+  Trash2,
+  ArrowLeft,
+  Eye,
+  ChevronDownIcon,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as yup from 'yup'
 import InputText from '@/components/generic/form/InputText.vue'
+import { GET_USER_BY_ID } from '@/graphql/user.query'
+import {
+  CREATE_LOCATION,
+  UPDATE_LOCATION,
+  DELETE_LOCATION,
+} from '@/graphql/location.mutation'
+import type { Location } from '@/interfaces/location.interface'
 
 // composables
 const { customUser } = useCustomUser()
@@ -217,6 +294,13 @@ const isEditing = ref(false)
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
 const loadingCreateLocation = ref(false)
 const loadingUpdateUser = ref(false)
+const loadingUpdateLocation = ref(false)
+const visibleLocation = ref({
+  detail: false,
+  edit: false,
+  create: false,
+})
+const selectedLocation = ref<Location | null>(null)
 
 // form
 const schema = yup.object({
@@ -293,6 +377,21 @@ const {
   error: deleteUserError,
 } = useMutation(DELETE_USER)
 
+const { mutate: createLocation, error: createLocationError } =
+  useMutation(CREATE_LOCATION)
+
+const {
+  mutate: updateLocation,
+  loading: updateLocationLoading,
+  error: updateLocationError,
+} = useMutation(UPDATE_LOCATION)
+
+const {
+  mutate: deleteLocation,
+  loading: deleteLocationLoading,
+  error: deleteLocationError,
+} = useMutation(DELETE_LOCATION)
+
 // logics
 // handle delete user
 const handleDeleteUser = async () => {
@@ -333,6 +432,7 @@ const handleUpdateUser = async () => {
     }).then(() => {
       showToast('success', 'Success', `You have updated your profile`)
       setEditing(false)
+      resetForm()
       refetchUser()
     })
   }
@@ -340,11 +440,18 @@ const handleUpdateUser = async () => {
 }
 
 // add new location
-const addNewLocation = async () => {}
-// edit location
-const editLocation = async (id: string) => {}
+const handleCreateLocation = async () => {}
+// update location
+const handleUpdateLocation = async (id: string) => {}
 // delete location
-const deleteLocation = async (id: string) => {}
+const handleDeleteLocation = async (id: string) => {
+  await deleteLocation({
+    id: id,
+  }).then(() => {
+    showToast('success', 'Success', `You have deleted a location`)
+    refetchUser()
+  })
+}
 
 const setEditing = (value: boolean) => {
   isEditing.value = value
@@ -369,12 +476,40 @@ const setEditing = (value: boolean) => {
   }
 }
 
+const openModal = (user: Location | null = null, type: string) => {
+  if (type === 'detail' && user) {
+    selectedLocation.value = { ...user }
+    visibleLocation.value.detail = true
+  } else if (type === 'edit' && user) {
+    selectedLocation.value = { ...user }
+    visibleLocation.value.edit = true
+  } else if (type === 'create') {
+    visibleLocation.value.create = true
+  }
+}
+
+const closeModal = () => {
+  selectedLocation.value = null
+  visibleLocation.value = {
+    detail: false,
+    edit: false,
+    create: false,
+  }
+}
+
 watchEffect(() => {
   // log the queries
   // if (userResult.value) console.log(userResult.value)
 
   // all errors
-  const errors = [userError.value, updateUserError.value, deleteUserError.value]
+  const errors = [
+    userError.value,
+    updateUserError.value,
+    deleteUserError.value,
+    createLocationError.value,
+    updateLocationError.value,
+    deleteLocationError.value,
+  ]
   errors.forEach(error => {
     if (error) {
       loadingCreateLocation.value = false

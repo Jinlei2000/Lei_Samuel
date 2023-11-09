@@ -185,7 +185,7 @@
 
       <CustomButton
         type="submit"
-        name="Create Employee"
+        name="Update Employee"
         :loading="loadingUpdate"
       />
     </form>
