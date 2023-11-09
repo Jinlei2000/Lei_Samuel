@@ -310,7 +310,11 @@ const handleDeleteUser = async () => {
   })
 }
 // handle update user
-const handleUpdateUser = async () => {}
+const handleUpdateUser = async () => {
+  loadingUpdateUser.value = true
+
+  loadingUpdateUser.value = false
+}
 
 // add new location
 const addNewLocation = async () => {}
@@ -327,6 +331,9 @@ watchEffect(() => {
   const errors = [userError.value, updateUserError.value, deleteUserError.value]
   errors.forEach(error => {
     if (error) {
+      loadingCreateLocation.value = false
+      loadingUpdateUser.value = false
+
       showToast('error', 'Error', error.message)
     }
   })
