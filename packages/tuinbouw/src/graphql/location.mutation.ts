@@ -20,6 +20,8 @@ export const UPDATE_LOCATION = gql`
       id
       userId
       address
+      lat
+      lng
       createdAt
       updatedAt
     }

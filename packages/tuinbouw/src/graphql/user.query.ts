@@ -15,6 +15,8 @@ export const GET_USER_BY_UID = gql`
         id
         userId
         address
+        lng
+        lat
         createdAt
         updatedAt
       }
@@ -49,6 +51,8 @@ export const GET_USERS = gql`
         id
         userId
         address
+        lng
+        lat
         createdAt
         updatedAt
       }
@@ -79,6 +83,8 @@ export const GET_EMPLOYEES_AVAILABLE_BY_DATE = gql`
         id
         userId
         address
+        lng
+        lat
         createdAt
         updatedAt
       }
@@ -106,6 +112,8 @@ export const GET_USER_BY_ID = gql`
         id
         userId
         address
+        lng
+        lat
         createdAt
         updatedAt
       }

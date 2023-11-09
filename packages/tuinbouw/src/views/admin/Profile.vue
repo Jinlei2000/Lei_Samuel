@@ -66,6 +66,9 @@
                 <p class="mt-2 text-sm font-medium text-gray-600">
                   Address: {{ location.address }}
                 </p>
+                <p class="text-gray-600">
+                  Latitude: {{ location.lat }} {{ location.lng }}
+                </p>
                 <!-- Edit and Delete buttons -->
                 <div class="mt-2 flex">
                   <button
@@ -211,6 +214,21 @@
       <p class="text-gray-600">
         {{ selectedLocation.address }}
       </p>
+
+      <div class="h-80 w-full overflow-auto rounded-3xl">
+        <Map
+          :coordinates="[
+            {
+              lat: selectedLocation.lat!,
+              lng: selectedLocation.lng!,
+            },
+            // {
+            //   lat: 50.8465573,
+            //   lng: 4.351697,
+            // },
+          ]"
+        />
+      </div>
     </div>
   </Dialog>
 
@@ -318,7 +336,7 @@ import {
   ChevronDownIcon,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as yup from 'yup'
 import InputText from '@/components/generic/form/InputText.vue'
@@ -331,6 +349,7 @@ import {
 import type { Location } from '@/interfaces/location.interface'
 import useTomTomMap from '@/composables/useTomTomMap'
 import type { Coordinate } from '@/interfaces/coordinate.interface'
+import Map from '@/components/Map.vue'
 
 // composables
 const { customUser } = useCustomUser()
@@ -613,7 +632,7 @@ const closeModal = () => {
 
 watchEffect(() => {
   // log the queries
-  // if (userResult.value) console.log(userResult.value)
+  if (userResult.value) console.log(userResult.value)
 
   // all errors
   const errors = [
