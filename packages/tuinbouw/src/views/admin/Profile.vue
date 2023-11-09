@@ -313,14 +313,14 @@ const handleUpdateUser = async () => {
   if (Object.keys(errors.value).length === 0) {
     console.log('no errors', values)
     // update client
-    let input = {}
-    if (customUser.value?.role !== Role.CLIENT) {
-      input = {
-        invoiceOption: values.invoiceOption,
-        company: values.company,
-        btwNumber: values.btwNumber,
-      }
-    }
+    const input =
+      customUser.value?.role !== Role.CLIENT
+        ? {
+            invoiceOption: values.invoiceOption,
+            company: values.company,
+            btwNumber: values.btwNumber,
+          }
+        : {}
     await updateUser({
       updateUserInput: {
         id: customUser.value?.id,
