@@ -244,6 +244,20 @@
     class="max-w-lg"
   >
     <form @submit.prevent="handleCreateLocation">
+      <InputText
+        name="Address"
+        placeholder="Search Address"
+        type="text"
+        :errorMessage="errorMessages.address"
+        v-bind="address"
+      />
+
+      <CustomButton
+        class="block"
+        name="Search Address"
+        @click="handleSearchAddress()"
+      />
+
       <CustomButton
         type="submit"
         name="Create Location"
@@ -281,6 +295,7 @@ import {
   DELETE_LOCATION,
 } from '@/graphql/location.mutation'
 import type { Location } from '@/interfaces/location.interface'
+import useTomTomMap from '@/composables/useTomTomMap'
 
 // composables
 const { customUser } = useCustomUser()
@@ -288,6 +303,7 @@ const { showToast } = useCustomToast()
 const { formatDateTime } = useTimeUtilities()
 const { firebaseUser } = useFirebase()
 const { replace } = useRouter()
+const { searchAddress } = useTomTomMap()
 
 // variables
 const isEditing = ref(false)
@@ -333,9 +349,10 @@ const errorMessages = ref<{
   lastname: '',
   email: '',
   telephone: '',
+  address: '',
 })
 
-// create form
+// update user form
 const { resetForm, defineComponentBinds, errors, values, validate, setValues } =
   useForm({
     validationSchema: schema,
@@ -348,6 +365,21 @@ const telephone = defineComponentBinds('telephone')
 const invoiceOption = defineComponentBinds('invoiceOption')
 const company = defineComponentBinds('company')
 const btwNumber = defineComponentBinds('btwNumber')
+
+// create location form
+const {
+  resetForm: resetFormLocation,
+  defineComponentBinds: defineComponentBindsLocation,
+  errors: errorsLocation,
+  values: valuesLocation,
+  validate: validateLocation,
+} = useForm({
+  validationSchema: yup.object({
+    address: yup.string().required(),
+  }),
+})
+
+const address = defineComponentBindsLocation('address')
 
 // graphql
 const {
@@ -404,6 +436,19 @@ const handleDeleteUser = async () => {
     replace('/')
   })
 }
+
+const handleSearchAddress = async () => {
+  // await searchAddress(valuesLocation.address)
+  await searchAddress(valuesLocation.address)
+    .then(async res => {
+      if (res) {
+        console.log('res', res)
+      }
+    })
+    .catch(err => {
+      showToast('error', 'Error', err.message)
+    })
+}
 // handle update user
 const handleUpdateUser = async () => {
   loadingUpdateUser.value = true
@@ -440,7 +485,9 @@ const handleUpdateUser = async () => {
 }
 
 // add new location
-const handleCreateLocation = async () => {}
+const handleCreateLocation = async () => {
+  console.log('values', valuesLocation)
+}
 // update location
 const handleUpdateLocation = async (id: string) => {}
 // delete location
