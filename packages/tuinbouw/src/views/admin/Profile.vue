@@ -248,13 +248,47 @@
         name="Address"
         placeholder="Search Address"
         type="text"
-        :errorMessage="errorMessages.address"
-        v-bind="address"
+        :errorMessage="errorMessages.searchAdressInput"
+        v-bind="searchAdressInput"
       />
+
+      <!-- show search results -->
+      <div v-if="searchAddressResults">
+        <div
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
+          v-for="coordinate in searchAddressResults"
+          :key="coordinate.address"
+        >
+          <div class="flex flex-col">
+            <!-- Add a radio button input -->
+            <input
+              type="radio"
+              name="selectedAddress"
+              v-bind="selectedAddress"
+              class="mr-2"
+              :value="coordinate"
+            />
+            <h2 class="mb-2 text-xl font-semibold">{{ coordinate.address }}</h2>
+
+            <div class="flex justify-between">
+              <p class="text-gray-600">
+                Latitude: <span>{{ coordinate.lat }}</span>
+              </p>
+              <p class="text-gray-600">
+                Longitude: <span>{{ coordinate.lng }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <small class="p-error">{{
+          errorMessages.selectedAddress || '&nbsp;'
+        }}</small>
+      </div>
 
       <CustomButton
         class="block"
         name="Search Address"
+        :loading="loadingSearchAddress"
         @click="handleSearchAddress()"
       />
 
@@ -296,6 +330,7 @@ import {
 } from '@/graphql/location.mutation'
 import type { Location } from '@/interfaces/location.interface'
 import useTomTomMap from '@/composables/useTomTomMap'
+import type { Coordinate } from '@/interfaces/coordinate.interface'
 
 // composables
 const { customUser } = useCustomUser()
@@ -317,6 +352,8 @@ const visibleLocation = ref({
   create: false,
 })
 const selectedLocation = ref<Location | null>(null)
+const searchAddressResults = ref<Coordinate[] | null>(null)
+const loadingSearchAddress = ref(false)
 
 // form
 const schema = yup.object({
@@ -349,7 +386,8 @@ const errorMessages = ref<{
   lastname: '',
   email: '',
   telephone: '',
-  address: '',
+  searchAdressInput: '',
+  selectedAddress: '',
 })
 
 // update user form
@@ -370,16 +408,19 @@ const btwNumber = defineComponentBinds('btwNumber')
 const {
   resetForm: resetFormLocation,
   defineComponentBinds: defineComponentBindsLocation,
+  defineInputBinds: defineInputBindsLocation,
   errors: errorsLocation,
   values: valuesLocation,
   validate: validateLocation,
 } = useForm({
   validationSchema: yup.object({
-    address: yup.string().required(),
+    searchAdressInput: yup.string().required(),
+    selectedAddress: yup.object().required(),
   }),
 })
 
-const address = defineComponentBindsLocation('address')
+const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
+const selectedAddress = defineInputBindsLocation('selectedAddress')
 
 // graphql
 const {
@@ -437,18 +478,6 @@ const handleDeleteUser = async () => {
   })
 }
 
-const handleSearchAddress = async () => {
-  // await searchAddress(valuesLocation.address)
-  await searchAddress(valuesLocation.address)
-    .then(async res => {
-      if (res) {
-        console.log('res', res)
-      }
-    })
-    .catch(err => {
-      showToast('error', 'Error', err.message)
-    })
-}
 // handle update user
 const handleUpdateUser = async () => {
   loadingUpdateUser.value = true
@@ -484,9 +513,48 @@ const handleUpdateUser = async () => {
   loadingUpdateUser.value = false
 }
 
+// search address
+const handleSearchAddress = async () => {
+  loadingSearchAddress.value = true
+  searchAddressResults.value = null
+  await validateLocation()
+  errorMessages.value.searchAdressInput = errorsLocation.value.searchAdressInput
+  if (!errorsLocation.value.searchAdressInput) {
+    await searchAddress(valuesLocation.searchAdressInput)
+      .then(async results => {
+        loadingSearchAddress.value = false
+        if (results) {
+          searchAddressResults.value = results
+        }
+      })
+      .catch(err => {
+        showToast('error', 'Error', err.message)
+      })
+  }
+  loadingSearchAddress.value = false
+}
+
 // add new location
 const handleCreateLocation = async () => {
-  console.log('values', valuesLocation)
+  loadingCreateLocation.value = true
+  await validateLocation()
+  errorMessages.value = errorsLocation.value
+  if (Object.keys(errorsLocation.value).length === 0) {
+    await createLocation({
+      createLocationInput: {
+        address: valuesLocation.selectedAddress.address,
+        lat: valuesLocation.selectedAddress.lat,
+        lng: valuesLocation.selectedAddress.lng,
+        userId: customUser.value?.id,
+      },
+    }).then(() => {
+      showToast('success', 'Success', `You have created a new location`)
+      closeModal()
+      resetFormLocation()
+      refetchUser()
+    })
+  }
+  loadingCreateLocation.value = false
 }
 // update location
 const handleUpdateLocation = async (id: string) => {}
