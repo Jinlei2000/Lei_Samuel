@@ -69,13 +69,13 @@
                 <!-- Edit and Delete buttons -->
                 <div class="mt-2 flex">
                   <button
-                    @click="handleDeleteLocation(location.id)"
-                    class="rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                    @click="openModal(location, 'detail')"
+                    class="mr-2 rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600"
                   >
                     <Eye />
                   </button>
                   <button
-                    @click="openModal(location, 'detail')"
+                    @click="openModal(location, 'edit')"
                     class="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                   >
                     <Pencil />
@@ -318,7 +318,7 @@ import {
   ChevronDownIcon,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as yup from 'yup'
 import InputText from '@/components/generic/form/InputText.vue'
@@ -537,6 +537,7 @@ const handleCreateLocation = async () => {
   await validateLocation()
   errorMessages.value = errorsLocation.value
   if (Object.keys(errorsLocation.value).length === 0) {
+    console.log('no errors', valuesLocation)
     await createLocation({
       createLocationInput: {
         address: valuesLocation.selectedAddress.address,
@@ -553,6 +554,7 @@ const handleCreateLocation = async () => {
   }
   loadingCreateLocation.value = false
 }
+
 // update location
 const handleUpdateLocation = async (id: string) => {}
 // delete location

@@ -6,6 +6,8 @@ export const GET_LOCATIONS_BY_USERID = gql`
       id
       userId
       address
+      lat
+      lng
       createdAt
       updatedAt
     }

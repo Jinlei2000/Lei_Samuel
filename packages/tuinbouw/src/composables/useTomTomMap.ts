@@ -32,6 +32,13 @@ const searchAddress = async (address: string): Promise<Coordinate[] | null> => {
   })
 }
 
+// make a marker
+
+// show map
+const showMap = () => {
+  
+}
+
 export default () => {
   return {
     searchAddress,

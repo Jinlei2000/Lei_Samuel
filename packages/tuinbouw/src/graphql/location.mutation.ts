@@ -2,10 +2,12 @@ import gql from 'graphql-tag'
 
 export const CREATE_LOCATION = gql`
   mutation createLocation($createLocationInput: CreateLocationInput!) {
-    createLocationInput(createLocationInput: $createLocationInput) {
+    createLocation(createLocationInput: $createLocationInput) {
       id
       userId
       address
+      lat
+      lng
       createdAt
       updatedAt
     }
@@ -14,7 +16,7 @@ export const CREATE_LOCATION = gql`
 
 export const UPDATE_LOCATION = gql`
   mutation updateLocation($updateLocationInput: UpdateLocationInput!) {
-    updateLocationInput(updateLocationInput: $updateLocationInput) {
+    updateLocation(updateLocationInput: $updateLocationInput) {
       id
       userId
       address
