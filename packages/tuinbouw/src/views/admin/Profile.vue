@@ -348,22 +348,23 @@ const deleteLocation = async (id: string) => {}
 
 const setEditing = (value: boolean) => {
   isEditing.value = value
-  if (value && user.value?.role === Role.CLIENT) {
+  const {
+    role,
+    firstname,
+    lastname,
+    email,
+    telephone,
+    invoiceOption,
+    company,
+    btwNumber,
+  } = user.value ?? {}
+  if (value) {
     setValues({
-      firstname: user.value?.firstname,
-      lastname: user.value?.lastname,
-      email: user.value?.email,
-      telephone: user.value?.telephone,
-      invoiceOption: user.value?.invoiceOption,
-      company: user.value?.company,
-      btwNumber: user.value?.btwNumber,
-    })
-  } else if (value && user.value?.role !== Role.CLIENT) {
-    setValues({
-      firstname: user.value?.firstname,
-      lastname: user.value?.lastname,
-      email: user.value?.email,
-      telephone: user.value?.telephone,
+      firstname,
+      lastname,
+      email,
+      telephone,
+      ...(role === Role.CLIENT && { invoiceOption, company, btwNumber }),
     })
   }
 }
