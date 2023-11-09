@@ -13,7 +13,7 @@
   <!-- show user -->
   <div v-if="!isEditing">
     <!-- edit button -->
-    <button class="flex" @click="isEditing = true">
+    <button class="flex" @click="setEditing(true)">
       <Pencil class="h-6 w-6" />
     </button>
 
@@ -96,25 +96,11 @@
   <!-- show edit form -->
   <div v-if="isEditing">
     <!-- go back button -->
-    <button class="flex" @click="isEditing = false">
+    <button class="flex" @click="setEditing(false)">
       <ArrowLeft class="h-6 w-6" />
       Go back
     </button>
     <form @submit.prevent="handleUpdateUser">
-      <!-- lastname: "xx" # optional
-      firstname: "xx" # optional
-      url: "xx" # optional
-      uid: "xx" # optional
-      locale: "xx" # optional
-      locationIds: ["xx"] # optional
-      email: "xx" # optional
-      telephone: "xx" # optional
-      availability: true # optional
-      # CLIENT ONLY
-      invoiceOption: "xx"  # optional
-      company: true # optional
-      btwNumber: "xx" # optional -->
-      <!-- First Name -->
       <InputText
         name="First Name"
         placeholder="John"
@@ -244,6 +230,15 @@ const schema = yup.object({
     .max(10)
     .optional()
     .nullable(),
+  invoiceOption: yup.string().optional().nullable(),
+  company: yup.boolean().optional().nullable(),
+  btwNumber: yup
+    .string()
+    .matches(/^[A-Za-z\d]{5,15}$/, 'Not a valid VAT Number')
+    .min(5, 'VAT Number must be at least 5 characters')
+    .max(15, 'VAT Number must be at most 15 characters')
+    .optional()
+    .nullable(),
 })
 
 // error messages of forms
@@ -257,9 +252,10 @@ const errorMessages = ref<{
 })
 
 // create form
-const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
-  validationSchema: schema,
-})
+const { resetForm, defineComponentBinds, errors, values, validate, setValues } =
+  useForm({
+    validationSchema: schema,
+  })
 
 const firstname = defineComponentBinds('firstname')
 const lastname = defineComponentBinds('lastname')
@@ -312,7 +308,34 @@ const handleDeleteUser = async () => {
 // handle update user
 const handleUpdateUser = async () => {
   loadingUpdateUser.value = true
-
+  await validate()
+  errorMessages.value = errors.value
+  if (Object.keys(errors.value).length === 0) {
+    console.log('no errors', values)
+    // update client
+    let input = {}
+    if (customUser.value?.role !== Role.CLIENT) {
+      input = {
+        invoiceOption: values.invoiceOption,
+        company: values.company,
+        btwNumber: values.btwNumber,
+      }
+    }
+    await updateUser({
+      updateUserInput: {
+        id: customUser.value?.id,
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+        ...input,
+      },
+    }).then(() => {
+      showToast('success', 'Success', `You have updated your profile`)
+      setEditing(false)
+      refetchUser()
+    })
+  }
   loadingUpdateUser.value = false
 }
 
@@ -322,6 +345,28 @@ const addNewLocation = async () => {}
 const editLocation = async (id: string) => {}
 // delete location
 const deleteLocation = async (id: string) => {}
+
+const setEditing = (value: boolean) => {
+  isEditing.value = value
+  if (value && user.value?.role === Role.CLIENT) {
+    setValues({
+      firstname: user.value?.firstname,
+      lastname: user.value?.lastname,
+      email: user.value?.email,
+      telephone: user.value?.telephone,
+      invoiceOption: user.value?.invoiceOption,
+      company: user.value?.company,
+      btwNumber: user.value?.btwNumber,
+    })
+  } else if (value && user.value?.role !== Role.CLIENT) {
+    setValues({
+      firstname: user.value?.firstname,
+      lastname: user.value?.lastname,
+      email: user.value?.email,
+      telephone: user.value?.telephone,
+    })
+  }
+}
 
 watchEffect(() => {
   // log the queries

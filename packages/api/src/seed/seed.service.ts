@@ -20,6 +20,7 @@ import {
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
+import { ObjectId } from 'typeorm'
 
 @Injectable()
 export class SeedService {
@@ -66,7 +67,7 @@ export class SeedService {
       u.uid = user.uid
       u.locale = user.locale
       u.locationIds = []
-      if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = 0
+      if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = user.absences.length
 
       theUsers.push(u)
     }
@@ -197,6 +198,7 @@ export class SeedService {
 
           absences.push(a)
         }
+
         await this.absencesService.saveAll(absences)
       }
 
