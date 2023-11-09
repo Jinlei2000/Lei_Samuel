@@ -1,7 +1,9 @@
 <template>
   <div
+    v-if="props.appointment"
     @click="openModal()"
     class="relative max-h-32 w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
+    :class="props.appointment.isDone ? 'opacity-50' : ''"
   >
     <div
       class="absolute left-0 top-0 h-full w-1"
@@ -15,12 +17,12 @@
           : 'bg-transparent'
       "
     ></div>
-    <h2 class="mb-1 text-xl">{{ props.appointment?.user?.fullname }}</h2>
+    <h2 class="mb-1 text-xl">{{ props.appointment.user?.fullname }}</h2>
     <div class="flex items-end justify-between gap-3">
       <p class="overflow-hidden text-base">
-        {{ props.appointment?.description }}
+        {{ props.appointment.description }}
       </p>
-      <button @click="navigateToLocation(props.appointment?.location!.address)" v-on:click.stop
+      <button @click="navigateToLocation(props.appointment.location!.address)" v-on:click.stop
         class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
       >
         Navigate <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
@@ -85,9 +87,9 @@
       <button
         @click="handleAppointmentUpdate()"
         class="bg-primary-green flex h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
-        :class="appointmentIsDone ? 'bg-primary-green' : 'bg-primary-orange'"
+        :class="appointmentIsDone ? 'bg-primary-orange' : 'bg-primary-green'"
       >
-        {{ appointmentIsDone ? 'Finish' : 'Unfinish' }} <CheckCircle v-if="appointmentIsDone" stroke-width="2" class="h-[17px] w-[17px]" /> <XCircle v-else stroke-width="2" class="h-[17px] w-[17px]" />
+        {{ appointmentIsDone ? 'Unfinish' : 'Finish' }}<XCircle v-if="appointmentIsDone" stroke-width="2" class="h-[17px] w-[17px]" /><CheckCircle v-else stroke-width="2" class="h-[17px] w-[17px]" />
       </button>
     </div>
   </Dialog>
@@ -127,10 +129,12 @@ const handleAppointmentUpdate = () => {
   updateAppointment({
     updateAppointmentInput: {
       id: props.appointment!.id,
-      isDone: appointmentIsDone.value
+      isDone: !appointmentIsDone.value
     },
   })
   appointmentIsDone.value = !appointmentIsDone.value
+
+  showModal.value = false
 }
 
 // TODO: add support for appointment location
