@@ -49,13 +49,7 @@ onMounted(() => {
 
     // Zoom to fit all markers
     map.fitBounds(bounds, {
-      // @ts-ignore
-      padding: {
-        top: 50,
-        bottom: 50,
-        left: 50,
-        right: 50,
-      },
+      padding: 50,
       maxZoom: 13,
     })
   }
