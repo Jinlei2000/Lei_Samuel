@@ -112,9 +112,6 @@ const finishedAppointments = ref<[Appointment]>()
 
 const materials = ref<[Material]>()
 
-const showModal = ref(false)
-const selectedAppointment = ref<Appointment | null>(null)
-
 const setNextAppointment = () => {
     // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
     nextAppointment.value = schedule.value.scheduleByDateAndUserId[0].appointments.find(
