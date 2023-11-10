@@ -87,12 +87,14 @@ const { customUser } = useCustomUser()
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
 const forecast = ref<Forecast>()
+ 
+const getWeekForecast = async (city: string) => {
+  await getForecast(city).then((data) => {
+    forecast.value = data
+  })
+}
 
-console.log('forecast', getForecast("Izegem"))
-await getForecast("Izegem").then((data) => {
-  forecast.value = data
-})
-console.log(forecast.value?.city.name)
+getWeekForecast("Izegem")
 
 const {
   result: schedule,
@@ -122,7 +124,6 @@ const setNextAppointment = () => {
 
 const setAppointments = () => {
     // set appointments to appointments of schedule where isDone is false
-    console.log('schedule', schedule.value.scheduleByDateAndUserId[0].appointments)
     appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
       (appointment: Appointment) => appointment.isDone === false
     )
@@ -175,7 +176,6 @@ watch(schedule, () => {
     // })
 
     materials.value = schedule.value.scheduleByDateAndUserId[0].materials
-    console.log('materials', materials.value)
   }
 })
 
