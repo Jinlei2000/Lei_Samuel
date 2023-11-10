@@ -80,15 +80,19 @@ import useCustomUser from '@/composables/useCustomUser'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import Materials from './Materials.vue'
 import type { Material } from '@/interfaces/material.interface'
+import type { Forecast } from '@/interfaces/forecast.interface'
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
-const forecast = ref()
+const forecast = ref<Forecast>()
 
-forecast.value = getForecast("Izegem")
-console.log(forecast.value)
+console.log('forecast', getForecast("Izegem"))
+await getForecast("Izegem").then((data) => {
+  forecast.value = data
+})
+console.log(forecast.value?.city.name)
 
 const {
   result: schedule,

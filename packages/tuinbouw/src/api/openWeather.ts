@@ -1,6 +1,8 @@
+import type { Forecast } from "@/interfaces/forecast.interface";
+
 const apiKey = import.meta.env.VITE_OPENWEATHER_apiKey;
 
-export const getForecast = async (city: string): Promise<any> => {
+export const getForecast = async (city: string): Promise<Forecast> => {
     console.log('getForecast', city);
     console.log('apiKey', apiKey);
     const response = await fetch(
