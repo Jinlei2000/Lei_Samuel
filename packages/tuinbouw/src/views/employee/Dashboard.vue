@@ -71,6 +71,7 @@ import { ArrowLeft, ArrowRight, ChevronRight} from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import { getForecast } from '@/api/openWeather'
 
 import Button from 'primevue/button'
 
@@ -84,6 +85,10 @@ const { customUser } = useCustomUser()
 
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
+const forecast = ref()
+
+forecast.value = getForecast("Izegem")
+console.log(forecast.value)
 
 const {
   result: schedule,
