@@ -71,7 +71,7 @@ import { ArrowLeft, ArrowRight, ChevronRight} from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { getForecast } from '@/api/openWeather'
+import { getForecast, getForecastForWeek } from '@/api/openWeather'
 
 import Button from 'primevue/button'
 
@@ -95,6 +95,7 @@ const getWeekForecast = async (city: string) => {
 }
 
 getWeekForecast("Izegem")
+console.log(getForecastForWeek("Izegem"))
 
 const {
   result: schedule,
