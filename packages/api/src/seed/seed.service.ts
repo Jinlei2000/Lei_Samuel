@@ -20,7 +20,6 @@ import {
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
-import { ObjectId } from 'typeorm'
 
 @Injectable()
 export class SeedService {
@@ -84,6 +83,8 @@ export class SeedService {
           const l = new Location()
           l.address = location.address
           l.userId = user.id.toString()
+          l.lat = location.lat 
+          l.lng = location.lng
 
           const newLoc = await this.locationsService.save(l)
           theLocationIds.push(newLoc.id.toString())
