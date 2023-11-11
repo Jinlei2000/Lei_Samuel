@@ -15,6 +15,8 @@ export const GET_USER_BY_UID = gql`
         id
         userId
         address
+        lng
+        lat
         createdAt
         updatedAt
       }
@@ -49,6 +51,8 @@ export const GET_USERS = gql`
         id
         userId
         address
+        lng
+        lat
         createdAt
         updatedAt
       }
@@ -79,6 +83,8 @@ export const GET_EMPLOYEES_AVAILABLE_BY_DATE = gql`
         id
         userId
         address
+        lng
+        lat
         createdAt
         updatedAt
       }
@@ -87,6 +93,38 @@ export const GET_EMPLOYEES_AVAILABLE_BY_DATE = gql`
       createdAt
       updatedAt
       absentCount
+    }
+  }
+`
+
+export const GET_USER_BY_ID = gql`
+  query user($id: String!) {
+    user(id: $id) {
+      id
+      uid
+      locale
+      role
+      firstname
+      lastname
+      fullname
+      url
+      locations {
+        id
+        userId
+        address
+        lng
+        lat
+        createdAt
+        updatedAt
+      }
+      email
+      telephone
+      createdAt
+      updatedAt
+      absentCount
+      invoiceOption
+      company
+      btwNumber
     }
   }
 `

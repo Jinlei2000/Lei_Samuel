@@ -281,7 +281,7 @@ export class UsersService {
   async incrementAbsencesCount(staffId: string): Promise<void> {
     const user = await this.findOne(staffId)
 
-    this.userRepository.update(
+    await this.userRepository.update(
       { id: new ObjectId(staffId) },
       { absentCount: user.absentCount + 1 },
     )

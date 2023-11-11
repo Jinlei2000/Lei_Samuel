@@ -469,7 +469,6 @@ mutation {
       locationIds: ["xx"] # optional
       email: "xx" # optional
       telephone: "xx" # optional
-      availability: true # optional
       # CLIENT ONLY
       invoiceOption: "xx"  # optional
       company: true # optional
@@ -626,6 +625,8 @@ mutation {
   id
   userId
   address
+  lat
+  lng
   createdAt
   updatedAt
 }
@@ -646,6 +647,8 @@ query {
     id
     userId
     address
+    lat
+    lng
     createdAt
     updatedAt
   }
@@ -662,6 +665,8 @@ query {
     id
     userId
     address
+    lat
+    lng
     createdAt
     updatedAt
   }
@@ -678,6 +683,8 @@ query {
     id
     userId
     address
+    lat
+    lng
     createdAt
     updatedAt
   }
@@ -688,10 +695,12 @@ query {
 
 ```graphql
 mutation {
-  createLocation(createLocationInput: { address: "x", userId: "xx" }) {
+  createLocation(createLocationInput: { address: "x", userId: "xx", lat: 1, lng: 1 }) {
     id
-    address
     userId
+    address
+    lat
+    lng
     createdAt
     updatedAt
   }
@@ -703,11 +712,13 @@ mutation {
 ```graphql
 mutation {
   updateLocation(
-    updateLocationInput: { id: "6522bd1cfabcb1f1d63dd63a", address: "x" }
+    updateLocationInput: { id: "6522bd1cfabcb1f1d63dd63a", address: "x", lat: 1, lng: 1 }
   ) {
     id
     userId
     address
+    lat
+    lng
     createdAt
     updatedAt
   }

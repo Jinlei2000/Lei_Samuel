@@ -83,6 +83,8 @@ export class LocationsService {
     const l = new Location()
     l.address = createLocationInput.address
     l.userId = createLocationInput.userId
+    l.lat = createLocationInput.lat
+    l.lng = createLocationInput.lng
 
     const newLoc = await this.locationRepository.save(l)
 
