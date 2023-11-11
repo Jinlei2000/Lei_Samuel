@@ -204,7 +204,6 @@
     maximizable
     header="Location Details"
     :style="{ width: '50vw' }"
-    @click:close="closeModal"
     class="max-w-lg"
   >
     <div v-if="selectedLocation">
@@ -222,10 +221,6 @@
               lat: selectedLocation.lat!,
               lng: selectedLocation.lng!,
             },
-            // {
-            //   lat: 50.8465573,
-            //   lng: 4.351697,
-            // },
           ]"
         />
       </div>
@@ -239,10 +234,57 @@
     maximizable
     header="Edit Location"
     :style="{ width: '50vw' }"
-    @click:close="closeModal"
     class="max-w-lg"
   >
-    <form @submit.prevent="handleUpdateUser">
+    <form @submit.prevent="handleUpdateLocation">
+      <InputText
+        name="Address"
+        placeholder="Search Address"
+        type="text"
+        :errorMessage="errorMessages.searchAdressInput"
+        v-bind="searchAdressInput"
+      />
+
+      <!-- show search results -->
+      <div v-if="searchAddressResults">
+        <div
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
+          v-for="coordinate in searchAddressResults"
+          :key="coordinate.address"
+        >
+          <div class="flex flex-col">
+            <!-- Add a radio button input -->
+            <input
+              type="radio"
+              name="selectedAddress"
+              v-bind="selectedAddress"
+              class="mr-2"
+              :value="coordinate"
+            />
+            <h2 class="mb-2 text-xl font-semibold">{{ coordinate.address }}</h2>
+
+            <div class="flex justify-between">
+              <p class="text-gray-600">
+                Latitude: <span>{{ coordinate.lat }}</span>
+              </p>
+              <p class="text-gray-600">
+                Longitude: <span>{{ coordinate.lng }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <small class="p-error">{{
+          errorMessages.selectedAddress || '&nbsp;'
+        }}</small>
+      </div>
+
+      <CustomButton
+        class="block"
+        name="Search Address"
+        :loading="loadingSearchAddress"
+        @click="handleSearchAddress()"
+      />
+
       <CustomButton
         type="submit"
         name="Update Location"
@@ -258,7 +300,6 @@
     maximizable
     header="Create Location"
     :style="{ width: '50vw' }"
-    @click:close="closeModal"
     class="max-w-lg"
   >
     <form @submit.prevent="handleCreateLocation">
@@ -431,6 +472,7 @@ const {
   errors: errorsLocation,
   values: valuesLocation,
   validate: validateLocation,
+  setValues: setValuesLocation,
 } = useForm({
   validationSchema: yup.object({
     searchAdressInput: yup.string().required().trim(),
@@ -472,11 +514,8 @@ const {
 const { mutate: createLocation, error: createLocationError } =
   useMutation(CREATE_LOCATION)
 
-const {
-  mutate: updateLocation,
-  loading: updateLocationLoading,
-  error: updateLocationError,
-} = useMutation(UPDATE_LOCATION)
+const { mutate: updateLocation, error: updateLocationError } =
+  useMutation(UPDATE_LOCATION)
 
 const { mutate: deleteLocation, error: deleteLocationError } =
   useMutation(DELETE_LOCATION)
@@ -567,7 +606,6 @@ const handleCreateLocation = async () => {
     }).then(() => {
       showToast('success', 'Success', `You have created a new location`)
       closeModal()
-      resetFormLocation()
       refetchUser()
     })
   }
@@ -575,7 +613,28 @@ const handleCreateLocation = async () => {
 }
 
 // update location
-const handleUpdateLocation = async (id: string) => {}
+const handleUpdateLocation = async () => {
+  loadingUpdateLocation.value = true
+  await validateLocation()
+  errorMessages.value = errorsLocation.value
+  if (Object.keys(errorsLocation.value).length === 0) {
+    console.log('no errors', valuesLocation)
+    await updateLocation({
+      updateLocationInput: {
+        id: selectedLocation.value?.id,
+        address: valuesLocation.selectedAddress.address,
+        lat: valuesLocation.selectedAddress.lat,
+        lng: valuesLocation.selectedAddress.lng,
+      },
+    }).then(() => {
+      showToast('success', 'Success', `You have updated a location`)
+      closeModal()
+      refetchUser()
+    })
+  }
+  loadingUpdateLocation.value = false
+}
+
 // delete location
 const handleDeleteLocation = async (id: string) => {
   await deleteLocation({
@@ -609,12 +668,23 @@ const setEditing = (value: boolean) => {
   }
 }
 
-const openModal = (user: Location | null = null, type: string) => {
-  if (type === 'detail' && user) {
-    selectedLocation.value = { ...user }
+const openModal = (location: Location | null = null, type: string) => {
+  // reset values
+  setValuesLocation({
+    searchAdressInput: '',
+    selectedAddress: null,
+  })
+  selectedLocation.value = null
+  searchAddressResults.value = null
+
+  if (type === 'detail' && location) {
+    selectedLocation.value = { ...location }
     visibleLocation.value.detail = true
-  } else if (type === 'edit' && user) {
-    selectedLocation.value = { ...user }
+  } else if (type === 'edit' && location) {
+    selectedLocation.value = { ...location }
+    setValuesLocation({
+      searchAdressInput: location.address,
+    })
     visibleLocation.value.edit = true
   } else if (type === 'create') {
     visibleLocation.value.create = true
@@ -622,7 +692,6 @@ const openModal = (user: Location | null = null, type: string) => {
 }
 
 const closeModal = () => {
-  selectedLocation.value = null
   visibleLocation.value = {
     detail: false,
     edit: false,
@@ -632,7 +701,7 @@ const closeModal = () => {
 
 watchEffect(() => {
   // log the queries
-  if (userResult.value) console.log(userResult.value)
+  // if (userResult.value) console.log(userResult.value)
 
   // all errors
   const errors = [
