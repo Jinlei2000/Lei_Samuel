@@ -22,7 +22,7 @@ const searchAddress = async (address: string): Promise<Location[] | null> => {
               address: result.address.freeformAddress,
               lat: result.position.lat,
               lng: result.position.lon,
-            }
+            } as Location
           })
         }
 
@@ -41,7 +41,6 @@ const createMap = (mapContainer: string): tt.Map => {
     // style: `https://api.tomtom.com/style/2/custom/style/dG9tdG9tQEBAbTQ4V1BvM3BHR0Jmb3dsZztjODYxMWY3YS1mNGNjLTQxM2UtOGUxNC0yZmMwMTQzMDI0ZmQ=.json?key=${TOMTOM_API_KEY}`,
     center: [3.689423, 50.872478],
     zoom: 7,
-    boxZoom: true,
   })
   map.addControl(new tt.FullscreenControl())
   // map.addControl(new tt.NavigationControl())
@@ -61,7 +60,7 @@ const createMarker = (map: tt.Map, location: Location): tt.Marker => {
     .addTo(map)
 
   const popupOptions = {
-    // closeButton: false,
+    closeButton: false,
     offset: 35,
     className: 'rounded-lg',
   }

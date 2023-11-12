@@ -11,12 +11,10 @@ import type { Location } from '@/interfaces/location.interface'
 // Props
 const props = defineProps({
   // The locations to show on the map
-  locations: {
-    type: Array as PropType<Location[]>,
-  },
+  locations: Array as PropType<Location[]>,
 })
 
-const mapRef = ref('')
+const mapRef = ref("")
 
 const { createMap, createMarker } = useTomTomMap()
 
@@ -27,10 +25,8 @@ onMounted(() => {
   if (props.locations && props.locations.length > 0) {
     const bounds = new tt.LngLatBounds()
     props.locations.forEach(l => {
-      if (!l.lat || !l.lng) return
       createMarker(map, l)
-
-      bounds.extend(new tt.LngLat(l.lng, l.lat))
+      bounds.extend(new tt.LngLat(l.lng!, l.lat!))
     })
 
     // Get center of bounds
