@@ -272,10 +272,10 @@
             </div>
           </div>
         </div>
-        <small class="p-error">{{
-          errorMessages.selectedAddress || '&nbsp;'
-        }}</small>
       </div>
+      <small class="p-error">{{
+        errorMessages.selectedAddress || '&nbsp;'
+      }}</small>
 
       <CustomButton
         class="block"
@@ -547,12 +547,11 @@ const { mutate: deleteLocation, error: deleteLocationError } =
 const handleDeleteUser = async () => {
   await deleteUser({
     id: customUser.value?.id,
-  }).then(() => {
-    showToast('success', 'Success', `You have deleted your account`)
-    customUser.value = null
-    firebaseUser.value = null
-    replace('/')
   })
+  showToast('success', 'Success', `You have deleted your account`)
+  customUser.value = null
+  firebaseUser.value = null
+  replace('/')
 }
 
 // handle update user
@@ -576,12 +575,11 @@ const handleUpdateUser = async () => {
           btwNumber: values.btwNumber,
         }),
       },
-    }).then(() => {
-      loading.value.updateUser = false
-      showToast('success', 'Success', `You have updated your profile`)
-      setEditing(false)
-      refetchUser()
     })
+    loading.value.updateUser = false
+    showToast('success', 'Success', `You have updated your profile`)
+    setEditing(false)
+    refetchUser()
   }
   loading.value.updateUser = false
 }
@@ -597,16 +595,15 @@ const handleSearchAddress = async () => {
   await validateLocation()
   errorMessages.value.searchAdressInput = errorsLocation.value.searchAdressInput
   if (!errorsLocation.value.searchAdressInput) {
-    await searchAddress(valuesLocation.searchAdressInput)
-      .then(async results => {
-        loading.value.searchAddress = false
-        if (results) {
-          searchAddressResults.value = results
-        }
-      })
-      .catch(err => {
-        showToast('error', 'Error', err.message)
-      })
+    try {
+      const results = await searchAddress(valuesLocation.searchAdressInput)
+      loading.value.searchAddress = false
+      if (results) {
+        searchAddressResults.value = results
+      }
+    } catch (err) {
+      if (err instanceof Error) showToast('error', 'Error', err.message)
+    }
   }
   loading.value.searchAddress = false
 }
@@ -625,12 +622,11 @@ const handleCreateLocation = async () => {
         lng: valuesLocation.selectedAddress.lng,
         userId: customUser.value?.id,
       },
-    }).then(() => {
-      loading.value.createLocation = false
-      showToast('success', 'Success', `You have created a new location`)
-      closeModal()
-      refetchUser()
     })
+    loading.value.createLocation = false
+    showToast('success', 'Success', `You have created a new location`)
+    closeModal()
+    refetchUser()
   }
   loading.value.createLocation = false
 }
@@ -649,12 +645,11 @@ const handleUpdateLocation = async () => {
         lat: valuesLocation.selectedAddress.lat,
         lng: valuesLocation.selectedAddress.lng,
       },
-    }).then(() => {
-      loading.value.updateLocation = false
-      showToast('success', 'Success', `You have updated a location`)
-      closeModal()
-      refetchUser()
     })
+    loading.value.updateLocation = false
+    showToast('success', 'Success', `You have updated a location`)
+    closeModal()
+    refetchUser()
   }
   loading.value.updateLocation = false
 }
@@ -663,10 +658,9 @@ const handleUpdateLocation = async () => {
 const handleDeleteLocation = async (id: string) => {
   await deleteLocation({
     id: id,
-  }).then(() => {
-    showToast('success', 'Success', `You have deleted a location`)
-    refetchUser()
   })
+  showToast('success', 'Success', `You have deleted a location`)
+  refetchUser()
 }
 
 const setEditing = (value: boolean) => {
@@ -710,6 +704,7 @@ const openModal = (location: Location | null = null, type: string) => {
     visibleLocation.value.detail = true
   } else if (type === 'edit' && location) {
     selectedLocation.value = { ...location }
+    searchAddressResults.value = [{ ...location }]
     setValuesLocation({
       searchAdressInput: location.address,
     })
@@ -754,4 +749,3 @@ watchEffect(() => {
   })
 })
 </script>
-@/interfaces/address.search.result.interface
