@@ -86,12 +86,18 @@
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
-        <div class="flex flex-col gap-3">
+        <div v-if="materials" class="flex flex-col gap-3">
           <ChecklistItem
             v-for="item in materials"
             :key="item.id"
             :material="item"
           />
+        </div>
+        <div
+          class="w-full h-12 bg-gray-200 rounded-2xl flex items-center justify-center"
+          v-else
+        >
+          <p class="text-gray-500">No materials for today</p>
         </div>
       </div>
     </div>
