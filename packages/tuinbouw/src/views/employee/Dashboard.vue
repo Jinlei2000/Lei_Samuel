@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12">
+  <div
+    class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12"
+  >
     <div class="grid grid-cols-4 w-full gap-3">
       <div class="col-start-1 col-span-1">
         <h2 class="mb-3 text-2xl">Next Appointment</h2>
@@ -8,6 +10,12 @@
             v-if="nextAppointment"
             :appointment="nextAppointment"
           />
+          <div
+            class="w-full h-32 bg-gray-200 rounded-2xl flex items-center justify-center"
+            v-else
+          >
+            <p class="text-gray-500">No appointments for today</p>
+          </div>
         </div>
         <div class="flex justify-between items-center mb-3 mt-6">
           <h2 class="text-2xl">Schedule</h2>
@@ -38,39 +46,72 @@
               :appointment="item"
             />
           </template>
-          <template v-if="finishedAppointments" v-for="(item, index) in finishedAppointments">
+          <template
+            v-if="finishedAppointments"
+            v-for="(item, index) in finishedAppointments"
+          >
             <AppointmentCard
               v-if="item !== nextAppointment"
               :appointment="item"
             />
           </template>
+          <div
+            class="w-full h-32 bg-gray-200 rounded-2xl flex items-center justify-center"
+            v-else
+          >
+            <p class="text-gray-500">No appointments for today</p>
+          </div>
         </div>
       </div>
       <div class="col-span-2 col-start-2">
         <h2 class="mb-3 text-2xl">Weather</h2>
-        <div class="bg-gray-200 rounded-2xl px-5 py-3">test</div>
+        <div
+          class="bg-gray-200 rounded-2xl min-h-24 px-5 py-3 flex justify-center items-center"
+        >
+          <Loader2 v-if="!forecast" class="animate-spin text-primary-green" />
+          <div v-if="forecast" class="flex justify-between w-full h-full">
+            <div v-for="item in forecast" class="flex flex-col items-center">
+              <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
+              <img
+                class="mix-blend-multiply w-20 h-20"
+                :src="getWeatherIconUrl(item.weather[0].icon)"
+                alt=""
+              />
+              <p class="text-sm">
+                {{ Math.round(item.main.temp).toFixed() }}°C
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
-        <div class="flex flex-col gap-3">
-          <ChecklistItem v-for="item in materials"
+        <div v-if="materials" class="flex flex-col gap-3">
+          <ChecklistItem
+            v-for="item in materials"
             :key="item.id"
             :material="item"
           />
         </div>
+        <div
+          class="w-full h-12 bg-gray-200 rounded-2xl flex items-center justify-center"
+          v-else
+        >
+          <p class="text-gray-500">No materials for today</p>
+        </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
-import { ArrowLeft, ArrowRight, ChevronRight} from 'lucide-vue-next'
-import { ref, watch } from 'vue'
+import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
+import { ref, watch, watchEffect } from 'vue'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import { getForecast, getForecastForWeek } from '@/api/openWeather'
 
 import Button from 'primevue/button'
 
@@ -79,11 +120,32 @@ import useCustomUser from '@/composables/useCustomUser'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import Materials from './Materials.vue'
 import type { Material } from '@/interfaces/material.interface'
+import type { Forecast } from '@/interfaces/forecast.interface'
+import { time } from 'console'
+import { finished } from 'stream'
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
+const forecast = ref<any>()
+
+const getWeekForecast = async (lon: string, lat: string) => {
+  await getForecastForWeek(lon, lat).then(data => {
+    forecast.value = data
+  })
+}
+
+const getWeatherIconUrl = (icon: string) => {
+  return `https://openweathermap.org/img/wn/${icon}@2x.png`
+}
+
+navigator.geolocation.getCurrentPosition(position => {
+  getWeekForecast(
+    position.coords.latitude.toString(),
+    position.coords.longitude.toString(),
+  )
+})
 
 const {
   result: schedule,
@@ -101,32 +163,29 @@ const finishedAppointments = ref<[Appointment]>()
 
 const materials = ref<[Material]>()
 
-const showModal = ref(false)
-const selectedAppointment = ref<Appointment | null>(null)
-
 const setNextAppointment = () => {
-    // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
-    nextAppointment.value = schedule.value.scheduleByDateAndUserId[0].appointments.find(
-      (appointment: Appointment) => appointment.isDone === false
+  // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
+  nextAppointment.value =
+    schedule.value.scheduleByDateAndUserId[0].appointments.find(
+      (appointment: Appointment) => appointment.isDone === false,
     )
 }
 
 const setAppointments = () => {
-    // set appointments to appointments of schedule where isDone is false
-    console.log('schedule', schedule.value.scheduleByDateAndUserId[0].appointments)
-    appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
-      (appointment: Appointment) => appointment.isDone === false
+  // set appointments to appointments of schedule where isDone is false
+  appointments.value =
+    schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+      (appointment: Appointment) => appointment.isDone === false,
     )
 }
 
 const setFinishedAppointments = () => {
-    // set appointments to appointments of schedule where isDone is true
-    finishedAppointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
-      (appointment: Appointment) => appointment.isDone === true
+  // set appointments to appointments of schedule where isDone is true
+  finishedAppointments.value =
+    schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+      (appointment: Appointment) => appointment.isDone === true,
     )
 }
-
-
 
 watch(schedule, () => {
   if (schedule.value && schedule.value.scheduleByDateAndUserId.length > 0) {
@@ -166,7 +225,6 @@ watch(schedule, () => {
     // })
 
     materials.value = schedule.value.scheduleByDateAndUserId[0].materials
-    console.log('materials', materials.value)
   }
 })
 
@@ -186,15 +244,24 @@ const days = [
 
 // nextday function
 const nextDay = () => {
+  resetAppointments()
   const currentDate = myDate.value
   const nextDay = new Date(currentDate.setDate(currentDate.getDate() + 1))
   myDate.value = nextDay
 }
 
 const prevDay = () => {
+  resetAppointments()
   const currentDate = myDate.value
   const prevDay = new Date(currentDate.setDate(currentDate.getDate() - 1))
   myDate.value = prevDay
+}
+
+const resetAppointments = () => {
+  nextAppointment.value = undefined
+  appointments.value = undefined
+  finishedAppointments.value = undefined
+  materials.value = undefined
 }
 
 // @ts-ignore
