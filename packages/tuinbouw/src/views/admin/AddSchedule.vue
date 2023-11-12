@@ -392,6 +392,10 @@ import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as yup from 'yup'
 
+// TODO: useStepper for steps (https://vueuse.org/core/useStepper/)
+// easy to use (but dont know if it is possible to use with vee-validate)
+// TODO: fix when you refresh the page, that you dont go back to the first step
+
 // composables
 const { showToast } = useCustomToast()
 const { replace } = useRouter()
