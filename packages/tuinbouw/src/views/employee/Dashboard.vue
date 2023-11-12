@@ -53,8 +53,19 @@
       </div>
       <div class="col-span-2 col-start-2">
         <h2 class="mb-3 text-2xl">Weather</h2>
-        <div class="bg-gray-200 rounded-2xl px-5 py-3">
-          <Loader2 v-if="!forecast" />
+        <div
+          class="bg-gray-200 rounded-2xl min-h-24 px-5 py-3 flex justify-center items-center"
+        >
+          <Loader2 v-if="!forecast" class="animate-spin text-primary-green" />
+          <div v-if="forecast" class="flex justify-between w-full h-full">
+            <div v-for="item in forecast" class="flex flex-col items-center">
+              <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
+              <img class="mix-blend-multiply w-20 h-20" :src="getWeatherIconUrl(item.weather[0].icon)" alt="" />
+              <p class="text-sm">
+                {{ Math.round(item.main.temp).toFixed() }}°C
+              </p>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-span-1 col-start-4">
@@ -94,13 +105,18 @@ const { customUser } = useCustomUser()
 
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
-const forecast = ref<Forecast>()
+const forecast = ref<any>()
 
 const getWeekForecast = async (lon: string, lat: string) => {
   console.log('getting week forecast')
   await getForecastForWeek(lon, lat).then(data => {
     forecast.value = data
   })
+}
+
+const getWeatherIconUrl = (icon: string) => {
+  console.log(icon)
+  return `https://openweathermap.org/img/wn/${icon}@2x.png`
 }
 
 navigator.geolocation.getCurrentPosition(position => {
