@@ -14,7 +14,7 @@ const props = defineProps({
   locations: Array as PropType<Location[]>,
 })
 
-const mapRef = ref("")
+const mapRef = ref('')
 
 const { createMap, createMarker } = useTomTomMap()
 
@@ -43,5 +43,11 @@ onMounted(() => {
       maxZoom: 13,
     })
   }
+
+  // Add controls
+  map.addControl(new tt.FullscreenControl())
+  map.addControl(new tt.GeolocateControl())
+  // map.addControl(new tt.NavigationControl())
+  // map.addControl(new tt.ScaleControl())
 })
 </script>

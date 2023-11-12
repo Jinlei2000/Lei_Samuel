@@ -42,8 +42,6 @@ const createMap = (mapContainer: string): tt.Map => {
     center: [3.689423, 50.872478],
     zoom: 7,
   })
-  map.addControl(new tt.FullscreenControl())
-  // map.addControl(new tt.NavigationControl())
 
   return map
 }
