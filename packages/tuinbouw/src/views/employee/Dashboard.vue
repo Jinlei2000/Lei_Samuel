@@ -131,19 +131,16 @@ const dateDisplay = ref('Today')
 const forecast = ref<any>()
 
 const getWeekForecast = async (lon: string, lat: string) => {
-  console.log('getting week forecast')
   await getForecastForWeek(lon, lat).then(data => {
     forecast.value = data
   })
 }
 
 const getWeatherIconUrl = (icon: string) => {
-  console.log(icon)
   return `https://openweathermap.org/img/wn/${icon}@2x.png`
 }
 
 navigator.geolocation.getCurrentPosition(position => {
-  console.log(position.coords.latitude, position.coords.longitude)
   getWeekForecast(
     position.coords.latitude.toString(),
     position.coords.longitude.toString(),
