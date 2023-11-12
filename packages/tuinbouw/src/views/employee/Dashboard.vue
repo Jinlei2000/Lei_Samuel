@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12">
+  <div
+    class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12"
+  >
     <div class="grid grid-cols-4 w-full gap-3">
       <div class="col-start-1 col-span-1">
         <h2 class="mb-3 text-2xl">Next Appointment</h2>
@@ -38,7 +40,10 @@
               :appointment="item"
             />
           </template>
-          <template v-if="finishedAppointments" v-for="(item, index) in finishedAppointments">
+          <template
+            v-if="finishedAppointments"
+            v-for="(item, index) in finishedAppointments"
+          >
             <AppointmentCard
               v-if="item !== nextAppointment"
               :appointment="item"
@@ -48,12 +53,15 @@
       </div>
       <div class="col-span-2 col-start-2">
         <h2 class="mb-3 text-2xl">Weather</h2>
-        <div class="bg-gray-200 rounded-2xl px-5 py-3">test</div>
+        <div class="bg-gray-200 rounded-2xl px-5 py-3">
+          <Loader2 v-if="!forecast" />
+        </div>
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
         <div class="flex flex-col gap-3">
-          <ChecklistItem v-for="item in materials"
+          <ChecklistItem
+            v-for="item in materials"
             :key="item.id"
             :material="item"
           />
@@ -61,14 +69,13 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
-import { ArrowLeft, ArrowRight, ChevronRight} from 'lucide-vue-next'
-import { ref, watch } from 'vue'
+import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
+import { ref, watch, watchEffect } from 'vue'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { getForecast, getForecastForWeek } from '@/api/openWeather'
@@ -81,21 +88,28 @@ import type { Appointment } from '@/interfaces/appointment.user.interface'
 import Materials from './Materials.vue'
 import type { Material } from '@/interfaces/material.interface'
 import type { Forecast } from '@/interfaces/forecast.interface'
+import { time } from 'console'
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
 const forecast = ref<Forecast>()
- 
-const getWeekForecast = async (city: string) => {
-  await getForecast(city).then((data) => {
+
+const getWeekForecast = async (lon: string, lat: string) => {
+  console.log('getting week forecast')
+  await getForecastForWeek(lon, lat).then(data => {
     forecast.value = data
   })
 }
 
-getWeekForecast("Izegem")
-console.log(getForecastForWeek("Izegem"))
+navigator.geolocation.getCurrentPosition(position => {
+  console.log(position.coords.latitude, position.coords.longitude)
+  getWeekForecast(
+    position.coords.latitude.toString(),
+    position.coords.longitude.toString(),
+  )
+})
 
 const {
   result: schedule,
@@ -114,27 +128,28 @@ const finishedAppointments = ref<[Appointment]>()
 const materials = ref<[Material]>()
 
 const setNextAppointment = () => {
-    // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
-    nextAppointment.value = schedule.value.scheduleByDateAndUserId[0].appointments.find(
-      (appointment: Appointment) => appointment.isDone === false
+  // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
+  nextAppointment.value =
+    schedule.value.scheduleByDateAndUserId[0].appointments.find(
+      (appointment: Appointment) => appointment.isDone === false,
     )
 }
 
 const setAppointments = () => {
-    // set appointments to appointments of schedule where isDone is false
-    appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
-      (appointment: Appointment) => appointment.isDone === false
+  // set appointments to appointments of schedule where isDone is false
+  appointments.value =
+    schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+      (appointment: Appointment) => appointment.isDone === false,
     )
 }
 
 const setFinishedAppointments = () => {
-    // set appointments to appointments of schedule where isDone is true
-    finishedAppointments.value = schedule.value.scheduleByDateAndUserId[0].appointments.filter(
-      (appointment: Appointment) => appointment.isDone === true
+  // set appointments to appointments of schedule where isDone is true
+  finishedAppointments.value =
+    schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+      (appointment: Appointment) => appointment.isDone === true,
     )
 }
-
-
 
 watch(schedule, () => {
   if (schedule.value && schedule.value.scheduleByDateAndUserId.length > 0) {
