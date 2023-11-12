@@ -6,18 +6,18 @@
   </h1>
 
   <!-- loading -->
-  <div v-if="userLoading">
+  <div v-if="userLoading && !user">
     <p class="text-6xl font-black">Loading User...</p>
   </div>
 
   <!-- show user -->
-  <div v-if="!isEditing">
+  <div v-if="!isEditing && user">
     <!-- edit button -->
     <button class="flex" @click="setEditing(true)">
       <Pencil class="h-6 w-6" />
     </button>
 
-    <div v-if="user">
+    <div>
       <div class="overflow-hidden rounded-lg bg-white p-6 shadow">
         <h2 class="text-2xl font-semibold text-gray-900">
           {{ user.fullname }}
@@ -32,7 +32,7 @@
         >
           Absent Count: {{ user.absentCount }}
         </p>
-        <p class="mt-2 text-sm font-medium text-gray-600">
+        <p class="mt-2 text-sm font-medium text-gray-600" v-if="user.telephone">
           Telephone: {{ user.telephone }}
         </p>
         <div v-if="user.role == Role.CLIENT && user.company">
@@ -53,9 +53,10 @@
           <CustomButton
             v-if="user.locations?.length === 0 || user.role === Role.CLIENT"
             name="Add New Location"
-            :loading="loadingCreateLocation"
+            :loading="loading.createLocation"
             @click="openModal(null, 'create')"
           />
+          <!-- show all locations -->
           <div v-if="user.locations && user.locations.length > 0" class="mt-4">
             <!-- show all locations -->
             <div v-for="location in user.locations" :key="location.id">
@@ -143,7 +144,7 @@
         placeholder="0412345678"
         type="text"
         :errorMessage="errorMessages.telephone"
-        v-bind="telephone" 
+        v-bind="telephone"
       />
 
       <!-- Client Only -->
@@ -216,12 +217,7 @@
 
       <div class="h-80 w-full overflow-auto rounded-3xl">
         <Map
-          :coordinates="[
-            {
-              lat: selectedLocation.lat!,
-              lng: selectedLocation.lng!,
-            },
-          ]"
+          :locations="[selectedLocation]"
         />
       </div>
     </div>
@@ -281,14 +277,14 @@
       <CustomButton
         class="block"
         name="Search Address"
-        :loading="loadingSearchAddress"
+        :loading="loading.searchAddress"
         @click="handleSearchAddress()"
       />
 
       <CustomButton
         type="submit"
         name="Update Location"
-        :loading="loadingUpdateLocation"
+        :loading="loading.updateLocation"
       />
     </form>
   </Dialog>
@@ -347,14 +343,14 @@
       <CustomButton
         class="block"
         name="Search Address"
-        :loading="loadingSearchAddress"
+        :loading="loading.searchAddress"
         @click="handleSearchAddress()"
       />
 
       <CustomButton
         type="submit"
         name="Create Location"
-        :loading="loadingCreateLocation"
+        :loading="loading.createLocation"
       />
     </form>
   </Dialog>
@@ -389,7 +385,6 @@ import {
 } from '@/graphql/location.mutation'
 import type { Location } from '@/interfaces/location.interface'
 import useTomTomMap from '@/composables/useTomTomMap'
-import type { Coordinate } from '@/interfaces/coordinate.interface'
 import Map from '@/components/Map.vue'
 
 // composables
@@ -401,19 +396,23 @@ const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
 // variables
-const isEditing = ref(false)
+const isEditing = ref<boolean>(false)
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
-const loadingCreateLocation = ref(false)
-const loadingUpdateUser = ref(false)
-const loadingUpdateLocation = ref(false)
 const visibleLocation = ref({
   detail: false,
   edit: false,
   create: false,
 })
 const selectedLocation = ref<Location | null>(null)
-const searchAddressResults = ref<Coordinate[] | null>(null)
-const loadingSearchAddress = ref(false)
+const searchAddressResults = ref<Location[] | null>(null)
+
+// loading states
+const loading = ref<{ [key: string]: boolean }>({
+  updateUser: false,
+  createLocation: false,
+  updateLocation: false,
+  searchAddress: false,
+})
 
 // form
 const schema = yup.object({
@@ -535,7 +534,7 @@ const handleDeleteUser = async () => {
 
 // handle update user
 const handleUpdateUser = async () => {
-  loadingUpdateUser.value = true
+  loading.value.updateUser = true
   await validate()
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
@@ -559,25 +558,25 @@ const handleUpdateUser = async () => {
         ...input,
       },
     }).then(() => {
+      loading.value.updateUser = false
       showToast('success', 'Success', `You have updated your profile`)
       setEditing(false)
-      resetForm()
       refetchUser()
     })
   }
-  loadingUpdateUser.value = false
+  loading.value.updateUser = false
 }
 
 // search address
 const handleSearchAddress = async () => {
-  loadingSearchAddress.value = true
+  loading.value.searchAddress = true
   searchAddressResults.value = null
   await validateLocation()
   errorMessages.value.searchAdressInput = errorsLocation.value.searchAdressInput
   if (!errorsLocation.value.searchAdressInput) {
     await searchAddress(valuesLocation.searchAdressInput)
       .then(async results => {
-        loadingSearchAddress.value = false
+        loading.value.searchAddress = false
         if (results) {
           searchAddressResults.value = results
         }
@@ -586,12 +585,12 @@ const handleSearchAddress = async () => {
         showToast('error', 'Error', err.message)
       })
   }
-  loadingSearchAddress.value = false
+  loading.value.searchAddress = false
 }
 
 // add new location
 const handleCreateLocation = async () => {
-  loadingCreateLocation.value = true
+  loading.value.createLocation = true
   await validateLocation()
   errorMessages.value = errorsLocation.value
   if (Object.keys(errorsLocation.value).length === 0) {
@@ -604,17 +603,18 @@ const handleCreateLocation = async () => {
         userId: customUser.value?.id,
       },
     }).then(() => {
+      loading.value.createLocation = false
       showToast('success', 'Success', `You have created a new location`)
       closeModal()
       refetchUser()
     })
   }
-  loadingCreateLocation.value = false
+  loading.value.createLocation = false
 }
 
 // update location
 const handleUpdateLocation = async () => {
-  loadingUpdateLocation.value = true
+  loading.value.updateLocation = true
   await validateLocation()
   errorMessages.value = errorsLocation.value
   if (Object.keys(errorsLocation.value).length === 0) {
@@ -627,12 +627,13 @@ const handleUpdateLocation = async () => {
         lng: valuesLocation.selectedAddress.lng,
       },
     }).then(() => {
+      loading.value.updateLocation = false
       showToast('success', 'Success', `You have updated a location`)
       closeModal()
       refetchUser()
     })
   }
-  loadingUpdateLocation.value = false
+  loading.value.updateLocation = false
 }
 
 // delete location
@@ -714,11 +715,16 @@ watchEffect(() => {
   ]
   errors.forEach(error => {
     if (error) {
-      loadingCreateLocation.value = false
-      loadingUpdateUser.value = false
+      loading.value = {
+        updateUser: false,
+        createLocation: false,
+        updateLocation: false,
+        searchAddress: false,
+      }
 
       showToast('error', 'Error', error.message)
     }
   })
 })
 </script>
+@/interfaces/address.search.result.interface

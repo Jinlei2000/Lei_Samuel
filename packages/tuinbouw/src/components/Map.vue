@@ -6,17 +6,13 @@
 import useTomTomMap from '@/composables/useTomTomMap'
 import { onMounted, ref, type PropType } from 'vue'
 import tt from '@tomtom-international/web-sdk-maps'
+import type { Location } from '@/interfaces/location.interface'
 
 // Props
 const props = defineProps({
   // The locations to show on the map
-  coordinates: {
-    type: Array as PropType<
-      {
-        lat: number
-        lng: number
-      }[]
-    >,
+  locations: {
+    type: Array as PropType<Location[]>,
   },
 })
 
@@ -28,15 +24,13 @@ onMounted(() => {
   const map = createMap(mapRef.value)
 
   // Show markers for each location & add to bounds
-  if (props.coordinates) {
+  if (props.locations && props.locations.length > 0) {
     const bounds = new tt.LngLatBounds()
-    props.coordinates.forEach(c => {
-      createMarker(map, {
-        lat: c.lat,
-        lng: c.lng,
-      })
+    props.locations.forEach(l => {
+      if (!l.lat || !l.lng) return
+      createMarker(map, l)
 
-      bounds.extend(new tt.LngLat(c.lng, c.lat))
+      bounds.extend(new tt.LngLat(l.lng, l.lat))
     })
 
     // Get center of bounds
