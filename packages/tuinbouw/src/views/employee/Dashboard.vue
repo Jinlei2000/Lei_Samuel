@@ -258,6 +258,7 @@ const resetAppointments = () => {
   nextAppointment.value = undefined
   appointments.value = undefined
   finishedAppointments.value = undefined
+  materials.value = undefined
 }
 
 // @ts-ignore
