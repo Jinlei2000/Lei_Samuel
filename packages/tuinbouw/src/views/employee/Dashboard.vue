@@ -10,6 +10,12 @@
             v-if="nextAppointment"
             :appointment="nextAppointment"
           />
+          <div
+            class="w-full h-32 bg-gray-200 rounded-2xl flex items-center justify-center"
+            v-else
+          >
+            <p class="text-gray-500">No appointments for today</p>
+          </div>
         </div>
         <div class="flex justify-between items-center mb-3 mt-6">
           <h2 class="text-2xl">Schedule</h2>
@@ -49,6 +55,12 @@
               :appointment="item"
             />
           </template>
+          <div
+            class="w-full h-32 bg-gray-200 rounded-2xl flex items-center justify-center"
+            v-else
+          >
+            <p class="text-gray-500">No appointments for today</p>
+          </div>
         </div>
       </div>
       <div class="col-span-2 col-start-2">
@@ -60,7 +72,11 @@
           <div v-if="forecast" class="flex justify-between w-full h-full">
             <div v-for="item in forecast" class="flex flex-col items-center">
               <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
-              <img class="mix-blend-multiply w-20 h-20" :src="getWeatherIconUrl(item.weather[0].icon)" alt="" />
+              <img
+                class="mix-blend-multiply w-20 h-20"
+                :src="getWeatherIconUrl(item.weather[0].icon)"
+                alt=""
+              />
               <p class="text-sm">
                 {{ Math.round(item.main.temp).toFixed() }}°C
               </p>
@@ -100,6 +116,7 @@ import Materials from './Materials.vue'
 import type { Material } from '@/interfaces/material.interface'
 import type { Forecast } from '@/interfaces/forecast.interface'
 import { time } from 'console'
+import { finished } from 'stream'
 const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 
@@ -224,15 +241,23 @@ const days = [
 
 // nextday function
 const nextDay = () => {
+  resetAppointments()
   const currentDate = myDate.value
   const nextDay = new Date(currentDate.setDate(currentDate.getDate() + 1))
   myDate.value = nextDay
 }
 
 const prevDay = () => {
+  resetAppointments()
   const currentDate = myDate.value
   const prevDay = new Date(currentDate.setDate(currentDate.getDate() - 1))
   myDate.value = prevDay
+}
+
+const resetAppointments = () => {
+  nextAppointment.value = undefined
+  appointments.value = undefined
+  finishedAppointments.value = undefined
 }
 
 // @ts-ignore
