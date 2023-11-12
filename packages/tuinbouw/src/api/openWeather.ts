@@ -11,6 +11,7 @@ export const getForecast = async (city: string): Promise<Forecast> => {
 }
 
 export const getForecastForWeek = async (city: string): Promise<any> => {
+    const today = new Date();
     const response = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`
     );
@@ -23,7 +24,10 @@ export const getForecastForWeek = async (city: string): Promise<any> => {
         const date = new Date(item.dt_txt);
         const dayOfWeek = date.getDay();
         const time = date.getHours();
-        if (time === 12) {
+        // For today, push first available weather data
+        if (dayOfWeek === today.getDay() && !week[currentDay]) {
+            week.push(item);
+        } else if (time === 12) {
             week.push(item);
         }
     });
