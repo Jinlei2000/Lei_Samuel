@@ -64,25 +64,32 @@
         </div>
       </div>
       <div class="col-span-2 col-start-2">
-        <h2 class="mb-3 text-2xl">Weather</h2>
-        <div
-          class="bg-gray-200 rounded-2xl min-h-24 px-5 py-3 flex justify-center items-center"
-        >
-          <Loader2 v-if="!forecast" class="animate-spin text-primary-green" />
-          <div v-if="forecast" class="flex justify-between w-full h-full">
-            <div v-for="item in forecast" class="flex flex-col items-center">
-              <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
-              <img
-                class="mix-blend-multiply w-20 h-20"
-                :src="getWeatherIconUrl(item.weather[0].icon)"
-                alt=""
-              />
-              <p class="text-sm">
-                {{ Math.round(item.main.temp).toFixed() }}°C
-              </p>
+        <div class="mb-3">
+          <h2 class="mb-3 text-2xl">Weather</h2>
+          <div
+            class="bg-gray-200 rounded-2xl min-h-24 px-5 py-3 flex justify-center items-center"
+          >
+            <Loader2 v-if="!forecast" class="animate-spin text-primary-green" />
+            <div v-if="forecast" class="flex justify-between w-full h-full">
+              <div v-for="item in forecast" class="flex flex-col items-center">
+                <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
+                <img
+                  class="mix-blend-multiply w-20 h-20"
+                  :src="getWeatherIconUrl(item.weather[0].icon)"
+                  alt=""
+                />
+                <p class="text-sm">
+                  {{ Math.round(item.main.temp).toFixed() }}°C
+                </p>
+              </div>
             </div>
           </div>
         </div>
+        <Map
+          v-if="todaysLocations"
+          class="rounded-2xl"
+          :locations="todaysLocations"
+        ></Map>
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
@@ -107,6 +114,7 @@
 <script setup lang="ts">
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
+import Map from '@/components/Map.vue'
 import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
 import { ref, watch, watchEffect } from 'vue'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
@@ -121,6 +129,7 @@ import type { Appointment } from '@/interfaces/appointment.user.interface'
 import Materials from './Materials.vue'
 import type { Material } from '@/interfaces/material.interface'
 import type { Forecast } from '@/interfaces/forecast.interface'
+import type { Location } from '@/interfaces/location.interface'
 import { time } from 'console'
 import { finished } from 'stream'
 const { firebaseUser } = useFirebase()
@@ -129,6 +138,8 @@ const { customUser } = useCustomUser()
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
 const forecast = ref<any>()
+
+const todaysLocations = ref<Location[]>()
 
 const getWeekForecast = async (lon: string, lat: string) => {
   await getForecastForWeek(lon, lat).then(data => {
@@ -179,6 +190,25 @@ const setAppointments = () => {
     )
 }
 
+const setTodaysLocations = () => {
+  // set appointments to appointments of schedule where isDone is false
+  console.log(schedule.value.scheduleByDateAndUserId[0].appointments)
+  todaysLocations.value = schedule.value.scheduleByDateAndUserId[0].appointments
+    .filter((appointment: Appointment) => appointment.isDone === false)
+    .map((appointment: Appointment) => {
+      console.log(appointment.location!.lat, appointment.location!.lng)
+      return {
+        id: appointment.location?.id,
+        userId: appointment.location?.userId,
+        address: appointment.location?.address,
+        lat: appointment.location?.lat,
+        lng: appointment.location?.lng,
+      }
+    })
+
+  console.log(todaysLocations.value)
+}
+
 const setFinishedAppointments = () => {
   // set appointments to appointments of schedule where isDone is true
   finishedAppointments.value =
@@ -210,6 +240,7 @@ watch(schedule, () => {
     setNextAppointment()
     setAppointments()
     setFinishedAppointments()
+    setTodaysLocations()
 
     // set appointments to appointments of schedule
     // appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
@@ -262,6 +293,7 @@ const resetAppointments = () => {
   appointments.value = undefined
   finishedAppointments.value = undefined
   materials.value = undefined
+  todaysLocations.value = undefined
 }
 
 // @ts-ignore
