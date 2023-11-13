@@ -24,7 +24,7 @@
   <!-- TODO: filters & orders -->
 
   <!-- show loading -->
-  <div v-if="absencesLoading || absencesByUserIdLoading">
+  <div v-if="loading.data">
     <p class="text-6xl font-black">Loading Absences...</p>
   </div>
 
@@ -203,7 +203,7 @@
       <CustomButton
         type="submit"
         name="Update Absence"
-        :loading="loadingUpdate"
+        :loading="loading.update"
       />
     </form>
   </Dialog>
@@ -317,7 +317,7 @@
       <CustomButton
         type="submit"
         name="Create Absence"
-        :loading="loadingCreate"
+        :loading="loading.create"
       />
     </form>
   </Dialog>
@@ -339,6 +339,7 @@ import {
 } from '@/graphql/absence.query'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
+import { absenceSchema } from '@/validation/absence.schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import {
   Eye,
@@ -350,8 +351,8 @@ import {
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
-import * as yup from 'yup'
 
+// props
 const props = defineProps({
   showAllOverview: {
     type: Boolean,
@@ -379,22 +380,18 @@ const visible = ref({
   create: false,
 })
 const selectedAbsence = ref<Absence | null>(null)
-const loadingUpdate = ref(false)
-const loadingCreate = ref(false)
+
+const loading = ref({
+  update: false,
+  create: false,
+  data: computed(() => absencesLoading.value || absencesByUserIdLoading.value),
+})
 
 const absences = computed<Absence[]>(() =>
   props.showAllOverview
     ? absencesResult.value?.absences || []
     : absencesByUserIdResult.value?.absencesByUserId || [],
 )
-
-// form
-const schema = yup.object({
-  startDate: yup.string().required(),
-  endDate: yup.string().required(),
-  type: yup.string().required(),
-  description: yup.string().optional(),
-})
 
 // error messages of forms
 const errorMessages = ref<{
@@ -407,10 +404,9 @@ const errorMessages = ref<{
 })
 
 // create form
-const { resetForm, defineComponentBinds, errors, values, validate, setValues } =
-  useForm({
-    validationSchema: schema,
-  })
+const { defineComponentBinds, errors, values, validate, setValues } = useForm({
+  validationSchema: absenceSchema,
+})
 
 const startDate = defineComponentBinds('startDate')
 const endDate = defineComponentBinds('endDate')
@@ -460,7 +456,7 @@ onMounted(() => {
 
 // handle create
 const handleCreate = async () => {
-  loadingCreate.value = true
+  loading.value.create = true
   await validate()
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
@@ -473,21 +469,18 @@ const handleCreate = async () => {
         endDate: formatDateTime(values.endDate),
         description: values.description,
       },
-    }).then(async () => {
-      loadingCreate.value = false
-      showToast('success', 'Success', 'Absence has been created')
-      // refetch
-      await refetch()
-      // close modal
-      closeModal()
     })
+    loading.value.create = false
+    showToast('success', 'Success', 'Absence has been created')
+    await refetch()
+    closeModal()
   }
-  loadingCreate.value = false
+  loading.value.create = false
 }
 
 // handle update
 const handleUpdate = async () => {
-  loadingUpdate.value = true
+  loading.value.update = true
   await validate()
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
@@ -500,30 +493,26 @@ const handleUpdate = async () => {
         endDate: formatDateTime(values.endDate),
         description: values.description,
       },
-    }).then(async () => {
-      loadingUpdate.value = false
-      showToast('success', 'Success', 'Absence has been updated')
-      // refetch
-      await refetch()
-      // close modal
-      closeModal()
     })
+    loading.value.update = false
+    showToast('success', 'Success', 'Absence has been updated')
+    await refetch()
+    closeModal()
   }
-  loadingUpdate.value = false
+  loading.value.update = false
 }
 
 // handle delete
 const handleDelete = async (absence: Absence) => {
   await deleteAbsence({
     id: absence.id,
-  }).then(() => {
-    showToast(
-      'success',
-      'Success',
-      `Absence of ${absence.user?.firstname} has been deleted`,
-    )
-    refetch()
   })
+  showToast(
+    'success',
+    'Success',
+    `Absence of ${absence.user?.firstname} has been deleted`,
+  )
+  refetch()
 }
 
 const openModal = (absence: Absence | null = null, type: string) => {
@@ -580,8 +569,11 @@ watchEffect(() => {
   ]
   errors.forEach(error => {
     if (error) {
-      loadingUpdate.value = false
-      loadingCreate.value = false
+      loading.value = {
+        ...loading.value,
+        update: false,
+        create: false,
+      }
 
       showToast('error', 'Error', error.message)
     }

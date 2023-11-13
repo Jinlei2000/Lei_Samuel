@@ -1,5 +1,5 @@
 <template>
-  <Absences :showOwnAbsences="true" />
+  <Absences />
 </template>
 
 <script setup lang="ts">
