@@ -552,7 +552,8 @@ const closeModal = () => {
 }
 
 const refetch = async (): Promise<void> => {
-  props.showAllOverview ? refetchAbsencesByUserId() : refetchAbsences()
+  if (props.showAllOverview) await refetchAbsences()
+  else await refetchAbsencesByUserId()
 }
 
 watchEffect(() => {
