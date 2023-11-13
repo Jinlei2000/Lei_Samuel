@@ -101,7 +101,7 @@
               class="border-1 mt-3 flex flex-col gap-4 rounded-2xl border-black border-opacity-10 bg-gray-200 py-3 pl-3 pr-6"
             >
               <Router-link :to="`/${role}/profile`">
-                <button class="hover:text-primary-green flex gap-3">
+                <button class="hover:text-primary-green flex gap-3" @click="showProfileDropdown()">
                   <User /> Profile
                 </button>
               </Router-link>
@@ -109,7 +109,7 @@
                 v-if="role === 'employee' || role === 'admin'"
                 :to="goToAbsences()"
               >
-                <button class="hover:text-primary-green flex gap-3">
+                <button class="hover:text-primary-green flex gap-3" @click="showProfileDropdown()">
                   <Hourglass /> Absences
                 </button>
               </Router-link>
@@ -159,7 +159,7 @@ const profileDropdown = ref(false)
 
 const showProfileDropdown = () => {
   profileDropdown.value = !profileDropdown.value
-  console.log(profileDropdown.value)
+  // console.log(profileDropdown.value)
 }
 
 const setLanguage = (e: Event) => {

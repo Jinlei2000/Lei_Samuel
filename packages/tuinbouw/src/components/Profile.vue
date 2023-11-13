@@ -402,7 +402,6 @@ import {
 import { useForm } from 'vee-validate'
 import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-import * as yup from 'yup'
 import InputText from '@/components/generic/form/InputText.vue'
 import { GET_USER_BY_ID } from '@/graphql/user.query'
 import {
@@ -413,6 +412,7 @@ import {
 import type { Location } from '@/interfaces/location.interface'
 import useTomTomMap from '@/composables/useTomTomMap'
 import Map from '@/components/Map.vue'
+import { locationCreateSchema, userUpdateSchema } from '@/validation/schema'
 
 // composables
 const { customUser } = useCustomUser()
@@ -441,27 +441,6 @@ const loading = ref<{ [key: string]: boolean }>({
   searchAddress: false,
 })
 
-// form
-const schema = yup.object({
-  email: yup.string().required().email(),
-  firstname: yup.string().required(),
-  lastname: yup.string().required(),
-  telephone: yup
-    .string()
-    .matches(/^[0-9]+$/, 'Must be only digits')
-    .min(10)
-    .max(10)
-    .optional()
-    .nullable(),
-  invoiceOption: yup.string().optional().nullable(),
-  company: yup.boolean().optional().nullable(),
-  btwNumber: yup
-    .string()
-    .matches(/^[A-Za-z\d]{5,15}$/, 'Not a valid VAT Number')
-    .optional()
-    .nullable(),
-})
-
 // error messages of forms
 const errorMessages = ref<{
   [key: string]: string | undefined
@@ -476,7 +455,7 @@ const errorMessages = ref<{
 
 // update user form
 const { defineComponentBinds, errors, values, validate, setValues } = useForm({
-  validationSchema: schema,
+  validationSchema: userUpdateSchema,
 })
 
 const firstname = defineComponentBinds('firstname')
@@ -496,10 +475,7 @@ const {
   validate: validateLocation,
   setValues: setValuesLocation,
 } = useForm({
-  validationSchema: yup.object({
-    searchAdressInput: yup.string().required().trim(),
-    selectedAddress: yup.object().required(),
-  }),
+  validationSchema: locationCreateSchema,
 })
 
 const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
@@ -588,10 +564,8 @@ const handleUpdateUser = async () => {
 const handleSearchAddress = async () => {
   loading.value.searchAddress = true
   searchAddressResults.value = null
-  errorMessages.value = {
-    searchAdressInput: '',
-    selectedAddress: '',
-  }
+  errorMessages.value = {}
+
   await validateLocation()
   errorMessages.value.searchAdressInput = errorsLocation.value.searchAdressInput
   if (!errorsLocation.value.searchAdressInput) {
@@ -694,10 +668,7 @@ const openModal = (location: Location | null = null, type: string) => {
   })
   selectedLocation.value = null
   searchAddressResults.value = null
-  errorMessages.value = {
-    searchAdressInput: '',
-    selectedAddress: '',
-  }
+  errorMessages.value = {}
 
   if (type === 'detail' && location) {
     selectedLocation.value = { ...location }

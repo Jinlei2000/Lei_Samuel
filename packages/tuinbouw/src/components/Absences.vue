@@ -340,7 +340,7 @@ import {
 import { ABSENCE_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
-import { absenceSchema } from '@/validation/absence.schema'
+import { absenceSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import {
   Eye,
@@ -583,3 +583,4 @@ watchEffect(() => {
   })
 })
 </script>
+@/validation/schema
