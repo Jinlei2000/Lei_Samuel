@@ -26,7 +26,7 @@ onMounted(() => {
     const bounds = new tt.LngLatBounds()
     props.locations.forEach(l => {
       createMarker(map, l)
-      bounds.extend(new tt.LngLat(l.lng!, l.lat!))
+      bounds.extend(new tt.LngLat(l.lng, l.lat))
     })
 
     // Get center of bounds

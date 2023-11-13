@@ -511,7 +511,7 @@ const handleDelete = async (absence: Absence) => {
     'Success',
     `Absence of ${absence.user.firstname} has been deleted`,
   )
-  refetch()
+  await refetch()
 }
 
 const openModal = (absence: Absence | null = null, type: string) => {

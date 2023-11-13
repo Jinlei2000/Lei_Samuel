@@ -54,7 +54,7 @@ const createMarker = (map: tt.Map, location: Location): tt.Marker => {
 
   // add marker
   const marker = new tt.Marker({ element: customMarker })
-    .setLngLat([location.lng!, location.lat!])
+    .setLngLat([location.lng, location.lat])
     .addTo(map)
 
   const popupOptions = {
