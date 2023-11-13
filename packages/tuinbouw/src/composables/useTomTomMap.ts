@@ -49,12 +49,12 @@ const createMap = (mapContainer: string): tt.Map => {
 const createMarker = (map: tt.Map, location: Location): tt.Marker => {
   // custom marker
   const customMarker = document.createElement('img')
-  customMarker.src = '/public/assets/marker.svg'
+  customMarker.src = '/assets/marker.svg'
   customMarker.className = 'h-8 w-8'
 
   // add marker
   const marker = new tt.Marker({ element: customMarker })
-    .setLngLat([location.lng!, location.lat!])
+    .setLngLat([location.lng, location.lat])
     .addTo(map)
 
   const popupOptions = {
