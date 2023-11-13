@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-      <div class="col-span-2 col-start-2">
+      <div class="col-span-2">
         <div class="mb-3">
           <h2 class="mb-3 text-2xl">Weather</h2>
           <div
@@ -193,11 +193,9 @@ const setAppointments = () => {
 
 const setTodaysLocations = () => {
   // set appointments to appointments of schedule where isDone is false
-  console.log(schedule.value.scheduleByDateAndUserId[0].appointments)
   todaysLocations.value = schedule.value.scheduleByDateAndUserId[0].appointments
     .filter((appointment: Appointment) => appointment.isDone === false)
     .map((appointment: Appointment) => {
-      console.log(appointment.location!.lat, appointment.location!.lng)
       return {
         id: appointment.location?.id,
         userId: appointment.location?.userId,
@@ -206,8 +204,6 @@ const setTodaysLocations = () => {
         lng: appointment.location?.lng,
       }
     })
-
-  console.log(todaysLocations.value)
 }
 
 const setFinishedAppointments = () => {
