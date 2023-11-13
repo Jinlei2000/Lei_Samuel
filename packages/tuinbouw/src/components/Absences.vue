@@ -128,7 +128,7 @@
         <Dropdown
           id="type"
           v-bind="type"
-          :options="[{ name: 'sick' }, { name: 'vacation' }, { name: 'other' }]"
+          :options="ABSENCE_TYPES"
           optionLabel="name"
           optionValue="name"
           class="w-full"
@@ -228,7 +228,7 @@
         <Dropdown
           id="type"
           v-bind="type"
-          :options="[{ name: 'sick' }, { name: 'vacation' }, { name: 'other' }]"
+          :options="ABSENCE_TYPES"
           optionLabel="name"
           optionValue="name"
           class="w-full"
@@ -337,6 +337,7 @@ import {
   GET_ALL_ABSENCES,
   GET_ALL_ABSENCES_BY_USERID,
 } from '@/graphql/absence.query'
+import { ABSENCE_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { absenceSchema } from '@/validation/absence.schema'
@@ -367,11 +368,12 @@ const { customUser } = useCustomUser()
 
 // variables
 const minDate = new Date()
+const selectedAbsence = ref<Absence | null>(null)
 const variables = ref<VariablesProps>({
   filters: [],
   order: {
     field: 'createdAt',
-    direction: 'DESC',
+    direction: ORDER_DIRECTION.DESC,
   },
 })
 const visible = ref({
@@ -379,14 +381,11 @@ const visible = ref({
   edit: false,
   create: false,
 })
-const selectedAbsence = ref<Absence | null>(null)
-
 const loading = ref({
   update: false,
   create: false,
   data: computed(() => absencesLoading.value || absencesByUserIdLoading.value),
 })
-
 const absences = computed<Absence[]>(() =>
   props.showAllOverview
     ? absencesResult.value?.absences || []
@@ -461,7 +460,7 @@ const handleCreate = async () => {
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
     // console.log('values: ', values)
-    createAbsence({
+    await createAbsence({
       createAbsenceInput: {
         userId: customUser.value?.id,
         type: values.type,
@@ -485,7 +484,7 @@ const handleUpdate = async () => {
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
     // console.log('values: ', values)
-    updateAbsence({
+    await updateAbsence({
       updateAbsenceInput: {
         id: values.id,
         type: values.type,
@@ -516,6 +515,10 @@ const handleDelete = async (absence: Absence) => {
 }
 
 const openModal = (absence: Absence | null = null, type: string) => {
+  // reset
+  errorMessages.value = {}
+  selectedAbsence.value = null
+
   if (type === 'detail' && absence) {
     selectedAbsence.value = { ...absence }
     visible.value.detail = true
@@ -541,7 +544,6 @@ const openModal = (absence: Absence | null = null, type: string) => {
 }
 
 const closeModal = () => {
-  selectedAbsence.value = null
   visible.value = {
     detail: false,
     edit: false,
