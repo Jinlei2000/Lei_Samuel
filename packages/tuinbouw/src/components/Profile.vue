@@ -1,4 +1,9 @@
 <template>
+  <!-- go back button -->
+  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
+    <ArrowLeft class="h-6 w-6" />
+    Go back
+  </button>
   <h1
     class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
   >
@@ -11,7 +16,7 @@
   </div>
 
   <!-- show user -->
-  <div v-if="!isEditing && user">
+  <div v-if="!isEditingUser && user">
     <!-- edit button -->
     <button class="flex" @click="setEditing(true)">
       <Pencil class="h-6 w-6" />
@@ -105,7 +110,7 @@
   </div>
 
   <!-- show edit form -->
-  <div v-if="isEditing">
+  <div v-if="isEditingUser">
     <!-- go back button -->
     <button class="flex" @click="setEditing(false)">
       <ArrowLeft class="h-6 w-6" />
@@ -216,9 +221,7 @@
       </p>
 
       <div class="h-80 w-full overflow-auto rounded-3xl">
-        <Map
-          :locations="[selectedLocation]"
-        />
+        <Map :locations="[selectedLocation]" />
       </div>
     </div>
   </Dialog>
@@ -269,10 +272,10 @@
             </div>
           </div>
         </div>
-        <small class="p-error">{{
-          errorMessages.selectedAddress || '&nbsp;'
-        }}</small>
       </div>
+      <small class="p-error">{{
+        errorMessages.selectedAddress || '&nbsp;'
+      }}</small>
 
       <CustomButton
         class="block"
@@ -335,10 +338,34 @@
             </div>
           </div>
         </div>
-        <small class="p-error">{{
-          errorMessages.selectedAddress || '&nbsp;'
-        }}</small>
       </div>
+
+      <!-- show no results -->
+      <div v-if="searchAddressResults?.length === 0 || !searchAddressResults">
+        <div class="mt-4">
+          <p class="text-gray-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              class="w-8 h-8 mx-auto text-gray-400"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </p>
+          <p class="text-gray-600 text-center">No results</p>
+        </div>
+      </div>
+
+      <small class="p-error">{{
+        errorMessages.selectedAddress || '&nbsp;'
+      }}</small>
 
       <CustomButton
         class="block"
@@ -396,7 +423,7 @@ const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
 // variables
-const isEditing = ref<boolean>(false)
+const isEditingUser = ref<boolean>(false)
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
 const visibleLocation = ref({
   detail: false,
@@ -431,8 +458,6 @@ const schema = yup.object({
   btwNumber: yup
     .string()
     .matches(/^[A-Za-z\d]{5,15}$/, 'Not a valid VAT Number')
-    .min(5, 'VAT Number must be at least 5 characters')
-    .max(15, 'VAT Number must be at most 15 characters')
     .optional()
     .nullable(),
 })
@@ -450,10 +475,9 @@ const errorMessages = ref<{
 })
 
 // update user form
-const { resetForm, defineComponentBinds, errors, values, validate, setValues } =
-  useForm({
-    validationSchema: schema,
-  })
+const { defineComponentBinds, errors, values, validate, setValues } = useForm({
+  validationSchema: schema,
+})
 
 const firstname = defineComponentBinds('firstname')
 const lastname = defineComponentBinds('lastname')
@@ -465,7 +489,6 @@ const btwNumber = defineComponentBinds('btwNumber')
 
 // create location form
 const {
-  resetForm: resetFormLocation,
   defineComponentBinds: defineComponentBindsLocation,
   defineInputBinds: defineInputBindsLocation,
   errors: errorsLocation,
@@ -524,12 +547,11 @@ const { mutate: deleteLocation, error: deleteLocationError } =
 const handleDeleteUser = async () => {
   await deleteUser({
     id: customUser.value?.id,
-  }).then(() => {
-    showToast('success', 'Success', `You have deleted your account`)
-    customUser.value = null
-    firebaseUser.value = null
-    replace('/')
   })
+  showToast('success', 'Success', `You have deleted your account`)
+  customUser.value = null
+  firebaseUser.value = null
+  replace('/')
 }
 
 // handle update user
@@ -539,15 +561,6 @@ const handleUpdateUser = async () => {
   errorMessages.value = errors.value
   if (Object.keys(errors.value).length === 0) {
     console.log('no errors', values)
-    // update client
-    const input =
-      customUser.value?.role !== Role.CLIENT
-        ? {
-            invoiceOption: values.invoiceOption,
-            company: values.company,
-            btwNumber: values.btwNumber,
-          }
-        : {}
     await updateUser({
       updateUserInput: {
         id: customUser.value?.id,
@@ -555,14 +568,18 @@ const handleUpdateUser = async () => {
         lastname: values.lastname,
         email: values.email,
         telephone: values.telephone,
-        ...input,
+        // client only
+        ...(customUser.value?.role === Role.CLIENT && {
+          invoiceOption: values.invoiceOption,
+          company: values.company,
+          btwNumber: values.btwNumber,
+        }),
       },
-    }).then(() => {
-      loading.value.updateUser = false
-      showToast('success', 'Success', `You have updated your profile`)
-      setEditing(false)
-      refetchUser()
     })
+    loading.value.updateUser = false
+    showToast('success', 'Success', `You have updated your profile`)
+    setEditing(false)
+    refetchUser()
   }
   loading.value.updateUser = false
 }
@@ -571,19 +588,22 @@ const handleUpdateUser = async () => {
 const handleSearchAddress = async () => {
   loading.value.searchAddress = true
   searchAddressResults.value = null
+  errorMessages.value = {
+    searchAdressInput: '',
+    selectedAddress: '',
+  }
   await validateLocation()
   errorMessages.value.searchAdressInput = errorsLocation.value.searchAdressInput
   if (!errorsLocation.value.searchAdressInput) {
-    await searchAddress(valuesLocation.searchAdressInput)
-      .then(async results => {
-        loading.value.searchAddress = false
-        if (results) {
-          searchAddressResults.value = results
-        }
-      })
-      .catch(err => {
-        showToast('error', 'Error', err.message)
-      })
+    try {
+      const results = await searchAddress(valuesLocation.searchAdressInput)
+      loading.value.searchAddress = false
+      if (results) {
+        searchAddressResults.value = results
+      }
+    } catch (err) {
+      if (err instanceof Error) showToast('error', 'Error', err.message)
+    }
   }
   loading.value.searchAddress = false
 }
@@ -602,12 +622,11 @@ const handleCreateLocation = async () => {
         lng: valuesLocation.selectedAddress.lng,
         userId: customUser.value?.id,
       },
-    }).then(() => {
-      loading.value.createLocation = false
-      showToast('success', 'Success', `You have created a new location`)
-      closeModal()
-      refetchUser()
     })
+    loading.value.createLocation = false
+    showToast('success', 'Success', `You have created a new location`)
+    closeModal()
+    refetchUser()
   }
   loading.value.createLocation = false
 }
@@ -626,12 +645,11 @@ const handleUpdateLocation = async () => {
         lat: valuesLocation.selectedAddress.lat,
         lng: valuesLocation.selectedAddress.lng,
       },
-    }).then(() => {
-      loading.value.updateLocation = false
-      showToast('success', 'Success', `You have updated a location`)
-      closeModal()
-      refetchUser()
     })
+    loading.value.updateLocation = false
+    showToast('success', 'Success', `You have updated a location`)
+    closeModal()
+    refetchUser()
   }
   loading.value.updateLocation = false
 }
@@ -640,14 +658,13 @@ const handleUpdateLocation = async () => {
 const handleDeleteLocation = async (id: string) => {
   await deleteLocation({
     id: id,
-  }).then(() => {
-    showToast('success', 'Success', `You have deleted a location`)
-    refetchUser()
   })
+  showToast('success', 'Success', `You have deleted a location`)
+  refetchUser()
 }
 
 const setEditing = (value: boolean) => {
-  isEditing.value = value
+  isEditingUser.value = value
   const {
     role,
     firstname,
@@ -677,12 +694,17 @@ const openModal = (location: Location | null = null, type: string) => {
   })
   selectedLocation.value = null
   searchAddressResults.value = null
+  errorMessages.value = {
+    searchAdressInput: '',
+    selectedAddress: '',
+  }
 
   if (type === 'detail' && location) {
     selectedLocation.value = { ...location }
     visibleLocation.value.detail = true
   } else if (type === 'edit' && location) {
     selectedLocation.value = { ...location }
+    searchAddressResults.value = [{ ...location }]
     setValuesLocation({
       searchAdressInput: location.address,
     })
@@ -727,4 +749,3 @@ watchEffect(() => {
   })
 })
 </script>
-@/interfaces/address.search.result.interface
