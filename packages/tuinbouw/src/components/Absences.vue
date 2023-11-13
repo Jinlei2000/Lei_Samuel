@@ -40,20 +40,20 @@
         <div class="px-4 py-5 sm:p-6">
           <!-- Absence details go here -->
           <h3 class="text-lg font-semibold text-gray-900">
-            {{ a.user!.id }}
+            {{ a.user.id }}
           </h3>
           <p class="mt-1 text-sm text-gray-500">{{ a.description }}</p>
           <!-- Add more details as needed -->
           <p class="mt-2 text-sm font-medium text-indigo-600">{{ a.type }}</p>
           <p class="mt-2 text-sm font-medium text-gray-600">
-            {{ formatDateTime(a.startDate!) }} -
-            {{ formatDateTime(a.endDate!) }}
+            {{ formatDateTime(a.startDate) }} -
+            {{ formatDateTime(a.endDate) }}
           </p>
           <p class="mt-2 text-sm font-medium text-gray-600">
             Total Days: {{ a.totalDays }}
           </p>
           <p class="mt-2 text-sm text-gray-500">
-            Created At: {{ formatDateTime(a.createdAt!) }}
+            Created At: {{ formatDateTime(a.createdAt) }}
           </p>
         </div>
         <div
@@ -68,7 +68,7 @@
           </button>
           <!-- Edit Button -->
           <button
-            v-if="a.user!.id === customUser?.id"
+            v-if="a.user.id === customUser?.id"
             @click="openModal(a, 'edit')"
             class="text-blue-500 hover:underline"
           >
@@ -173,7 +173,7 @@
           id="endDate"
           v-bind="endDate"
           :manualInput="false"
-          :minDate="new Date(startDate.modelValue!)"
+          :minDate="new Date(startDate.modelValue)"
           showIcon
           dateFormat="yy-mm-dd"
         >
@@ -509,7 +509,7 @@ const handleDelete = async (absence: Absence) => {
   showToast(
     'success',
     'Success',
-    `Absence of ${absence.user?.firstname} has been deleted`,
+    `Absence of ${absence.user.firstname} has been deleted`,
   )
   refetch()
 }
@@ -558,7 +558,7 @@ const refetch = async (): Promise<void> => {
 watchEffect(() => {
   // log the queries
   // if (absences.value) console.log(absences.value)
-  // if (absencesByUserId.value) console.log(absencesByUserId.value)
+  // if (absencesByUserIdResult.value) console.log(absencesByUserIdResult.value)
   // if (absencesResult.value) console.log(absencesResult.value)
 
   // all errors
