@@ -1,13 +1,7 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center">
-    <div class="text-center">
-      <h1
-        class="mb-4 bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
-      >
-        Absences
-      </h1>
-    </div>
-  </div>
+  <Absences :showOwnAbsences="true" />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Absences from '@/components/Absences.vue'
+</script>
