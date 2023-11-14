@@ -43,7 +43,7 @@
             optionLabel="name"
             optionValue="name"
             v-model="field.value"
-            @change="handleType($event, handleChange)"
+            @change="handleChange($event.value, false)"
           >
             <template #dropdownicon>
               <ChevronDownIcon />
@@ -51,7 +51,27 @@
           </Dropdown>
         </Field>
 
-        <ErrorMessage class="block text-red-500" :name="name" />
+        <Field
+          v-if="type === 'date'"
+          :name="name"
+          v-slot="{ field, handleChange }"
+        >
+          <Calendar
+            id="startDate"
+            v-bind="startDate"
+            :manualInput="false"
+            :minDate="minDate"
+            showIcon
+            dateFormat="yy-mm-dd"
+            @date-select="setValues({ endDate: startDate.modelValue })"
+          >
+            <template #dropdownicon>
+              <CalendarIcon />
+            </template>
+          </Calendar>
+        </Field>
+
+        <ErrorMessage class="text-red-500 block" :name="name" />
       </li>
     </ul>
 
@@ -98,7 +118,6 @@ configure({
 const handleType = (event: DropdownChangeEvent, handleChange: Function) => {
   // @ts-ignore
   const value = event.value
-  console.log(value)
   handleChange(value, false)
 }
 </script>

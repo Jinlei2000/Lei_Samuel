@@ -9,6 +9,7 @@
         name: 'John Doe',
         email: 'johon@gmail.com',
         password: '123456',
+        type: 'other',
       }"
     />
   </div>
@@ -48,24 +49,19 @@ const formSchema = {
       as: 'input',
       type: 'password',
     },
-    // {
-    //   label: 'Select Date',
-    //   name: 'date',
-    //   as: 'input',
-    //   type: 'date',
-    // },
     {
       label: 'Select Type',
       name: 'type',
       as: 'select',
       type: 'select',
-      // options: [
-      //   { label: 'Select an option', value: '', disabled: true },
-      //   { label: 'Option 1', value: '1' },
-      //   { label: 'Option 2', value: '2' },
-      // ],
       options: ABSENCE_TYPES,
       placeholder: 'Select a type',
+    },
+    {
+      label: 'Select Date',
+      name: 'date',
+      as: 'input',
+      type: 'date',
     },
   ],
 
