@@ -103,6 +103,28 @@ export class SchedulesService {
     return schedules
   }
 
+  async findSchedulesFromDateForDaysByUserId(
+    userId: string,
+    date: string,
+    days: number,
+  ): Promise<Schedule[]> {
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        // finalDate is between date and date + days
+        finalDate: {
+          $gte: resetTime(new Date(date)),
+          $lte: new Date(date),
+        },
+        employees: {
+          // @ts-ignore
+          $elemMatch: { id: new ObjectId(userId) }, // $elemMatch is needed to search in array of objects
+        },
+      },
+    })
+
+    return schedules
+  }
+
   async create(createScheduleInput: CreateScheduleInput) {
     const s = new Schedule()
     s.appointmentIds = createScheduleInput.appointmentIds
