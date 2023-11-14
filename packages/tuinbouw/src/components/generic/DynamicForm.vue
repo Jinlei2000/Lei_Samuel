@@ -19,7 +19,7 @@
         <!-- TODO: use toggle password & add custom date component -->
         <Field
           v-if="type !== 'date' && type !== 'select'"
-          class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
+          class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
           :class="{
             'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
               errors[name],
@@ -44,6 +44,24 @@
             optionValue="name"
             v-model="field.value"
             @change="handleChange($event.value, false)"
+            :pt="{
+              // root: {
+              //   class: [
+              //     'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none focus:ring-primary-green-400/40 focus:ring-3',
+              //   ],
+              // },
+              input: {
+                class: [
+                  'placeholder-gray-900 placeholder-text-sm',
+                  'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none block w-full p-3 focus:ring-primary-green-400/40 focus:ring-3',
+                  {
+                    'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                      errors[name],
+                  },
+                ],
+              },
+            }"
+            unstyled
           >
             <template #dropdownicon>
               <ChevronDownIcon />
@@ -57,16 +75,30 @@
           v-slot="{ field, handleChange }"
         >
           <Calendar
-            id="startDate"
-            v-bind="startDate"
+            :id="name"
             :manualInput="false"
-            :minDate="minDate"
+            :minDate="attrs.minDate"
             showIcon
             dateFormat="yy-mm-dd"
-            @date-select="setValues({ endDate: startDate.modelValue })"
+            :placeholder="attrs.placeholder"
+            :pt="{
+              input: {
+                class: [
+                  'placeholder-gray-900 placeholder-text-sm',
+                  'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-3 focus:ring-primary-green-400/40 focus:ring-3',
+                  {
+                    'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                      errors[name],
+                  },
+                ],
+              },
+            }"
+            unstyled
+            v-model="field.value"
+            @date-select="handleChange($event, false)"
           >
             <template #dropdownicon>
-              <CalendarIcon />
+              <CalendarIcon class="h-5 w-5" />
             </template>
           </Calendar>
         </Field>
@@ -81,7 +113,7 @@
 
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
-import { ChevronDownIcon } from 'lucide-vue-next'
+import { CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
 import type { DropdownChangeEvent } from 'primevue/dropdown'
 import { ErrorMessage, Form, Field, configure } from 'vee-validate'
 

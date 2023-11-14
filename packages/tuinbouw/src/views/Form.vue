@@ -9,7 +9,6 @@
         name: 'John Doe',
         email: 'johon@gmail.com',
         password: '123456',
-        type: 'other',
       }"
     />
   </div>
@@ -62,6 +61,8 @@ const formSchema = {
       name: 'date',
       as: 'input',
       type: 'date',
+      placeholder: 'Select a date fds dsfd df sdfdf sdfdsf ',
+      minDate: new Date(),
     },
   ],
 

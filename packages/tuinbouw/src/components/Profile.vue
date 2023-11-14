@@ -507,7 +507,7 @@ const {
   mutate: deleteUser,
   loading: deleteUserLoading,
   error: deleteUserError,
-} = useMutation<CustomUser>(DELETE_USER)
+} = useMutation(DELETE_USER)
 
 const { mutate: createLocation, error: createLocationError } =
   useMutation(CREATE_LOCATION)

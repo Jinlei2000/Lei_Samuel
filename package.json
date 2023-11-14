@@ -22,10 +22,6 @@
     "singleQuote": true,
     "tabWidth": 2,
     "trailingComma": "all",
-    "useTabs": false,
-  },
-  "devDependencies": {
-    "prettier": "^3.1.0",
-    "prettier-plugin-tailwindcss": "^0.5.7"
+    "useTabs": false
   }
 }
