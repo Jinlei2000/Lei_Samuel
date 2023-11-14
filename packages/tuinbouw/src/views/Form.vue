@@ -1,94 +1,80 @@
 <template>
   <div class="mt-10">
-    <Form
-      @submit="handleSubmit"
-      v-slot="{ errors }"
-      :validation-schema="schema"
-      novalidate
-      :initial-values="initialValues"
-      ref="form"
-    >
-      <div class="flex flex-col">
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="email"
-          >email</label
-        >
-        <Field
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          name="email"
-          id="email"
-          :class="{ 'border-red-500': errors.email }"
-        />
-        <ErrorMessage class="block text-red-500" name="email" />
-      </div>
-
-      <div class="flex flex-col mt-5">
-        <label
-          class="block mb-2 text-sm font-medium text-gray-900"
-          for="firstname"
-          >firstname</label
-        >
-        <Field
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          name="firstname"
-          id="firstname"
-          :class="{ 'border-red-500': errors.firstname }"
-        />
-        <ErrorMessage class="block text-red-500" name="firstname" />
-      </div>
-
-      <div class="flex flex-col mt-5">
-        <label
-          class="block mb-2 text-sm font-medium text-gray-900"
-          for="lastname"
-          >lastname</label
-        >
-        <Field
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          name="lastname"
-          id="lastname"
-          :class="{ 'border-red-500': errors.lastname }"
-        />
-        <ErrorMessage class="block text-red-500" name="lastname" />
-      </div>
-
-      <CustomButton type="submit" name="Submit" />
-    </Form>
+    <DynamicForm
+      :schema="formSchema"
+      :validationSchema="validationSchema"
+      :handleForm="handleSubmit"
+      :loading="false"
+      :initialValues="{
+        name: 'John Doe',
+        email: 'johon@gmail.com',
+        password: '123456',
+      }"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import CustomButton from '@/components/generic/CustomButton.vue'
-import {
-  ErrorMessage,
-  Form,
-  Field,
-  configure,
-  type GenericObject,
-} from 'vee-validate'
-import { object, string } from 'yup'
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import { ABSENCE_TYPES } from '@/helpers/constants'
+import type { GenericObject } from 'vee-validate'
+import * as yup from 'yup'
 
-// Default values
-configure({
-  validateOnBlur: false, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: false, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: false, // controls if `input` events should trigger validation with `handleChange` handler
-  validateOnModelUpdate: false, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+const validationSchema = yup.object({
+  name: yup.string().required(),
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+  type: yup.string().required(),
 })
 
-const initialValues = {
-  email: 'abc@abc.com',
-  firstname: 'abc',
-  lastname: 'abc',
+const formSchema = {
+  fields: [
+    {
+      label: 'Your Name',
+      name: 'name',
+      placeholder: 'John Doe',
+      as: 'input',
+    },
+    {
+      label: 'Your Email',
+      name: 'email',
+      placeholder: 'john@gmail.com',
+      as: 'input',
+    },
+    {
+      label: 'Your Password',
+      name: 'password',
+      placeholder: '********',
+      as: 'input',
+      type: 'password',
+    },
+    // {
+    //   label: 'Select Date',
+    //   name: 'date',
+    //   as: 'input',
+    //   type: 'date',
+    // },
+    {
+      label: 'Select Type',
+      name: 'type',
+      as: 'select',
+      type: 'select',
+      // options: [
+      //   { label: 'Select an option', value: '', disabled: true },
+      //   { label: 'Option 1', value: '1' },
+      //   { label: 'Option 2', value: '2' },
+      // ],
+      options: ABSENCE_TYPES,
+      placeholder: 'Select a type',
+    },
+  ],
+
+  button: {
+    name: 'Create',
+  },
 }
 
-const schema = object({
-  email: string().required().email(),
-  firstname: string().required(),
-  lastname: string().required(),
-})
-
-const handleSubmit = async (values: GenericObject) => {
-  console.log('submit')
+const handleSubmit = (values: GenericObject) => {
   console.log(values)
 }
 </script>
