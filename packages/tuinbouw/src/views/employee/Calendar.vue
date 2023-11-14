@@ -9,7 +9,7 @@
         <button
           class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
         >
-          <ArrowLeft @click="" class="text-white" />
+          <ArrowLeft @click="getPreviousWeekBounds" class="text-white" />
         </button>
         <div v-if="firstDay && lastDay" class="flex gap-4">
           <p>
@@ -23,7 +23,7 @@
         <button
           class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
         >
-          <ArrowRight @click="" class="text-white" />
+          <ArrowRight @click="getNextWeekBounds" class="text-white" />
         </button>
       </div>
     </div>
@@ -57,6 +57,24 @@ const getWeekBounds = () => {
 
   firstDay.value = firstDayOfWeek
   lastDay.value = lastDayOfWeek
+}
+
+// Function that sets firstDay and lastDay to 1 week later
+const getNextWeekBounds = () => {
+  const newFirstDay = firstDay.value!.setDate(firstDay.value!.getDate() + 7)
+  const newLastDay = lastDay.value!.setDate(lastDay.value!.getDate() + 7)
+
+  firstDay.value = new Date(newFirstDay)
+  lastDay.value = new Date(newLastDay)
+}
+
+// Function that sets firstDay and lastDay to 1 week earlier
+const getPreviousWeekBounds = () => {
+  const newFirstDay = firstDay.value!.setDate(firstDay.value!.getDate() - 7)
+  const newLastDay = lastDay.value!.setDate(lastDay.value!.getDate() - 7)
+
+  firstDay.value = new Date(newFirstDay)
+  lastDay.value = new Date(newLastDay)
 }
 
 // Function that formats a date to a string (dd/mm)
