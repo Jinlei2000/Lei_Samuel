@@ -6,19 +6,19 @@
     :initial-values="initialValues"
     novalidate
   >
-    <ul
-      v-for="{ as, name, label, type, options, ...attrs } in schema.fields"
-      :key="name"
-    >
-      <li>
+    <ul class="space-y-4">
+      <li
+        v-for="{ as, name, label, type, options, ...attrs } in schema.fields"
+        :key="name"
+      >
         <label
           class="block mb-2 text-sm font-medium text-gray-900"
           :for="name"
           >{{ label }}</label
         >
-        <!-- TODO: use toggle password & add custom date component -->
+        <!-- input -->
         <Field
-          v-if="type !== 'date' && type !== 'select'"
+          v-if="!['date', 'select', 'password'].includes(type)"
           class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
           :class="{
             'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
@@ -31,6 +31,7 @@
         >
         </Field>
 
+        <!-- dropdown -->
         <Field
           v-if="type === 'select'"
           :name="name"
@@ -45,11 +46,6 @@
             v-model="field.value"
             @change="handleChange($event.value, false)"
             :pt="{
-              // root: {
-              //   class: [
-              //     'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none focus:ring-primary-green-400/40 focus:ring-3',
-              //   ],
-              // },
               input: {
                 class: [
                   'placeholder-gray-900 placeholder-text-sm',
@@ -69,6 +65,7 @@
           </Dropdown>
         </Field>
 
+        <!-- date -->
         <Field
           v-if="type === 'date'"
           :name="name"
@@ -103,6 +100,31 @@
           </Calendar>
         </Field>
 
+        <!-- password -->
+        <div v-if="type === 'password'" class="relative">
+          <Field
+            class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
+            :class="{
+              'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                errors[name],
+            }"
+            :as="as"
+            :id="name"
+            :name="name"
+            :type="passwordVisible ? 'text' : 'password'"
+            v-bind="attrs"
+          >
+          </Field>
+          <button
+            type="button"
+            class="absolute inset-y-0 right-0 flex items-center px-3"
+            @click="passwordVisible = !passwordVisible"
+          >
+            <Eye class="stroke-gray-900" v-if="!passwordVisible" />
+            <EyeOff class="stroke-gray-900" v-else />
+          </button>
+        </div>
+
         <ErrorMessage class="text-red-500 block" :name="name" />
       </li>
     </ul>
@@ -113,9 +135,12 @@
 
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
+import { Eye } from 'lucide-vue-next'
+import { EyeOff } from 'lucide-vue-next'
 import { CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
 import type { DropdownChangeEvent } from 'primevue/dropdown'
 import { ErrorMessage, Form, Field, configure } from 'vee-validate'
+import { ref } from 'vue'
 
 defineProps({
   schema: {
@@ -138,6 +163,8 @@ defineProps({
     default: false,
   },
 })
+
+const passwordVisible = ref(false)
 
 // Default values
 configure({

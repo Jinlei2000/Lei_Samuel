@@ -5,11 +5,7 @@
       :validationSchema="validationSchema"
       :handleForm="handleSubmit"
       :loading="false"
-      :initialValues="{
-        name: 'John Doe',
-        email: 'johon@gmail.com',
-        password: '123456',
-      }"
+      :initialValues="{}"
     />
   </div>
 </template>
@@ -44,7 +40,7 @@ const formSchema = {
     {
       label: 'Your Password',
       name: 'password',
-      placeholder: '********',
+      placeholder: '••••••••',
       as: 'input',
       type: 'password',
     },
@@ -61,7 +57,7 @@ const formSchema = {
       name: 'date',
       as: 'input',
       type: 'date',
-      placeholder: 'Select a date fds dsfd df sdfdf sdfdsf ',
+      placeholder: 'Select a date',
       minDate: new Date(),
     },
   ],
