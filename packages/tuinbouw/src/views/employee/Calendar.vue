@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col mt-12 gap-5 max-w-7xl m-auto">
+    <!-- Week selection -->
     <div class="w-full grid grid-cols-3">
       <h1 class="col-start-1 text-2xl">Calendar</h1>
       <div
@@ -10,10 +11,14 @@
         >
           <ArrowLeft @click="" class="text-white" />
         </button>
-        <div class="flex gap-4">
-          <p class="">week</p>
+        <div v-if="firstDay && lastDay" class="flex gap-4">
+          <p>
+            {{ formatDate(firstDay) }}
+          </p>
           <p>-</p>
-          <p class="">week</p>
+          <p>
+            {{ formatDate(lastDay) }}
+          </p>
         </div>
         <button
           class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
@@ -22,9 +27,45 @@
         </button>
       </div>
     </div>
+
+    <!-- Calendar for the selected week -->
+    <div class="w-full grid grid-cols-5 gap-3"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
+import { ref } from 'vue'
+
+// Variables
+const firstDay = ref<Date>()
+const lastDay = ref<Date>()
+
+// Functions that run on component mount
+const initialize = () => {
+  getWeekBounds()
+}
+
+// Function that returns the first and last day of the workweek (Monday - Friday)
+const getWeekBounds = () => {
+  const today = new Date()
+  const first = today.getDate() - today.getDay()
+  const last = first + 4
+
+  const firstDayOfWeek = new Date(today.setDate(first))
+  const lastDayOfWeek = new Date(today.setDate(last))
+
+  firstDay.value = firstDayOfWeek
+  lastDay.value = lastDayOfWeek
+}
+
+// Function that formats a date to a string (dd/mm)
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+  })
+}
+
+initialize()
 </script>
