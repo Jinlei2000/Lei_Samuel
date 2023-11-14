@@ -100,7 +100,7 @@
           </Calendar>
         </Field>
 
-        <!-- password -->
+        <!-- password with toggle -->
         <div v-if="type === 'password'" class="relative">
           <Field
             class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
@@ -138,7 +138,6 @@ import CustomButton from '@/components/generic/CustomButton.vue'
 import { Eye } from 'lucide-vue-next'
 import { EyeOff } from 'lucide-vue-next'
 import { CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
-import type { DropdownChangeEvent } from 'primevue/dropdown'
 import { ErrorMessage, Form, Field, configure } from 'vee-validate'
 import { ref } from 'vue'
 
@@ -173,10 +172,4 @@ configure({
   validateOnInput: false, // controls if `input` events should trigger validation with `handleChange` handler
   validateOnModelUpdate: false, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
 })
-
-const handleType = (event: DropdownChangeEvent, handleChange: Function) => {
-  // @ts-ignore
-  const value = event.value
-  handleChange(value, false)
-}
 </script>
