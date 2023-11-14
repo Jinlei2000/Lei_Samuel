@@ -56,6 +56,22 @@ export class SchedulesResolver {
     return this.schedulesService.findTodayScheduleByDateAndUserId(userId, date)
   }
 
+  // Get schedules from startdate for specified number of days by employeeId
+  @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Schedule], { name: 'schedulesFromDateForDaysByUserId' })
+  findSchedulesFromDateForDaysByUserId(
+    @Args('date', { type: () => String }) date: string,
+    @Args('days', { type: () => Number }) days: number,
+    @Args('userId', { type: () => String }) userId: string,
+  ) {
+    return this.schedulesService.findSchedulesFromDateForDaysByUserId(
+      userId,
+      date,
+      days,
+    )
+  }
+
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Mutation(() => Schedule)

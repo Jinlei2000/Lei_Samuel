@@ -112,8 +112,11 @@ export class SchedulesService {
       where: {
         // finalDate is between date and date + days
         finalDate: {
-          $gte: resetTime(new Date(date)),
-          $lte: new Date(date),
+          // @ts-ignore
+          $gte: new Date(date),
+          $lte: new Date(
+            new Date(date).setDate(new Date(date).getDate() + days),
+          ),
         },
         employees: {
           // @ts-ignore
