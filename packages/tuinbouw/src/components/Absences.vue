@@ -237,7 +237,7 @@ const formAbsence = {
       as: 'input',
       type: 'date',
       placeholder: 'Select a end date',
-      minDate: new Date(),
+      setMinEndDate: true,
     },
     {
       label: 'Description',

@@ -18,7 +18,7 @@
         >
         <!-- input -->
         <Field
-          v-if="!['date', 'select', 'password'].includes(type)"
+          v-if="!['date', 'select', 'password', 'date-range'].includes(type)"
           class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
           :class="{
             'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
@@ -71,10 +71,11 @@
           :name="name"
           v-slot="{ field, handleChange }"
         >
+          <!-- :minDate="attrs.minDate" -->
           <Calendar
             :id="name"
             :manualInput="false"
-            :minDate="attrs.minDate"
+            :minDate="attrs.setMinEndDate ? minEndDate : attrs.minDate"
             showIcon
             dateFormat="yy-mm-dd"
             :placeholder="attrs.placeholder"
@@ -92,7 +93,14 @@
             }"
             unstyled
             v-model="field.value"
-            @date-select="handleChange($event, false)"
+            @date-select="
+              $event => {
+                // Set minEndDate to the selected date if setMinEndDate is true
+                // This is used to set the minEndDate of the end date field
+                if (!attrs.setMinEndDate) minEndDate = $event
+                handleChange($event, false)
+              }
+            "
           >
             <template #dropdownicon>
               <CalendarIcon class="h-5 w-5" />
@@ -146,7 +154,7 @@ import { CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
 import { ErrorMessage, Form, Field, configure } from 'vee-validate'
 import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   schema: {
     type: Object,
     required: true,
@@ -169,7 +177,7 @@ const props = defineProps({
 })
 
 const passwordVisible = ref(false)
-console.log(props.initialValues)
+const minEndDate = ref()
 
 // Default values
 configure({
