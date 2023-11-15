@@ -79,6 +79,7 @@
               }"
               :minDate="minDate"
               dateFormat="yy-mm-dd"
+              unstyled
             >
               <template #dropdownicon>
                 <CalendarIcon class="h-5 w-5" />
@@ -94,6 +95,7 @@
               }"
               :minDate="startProposedDate"
               dateFormat="yy-mm-dd"
+              unstyled
             >
               <template #dropdownicon>
                 <CalendarIcon class="h-5 w-5" />

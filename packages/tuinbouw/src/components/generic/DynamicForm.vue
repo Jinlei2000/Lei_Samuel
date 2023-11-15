@@ -57,6 +57,7 @@
                 ],
               },
             }"
+            unstyled
           >
             <template #dropdownicon>
               <ChevronDownIcon />
@@ -124,11 +125,16 @@
           </button>
         </div>
 
-        <ErrorMessage class="text-red-500 block" :name="name" />
+        <ErrorMessage class="text-red-500 block text-sm" :name="name" />
       </li>
     </ul>
 
-    <CustomButton :loading="loading" type="submit" :name="schema.button.name" />
+    <CustomButton
+      class="flex ml-auto"
+      :loading="loading"
+      type="submit"
+      :name="schema.button.name"
+    />
   </Form>
 </template>
 
@@ -140,7 +146,7 @@ import { CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
 import { ErrorMessage, Form, Field, configure } from 'vee-validate'
 import { ref } from 'vue'
 
-defineProps({
+const props = defineProps({
   schema: {
     type: Object,
     required: true,
@@ -163,6 +169,7 @@ defineProps({
 })
 
 const passwordVisible = ref(false)
+console.log(props.initialValues)
 
 // Default values
 configure({
