@@ -120,3 +120,45 @@ export const GET_SCHEDULE_BY_USER_AND_DATE = gql`
     }
   }
 `
+
+export const GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID = gql`
+  query schedulesFromDateForDaysByUserId(
+    $date: String!
+    $days: Float!
+    $userId: String!
+  ) {
+    schedulesFromDateForDaysByUserId(
+      date: $date
+      days: $days
+      userId: $userId
+    ) {
+      id
+      appointments {
+        id
+        user {
+          fullname
+        }
+        location {
+          id
+          address
+          lat
+          lng
+          userId
+        }
+        price
+        type
+        finalDate
+        isDone
+        description
+        priority
+      }
+      materials {
+        name
+      }
+      employees {
+        id
+        fullname
+      }
+    }
+  }
+`
