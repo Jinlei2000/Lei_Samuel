@@ -63,6 +63,14 @@ const formSchema = {
       minDate: new Date(),
     },
     {
+      label: 'End Date',
+      name: 'endDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a end date',
+      setMinEndDate: true,
+    },
+    {
       label: 'Description',
       name: 'description',
       as: 'textarea',

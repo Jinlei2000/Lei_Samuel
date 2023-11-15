@@ -16,7 +16,7 @@
   <button
     v-if="!showAllOverview"
     class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
-    @click="openModal(null, 'create')"
+    @click="toggleModal(null, 'create')"
   >
     Add Absence
   </button>
@@ -61,7 +61,7 @@
         >
           <!-- View More Button -->
           <button
-            @click="openModal(a, 'detail')"
+            @click="toggleModal(a, 'detail')"
             class="text-green-500 hover:underline"
           >
             <Eye />
@@ -69,7 +69,7 @@
           <!-- Edit Button -->
           <button
             v-if="a.user.id === customUser?.id"
-            @click="openModal(a, 'edit')"
+            @click="toggleModal(a, 'edit')"
             class="text-blue-500 hover:underline"
           >
             <Pencil />
@@ -310,7 +310,7 @@ const handleCreateAbsence = async (values: Absence) => {
   loading.value.create = false
   showToast('success', 'Success', 'Absence has been created')
   await refetch()
-  closeModal()
+  toggleModal()
 }
 
 // handle update absence
@@ -328,10 +328,10 @@ const handleUpdateAbsence = async (values: Absence) => {
   loading.value.update = false
   showToast('success', 'Success', 'Absence has been updated')
   await refetch()
-  closeModal()
+  toggleModal()
 }
 
-// handle delete
+// handle delete absence
 const handleDelete = async (absence: Absence) => {
   await deleteAbsence({
     id: absence.id,
@@ -344,25 +344,16 @@ const handleDelete = async (absence: Absence) => {
   await refetch()
 }
 
-const openModal = (absence: Absence | null = null, type: string) => {
-  // reset
-  selectedAbsence.value = null
-  if (type === 'detail' && absence) {
-    selectedAbsence.value = { ...absence }
-    visible.value.detail = true
-  } else if (type === 'edit' && absence) {
-    selectedAbsence.value = { ...absence }
-    visible.value.edit = true
-  } else if (type === 'create') {
-    visible.value.create = true
-  }
-}
-
-const closeModal = () => {
+// open or close modal
+const toggleModal = (
+  absence: Absence | null = null,
+  type: string = 'close',
+) => {
+  selectedAbsence.value = absence ? { ...absence } : null
   visible.value = {
-    detail: false,
-    edit: false,
-    create: false,
+    detail: type === 'detail',
+    edit: type === 'edit',
+    create: type === 'create',
   }
 }
 
