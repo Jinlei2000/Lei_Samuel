@@ -62,6 +62,14 @@ const formSchema = {
       placeholder: 'Select a date',
       minDate: new Date(),
     },
+    {
+      label: 'Description',
+      name: 'description',
+      as: 'textarea',
+      type: 'textarea',
+      placeholder: 'Reason for absence',
+      rows: 10,
+    },
   ],
 
   button: {

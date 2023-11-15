@@ -57,7 +57,6 @@
                 ],
               },
             }"
-            unstyled
           >
             <template #dropdownicon>
               <ChevronDownIcon />

@@ -1,11 +1,7 @@
 export default {
   toast: {
-    closeButton: {
-      class: ['hover:bg-white/30', 'focus:shadow-none'],
-    },
-    closeIcon: 'w-6 h-6',
-    buttonContainer: {
-      class: ['self-start'],
+    root: {
+      class: ['w-96', 'opacity-90'],
     },
     container: ({ props }: any) => ({
       class: [
@@ -22,9 +18,27 @@ export default {
         },
       ],
     }),
-    content: 'flex items-center p-5',
+    content: 'flex items-center py-5 px-7',
     icon: {
-      class: ['w-8 h-8', 'text-lg mr-2'],
+      class: ['w-6 h-6', 'text-lg mr-2'],
+    },
+    text: 'text-base font-normal flex flex-col flex-1 grow shrink ml-4',
+    summary: 'font-bold block',
+    detail: 'mt-1 block',
+    closebutton: {
+      class: [
+        'w-8 h-8 rounded-full bg-transparent transition duration-200 ease-in-out',
+        'ml-auto overflow-hidden relative',
+        'flex items-center justify-center',
+        'hover:bg-white/30',
+      ],
+    },
+    transition: {
+      enterFromClass: 'opacity-0 translate-x-0 translate-y-2/4 translate-z-0',
+      enterActiveClass: 'transition-transform transition-opacity duration-300',
+      leaveFromClass: 'max-h-40',
+      leaveActiveClass: 'transition-all duration-500 ease-in',
+      leaveToClass: 'max-h-0 opacity-0 mb-0 overflow-hidden',
     },
   },
   inputtext: {
@@ -215,7 +229,6 @@ export default {
       leaveToClass: 'opacity-0',
     },
   },
-
   dropdown: {
     root: ({ props }: any) => ({
       class: [
