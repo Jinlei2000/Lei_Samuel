@@ -44,30 +44,31 @@
           }}
         </p>
       </div>
-      <div
+      <!-- <div
         v-if="weekSchedules"
         v-for="schedule in weekSchedules"
       >
         <p>test</p>
         <p>{{ schedule.finalDate }}</p>
-      </div>
+      </div> -->
       <!-- Display schedule where date = getDateWithOffset(index) -->
-      <!-- <div v-for="index in 5" v-if="schedules.value">
+      <div v-for="index in 5" v-if="weekSchedules">
         <p>{{ getDateWithOffset(index).toISOString() }}</p>
-        <p>{{ schedules.value.schedulesFromDateForDaysByUserId }}</p>
         <div
-          v-if="schedules.value"
-          v-for="schedule in schedules.value.schedulesFromDateForDaysByUserId"
+          v-if="weekSchedules"
+          v-for="schedule in weekSchedules"
           :key="schedule.id"
         >
-          <p>test</p>
           <p
-            v-if="schedule.finalDate === getDateWithOffset(index).toISOString()"
+            v-if="
+              schedule.finalDate.toString().substring(0, 10) ===
+              getDateWithOffset(index).toISOString().substring(0, 10)
+            "
           >
             {{ schedule.finalDate }}
           </p>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -179,7 +180,6 @@ const formatDate = (date: Date) => {
 
 watch(schedules, () => {
   setWeekSchedule()
-  console.log(weekSchedules.value)
 })
 
 initialize()
