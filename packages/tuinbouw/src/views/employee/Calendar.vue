@@ -106,7 +106,7 @@
         </div>
 
         <div
-          v-show="isAccordionOpen[index - 1]"
+          v-show="!isMobile() || isAccordionOpen[index - 1]"
           v-if="
             getAppointmentAmountForDay(getDateWithOffset(index)) == 0 &&
             weekSchedules &&
