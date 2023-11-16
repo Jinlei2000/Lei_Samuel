@@ -29,6 +29,7 @@
     </div>
 
     <!-- Calendar for the selected week -->
+
     <div class="w-full grid grid-cols-5 gap-3">
       <div
         v-if="firstDay"
@@ -44,7 +45,19 @@
           }}
         </p>
       </div>
-      <div v-for="index in 5" v-if="weekSchedules">
+      <div v-if="!schedulesLoading" v-for="index in 5">
+        <div
+          class="h-32 w-full bg-gray-200 rounded-2xl flex flex-col gap-2 p-3 animate-pulse"
+        >
+          <div class="h-4 w-full bg-gray-500 rounded-full"></div>
+          <div class="h-16 w-full rounded-2xl flex flex-col gap-2">
+            <div class="h-3 w-2/3 bg-gray-400 rounded-full"></div>
+            <div class="h-3 w-1/2 bg-gray-400 rounded-full"></div>
+            <div class="h-3 w-3/4 bg-gray-400 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+      <!-- <div v-else v-for="index in 5" v-if="weekSchedules">
         <div
           v-if="weekSchedules"
           v-for="schedule in weekSchedules"
@@ -62,7 +75,7 @@
             </template>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
