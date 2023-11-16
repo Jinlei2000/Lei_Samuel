@@ -46,7 +46,7 @@
         class="flex flex-col gap-3"
       >
         <div
-          class="bg-gray-500 p-2 flex justify-center items-center rounded-2xl"
+          class="bg-gray-500 p-2 flex justify-center items-center rounded-2xl relative"
         >
           <p class="text-lg">
             {{
@@ -55,6 +55,11 @@
               formatDate(getDateWithOffset(index))
             }}
           </p>
+          <div
+            class="sm:hidden absolute right-1 bg-primary-green text-white flex justify-center items-center h-9 w-9 rounded-xl"
+          >
+            {{ getAppointmentAmountForDay(getDateWithOffset(index)) }}
+          </div>
         </div>
 
         <div v-if="schedulesLoading" class="flex flex-col gap-3">
@@ -71,7 +76,10 @@
           </div>
         </div>
 
-        <div v-else v-if="checkIfScheduleExists(getDateWithOffset(index))">
+        <div
+          v-else
+          v-if="getAppointmentAmountForDay(getDateWithOffset(index)) > 0"
+        >
           <div v-for="schedule in weekSchedules" :key="schedule.id">
             <div
               v-if="
@@ -89,14 +97,14 @@
 
         <div
           v-if="
-            !checkIfScheduleExists(getDateWithOffset(index)) &&
+            getAppointmentAmountForDay(getDateWithOffset(index)) == 0 &&
             weekSchedules &&
             weekSchedules.length > 0
           "
         >
           <div
             v-if="!schedulesLoading"
-            class="w-full h-20 bg-gray-200 rounded-2xl flex justify-center items-center"
+            class="w-full h-20 bg-gray-200 p-3 rounded-2xl flex justify-center items-center"
           >
             <p>No Appointments this day</p>
           </div>
@@ -167,18 +175,20 @@ const setWeekSchedule = () => {
   weekSchedules.value = schedules.value?.schedulesFromDateForDaysByUserId
 }
 
-const checkIfScheduleExists = (date: Date) => {
+const getAppointmentAmountForDay = (date: Date) => {
+  let amount = 0
   if (weekSchedules.value) {
     for (const schedule of weekSchedules.value) {
       if (
         schedule.finalDate.toString().substring(0, 10) ===
         date.toISOString().substring(0, 10)
       ) {
-        return true
+        amount = schedule.appointments.length
       }
     }
+    return amount
   }
-  return false
+  return 0
 }
 
 // Functions that run on component mount
