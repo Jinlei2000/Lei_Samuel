@@ -26,6 +26,12 @@
           <ArrowRight @click="getNextWeekBounds" class="text-white" />
         </button>
       </div>
+      <button
+        class="bg-primary-green rounded-2xl text-white ml-3 w-fit px-[18px] hover:scale-105 transition-all"
+        @click="getWeekBounds"
+      >
+        Today
+      </button>
     </div>
 
     <!-- Calendar for the selected week -->
