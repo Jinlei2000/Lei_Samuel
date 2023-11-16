@@ -44,14 +44,6 @@
           }}
         </p>
       </div>
-      <!-- <div
-        v-if="weekSchedules"
-        v-for="schedule in weekSchedules"
-      >
-        <p>test</p>
-        <p>{{ schedule.finalDate }}</p>
-      </div> -->
-      <!-- Display schedule where date = getDateWithOffset(index) -->
       <div v-for="index in 5" v-if="weekSchedules">
         <div
           v-if="weekSchedules"
