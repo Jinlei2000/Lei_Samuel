@@ -40,3 +40,10 @@ export const loginValidationSchema = yup.object({
   email: yup.string().required().email(),
   password: yup.string().required().min(6),
 })
+
+export const registerValidationSchema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(6),
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+})
