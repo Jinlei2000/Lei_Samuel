@@ -7,7 +7,7 @@ export const absenceValidationSchema = yup.object({
   description: yup.string().optional(),
 })
 
-export const userUpdateSchema = yup.object({
+export const userUpdateValidationSchema = yup.object({
   email: yup.string().required().email(),
   firstname: yup.string().required(),
   lastname: yup.string().required(),
@@ -27,7 +27,7 @@ export const userUpdateSchema = yup.object({
     .nullable(),
 })
 
-export const locationCreateSchema = yup.object({
+export const locationValidationSchema = yup.object({
   searchAdressInput: yup.string().required().trim(),
   selectedAddress: yup.object().required(),
 })

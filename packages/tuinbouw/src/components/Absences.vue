@@ -92,10 +92,14 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    maximizable
     header="Absence Details"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <div v-if="selectedAbsence">
       <h2 class="mb-2 text-xl font-semibold">
@@ -112,11 +116,14 @@
   <Dialog
     v-model:visible="visible.edit"
     modal
-    maximizable
     header="Edit Absence"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
     :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <DynamicForm
       :schema="formAbsence"
@@ -124,7 +131,6 @@
       :handleForm="handleUpdateAbsence"
       :loading="loading.update"
       :initial-values="{
-        id: selectedAbsence!.id,
         type: selectedAbsence!.type,
         startDate: formatDateTime(selectedAbsence!.startDate),
         endDate: formatDateTime(selectedAbsence!.endDate),
@@ -137,11 +143,14 @@
   <Dialog
     v-model:visible="visible.create"
     modal
-    maximizable
     header="Create Absence"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
     :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <DynamicForm
       :schema="formAbsence"

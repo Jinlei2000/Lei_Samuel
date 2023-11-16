@@ -12,13 +12,22 @@
         :key="name"
       >
         <label
+          v-if="
+            !attrs.displayIf ||
+            (switchValue &&
+              attrs.displayIf === switchValue.name &&
+              switchValue.value)
+          "
           class="block mb-2 text-sm font-medium text-gray-900"
           :for="name"
           >{{ label }}</label
         >
         <!-- input -->
         <Field
-          v-if="!['date', 'select', 'password', 'date-range'].includes(type)"
+          v-if="
+            !['date', 'select', 'password', 'switch'].includes(type) &&
+            !attrs.displayIf
+          "
           class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
           :class="{
             'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
@@ -70,7 +79,6 @@
           :name="name"
           v-slot="{ field, handleChange }"
         >
-          <!-- :minDate="attrs.minDate" -->
           <Calendar
             :id="name"
             :manualInput="false"
@@ -79,10 +87,13 @@
             dateFormat="yy-mm-dd"
             :placeholder="attrs.placeholder"
             :pt="{
+              root: {
+                class: ['w-full'],
+              },
               input: {
                 class: [
                   'placeholder-gray-900 placeholder-text-sm',
-                  'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-3 focus:ring-primary-green-400/40 focus:ring-3',
+                  'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none hover:border-primary-green-400 focus:ring-primary-green-400/40 focus:ring-3',
                   {
                     'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
                       errors[name],
@@ -131,6 +142,51 @@
           </button>
         </div>
 
+        <!-- switch -->
+        <Field
+          v-if="type === 'switch'"
+          :name="name"
+          v-slot="{ field, handleChange }"
+        >
+          <InputSwitch
+            :id="name"
+            v-model="field.value"
+            @input="
+              $event => {
+                // Set switchValue to the selected value
+                switchValue = {
+                  name: name,
+                  value: $event,
+                }
+                handleChange($event, false)
+              }
+            "
+            :class="{
+              'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                errors[name],
+            }"
+          />
+        </Field>
+
+        <!-- show only if switch is true -->
+        <Field
+          v-if="
+            switchValue &&
+            attrs.displayIf === switchValue.name &&
+            switchValue.value
+          "
+          class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
+          :class="{
+            'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+              errors[name],
+          }"
+          :as="as"
+          :id="name"
+          :name="name"
+          v-bind="attrs"
+        >
+        </Field>
+
         <ErrorMessage class="text-red-500 block text-sm" :name="name" />
       </li>
     </ul>
@@ -149,10 +205,11 @@ import CustomButton from '@/components/generic/CustomButton.vue'
 import { Eye } from 'lucide-vue-next'
 import { EyeOff } from 'lucide-vue-next'
 import { CalendarIcon, ChevronDownIcon } from 'lucide-vue-next'
+import InputSwitch from 'primevue/inputswitch'
 import { ErrorMessage, Form, Field, configure } from 'vee-validate'
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 
-defineProps({
+const props = defineProps({
   schema: {
     type: Object,
     required: true,
@@ -176,6 +233,21 @@ defineProps({
 
 const passwordVisible = ref(false)
 const minEndDate = ref()
+const switchValue = ref()
+
+// Set switchValue before mounting
+onBeforeMount(() => {
+  if (props.initialValues && props.schema) {
+    const name = props.schema.fields.find(
+      (field: any) => field.type === 'switch',
+    ).name
+    const value = props.initialValues[name] ?? false
+    switchValue.value = {
+      name: name,
+      value: value,
+    }
+  }
+})
 
 // Default values
 configure({

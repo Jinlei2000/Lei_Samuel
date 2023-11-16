@@ -324,7 +324,7 @@ export default {
   dialog: {
     root: ({ state }: any) => ({
       class: [
-        'rounded-xl shadow-lg border-0',
+        'rounded-xl shadow-lg border-0 overflow-hidden',
         'transform scale-100',
         'm-0 w-[50vw]',
         {
@@ -425,5 +425,30 @@ export default {
             leaveToClass: 'opacity-0 scale-75',
           }
     },
+  },
+  inputswitch: {
+    root: ({ props }: any) => ({
+      class: [
+        'inline-block relative',
+        'w-12 h-7',
+        {
+          'opacity-60 select-none pointer-events-none cursor-default':
+            props.disabled,
+        },
+      ],
+    }),
+    slider: ({ props }: any) => ({
+      class: [
+        'absolute cursor-pointer top-0 left-0 right-0 bottom-0 border border-transparent',
+        'transition-colors duration-200 rounded-2xl',
+        'focus:outline-none focus:outline-offset-0 focus:shadow-[0_0_0_0.2rem_rgba(191,219,254,1)]',
+        "before:absolute before:content-'' before:top-1/2 before:bg-white before:w-5 before:h-5 before:left-1 before:-mt-2.5 before:rounded-full before:transition-duration-200",
+        {
+          'bg-gray-200 hover:bg-gray-300': !props.modelValue,
+          'bg-primary-green-400 before:transform before:translate-x-5':
+            props.modelValue,
+        },
+      ],
+    }),
   },
 }

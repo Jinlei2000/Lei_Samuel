@@ -228,6 +228,7 @@
     "uid": "GLRvH7xu7ufJ4bUrJjwxQje8rez2",
     "locale": "en",
     "role": "CLIENT",
+    "invoiceOption": "post",
     "locations": [
       {
         "address": "Waalstraat 27, 9870 Zulte",
@@ -402,6 +403,7 @@
     "uid": "cMaKJFPuRiTYb33KFxi5RHWFqj93",
     "locale": "en",
     "role": "CLIENT",
+    "invoiceOption": "email",
     "locations": [
       {
         "address": "Kortrijksesteenweg 500, 9000 Gent",
@@ -581,6 +583,7 @@
     "uid": "QGca0m8ENZc1pjQsmaHy0JDLDyD3",
     "locale": "en",
     "role": "CLIENT",
+    "invoiceOption": "post",
     "locations": [
       {
         "address": "Sint-Janslaan 5, 8500 Kortrijk",
@@ -760,6 +763,7 @@
     "uid": "iY5FitxvE2MzmXtlo2qw5kcrHtv2",
     "locale": "en",
     "role": "CLIENT",
+    "invoiceOption": "post",
     "locations": [
       {
         "address": "Rue du Curé du Château 1, 7500 Tournai",
@@ -934,6 +938,7 @@
     "uid": "9O4vHjsnxicB9693W2hT4yb9hYs2",
     "locale": "en",
     "role": "CLIENT",
+    "invoiceOption": "email",
     "locations": [
       {
         "address": "Broekstraat 114, 9700 Oudenaarde",
@@ -1112,6 +1117,7 @@
     "email": "emily.williams@gmail.com",
     "uid": "CNihqseWkQN603GCHOLU2G8hrsh2",
     "locale": "en",
-    "role": "CLIENT"
+    "role": "CLIENT",
+    "invoiceOption": "post"
   }
 ]

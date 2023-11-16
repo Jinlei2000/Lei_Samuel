@@ -47,7 +47,7 @@
     :close-on-escape="true"
     :pt="{
       root: {
-        class: 'max-w-lg rounded-full overflow-hidden',
+        class: 'max-w-lg',
       },
     }"
   >

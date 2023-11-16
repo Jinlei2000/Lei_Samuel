@@ -9,3 +9,5 @@ export const ORDER_DIRECTION = {
   ASC: 'ASC',
   DESC: 'DESC',
 }
+
+export const INVOICE_OPTIONS = [{ name: 'post' }, { name: 'email' }]

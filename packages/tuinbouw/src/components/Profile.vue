@@ -18,7 +18,7 @@
   <!-- show user -->
   <div v-if="!isEditingUser && user">
     <!-- edit button -->
-    <button class="flex" @click="setEditing(true)">
+    <button class="flex" @click="isEditingUser = true">
       <Pencil class="h-6 w-6" />
     </button>
 
@@ -112,105 +112,40 @@
   <!-- show edit form -->
   <div v-if="isEditingUser">
     <!-- go back button -->
-    <button class="flex" @click="setEditing(false)">
+    <button class="flex" @click="isEditingUser = false">
       <ArrowLeft class="h-6 w-6" />
       Go back
     </button>
-    <form @submit.prevent="handleUpdateUser">
-      <InputText
-        name="First Name"
-        placeholder="John"
-        type="text"
-        :errorMessage="errorMessages.firstname"
-        v-bind="firstname"
-      />
 
-      <!-- Last Name -->
-      <InputText
-        name="Last Name"
-        placeholder="Doe"
-        type="text"
-        :errorMessage="errorMessages.lastname"
-        v-bind="lastname"
-      />
-
-      <!-- Email -->
-      <InputText
-        name="Email"
-        placeholder="john@example.com"
-        type="text"
-        :errorMessage="errorMessages.email"
-        v-bind="email"
-      />
-
-      <!-- Telephone -->
-      <InputText
-        name="Telephone (optional)"
-        placeholder="0412345678"
-        type="text"
-        :errorMessage="errorMessages.telephone"
-        v-bind="telephone"
-      />
-
-      <!-- Client Only -->
-      <div v-if="user?.role === Role.CLIENT">
-        <!-- Invoice Option -->
-        <div>
-          <label
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            for="invoiceOption"
-            >Invoice Option (optional)
-          </label>
-          <Dropdown
-            id="invoiceOption"
-            v-model="invoiceOption"
-            :options="[{ name: 'post' }, { name: 'email' }]"
-            optionLabel="name"
-            optionValue="name"
-            class="w-full"
-            placeholder="Select Invoice Option"
-          >
-            <template #dropdownicon>
-              <ChevronDownIcon />
-            </template>
-          </Dropdown>
-        </div>
-        <!-- Company -->
-        <div>
-          <label
-            class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-            for="company"
-            >Company (optional)
-          </label>
-          <InputSwitch id="company" v-bind="company" />
-        </div>
-
-        <InputText
-          v-if="company.modelValue"
-          name="BTW Number (optional)"
-          placeholder="BE0123456789"
-          type="text"
-          :errorMessage="errorMessages.btwNumber"
-          v-bind="btwNumber"
-        />
-      </div>
-
-      <CustomButton
-        type="submit"
-        name="Update User"
-        :loading="updateUserLoading"
-      />
-    </form>
+    <DynamicForm
+      :schema="formUpdateUser"
+      :validationSchema="userUpdateValidationSchema"
+      :handleForm="handleUpdateUser"
+      :loading="loading.updateUser"
+      :initial-values="{
+        firstname: user!.firstname,
+        lastname: user!.lastname,
+        email: user!.email,
+        telephone: user!.telephone,
+        invoiceOption: user!.invoiceOption,
+        company: user!.company,
+        btwNumber: user!.btwNumber,
+      }"
+    />
   </div>
 
   <!-- Detail Location Modal -->
   <Dialog
     v-model:visible="visibleLocation.detail"
     modal
-    maximizable
     header="Location Details"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <div v-if="selectedLocation">
       <h2 class="mb-2 text-xl font-semibold">
@@ -230,10 +165,14 @@
   <Dialog
     v-model:visible="visibleLocation.edit"
     modal
-    maximizable
     header="Edit Location"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <form @submit.prevent="handleUpdateLocation">
       <InputText
@@ -296,10 +235,14 @@
   <Dialog
     v-model:visible="visibleLocation.create"
     modal
-    maximizable
     header="Create Location"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <form @submit.prevent="handleCreateLocation">
       <InputText
@@ -392,13 +335,7 @@ import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
 import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import {
-  Pencil,
-  Trash2,
-  ArrowLeft,
-  Eye,
-  ChevronDownIcon,
-} from 'lucide-vue-next'
+import { Pencil, Trash2, ArrowLeft, Eye } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
@@ -412,7 +349,12 @@ import {
 import type { Location } from '@/interfaces/location.interface'
 import useTomTomMap from '@/composables/useTomTomMap'
 import Map from '@/components/Map.vue'
-import { locationCreateSchema, userUpdateSchema } from '@/validation/schema'
+import {
+  locationValidationSchema,
+  userUpdateValidationSchema,
+} from '@/validation/schema'
+import DynamicForm from './generic/DynamicForm.vue'
+import { INVOICE_OPTIONS } from '@/helpers/constants'
 
 // composables
 const { customUser } = useCustomUser()
@@ -441,30 +383,73 @@ const loading = ref<{ [key: string]: boolean }>({
   searchAddress: false,
 })
 
+// form schema update user
+const formUpdateUser = {
+  fields: [
+    {
+      label: 'First Name',
+      name: 'firstname',
+      placeholder: 'John',
+      as: 'input',
+    },
+    {
+      label: 'Last Name',
+      name: 'lastname',
+      placeholder: 'Doe',
+      as: 'input',
+    },
+    {
+      label: 'Email',
+      name: 'email',
+      placeholder: 'john@example.com',
+      as: 'input',
+    },
+    {
+      label: 'Telephone (optional)',
+      name: 'telephone',
+      placeholder: '0412345678',
+      as: 'input',
+    },
+    // client only
+    ...(customUser.value?.role === Role.CLIENT
+      ? [
+          {
+            label: 'Select Invoice Option',
+            name: 'invoiceOption',
+            as: 'select',
+            type: 'select',
+            options: INVOICE_OPTIONS,
+            placeholder: 'Select a type',
+          },
+          {
+            label: 'Company (optional)',
+            name: 'company',
+            as: 'switch',
+            type: 'switch',
+          },
+          {
+            label: 'BTW Number (optional)',
+            name: 'btwNumber',
+            placeholder: 'BE0123456789',
+            as: 'input',
+            displayIf: 'company',
+          },
+        ]
+      : []),
+  ],
+
+  button: {
+    name: 'Update User',
+  },
+}
+
 // error messages of forms
 const errorMessages = ref<{
   [key: string]: string | undefined
 }>({
-  firstname: '',
-  lastname: '',
-  email: '',
-  telephone: '',
   searchAdressInput: '',
   selectedAddress: '',
 })
-
-// update user form
-const { defineComponentBinds, errors, values, validate, setValues } = useForm({
-  validationSchema: userUpdateSchema,
-})
-
-const firstname = defineComponentBinds('firstname')
-const lastname = defineComponentBinds('lastname')
-const email = defineComponentBinds('email')
-const telephone = defineComponentBinds('telephone')
-const invoiceOption = defineComponentBinds('invoiceOption')
-const company = defineComponentBinds('company')
-const btwNumber = defineComponentBinds('btwNumber')
 
 // create location form
 const {
@@ -475,7 +460,7 @@ const {
   validate: validateLocation,
   setValues: setValuesLocation,
 } = useForm({
-  validationSchema: locationCreateSchema,
+  validationSchema: locationValidationSchema,
 })
 
 const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
@@ -497,11 +482,7 @@ const {
   },
 )
 
-const {
-  mutate: updateUser,
-  loading: updateUserLoading,
-  error: updateUserError,
-} = useMutation(UPDATE_USER)
+const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
 const {
   mutate: deleteUser,
@@ -531,33 +512,27 @@ const handleDeleteUser = async () => {
 }
 
 // handle update user
-const handleUpdateUser = async () => {
+const handleUpdateUser = async (values: CustomUser) => {
   loading.value.updateUser = true
-  await validate()
-  errorMessages.value = errors.value
-  if (Object.keys(errors.value).length === 0) {
-    console.log('no errors', values)
-    await updateUser({
-      updateUserInput: {
-        id: customUser.value?.id,
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        telephone: values.telephone,
-        // client only
-        ...(customUser.value?.role === Role.CLIENT && {
-          invoiceOption: values.invoiceOption,
-          company: values.company,
-          btwNumber: values.btwNumber,
-        }),
-      },
-    })
-    loading.value.updateUser = false
-    showToast('success', 'Success', `You have updated your profile`)
-    setEditing(false)
-    refetchUser()
-  }
+  await updateUser({
+    updateUserInput: {
+      id: customUser.value?.id,
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      telephone: values.telephone,
+      // client only
+      ...(customUser.value?.role === Role.CLIENT && {
+        invoiceOption: values.invoiceOption,
+        company: values.company,
+        btwNumber: values.company ? values.btwNumber : null,
+      }),
+    },
+  })
   loading.value.updateUser = false
+  showToast('success', 'Success', `You have updated your profile`)
+  isEditingUser.value = false
+  refetchUser()
 }
 
 // search address
@@ -635,29 +610,6 @@ const handleDeleteLocation = async (id: string) => {
   })
   showToast('success', 'Success', `You have deleted a location`)
   refetchUser()
-}
-
-const setEditing = (value: boolean) => {
-  isEditingUser.value = value
-  const {
-    role,
-    firstname,
-    lastname,
-    email,
-    telephone,
-    invoiceOption,
-    company,
-    btwNumber,
-  } = user.value ?? {}
-  if (value) {
-    setValues({
-      firstname,
-      lastname,
-      email,
-      telephone,
-      ...(role === Role.CLIENT && { invoiceOption, company, btwNumber }),
-    })
-  }
 }
 
 const openModal = (location: Location | null = null, type: string) => {

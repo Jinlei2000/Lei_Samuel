@@ -84,7 +84,7 @@
                 <CalendarIcon class="h-5 w-5" />
               </template>
             </Calendar>
-            <img src="../../../public/assets/doubleArrow.svg" />
+            <img src="/assets/doubleArrow.svg" />
             <Calendar
               v-model="endProposedDate"
               showIcon
