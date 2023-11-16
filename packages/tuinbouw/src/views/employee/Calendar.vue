@@ -1,42 +1,44 @@
 <template>
   <div class="flex flex-col mt-12 gap-3 max-w-7xl m-auto">
     <!-- Week selection -->
-    <div class="w-full grid grid-cols-3">
+    <div class="w-full md:grid grid-cols-3 gap-3 md:gap-0 flex flex-col">
       <h1 class="col-start-1 text-2xl">Calendar</h1>
-      <div
-        class="w-full col-start-2 justify-self-center bg-gray-500 p-1 flex justify-between items-center rounded-2xl"
-      >
-        <button
-          class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+      <div class="flex gap-3">
+        <div
+          class="w-full col-start-2 row-start-2 md:row-start-1 justify-self-center bg-gray-500 p-1 flex justify-between items-center rounded-2xl"
         >
-          <ArrowLeft @click="getPreviousWeekBounds" class="text-white" />
-        </button>
-        <div v-if="firstDay && lastDay" class="flex gap-4">
-          <p>
-            {{ formatDate(firstDay) }}
-          </p>
-          <p>-</p>
-          <p>
-            {{ formatDate(lastDay) }}
-          </p>
+          <button
+            class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+          >
+            <ArrowLeft @click="getPreviousWeekBounds" class="text-white" />
+          </button>
+          <div v-if="firstDay && lastDay" class="flex gap-4">
+            <p>
+              {{ formatDate(firstDay) }}
+            </p>
+            <p>-</p>
+            <p>
+              {{ formatDate(lastDay) }}
+            </p>
+          </div>
+          <button
+            class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+          >
+            <ArrowRight @click="getNextWeekBounds" class="text-white" />
+          </button>
         </div>
         <button
-          class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+          class="border-primary-green border rounded-2xl text-primary-green w-fit px-[18px] hover:scale-105 transition-all flex items-center justify-center gap-3"
+          @click="getWeekBounds"
         >
-          <ArrowRight @click="getNextWeekBounds" class="text-white" />
+          Today
         </button>
       </div>
-      <button
-        class="border-primary-green border rounded-2xl text-primary-green ml-3 w-fit px-[18px] hover:scale-105 transition-all flex items-center justify-center gap-3"
-        @click="getWeekBounds"
-      >
-        Today
-      </button>
     </div>
 
     <!-- Calendar for the selected week -->
 
-    <div class="w-full grid grid-cols-5 gap-3">
+    <div class="w-full flex flex-col md:grid grid-cols-5 gap-3">
       <div
         v-if="firstDay"
         v-for="index in 5"
