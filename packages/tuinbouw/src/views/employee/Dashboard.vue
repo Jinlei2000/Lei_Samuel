@@ -19,9 +19,16 @@
         </div>
         <div class="flex justify-between items-center mb-3 mt-6">
           <h2 class="text-2xl">Schedule</h2>
-          <button class="flex text-base text-primary-orange">
-            Calendar <ChevronRight stroke-width="1" />
-          </button>
+          <RouterLink
+            :to="`/employee/calendar`"
+            class="flex text-base text-primary-orange group"
+          >
+            Calendar
+            <ChevronRight
+              class="group-hover:translate-x-1 transition-all"
+              stroke-width="1"
+            />
+          </RouterLink>
         </div>
 
         <div
