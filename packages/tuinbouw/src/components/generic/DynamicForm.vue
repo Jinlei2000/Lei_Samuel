@@ -51,7 +51,7 @@
             :placeholder="attrs.placeholder"
             :options="options"
             optionLabel="name"
-            optionValue="name"
+            :optionValue="attrs.optionValue ?? 'name'"
             v-model="field.value"
             @change="handleChange($event.value, false)"
             :pt="{

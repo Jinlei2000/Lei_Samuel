@@ -13,7 +13,7 @@
   <!-- add employee button -->
   <button
     class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
-    @click="openModal(null, 'create')"
+    @click="toggleModal(null, 'create')"
   >
     Add Employee
   </button>
@@ -60,7 +60,7 @@
         >
           <!-- View More Button -->
           <button
-            @click="openModal(user, 'detail')"
+            @click="toggleModal(user, 'detail')"
             class="text-green-500 hover:underline"
           >
             <Eye />
@@ -68,7 +68,7 @@
           <!-- Edit Button -->
           <button
             v-if="user.role === 'EMPLOYEE'"
-            @click="openModal(user, 'edit')"
+            @click="toggleModal(user, 'edit')"
             class="text-blue-500 hover:underline"
           >
             <Pencil />
@@ -90,11 +90,14 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    maximizable
     header="User Details"
-    :style="{ width: '50vw' }"
-    @click:close="closeModal"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <div v-if="selectedUser">
       <h2 class="mb-2 text-xl font-semibold">
@@ -118,153 +121,48 @@
   <Dialog
     v-model:visible="visible.edit"
     modal
-    maximizable
     header="Edit User"
-    :style="{ width: '50vw' }"
-    @click:close="closeModal"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
-    <form @submit.prevent="handleUpdate">
-      <!-- First Name -->
-      <InputText
-        name="First Name"
-        placeholder="John"
-        type="text"
-        :errorMessage="errorMessages.firstname"
-        v-bind="firstnameUpdate"
-      />
-
-      <!-- Last Name -->
-      <InputText
-        name="Last Name"
-        placeholder="Doe"
-        type="text"
-        :errorMessage="errorMessages.lastname"
-        v-bind="lastnameUpdate"
-      />
-
-      <!-- Email -->
-      <InputText
-        v-if="selectedUser?.uid === null"
-        name="Email"
-        placeholder="john@example.com"
-        type="text"
-        :errorMessage="errorMessages.email"
-        v-bind="emailUpdate"
-      />
-
-      <!-- Telephone -->
-      <InputText
-        name="Telephone (optional)"
-        placeholder="0412345678"
-        type="text"
-        :errorMessage="errorMessages.telephone"
-        v-bind="telephoneUpdate"
-      />
-
-      <!-- Locale -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="locale"
-          >Language
-        </label>
-        <Dropdown
-          id="locale"
-          v-model="localeUpdate"
-          :options="getLocales()"
-          optionLabel="name"
-          optionValue="value"
-          class="w-full"
-        >
-          <template #dropdownicon>
-            <ChevronDownIcon />
-          </template>
-        </Dropdown>
-      </div>
-
-      <CustomButton
-        type="submit"
-        name="Update Employee"
-        :loading="loadingUpdate"
-      />
-    </form>
+    <DynamicForm
+      :schema="formUpdateEmployee"
+      :validationSchema="userUpdateAdminValidationSchema"
+      :handleForm="handleUpdateEmployee"
+      :loading="loading.updateEmployee"
+      :initial-values="{
+        firstname: selectedUser?.firstname,
+        lastname: selectedUser?.lastname,
+        email: selectedUser?.email,
+        telephone: selectedUser?.telephone,
+      }"
+    />
   </Dialog>
 
   <!-- Create Employee Modal -->
   <Dialog
     v-model:visible="visible.create"
     modal
-    maximizable
     header="Create Employee"
-    :style="{ width: '50vw' }"
-    @click:close="closeModal"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
-    <form @submit.prevent="handleCreateEmployee">
-      <!-- First Name -->
-      <InputText
-        name="First Name"
-        placeholder="John"
-        type="text"
-        :errorMessage="errorMessages.firstname"
-        v-bind="firstname"
-      />
-
-      <!-- Last Name -->
-      <InputText
-        name="Last Name"
-        placeholder="Doe"
-        type="text"
-        :errorMessage="errorMessages.lastname"
-        v-bind="lastname"
-      />
-
-      <!-- Email -->
-      <InputText
-        name="Email"
-        placeholder="john@example.com"
-        type="text"
-        :errorMessage="errorMessages.email"
-        v-bind="email"
-      />
-
-      <!-- Telephone -->
-      <InputText
-        name="Telephone (optional)"
-        placeholder="0412345678"
-        type="text"
-        :errorMessage="errorMessages.telephone"
-        v-bind="telephone"
-      />
-
-      <!-- Locale -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="locale"
-          >Language
-        </label>
-        <Dropdown
-          id="locale"
-          v-model="locale"
-          :options="getLocales()"
-          optionLabel="name"
-          optionValue="value"
-          class="w-full"
-        >
-          <template #dropdownicon>
-            <ChevronDownIcon />
-          </template>
-        </Dropdown>
-      </div>
-
-      <CustomButton
-        type="submit"
-        name="Create Employee"
-        :loading="loadingCreateEmployee"
-      />
-    </form>
+    <DynamicForm
+      :schema="formCreateEmployee"
+      :validationSchema="userCreateEmployeeValidationSchema"
+      :handleForm="handleCreateEmployee"
+      :loading="loading.createEmployee"
+    />
   </Dialog>
 </template>
 
@@ -282,12 +180,13 @@ import {
   UPDATE_USER_TO_ADMIN,
 } from '@/graphql/user.mutation'
 import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
-import * as yup from 'yup'
-import { useForm } from 'vee-validate'
-import InputText from '@/components/generic/form/InputText.vue'
-import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
-import { ChevronDownIcon } from 'lucide-vue-next'
 import CustomButton from '@/components/generic/CustomButton.vue'
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import {
+  userUpdateAdminValidationSchema,
+  userCreateEmployeeValidationSchema,
+} from '@/validation/schema'
+import { SUPPORTED_LOCALES_TYPES } from '@/helpers/constants'
 
 // composables
 const { showToast } = useCustomToast()
@@ -315,60 +214,86 @@ const visible = ref({
 })
 const selectedUser = ref<CustomUser | null>(null)
 const sendMailCurrentUserId = ref<string | null>(null)
+// form update employee
+const formUpdateEmployee = {
+  fields: [
+    {
+      label: 'First name',
+      name: 'firstname',
+      placeholder: 'John',
+      as: 'input',
+    },
+    {
+      label: 'Last name',
+      name: 'lastname',
+      placeholder: 'Doe',
+      as: 'input',
+    },
+    {
+      label: 'Email',
+      name: 'email',
+      placeholder: 'john@gmail.com',
+      as: 'input',
+    },
+    {
+      label: 'Telephone (optional)',
+      name: 'telephone',
+      placeholder: '0412345678',
+      as: 'input',
+    },
+  ],
 
-// form
-const schema = yup.object({
-  email: yup.string().required().email(),
-  firstname: yup.string().required(),
-  lastname: yup.string().required(),
-  telephone: yup
-    .string()
-    .matches(/^[0-9]+$/, 'Must be only digits')
-    .min(10)
-    .max(10)
-    .optional()
-    .nullable(),
+  button: {
+    name: 'Update User',
+  },
+}
+// form create employee
+const formCreateEmployee = {
+  fields: [
+    {
+      label: 'First name',
+      name: 'firstname',
+      placeholder: 'John',
+      as: 'input',
+    },
+    {
+      label: 'Last name',
+      name: 'lastname',
+      placeholder: 'Doe',
+      as: 'input',
+    },
+    {
+      label: 'Email',
+      name: 'email',
+      placeholder: 'john@gmail.com',
+      as: 'input',
+    },
+    {
+      label: 'Telephone (optional)',
+      name: 'telephone',
+      placeholder: '0412345678',
+      as: 'input',
+    },
+    {
+      label: 'Select Language',
+      name: 'locale',
+      as: 'select',
+      type: 'select',
+      options: SUPPORTED_LOCALES_TYPES(),
+      optionValue: 'value',
+      placeholder: 'Select a language',
+    },
+  ],
+
+  button: {
+    name: 'Create Employee',
+  },
+}
+
+const loading = ref({
+  createEmployee: false,
+  updateEmployee: false,
 })
-
-// error messages of forms
-const errorMessages = ref<{
-  [key: string]: string | undefined
-}>({
-  firstname: '',
-  lastname: '',
-  email: '',
-  telephone: '',
-})
-
-// create form
-const { resetForm, defineComponentBinds, errors, values, validate } = useForm({
-  validationSchema: schema,
-})
-
-const firstname = defineComponentBinds('firstname')
-const lastname = defineComponentBinds('lastname')
-const email = defineComponentBinds('email')
-const telephone = defineComponentBinds('telephone')
-const locale = ref('en')
-const loadingCreateEmployee = ref(false)
-
-// update form
-const {
-  defineComponentBinds: defineComponentBindsUpdate,
-  errors: errorsUpdate,
-  values: valuesUpdate,
-  validate: validateUpdate,
-  setValues: setValuesUpdate,
-} = useForm({
-  validationSchema: schema,
-})
-
-const firstnameUpdate = defineComponentBindsUpdate('firstname')
-const lastnameUpdate = defineComponentBindsUpdate('lastname')
-const emailUpdate = defineComponentBindsUpdate('email')
-const telephoneUpdate = defineComponentBindsUpdate('telephone')
-const localeUpdate = ref('en')
-const loadingUpdate = ref(false)
 
 // graphql
 const {
@@ -389,11 +314,7 @@ const {
 const { mutate: createEmployee, error: createEmployeeError } =
   useMutation(CREATE_EMPLOYEE)
 
-const {
-  mutate: deleteUser,
-  loading: deleteUserLoading,
-  error: deleteUserError,
-} = useMutation(DELETE_USER)
+const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
 
 const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
@@ -404,68 +325,51 @@ const {
 } = useMutation(UPDATE_USER_TO_ADMIN)
 
 // logics
-// handle edit
-const handleUpdate = async () => {
-  loadingUpdate.value = true
-  await validateUpdate()
-  errorMessages.value = errorsUpdate.value
-  if (Object.keys(errorsUpdate.value).length === 0) {
-    console.log('no errors', valuesUpdate)
-    await updateUser({
-      updateUserInput: {
-        id: selectedUser.value?.id!,
-        firstname: valuesUpdate.firstname,
-        lastname: valuesUpdate.lastname,
-        email: valuesUpdate.email,
-        telephone: valuesUpdate.telephone,
-        locale: localeUpdate.value,
-      },
-    }).then(async () => {
-      loadingUpdate.value = false
-      showToast('success', 'Success', 'User has been updated')
-      await refetchUsers()
-      closeModal()
-      resetForm()
-    })
-  }
-  loadingUpdate.value = false
+// handle edit employee
+const handleUpdateEmployee = async (values: CustomUser) => {
+  loading.value.updateEmployee = true
+  await updateUser({
+    updateUserInput: {
+      id: selectedUser.value?.id!,
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      telephone: values.telephone,
+    },
+  })
+  loading.value.updateEmployee = false
+  showToast('success', 'Success', 'User has been updated')
+  await refetchUsers()
+  toggleModal()
 }
 
-// handle delete
+// handle delete user
 const handleDelete = async (user: CustomUser) => {
   const email = user.email
   await deleteUser({
     id: user.id,
-  }).then(() => {
-    showToast('success', 'Success', `User ${email} has been deleted`)
-    refetchUsers()
   })
+  showToast('success', 'Success', `User ${email} has been deleted`)
+  refetchUsers()
 }
 
 // handle create employee
-const handleCreateEmployee = async () => {
-  loadingCreateEmployee.value = true
-  await validate()
-  errorMessages.value = errors.value
-  if (Object.keys(errors.value).length === 0) {
-    console.log('no errors', values)
-    await createEmployee({
-      createStaffInput: {
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        telephone: values.telephone,
-        locale: locale.value,
-      },
-    }).then(async () => {
-      loadingCreateEmployee.value = false
-      showToast('success', 'Success', 'Employee has been created')
-      await refetchUsers()
-      closeModal()
-      resetForm()
-    })
-  }
-  loadingCreateEmployee.value = false
+const handleCreateEmployee = async (values: CustomUser) => {
+  console.log(values)
+  loading.value.createEmployee = true
+  await createEmployee({
+    createStaffInput: {
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      telephone: values.telephone,
+      locale: values.locale,
+    },
+  })
+  loading.value.createEmployee = false
+  showToast('success', 'Success', 'Employee has been created')
+  await refetchUsers()
+  toggleModal()
 }
 
 // handle send email to employee
@@ -473,72 +377,44 @@ const handleSendMailToEmployee = async (user: CustomUser) => {
   sendMailCurrentUserId.value = user.id
   await sendMailToEmployee({
     userId: user.id,
-  }).then(() => {
-    showToast(
-      'success',
-      'Success',
-      `Email has been sent to ${user.email} to create an account`,
-    )
   })
+  showToast(
+    'success',
+    'Success',
+    `Email has been sent to ${user.email} to create an account`,
+  )
 }
 
 // handle upgrade to admin
 const handleUpgradeToAdmin = async (user: CustomUser) => {
   await upgradeToAdmin({
     id: user.id,
-  }).then(() => {
-    showToast(
-      'success',
-      'Success',
-      `User ${user.email} has been upgraded to admin`,
-    )
-    refetchUsers()
-    closeModal()
   })
+  showToast(
+    'success',
+    'Success',
+    `User ${user.email} has been upgraded to admin`,
+  )
+  await refetchUsers()
+  toggleModal()
 }
 
-const openModal = (user: CustomUser | null = null, type: string) => {
-  if (type === 'detail' && user) {
-    selectedUser.value = { ...user }
-    visible.value.detail = true
-  } else if (type === 'edit' && user) {
-    selectedUser.value = { ...user }
-    setValuesUpdate({
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      telephone: user.telephone,
-    })
-    localeUpdate.value = user.locale!
-    visible.value.edit = true
-  } else if (type === 'create') {
-    visible.value.create = true
-  }
-}
-
-const closeModal = () => {
+// open or close modal
+const toggleModal = (
+  user: CustomUser | null = null,
+  type: string = 'close',
+) => {
+  selectedUser.value = user ? { ...user } : null
   visible.value = {
-    detail: false,
-    edit: false,
-    create: false,
+    detail: type === 'detail',
+    edit: type === 'edit',
+    create: type === 'create',
   }
-}
-
-// get locales
-const getLocales = (): { name: string; value: string }[] => {
-  let locales = []
-  for (const [key, value] of Object.entries(SUPPORTED_LOCALES)) {
-    locales.push({
-      name: value,
-      value: key,
-    })
-  }
-  return locales
 }
 
 watchEffect(() => {
   // log the queries
-  if (users.value) console.log(users.value)
+  // if (users.value) console.log(users.value)
 
   // all errors
   const errors = [
@@ -551,8 +427,10 @@ watchEffect(() => {
   ]
   errors.forEach(error => {
     if (error) {
-      loadingCreateEmployee.value = false
-      loadingUpdate.value = false
+      loading.value = {
+        createEmployee: false,
+        updateEmployee: false,
+      }
 
       showToast('error', 'Error', error.message)
     }

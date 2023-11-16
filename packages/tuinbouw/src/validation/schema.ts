@@ -47,3 +47,30 @@ export const registerValidationSchema = yup.object({
   firstName: yup.string().required(),
   lastName: yup.string().required(),
 })
+
+export const userUpdateAdminValidationSchema = yup.object({
+  email: yup.string().required().email(),
+  firstname: yup.string().required(),
+  lastname: yup.string().required(),
+  telephone: yup
+    .string()
+    .matches(/^[0-9]+$/, 'Must be only digits')
+    .min(10)
+    .max(10)
+    .optional()
+    .nullable(),
+})
+
+export const userCreateEmployeeValidationSchema = yup.object({
+  email: yup.string().required().email(),
+  firstname: yup.string().required(),
+  lastname: yup.string().required(),
+  telephone: yup
+    .string()
+    .matches(/^[0-9]+$/, 'Must be only digits')
+    .min(10)
+    .max(10)
+    .optional()
+    .nullable(),
+  locale: yup.string().required(),
+})
