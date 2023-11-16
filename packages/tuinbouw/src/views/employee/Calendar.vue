@@ -45,8 +45,13 @@
           }}
         </p>
       </div>
-      <div v-if="!schedulesLoading" v-for="index in 5">
+      <div
+        v-if="schedulesLoading"
+        v-for="index in 5"
+        class="flex flex-col gap-3"
+      >
         <div
+          v-for="n in Math.floor(Math.random() * 3) + 1"
           class="h-32 w-full bg-gray-200 rounded-2xl flex flex-col gap-2 p-3 animate-pulse"
         >
           <div class="h-4 w-full bg-gray-500 rounded-full"></div>
@@ -57,7 +62,7 @@
           </div>
         </div>
       </div>
-      <!-- <div v-else v-for="index in 5" v-if="weekSchedules">
+      <div v-else v-for="index in 5" v-if="weekSchedules">
         <div
           v-if="weekSchedules"
           v-for="schedule in weekSchedules"
@@ -75,7 +80,7 @@
             </template>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
