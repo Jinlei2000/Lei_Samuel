@@ -70,6 +70,16 @@
             </button>
           </Router-link>
 
+          <!-- Edit Button -->
+          <Router-link
+            :to="`/admin/schedules/${schedule.id}/edit`"
+            v-if="isNotInPastOrToday(schedule.finalDate)"
+          >
+            <button class="text-blue-500">
+              <Pencil />
+            </button>
+          </Router-link>
+
           <!-- Delete Button -->
           <button
             v-if="isNotInPastOrToday(schedule.finalDate)"
@@ -88,7 +98,7 @@
 import useCustomToast from '@/composables/useCustomToast'
 import { GET_ALL_SCHEDULES } from '@/graphql/schedule.query'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, Eye, Trash2 } from 'lucide-vue-next'
+import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import useTimeUtilities from '@/composables/useTimeUtilities'
