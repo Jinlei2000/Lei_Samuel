@@ -43,10 +43,10 @@
         v-if="firstDay"
         v-for="index in 5"
         :key="index"
-        class="flex flex-col"
+        class="flex flex-col gap-3"
       >
         <div
-          class="bg-gray-500 p-2 flex justify-center items-center rounded-2xl mb-3"
+          class="bg-gray-500 p-2 flex justify-center items-center rounded-2xl"
         >
           <p class="text-lg">
             {{
@@ -71,7 +71,24 @@
           </div>
         </div>
 
-        <div v-else>
+        <div v-else v-if="checkIfScheduleExists(getDateWithOffset(index))">
+          <div v-for="schedule in weekSchedules" :key="schedule.id">
+            <div
+              v-if="
+                schedule.finalDate.toString().substring(0, 10) ===
+                getDateWithOffset(index).toISOString().substring(0, 10)
+              "
+              class="flex flex-col gap-3"
+            >
+              <template v-for="(item, index) in schedule.appointments">
+                <AppointmentCard :appointment="item" :nav="false" />
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div v-else v-if="weekSchedules && weekSchedules.length > 0">
+          <p>{{ weekSchedules.length }}</p>
           <div
             v-if="weekSchedules && weekSchedules.length > 0"
             v-for="schedule in weekSchedules"
@@ -89,7 +106,7 @@
               </template>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div
         v-if="!schedulesLoading && weekSchedules && weekSchedules.length < 1"
@@ -154,6 +171,22 @@ const {
 const setWeekSchedule = () => {
   console.log('schedules', schedules.value?.schedulesFromDateForDaysByUserId)
   weekSchedules.value = schedules.value?.schedulesFromDateForDaysByUserId
+}
+
+const checkIfScheduleExists = (date: Date) => {
+  if (weekSchedules.value) {
+    for (const schedule of weekSchedules.value) {
+      if (
+        schedule.finalDate.toString().substring(0, 10) ===
+        date.toISOString().substring(0, 10)
+      ) {
+        console.log('true')
+        return true
+      }
+    }
+  }
+  console.log('false')
+  return false
 }
 
 // Functions that run on component mount
