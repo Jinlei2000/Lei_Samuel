@@ -383,6 +383,7 @@ import { GET_EMPLOYEES_AVAILABLE_BY_DATE } from '@/graphql/user.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
+import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, Eye } from 'lucide-vue-next'
 import Calendar from 'primevue/calendar'
@@ -390,7 +391,6 @@ import InputNumber from 'primevue/inputnumber'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-import * as yup from 'yup'
 
 // TODO: useStepper for steps (https://vueuse.org/core/useStepper/)
 // easy to use (but dont know if it is possible to use with vee-validate)
@@ -407,14 +407,6 @@ const { customUser } = useCustomUser()
 const minDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
 const loadingCreate = ref(false)
 
-// form
-const schema = yup.object({
-  finalDate: yup.string().required(),
-  appointmentsIds: yup.array().required().min(1),
-  employeesIds: yup.array().required().min(1),
-  materialsIds: yup.array().required(),
-})
-
 // error messages of forms
 const errorMessages = ref<{
   [key: string]: string | undefined
@@ -428,7 +420,7 @@ const errorMessages = ref<{
 
 // create form
 const { defineComponentBinds, errors, values, validate, setValues } = useForm({
-  validationSchema: schema,
+  validationSchema: schedulesValidationSchema,
 })
 
 const finalDate = defineComponentBinds('finalDate')

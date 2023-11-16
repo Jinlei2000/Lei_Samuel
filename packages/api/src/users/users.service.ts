@@ -271,6 +271,7 @@ export class UsersService {
     s.lastname = createClientInput.lastname.toLowerCase()
     s.fullname = `${createClientInput.firstname.toLowerCase()} ${createClientInput.lastname.toLowerCase()}`
     s.email = createClientInput.email
+    s.invoiceOption = 'post'
 
     const newUser = this.userRepository.save(s)
 

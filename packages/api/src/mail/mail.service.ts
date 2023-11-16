@@ -82,7 +82,7 @@ export class MailService {
     })
 
     if (!tokenFound) {
-      throw new GraphQLError('Token not found!')
+      throw new GraphQLError('Token is not valid!')
     }
 
     // Check if token is expired

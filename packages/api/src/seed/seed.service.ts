@@ -66,6 +66,7 @@ export class SeedService {
       u.uid = user.uid
       u.locale = user.locale
       u.locationIds = []
+      if (user.role === 'CLIENT') u.invoiceOption = user.invoiceOption
       if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = user.absences.length
 
       theUsers.push(u)

@@ -53,14 +53,6 @@ const router = createRouter({
           component: () => import('../views/employee/Profile.vue'),
         },
         {
-          path: 'schedules',
-          component: () => import('../views/employee/Schedules.vue'),
-        },
-        {
-          path: 'schedules/:id',
-          component: () => import('../views/employee/ScheduleDetail.vue'),
-        },
-        {
           path: 'absences',
           component: () => import('../views/employee/Absences.vue'),
         },

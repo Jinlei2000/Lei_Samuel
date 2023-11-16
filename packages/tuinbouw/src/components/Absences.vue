@@ -16,7 +16,7 @@
   <button
     v-if="!showAllOverview"
     class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
-    @click="openModal(null, 'create')"
+    @click="toggleModal(null, 'create')"
   >
     Add Absence
   </button>
@@ -61,7 +61,7 @@
         >
           <!-- View More Button -->
           <button
-            @click="openModal(a, 'detail')"
+            @click="toggleModal(a, 'detail')"
             class="text-green-500 hover:underline"
           >
             <Eye />
@@ -69,7 +69,7 @@
           <!-- Edit Button -->
           <button
             v-if="a.user.id === customUser?.id"
-            @click="openModal(a, 'edit')"
+            @click="toggleModal(a, 'edit')"
             class="text-blue-500 hover:underline"
           >
             <Pencil />
@@ -92,10 +92,14 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    maximizable
     header="Absence Details"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
     <div v-if="selectedAbsence">
       <h2 class="mb-2 text-xl font-semibold">
@@ -112,219 +116,52 @@
   <Dialog
     v-model:visible="visible.edit"
     modal
-    maximizable
     header="Edit Absence"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
-    <form @submit.prevent="handleUpdate">
-      <!-- Type -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="type"
-          >Type
-        </label>
-        <Dropdown
-          id="type"
-          v-bind="type"
-          :options="ABSENCE_TYPES"
-          optionLabel="name"
-          optionValue="name"
-          class="w-full"
-          placeholder="Select a type"
-        >
-          <template #dropdownicon>
-            <ChevronDownIcon />
-          </template>
-        </Dropdown>
-      </div>
-
-      <!-- Start Date -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="startDate"
-          >Start Date
-        </label>
-        <Calendar
-          id="startDate"
-          v-bind="startDate"
-          :manualInput="false"
-          :minDate="minDate"
-          showIcon
-          dateFormat="yy-mm-dd"
-          @date-select="setValues({ endDate: startDate.modelValue })"
-        >
-          <template #dropdownicon>
-            <CalendarIcon />
-          </template>
-        </Calendar>
-      </div>
-
-      <!-- End Date -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="endDate"
-          >End Date
-        </label>
-        <Calendar
-          id="endDate"
-          v-bind="endDate"
-          :manualInput="false"
-          :minDate="new Date(startDate.modelValue)"
-          showIcon
-          dateFormat="yy-mm-dd"
-        >
-          <template #dropdownicon>
-            <CalendarIcon />
-          </template>
-        </Calendar>
-      </div>
-
-      <!-- Description -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="description"
-        >
-          Description
-        </label>
-        <Textarea
-          id="description"
-          v-bind="description"
-          rows="5"
-          cols="30"
-          placeholder="Type your description here..."
-        />
-      </div>
-
-      <CustomButton
-        type="submit"
-        name="Update Absence"
-        :loading="loading.update"
-      />
-    </form>
+    <DynamicForm
+      :schema="formAbsence"
+      :validationSchema="absenceValidationSchema"
+      :handleForm="handleUpdateAbsence"
+      :loading="loading.update"
+      :initial-values="{
+        type: selectedAbsence!.type,
+        startDate: formatDateTime(selectedAbsence!.startDate),
+        endDate: formatDateTime(selectedAbsence!.endDate),
+        description: selectedAbsence!.description,
+      }"
+    />
   </Dialog>
 
   <!-- Create Modal -->
   <Dialog
     v-model:visible="visible.create"
     modal
-    maximizable
     header="Create Absence"
-    :style="{ width: '50vw' }"
-    class="max-w-lg"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
   >
-    <form @submit.prevent="handleCreate">
-      <!-- Type -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="type"
-          >Type
-        </label>
-        <Dropdown
-          id="type"
-          v-bind="type"
-          :options="ABSENCE_TYPES"
-          optionLabel="name"
-          optionValue="name"
-          class="w-full"
-          placeholder="Select a type"
-        >
-          <template #dropdownicon>
-            <ChevronDownIcon />
-          </template>
-        </Dropdown>
-        <small class="p-error" id="text-error">{{
-          errorMessages.type || '&nbsp;'
-        }}</small>
-      </div>
-
-      <!-- Start Date -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="startDate"
-          >Start Date
-        </label>
-        <Calendar
-          id="startDate"
-          v-bind="startDate"
-          :manualInput="false"
-          :minDate="minDate"
-          showIcon
-          dateFormat="yy-mm-dd"
-          @date-select="setValues({ endDate: startDate.modelValue })"
-          placeholder="Select a start date"
-        >
-          <template #dropdownicon>
-            <CalendarIcon />
-          </template>
-        </Calendar>
-        <small class="p-error block" id="date-error">{{
-          errorMessages.startDate || '&nbsp;'
-        }}</small>
-      </div>
-
-      <!-- End Date -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="endDate"
-          >End Date
-        </label>
-        <Calendar
-          id="endDate"
-          v-bind="endDate"
-          :manualInput="false"
-          :minDate="new Date(startDate.modelValue!)"
-          showIcon
-          dateFormat="yy-mm-dd"
-          placeholder="Select an end date"
-        >
-          <template #dropdownicon>
-            <CalendarIcon />
-          </template>
-        </Calendar>
-        <small class="p-error block" id="date-error">{{
-          errorMessages.endDate || '&nbsp;'
-        }}</small>
-      </div>
-
-      <!-- Description -->
-      <div>
-        <label
-          class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-          for="description"
-        >
-          Description
-        </label>
-        <Textarea
-          id="description"
-          v-bind="description"
-          rows="5"
-          cols="30"
-          placeholder="Type your description here..."
-        />
-        <small class="p-error" id="text-error">{{
-          errorMessages.description || '&nbsp;'
-        }}</small>
-      </div>
-
-      <CustomButton
-        type="submit"
-        name="Create Absence"
-        :loading="loading.create"
-      />
-    </form>
+    <DynamicForm
+      :schema="formAbsence"
+      :validationSchema="absenceValidationSchema"
+      :handleForm="handleCreateAbsence"
+      :loading="loading.create"
+    />
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import CustomButton from '@/components/generic/CustomButton.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -340,18 +177,11 @@ import {
 import { ABSENCE_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
-import { absenceSchema } from '@/validation/schema'
+import { absenceValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import {
-  Eye,
-  ArrowLeft,
-  Trash2,
-  Pencil,
-  ChevronDownIcon,
-  CalendarIcon,
-} from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
+import { Eye, ArrowLeft, Trash2, Pencil } from 'lucide-vue-next'
 import { computed, onMounted, ref, watchEffect } from 'vue'
+import DynamicForm from './generic/DynamicForm.vue'
 
 // props
 const props = defineProps({
@@ -367,7 +197,6 @@ const { formatDateTime } = useTimeUtilities()
 const { customUser } = useCustomUser()
 
 // variables
-const minDate = new Date()
 const selectedAbsence = ref<Absence | null>(null)
 const variables = ref<VariablesProps>({
   filters: [],
@@ -392,25 +221,47 @@ const absences = computed<Absence[]>(() =>
     : absencesByUserIdResult.value?.absencesByUserId || [],
 )
 
-// error messages of forms
-const errorMessages = ref<{
-  [key: string]: string | undefined
-}>({
-  startDate: '',
-  endDate: '',
-  type: '',
-  description: '',
-})
+// form schema absence
+const formAbsence = {
+  fields: [
+    {
+      label: 'Type',
+      name: 'type',
+      as: 'select',
+      type: 'select',
+      options: ABSENCE_TYPES,
+      placeholder: 'Select a type',
+    },
+    {
+      label: 'Start Date',
+      name: 'startDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a start date',
+      minDate: new Date(),
+    },
+    {
+      label: 'End Date',
+      name: 'endDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a end date',
+      setMinEndDate: true,
+    },
+    {
+      label: 'Description',
+      name: 'description',
+      as: 'textarea',
+      type: 'textarea',
+      placeholder: 'Reason for absence',
+      rows: 5,
+    },
+  ],
 
-// create form
-const { defineComponentBinds, errors, values, validate, setValues } = useForm({
-  validationSchema: absenceSchema,
-})
-
-const startDate = defineComponentBinds('startDate')
-const endDate = defineComponentBinds('endDate')
-const type = defineComponentBinds('type')
-const description = defineComponentBinds('description')
+  button: {
+    name: 'Create Absence',
+  },
+}
 
 // graphql
 const {
@@ -453,55 +304,43 @@ onMounted(() => {
   }
 })
 
-// handle create
-const handleCreate = async () => {
+// handle create absence
+const handleCreateAbsence = async (values: Absence) => {
   loading.value.create = true
-  await validate()
-  errorMessages.value = errors.value
-  if (Object.keys(errors.value).length === 0) {
-    // console.log('values: ', values)
-    await createAbsence({
-      createAbsenceInput: {
-        userId: customUser.value?.id,
-        type: values.type,
-        startDate: formatDateTime(values.startDate),
-        endDate: formatDateTime(values.endDate),
-        description: values.description,
-      },
-    })
-    loading.value.create = false
-    showToast('success', 'Success', 'Absence has been created')
-    await refetch()
-    closeModal()
-  }
+  await createAbsence({
+    createAbsenceInput: {
+      userId: customUser.value?.id,
+      type: values.type,
+      startDate: formatDateTime(values.startDate),
+      endDate: formatDateTime(values.endDate),
+      description: values.description,
+    },
+  })
   loading.value.create = false
+  showToast('success', 'Success', 'Absence has been created')
+  await refetch()
+  toggleModal()
 }
 
-// handle update
-const handleUpdate = async () => {
+// handle update absence
+const handleUpdateAbsence = async (values: Absence) => {
   loading.value.update = true
-  await validate()
-  errorMessages.value = errors.value
-  if (Object.keys(errors.value).length === 0) {
-    // console.log('values: ', values)
-    await updateAbsence({
-      updateAbsenceInput: {
-        id: values.id,
-        type: values.type,
-        startDate: formatDateTime(values.startDate),
-        endDate: formatDateTime(values.endDate),
-        description: values.description,
-      },
-    })
-    loading.value.update = false
-    showToast('success', 'Success', 'Absence has been updated')
-    await refetch()
-    closeModal()
-  }
+  await updateAbsence({
+    updateAbsenceInput: {
+      id: values.id,
+      type: values.type,
+      startDate: formatDateTime(values.startDate),
+      endDate: formatDateTime(values.endDate),
+      description: values.description,
+    },
+  })
   loading.value.update = false
+  showToast('success', 'Success', 'Absence has been updated')
+  await refetch()
+  toggleModal()
 }
 
-// handle delete
+// handle delete absence
 const handleDelete = async (absence: Absence) => {
   await deleteAbsence({
     id: absence.id,
@@ -514,40 +353,16 @@ const handleDelete = async (absence: Absence) => {
   await refetch()
 }
 
-const openModal = (absence: Absence | null = null, type: string) => {
-  // reset
-  errorMessages.value = {}
-  selectedAbsence.value = null
-
-  if (type === 'detail' && absence) {
-    selectedAbsence.value = { ...absence }
-    visible.value.detail = true
-  } else if (type === 'edit' && absence) {
-    selectedAbsence.value = { ...absence }
-    setValues({
-      id: absence.id,
-      startDate: formatDateTime(absence.startDate!),
-      endDate: formatDateTime(absence.endDate!),
-      type: absence.type,
-      description: absence.description,
-    })
-    visible.value.edit = true
-  } else if (type === 'create') {
-    setValues({
-      startDate: '',
-      endDate: '',
-      type: '',
-      description: '',
-    })
-    visible.value.create = true
-  }
-}
-
-const closeModal = () => {
+// open or close modal
+const toggleModal = (
+  absence: Absence | null = null,
+  type: string = 'close',
+) => {
+  selectedAbsence.value = absence ? { ...absence } : null
   visible.value = {
-    detail: false,
-    edit: false,
-    create: false,
+    detail: type === 'detail',
+    edit: type === 'edit',
+    create: type === 'create',
   }
 }
 
@@ -583,4 +398,3 @@ watchEffect(() => {
   })
 })
 </script>
-@/validation/schema

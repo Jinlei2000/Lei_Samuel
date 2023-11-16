@@ -74,26 +74,26 @@
               v-model="startProposedDate"
               showIcon
               :pt="{
+                root: { class: 'w-1/3' },
                 input: { class: 'h-fit p-3 bg-gray-400' },
               }"
               :minDate="minDate"
               dateFormat="yy-mm-dd"
-              unstyled
             >
               <template #dropdownicon>
                 <CalendarIcon class="h-5 w-5" />
               </template>
             </Calendar>
-            <img src="../../../public/assets/doubleArrow.svg" />
+            <img src="/assets/doubleArrow.svg" />
             <Calendar
               v-model="endProposedDate"
               showIcon
               :pt="{
+                root: { class: 'w-1/3' },
                 input: { class: 'h-fit p-3 bg-gray-400' },
               }"
               :minDate="startProposedDate"
               dateFormat="yy-mm-dd"
-              unstyled
             >
               <template #dropdownicon>
                 <CalendarIcon class="h-5 w-5" />

@@ -62,6 +62,22 @@ const formSchema = {
       placeholder: 'Select a date',
       minDate: new Date(),
     },
+    {
+      label: 'End Date',
+      name: 'endDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a end date',
+      setMinEndDate: true,
+    },
+    {
+      label: 'Description',
+      name: 'description',
+      as: 'textarea',
+      type: 'textarea',
+      placeholder: 'Reason for absence',
+      rows: 10,
+    },
   ],
 
   button: {
