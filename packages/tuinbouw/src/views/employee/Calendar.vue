@@ -53,20 +53,22 @@
       </div> -->
       <!-- Display schedule where date = getDateWithOffset(index) -->
       <div v-for="index in 5" v-if="weekSchedules">
-        <p>{{ getDateWithOffset(index).toISOString() }}</p>
         <div
           v-if="weekSchedules"
           v-for="schedule in weekSchedules"
           :key="schedule.id"
         >
-          <p
+          <div
             v-if="
               schedule.finalDate.toString().substring(0, 10) ===
               getDateWithOffset(index).toISOString().substring(0, 10)
             "
+            class="flex flex-col gap-3"
           >
-            {{ schedule.finalDate }}
-          </p>
+            <template v-for="(item, index) in schedule.appointments">
+              <AppointmentCard :appointment="item" />
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -74,10 +76,17 @@
 </template>
 
 <script setup lang="ts">
+// Icons
 import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
+
+// Vue
 import { ref, watchEffect, watch } from 'vue'
 import { useQuery } from '@vue/apollo-composable'
 
+// Components
+import AppointmentCard from '@/components/generic/AppointmentCard.vue'
+
+// GraphQL
 import { GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID } from '@/graphql/schedule.query'
 import useCustomUser from '@/composables/useCustomUser'
 import type { Schedule } from '@/interfaces/schedule.interface'
