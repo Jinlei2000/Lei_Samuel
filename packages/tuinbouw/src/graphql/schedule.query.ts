@@ -133,6 +133,7 @@ export const GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID = gql`
       userId: $userId
     ) {
       id
+      finalDate
       appointments {
         id
         user {

@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col mt-12 gap-5 max-w-7xl m-auto">
+  <div class="flex flex-col mt-12 gap-3 max-w-7xl m-auto">
     <!-- Week selection -->
     <div class="w-full grid grid-cols-3">
       <h1 class="col-start-1 text-2xl">Calendar</h1>
       <div
-        class="w-full col-start-2 justify-self-center bg-gray-500 p-1 flex justify-between items-center rounded-2xl mb-3"
+        class="w-full col-start-2 justify-self-center bg-gray-500 p-1 flex justify-between items-center rounded-2xl"
       >
         <button
           class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
@@ -34,14 +34,40 @@
         v-if="firstDay"
         v-for="index in 5"
         :key="index"
-        class="bg-gray-500 p-1 rounded-2xl"
+        class="bg-gray-500 p-2 flex justify-center rounded-2xl"
       >
-        <p class="text-white">
-          <!-- display firstDay + index days -->
-          {{ index }}
-          {{ getDateWithOffset(index) }}
+        <p class="text-lg">
+          {{
+            days[getDateWithOffset(index).getDay()] +
+            ' ' +
+            formatDate(getDateWithOffset(index))
+          }}
         </p>
       </div>
+      <div
+        v-if="weekSchedules"
+        v-for="schedule in weekSchedules"
+      >
+        <p>test</p>
+        <p>{{ schedule.finalDate }}</p>
+      </div>
+      <!-- Display schedule where date = getDateWithOffset(index) -->
+      <!-- <div v-for="index in 5" v-if="schedules.value">
+        <p>{{ getDateWithOffset(index).toISOString() }}</p>
+        <p>{{ schedules.value.schedulesFromDateForDaysByUserId }}</p>
+        <div
+          v-if="schedules.value"
+          v-for="schedule in schedules.value.schedulesFromDateForDaysByUserId"
+          :key="schedule.id"
+        >
+          <p>test</p>
+          <p
+            v-if="schedule.finalDate === getDateWithOffset(index).toISOString()"
+          >
+            {{ schedule.finalDate }}
+          </p>
+        </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -53,11 +79,14 @@ import { useQuery } from '@vue/apollo-composable'
 
 import { GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID } from '@/graphql/schedule.query'
 import useCustomUser from '@/composables/useCustomUser'
+import type { Schedule } from '@/interfaces/schedule.interface'
 
 // Variables
 const firstDay = ref<Date>()
 const lastDay = ref<Date>()
 const daysOfWeek = ref<Date[]>([])
+
+const weekSchedules = ref<[Schedule]>()
 
 const { customUser } = useCustomUser()
 
@@ -67,6 +96,16 @@ const variables = ref({
   days: 5,
 })
 
+const days = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+]
+
 const {
   result: schedules,
   error: schedulesError,
@@ -75,6 +114,11 @@ const {
 } = useQuery(GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID, variables, {
   fetchPolicy: 'cache-and-network',
 })
+
+const setWeekSchedule = () => {
+  console.log('schedules', schedules.value?.schedulesFromDateForDaysByUserId)
+  weekSchedules.value = schedules.value?.schedulesFromDateForDaysByUserId
+}
 
 // Functions that run on component mount
 const initialize = () => {
@@ -133,9 +177,14 @@ const formatDate = (date: Date) => {
   })
 }
 
+watch(schedules, () => {
+  setWeekSchedule()
+  console.log(weekSchedules.value)
+})
+
 watchEffect(() => {
   if (schedules.value) {
-    console.log(schedules.value)
+    console.log('schedules', schedules.value.schedulesFromDateForDaysByUserId)
   }
 })
 
