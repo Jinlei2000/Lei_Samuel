@@ -27,7 +27,7 @@
         </button>
       </div>
       <button
-        class="bg-primary-green rounded-2xl text-white ml-3 w-fit px-[18px] hover:scale-105 transition-all"
+        class="border-primary-green border rounded-2xl text-primary-green ml-3 w-fit px-[18px] hover:scale-105 transition-all flex items-center justify-center gap-3"
         @click="getWeekBounds"
       >
         Today
@@ -106,7 +106,7 @@
 import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
 
 // Vue
-import { ref, watchEffect, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useQuery } from '@vue/apollo-composable'
 
 // Components
