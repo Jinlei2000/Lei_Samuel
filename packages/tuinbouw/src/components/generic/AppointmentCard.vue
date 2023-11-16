@@ -23,6 +23,7 @@
         {{ appointment.description }}
       </p>
       <button
+        v-if="nav"
         @click="navigateToLocation(appointment.location!)"
         v-on:click.stop
         class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
@@ -37,6 +38,7 @@
       <Info class="h-[24px] w-[24px]" />
     </button>
   </div>
+
   <!-- Appointment Detail Modal -->
   <Dialog
     v-model:visible="showModal"
@@ -131,6 +133,10 @@ const showModal = ref(false)
 
 const props = defineProps({
   appointment: Object as PropType<Appointment>,
+  nav: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const appointmentIsDone = ref(props.appointment?.isDone)

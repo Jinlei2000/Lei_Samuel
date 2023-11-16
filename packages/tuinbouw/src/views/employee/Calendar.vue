@@ -58,7 +58,7 @@
             class="flex flex-col gap-3"
           >
             <template v-for="(item, index) in schedule.appointments">
-              <AppointmentCard :appointment="item" />
+              <AppointmentCard :appointment="item" :nav="false" />
             </template>
           </div>
         </div>
