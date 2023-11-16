@@ -91,13 +91,6 @@
           </div>
         </div>
       </div>
-      <!-- <div
-        v-else
-        v-for="index in 5"
-        v-if="weekSchedules && weekSchedules.length > 0"
-      > -->
-
-      <!-- </div> -->
       <div
         v-if="!schedulesLoading && weekSchedules && weekSchedules.length < 1"
         class="w-full col-span-5 h-36 bg-gray-200 rounded-2xl flex justify-center items-center"
