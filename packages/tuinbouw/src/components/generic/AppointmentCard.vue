@@ -42,10 +42,14 @@
     v-model:visible="showModal"
     modal
     :header="appointment.user!.fullname"
-    :style="{ width: '50vw', position: 'relative', overflow: 'hidden' }"
     v-if="appointment"
-    class="max-w-lg"
     :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg rounded-full overflow-hidden',
+      },
+    }"
   >
     <div
       class="absolute left-0 top-0 h-full w-1"

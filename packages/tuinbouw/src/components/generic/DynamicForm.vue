@@ -57,7 +57,6 @@
                 ],
               },
             }"
-            unstyled
           >
             <template #dropdownicon>
               <ChevronDownIcon />
@@ -91,7 +90,6 @@
                 ],
               },
             }"
-            unstyled
             v-model="field.value"
             @date-select="
               $event => {

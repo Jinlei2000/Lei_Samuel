@@ -321,4 +321,109 @@ export default {
       leaveToClass: 'opacity-0',
     },
   },
+  dialog: {
+    root: ({ state }: any) => ({
+      class: [
+        'rounded-xl shadow-lg border-0',
+        'transform scale-100',
+        'm-0 w-[50vw]',
+        {
+          'transition-none transform-none !w-screen !h-screen !max-h-full !top-0 !left-0':
+            state.maximized,
+        },
+      ],
+    }),
+    header: {
+      class: [
+        'flex items-center justify-between shrink-0',
+        'bg-white text-gray-800 border-t-0  rounded-tl-lg rounded-tr-lg p-6',
+        'dark:bg-gray-900  dark:text-white/80',
+      ],
+    },
+    headerTitle: {
+      class: 'font-bold text-lg text-black capitalize',
+    },
+    headerIcons: {
+      class: 'flex items-center',
+    },
+    closeButton: {
+      class: [
+        'flex items-center justify-center overflow-hidden relative',
+        'w-8 h-8 text-black border-0 bg-transparent rounded-full transition duration-200 ease-in-out mr-2 last:mr-0',
+        'hover:border-transparent hover:bg-gray-200',
+      ],
+    },
+    closeButtonIcon: {
+      class: 'w-4 h-4 inline-block',
+    },
+    content: ({ state, instance }: any) => ({
+      class: [
+        'overflow-y-auto',
+        'bg-white text-black px-6 pb-8 pt-0',
+        ,
+        {
+          grow: state.maximized,
+        },
+        {
+          'rounded-bl-lg rounded-br-lg': !instance.$slots.footer,
+        },
+      ],
+    }),
+    footer: {
+      class: [
+        'flex gap-2 shrink-0 justify-end align-center',
+        'border-t-0 bg-white text-gray-700 px-6 pb-6 text-right rounded-b-lg',
+      ],
+    },
+    mask: ({ props }: any) => ({
+      class: ['transition duration-200', { 'bg-black/40': props.modal }],
+    }),
+    transition: ({ props }: any) => {
+      return props.position === 'top'
+        ? {
+            enterFromClass:
+              'opacity-0 scale-75 translate-x-0 -translate-y-full translate-z-0',
+            enterActiveClass: 'transition-all duration-200 ease-out',
+            leaveActiveClass: 'transition-all duration-200 ease-out',
+            leaveToClass:
+              'opacity-0 scale-75 translate-x-0 -translate-y-full translate-z-0',
+          }
+        : props.position === 'bottom'
+        ? {
+            enterFromClass: 'opacity-0 scale-75 translate-y-full',
+            enterActiveClass: 'transition-all duration-200 ease-out',
+            leaveActiveClass: 'transition-all duration-200 ease-out',
+            leaveToClass:
+              'opacity-0 scale-75 translate-x-0 translate-y-full translate-z-0',
+          }
+        : props.position === 'left' ||
+          props.position === 'topleft' ||
+          props.position === 'bottomleft'
+        ? {
+            enterFromClass:
+              'opacity-0 scale-75 -translate-x-full translate-y-0 translate-z-0',
+            enterActiveClass: 'transition-all duration-200 ease-out',
+            leaveActiveClass: 'transition-all duration-200 ease-out',
+            leaveToClass:
+              'opacity-0 scale-75  -translate-x-full translate-y-0 translate-z-0',
+          }
+        : props.position === 'right' ||
+          props.position === 'topright' ||
+          props.position === 'bottomright'
+        ? {
+            enterFromClass:
+              'opacity-0 scale-75 translate-x-full translate-y-0 translate-z-0',
+            enterActiveClass: 'transition-all duration-200 ease-out',
+            leaveActiveClass: 'transition-all duration-200 ease-out',
+            leaveToClass:
+              'opacity-0 scale-75 opacity-0 scale-75 translate-x-full translate-y-0 translate-z-0',
+          }
+        : {
+            enterFromClass: 'opacity-0 scale-75',
+            enterActiveClass: 'transition-all duration-200 ease-out',
+            leaveActiveClass: 'transition-all duration-200 ease-out',
+            leaveToClass: 'opacity-0 scale-75',
+          }
+    },
+  },
 }
