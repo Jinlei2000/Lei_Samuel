@@ -47,6 +47,7 @@
       >
         <div
           class="bg-gray-500 p-2 flex justify-center items-center rounded-2xl relative"
+          @click="toggleAccordion(index)"
         >
           <p class="text-lg">
             {{
@@ -62,7 +63,13 @@
           </div>
         </div>
 
-        <div v-if="schedulesLoading" class="flex flex-col gap-3">
+        <div
+          v-show="
+            (!isMobile() && schedulesLoading) ||
+            (isAccordionOpen[index - 1] && schedulesLoading)
+          "
+          class="flex flex-col gap-3"
+        >
           <div
             v-for="n in Math.floor(Math.random() * 3) + 1"
             class="h-32 w-full bg-gray-200 rounded-2xl flex flex-col gap-2 p-3 animate-pulse"
@@ -77,7 +84,10 @@
         </div>
 
         <div
-          v-else
+          v-show="
+            (!isMobile() && !schedulesLoading) ||
+            (isAccordionOpen[index - 1] && !schedulesLoading)
+          "
           v-if="getAppointmentAmountForDay(getDateWithOffset(index)) > 0"
         >
           <div v-for="schedule in weekSchedules" :key="schedule.id">
@@ -96,6 +106,7 @@
         </div>
 
         <div
+          v-show="isAccordionOpen[index - 1]"
           v-if="
             getAppointmentAmountForDay(getDateWithOffset(index)) == 0 &&
             weekSchedules &&
@@ -140,6 +151,7 @@ import type { Schedule } from '@/interfaces/schedule.interface'
 const firstDay = ref<Date>()
 const lastDay = ref<Date>()
 const daysOfWeek = ref<Date[]>([])
+const isAccordionOpen = ref([true, false, false, false, false])
 
 const weekSchedules = ref<[Schedule]>()
 
@@ -173,6 +185,20 @@ const {
 const setWeekSchedule = () => {
   console.log('schedules', schedules.value?.schedulesFromDateForDaysByUserId)
   weekSchedules.value = schedules.value?.schedulesFromDateForDaysByUserId
+}
+
+const toggleAccordion = (index: number) => {
+  console.log()
+  console.log(index)
+  isAccordionOpen.value[index - 1] = !isAccordionOpen.value[index - 1]
+  console.log(isAccordionOpen.value)
+}
+
+const isMobile = () => {
+  if (window.innerWidth <= 640) {
+    return true
+  }
+  return false
 }
 
 const getAppointmentAmountForDay = (date: Date) => {
