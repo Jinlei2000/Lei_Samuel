@@ -171,10 +171,16 @@ const {
   error: scheduleError,
   refetch: scheduleRefetch,
   loading: scheduleLoading,
-} = useQuery(GET_SCHEDULE_BY_USER_AND_DATE, () => ({
-  userId: customUser.value?.id,
-  date: myDate.value.toISOString().substring(0, 10),
-}))
+} = useQuery(
+  GET_SCHEDULE_BY_USER_AND_DATE,
+  () => ({
+    userId: customUser.value?.id,
+    date: myDate.value.toISOString().substring(0, 10),
+  }),
+  {
+    fetchPolicy: 'cache-and-network',
+  },
+)
 
 const appointments = ref<[Appointment]>()
 const nextAppointment = ref<Appointment>()
