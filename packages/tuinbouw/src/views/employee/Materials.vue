@@ -194,7 +194,7 @@
               class="bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
               v-on:click="sort = !sort"
             >
-              <img class="h-3 w-4 m-1" src="../../../public/icons/sort.svg" />
+              <img class="h-3 w-4 m-1" src="/icons/sort.svg" />
               <p class="m-0 text-lg">Sort</p>
               <ChevronDown class="h-[22px] w-[22px]" />
             </button>
