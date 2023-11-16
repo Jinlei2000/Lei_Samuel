@@ -87,6 +87,21 @@
           </div>
         </div>
 
+        <div
+          v-if="
+            !checkIfScheduleExists(getDateWithOffset(index)) &&
+            weekSchedules &&
+            weekSchedules.length > 0
+          "
+        >
+          <div
+            v-if="!schedulesLoading"
+            class="w-full h-20 bg-gray-200 rounded-2xl flex justify-center items-center"
+          >
+            <p>No Appointments this day</p>
+          </div>
+        </div>
+
         <!-- <div v-else v-if="weekSchedules && weekSchedules.length > 0">
           <p>{{ weekSchedules.length }}</p>
           <div
