@@ -43,56 +43,61 @@
         v-if="firstDay"
         v-for="index in 5"
         :key="index"
-        class="bg-gray-500 p-2 flex justify-center rounded-2xl"
-      >
-        <p class="text-lg">
-          {{
-            days[getDateWithOffset(index).getDay()] +
-            ' ' +
-            formatDate(getDateWithOffset(index))
-          }}
-        </p>
-      </div>
-      <div
-        v-if="schedulesLoading"
-        v-for="index in 5"
-        class="flex flex-col gap-3"
+        class="flex flex-col"
       >
         <div
-          v-for="n in Math.floor(Math.random() * 3) + 1"
-          class="h-32 w-full bg-gray-200 rounded-2xl flex flex-col gap-2 p-3 animate-pulse"
+          class="bg-gray-500 p-2 flex justify-center items-center rounded-2xl mb-3"
         >
-          <div class="h-4 w-full bg-gray-500 rounded-full"></div>
-          <div class="h-16 w-full rounded-2xl flex flex-col gap-2">
-            <div class="h-3 w-2/3 bg-gray-400 rounded-full"></div>
-            <div class="h-3 w-1/2 bg-gray-400 rounded-full"></div>
-            <div class="h-3 w-3/4 bg-gray-400 rounded-full"></div>
+          <p class="text-lg">
+            {{
+              days[getDateWithOffset(index).getDay()] +
+              ' ' +
+              formatDate(getDateWithOffset(index))
+            }}
+          </p>
+        </div>
+
+        <div v-if="schedulesLoading" class="flex flex-col gap-3">
+          <div
+            v-for="n in Math.floor(Math.random() * 3) + 1"
+            class="h-32 w-full bg-gray-200 rounded-2xl flex flex-col gap-2 p-3 animate-pulse"
+          >
+            <div class="h-4 w-full bg-gray-500 rounded-full"></div>
+            <div class="h-16 w-full rounded-2xl flex flex-col gap-2">
+              <div class="h-3 w-2/3 bg-gray-400 rounded-full"></div>
+              <div class="h-3 w-1/2 bg-gray-400 rounded-full"></div>
+              <div class="h-3 w-3/4 bg-gray-400 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else>
+          <div
+            v-if="weekSchedules && weekSchedules.length > 0"
+            v-for="schedule in weekSchedules"
+            :key="schedule.id"
+          >
+            <div
+              v-if="
+                schedule.finalDate.toString().substring(0, 10) ===
+                getDateWithOffset(index).toISOString().substring(0, 10)
+              "
+              class="flex flex-col gap-3"
+            >
+              <template v-for="(item, index) in schedule.appointments">
+                <AppointmentCard :appointment="item" :nav="false" />
+              </template>
+            </div>
           </div>
         </div>
       </div>
-      <div
+      <!-- <div
         v-else
         v-for="index in 5"
         v-if="weekSchedules && weekSchedules.length > 0"
-      >
-        <div
-          v-if="weekSchedules.length > 0"
-          v-for="schedule in weekSchedules"
-          :key="schedule.id"
-        >
-          <div
-            v-if="
-              schedule.finalDate.toString().substring(0, 10) ===
-              getDateWithOffset(index).toISOString().substring(0, 10)
-            "
-            class="flex flex-col gap-3"
-          >
-            <template v-for="(item, index) in schedule.appointments">
-              <AppointmentCard :appointment="item" :nav="false" />
-            </template>
-          </div>
-        </div>
-      </div>
+      > -->
+
+      <!-- </div> -->
       <div
         v-if="!schedulesLoading && weekSchedules && weekSchedules.length < 1"
         class="w-full col-span-5 h-36 bg-gray-200 rounded-2xl flex justify-center items-center"
