@@ -175,10 +175,10 @@
     }"
   >
     <form @submit.prevent="handleUpdateLocation">
-      <InputText
+      <InputField
         name="Address"
-        placeholder="Search Address"
         type="text"
+        placeholder="Search Address"
         :errorMessage="errorMessages.searchAdressInput"
         v-bind="searchAdressInput"
       />
@@ -216,6 +216,29 @@
         errorMessages.selectedAddress || '&nbsp;'
       }}</small>
 
+      <!-- show no results -->
+      <div v-if="searchAddressResults?.length === 0 || !searchAddressResults">
+        <div class="mt-4">
+          <p class="text-gray-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              class="w-8 h-8 mx-auto text-gray-400"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </p>
+          <p class="text-gray-600 text-center">No results</p>
+        </div>
+      </div>
+
       <CustomButton
         class="block"
         name="Search Address"
@@ -245,10 +268,10 @@
     }"
   >
     <form @submit.prevent="handleCreateLocation">
-      <InputText
+      <InputField
         name="Address"
-        placeholder="Search Address"
         type="text"
+        placeholder="Search Address"
         :errorMessage="errorMessages.searchAdressInput"
         v-bind="searchAdressInput"
       />
@@ -339,7 +362,6 @@ import { Pencil, Trash2, ArrowLeft, Eye } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-import InputText from '@/components/generic/form/InputText.vue'
 import { GET_USER_BY_ID } from '@/graphql/user.query'
 import {
   CREATE_LOCATION,
@@ -355,6 +377,7 @@ import {
 } from '@/validation/schema'
 import DynamicForm from './generic/DynamicForm.vue'
 import { INVOICE_OPTIONS } from '@/helpers/constants'
+import InputField from './generic/InputField.vue'
 
 // composables
 const { customUser } = useCustomUser()

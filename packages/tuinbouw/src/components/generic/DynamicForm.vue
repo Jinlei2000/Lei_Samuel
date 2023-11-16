@@ -239,9 +239,9 @@ const switchValue = ref()
 // Set switchValue before mounting
 onBeforeMount(() => {
   if (props.initialValues && props.schema) {
-    const name = props.schema.fields.find(
-      (field: any) => field.type === 'switch',
-    ).name
+    const name =
+      props.schema.fields.find((field: any) => field.type === 'switch')?.name ||
+      ''
     const value = props.initialValues[name] ?? false
     switchValue.value = {
       name: name,
