@@ -31,3 +31,7 @@ export const locationValidationSchema = yup.object({
   searchAdressInput: yup.string().required().trim(),
   selectedAddress: yup.object().required(),
 })
+
+export const forgotPasswordValidationSchema = yup.object({
+  email: yup.string().required().email(),
+})

@@ -193,6 +193,7 @@
 
     <CustomButton
       class="flex ml-auto"
+      :class="schema.button.class"
       :loading="loading"
       type="submit"
       :name="schema.button.name"
