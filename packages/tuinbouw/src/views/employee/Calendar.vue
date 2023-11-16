@@ -182,11 +182,5 @@ watch(schedules, () => {
   console.log(weekSchedules.value)
 })
 
-watchEffect(() => {
-  if (schedules.value) {
-    console.log('schedules', schedules.value.schedulesFromDateForDaysByUserId)
-  }
-})
-
 initialize()
 </script>
