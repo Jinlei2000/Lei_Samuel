@@ -524,12 +524,12 @@ import { GET_EMPLOYEES_AVAILABLE_BY_DATE } from '@/graphql/user.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
+import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ArrowLeft } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-import * as yup from 'yup'
 
 // TODO: add steps (next.value) to the url as query params (e.g. /schedules/edit?step=1)
 // TODO: use useLazyQuery for materials and (employees or users) to prevent loading all materials and (employees or appointments)
@@ -550,14 +550,6 @@ const selectedMaterials = ref<Material[]>([])
 const selectedMaterialsEdit = ref<Material[]>([])
 const loadingUpdate = ref(false)
 
-// form
-const schema = yup.object({
-  finalDate: yup.string().required(),
-  appointmentsIds: yup.array().required().min(1),
-  employeesIds: yup.array().required().min(1),
-  materialsIds: yup.array().required(),
-})
-
 // error messages of forms
 const errorMessages = ref<{
   [key: string]: string | undefined
@@ -571,7 +563,7 @@ const errorMessages = ref<{
 
 // update form
 const { defineComponentBinds, errors, values, validate, setValues } = useForm({
-  validationSchema: schema,
+  validationSchema: schedulesValidationSchema,
 })
 
 const finalDate = defineComponentBinds('finalDate')

@@ -74,3 +74,10 @@ export const userCreateEmployeeValidationSchema = yup.object({
     .nullable(),
   locale: yup.string().required(),
 })
+
+export const schedulesValidationSchema = yup.object({
+  finalDate: yup.string().required(),
+  appointmentsIds: yup.array().required().min(1),
+  employeesIds: yup.array().required().min(1),
+  materialsIds: yup.array().required(),
+})
