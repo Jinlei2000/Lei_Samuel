@@ -62,9 +62,13 @@
           </div>
         </div>
       </div>
-      <div v-else v-for="index in 5" v-if="weekSchedules">
+      <div
+        v-else
+        v-for="index in 5"
+        v-if="weekSchedules && weekSchedules.length > 0"
+      >
         <div
-          v-if="weekSchedules"
+          v-if="weekSchedules.length > 0"
           v-for="schedule in weekSchedules"
           :key="schedule.id"
         >
@@ -80,6 +84,12 @@
             </template>
           </div>
         </div>
+      </div>
+      <div
+        v-if="!schedulesLoading && weekSchedules && weekSchedules.length < 1"
+        class="w-full col-span-5 h-36 bg-gray-200 rounded-2xl flex justify-center items-center"
+      >
+        <p>No Appointments this week</p>
       </div>
     </div>
   </div>
