@@ -15,7 +15,7 @@
             :schema="formLogin"
             :validationSchema="loginValidationSchema"
             :handleForm="handleLogin"
-            :loading="true"
+            :loading="loading"
           />
           <div>
             <div class="flex items-center justify-end">
