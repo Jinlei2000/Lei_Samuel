@@ -35,3 +35,8 @@ export const locationValidationSchema = yup.object({
 export const forgotPasswordValidationSchema = yup.object({
   email: yup.string().required().email(),
 })
+
+export const loginValidationSchema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(6),
+})

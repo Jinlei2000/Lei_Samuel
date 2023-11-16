@@ -37,7 +37,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import useFirebase from '@/composables/useFirebase'
-
 import { forgotPasswordValidationSchema } from '@/validation/schema'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
 import useCustomToast from '@/composables/useCustomToast'
