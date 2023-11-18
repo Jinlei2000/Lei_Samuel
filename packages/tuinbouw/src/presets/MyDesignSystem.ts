@@ -244,6 +244,7 @@ export default {
     input: ({ props }: any) => ({
       class: [
         'cursor-pointer block flex flex-auto overflow-hidden relative',
+        'outline-none focus:outline-none',
         { 'pr-7': props.showClear },
       ],
     }),
