@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -23,15 +23,15 @@
   <!-- TODO: search bar -->
 
   <!-- show loading -->
-  <div v-if="usersLoading">
+  <div v-if="loading.data">
     <p class="text-6xl font-black">Loading Users...</p>
   </div>
 
   <!-- show users -->
-  <div v-if="users && users.users.length > 0">
+  <div v-else-if="users && users.length > 0">
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div
-        v-for="user in users.users"
+        v-for="user in users"
         :key="user.id"
         class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
         :class="user.uid === null ?? 'border-red-500'"
@@ -84,6 +84,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- show no users -->
+  <div v-else-if="users.length === 0">
+    <p class="text-6xl font-black">Loading Users...</p>
   </div>
 
   <!-- Detail Modal -->
@@ -167,43 +172,37 @@
 </template>
 
 <script setup lang="ts">
-import { GET_USERS } from '@/graphql/user.query'
-import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ref, watchEffect } from 'vue'
-import { ArrowLeft, Trash2, Pencil, Eye } from 'lucide-vue-next'
+import CustomButton from '@/components/generic/CustomButton.vue'
+import DynamicForm from '@/components/generic/DynamicForm.vue'
 import useCustomToast from '@/composables/useCustomToast'
-import type { CustomUser } from '@/interfaces/custom.user.interface'
+import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
 import {
-  DELETE_USER,
   CREATE_EMPLOYEE,
+  DELETE_USER,
   UPDATE_USER,
   UPDATE_USER_TO_ADMIN,
 } from '@/graphql/user.mutation'
-import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
-import CustomButton from '@/components/generic/CustomButton.vue'
-import DynamicForm from '@/components/generic/DynamicForm.vue'
+import { GET_USERS } from '@/graphql/user.query'
+import { ORDER_DIRECTION, SUPPORTED_LOCALES_TYPES } from '@/helpers/constants'
+import type { CustomUser } from '@/interfaces/custom.user.interface'
+import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import {
-  userUpdateAdminValidationSchema,
   userCreateEmployeeValidationSchema,
+  userUpdateAdminValidationSchema,
 } from '@/validation/schema'
-import { SUPPORTED_LOCALES_TYPES } from '@/helpers/constants'
+import { useMutation, useQuery } from '@vue/apollo-composable'
+import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
+import { computed, ref, watchEffect } from 'vue'
 
 // composables
 const { showToast } = useCustomToast()
 
 // variables
-const variables = ref<{
-  filters: string[]
-  order: {
-    field: string
-    direction: string
-  }
-  searchString: string
-}>({
+const variables = ref<VariablesProps>({
   filters: [],
   order: {
     field: 'createdAt',
-    direction: 'DESC',
+    direction: ORDER_DIRECTION.DESC,
   },
   searchString: '',
 })
@@ -214,6 +213,12 @@ const visible = ref({
 })
 const selectedUser = ref<CustomUser | null>(null)
 const sendMailCurrentUserId = ref<string | null>(null)
+const users = computed(() => usersResult.value?.users || [])
+const loading = ref({
+  createEmployee: false,
+  updateEmployee: false,
+  data: computed(() => usersLoading.value),
+})
 // form update employee
 const formUpdateEmployee = {
   fields: [
@@ -290,14 +295,9 @@ const formCreateEmployee = {
   },
 }
 
-const loading = ref({
-  createEmployee: false,
-  updateEmployee: false,
-})
-
 // graphql
 const {
-  result: users,
+  result: usersResult,
   error: usersError,
   loading: usersLoading,
   refetch: refetchUsers,
@@ -428,6 +428,7 @@ watchEffect(() => {
   errors.forEach(error => {
     if (error) {
       loading.value = {
+        ...loading.value,
         createEmployee: false,
         updateEmployee: false,
       }
