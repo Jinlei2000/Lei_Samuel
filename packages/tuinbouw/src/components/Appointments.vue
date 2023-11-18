@@ -281,32 +281,37 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
-import {
-  GET_ALL_APPOINTMENT_BY_USERID,
-  GET_ALL_APPOINTMENT,
-} from '@/graphql/appointment.query'
-import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import { computed, onMounted, ref, watchEffect } from 'vue'
-import { ArrowLeft, Filter, ChevronDown, Check } from 'lucide-vue-next'
-import Dialog from 'primevue/dialog'
-import type { Appointment } from '@/interfaces/appointment.user.interface'
+import useTimeUtilities from '@/composables/useTimeUtilities'
 import {
   DELETE_APPOINTMENT,
   UPDATE_APPOINTMENT,
 } from '@/graphql/appointment.mutation'
+import {
+  GET_ALL_APPOINTMENT,
+  GET_ALL_APPOINTMENT_BY_USERID,
+} from '@/graphql/appointment.query'
 import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
-import useCustomToast from '@/composables/useCustomToast'
-import useTimeUtilities from '@/composables/useTimeUtilities'
-import { type GenericObject } from 'vee-validate'
-import { Trash2 } from 'lucide-vue-next'
-import { Pencil } from 'lucide-vue-next'
-import { Eye } from 'lucide-vue-next'
-import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { APPOINTMENT_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
-import DynamicForm from './generic/DynamicForm.vue'
-import { appointmentUpdateValidationSchema } from '@/validation/schema'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { Location } from '@/interfaces/location.interface'
+import type { VariablesProps } from '@/interfaces/variablesProps.interface'
+import { appointmentUpdateValidationSchema } from '@/validation/schema'
+import { useLazyQuery, useMutation } from '@vue/apollo-composable'
+import {
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  Eye,
+  Filter,
+  Pencil,
+  Trash2,
+} from 'lucide-vue-next'
+import Dialog from 'primevue/dialog'
+import { type GenericObject } from 'vee-validate'
+import { computed, onMounted, ref, watchEffect } from 'vue'
+import DynamicForm from './generic/DynamicForm.vue'
 
 // props
 const props = defineProps({
@@ -545,16 +550,6 @@ const toggleModal = (
 const refetch = async (): Promise<void> => {
   if (props.showAllOverview) await appointmentsRefetch()
   else await appointmentsByUserIdRefetch()
-}
-
-const getLocationsOptions = () => {
-  const options = locations.value.map((l: Location) => ({
-    name: l.address,
-    value: l.id,
-  }))
-
-  console.log('options: ', options)
-  return options
 }
 
 // log the queries
