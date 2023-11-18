@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -29,10 +29,10 @@
   </div>
 
   <!-- show schedules -->
-  <div v-if="schedules && schedules.schedules.length > 0">
+  <div v-else-if="schedules && schedules.length > 0">
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div
-        v-for="schedule in schedules.schedules"
+        v-for="schedule in schedules"
         :key="schedule.id"
         class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
       >
@@ -83,7 +83,7 @@
           <!-- Delete Button -->
           <button
             v-if="isNotInPastOrToday(schedule.finalDate)"
-            @click="handleDelete(schedule)"
+            @click="handleDeleteSchedule(schedule)"
             class="text-red-500"
           >
             <Trash2 />
@@ -92,40 +92,43 @@
       </div>
     </div>
   </div>
+
+  <!-- show no schedules -->
+  <div v-else-if="schedules.length === 0">
+    <p class="text-6xl font-black">No Schedules Found</p>
+  </div>
 </template>
 
 <script setup lang="ts">
 import useCustomToast from '@/composables/useCustomToast'
-import { GET_ALL_SCHEDULES } from '@/graphql/schedule.query'
-import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
-import { ref, watchEffect } from 'vue'
-import type { Schedule } from '@/interfaces/schedule.interface'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_SCHEDULE } from '@/graphql/schedule.mutation'
+import { GET_ALL_SCHEDULES } from '@/graphql/schedule.query'
+import { ORDER_DIRECTION } from '@/helpers/constants'
+import type { Schedule } from '@/interfaces/schedule.interface'
+import type { VariablesProps } from '@/interfaces/variablesProps.interface'
+import { useMutation, useQuery } from '@vue/apollo-composable'
+import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
+import { computed, ref, watchEffect } from 'vue'
 
 // composables
 const { showToast } = useCustomToast()
 const { formatDateTime, isNotInPastOrToday } = useTimeUtilities()
 
 // variables
-const variables = ref<{
-  filters: string[]
-  order: {
-    field: string
-    direction: string
-  }
-}>({
+const variables = ref<VariablesProps>({
   filters: [],
   order: {
     field: 'createdAt',
-    direction: 'ASC',
+    direction: ORDER_DIRECTION.DESC,
   },
 })
 
+const schedules = computed(() => schedulesResult.value?.schedules || [])
+
 // graphql
 const {
-  result: schedules,
+  result: schedulesResult,
   error: schedulesError,
   loading: schedulesLoading,
   refetch: refetchSchedules,
@@ -133,26 +136,22 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const {
-  mutate: deleteSchedule,
-  loading: deleteScheduleLoading,
-  error: deleteScheduleError,
-} = useMutation(DELETE_SCHEDULE)
+const { mutate: deleteSchedule, error: deleteScheduleError } =
+  useMutation(DELETE_SCHEDULE)
 
 // logics
 // delete schedule
-const handleDelete = async (schedule: Schedule) => {
+const handleDeleteSchedule = async (schedule: Schedule) => {
   await deleteSchedule({
     id: schedule.id,
-  }).then(() => {
-    showToast('success', 'Success', `Schedule deleted`)
-    refetchSchedules()
   })
+  showToast('success', 'Success', `Schedule deleted`)
+  refetchSchedules()
 }
 
 watchEffect(() => {
   // log the queries
-  if (schedules.value) console.log(schedules.value)
+  // if (schedules.value) console.log(schedules.value)
 
   // all errors
   const errors = [schedulesError.value, deleteScheduleError.value]
