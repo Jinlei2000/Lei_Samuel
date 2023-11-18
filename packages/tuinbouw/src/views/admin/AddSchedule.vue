@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -18,9 +18,9 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <span class="text-red-500 block" id="text-error">{{
         errorMessages.finalDate || '&nbsp;'
-      }}</small>
+      }}</span>
 
       <div class="flex flex-col">
         <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">
@@ -53,9 +53,9 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <span class="text-red-500 block" id="text-error">{{
         errorMessages.appointmentsIds || '&nbsp;'
-      }}</small>
+      }}</span>
 
       <!-- loading appointments -->
       <div v-if="loadingAppointments">
@@ -63,16 +63,9 @@
       </div>
 
       <!-- show appointments -->
-      <div>
+      <div v-else-if="appointments && appointments.length > 0">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div
-            v-if="
-              appointments &&
-              appointments.appointmentsAvailableByDate.length > 0
-            "
-            v-for="a of appointments.appointmentsAvailableByDate"
-            :key="a.id"
-          >
+          <div v-for="a of appointments" :key="a.id">
             <div
               :class="[
                 'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
@@ -130,19 +123,19 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- no appointments -->
-          <div
-            v-else
-            class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
-          >
-            <div class="p-4">
-              <h2 class="mb-2 text-xl font-semibold">No appointments</h2>
-              <p class="mb-1 text-gray-600">
-                There are no appointments available for this date
-              </p>
-            </div>
-          </div>
+      <!-- no appointments -->
+      <div
+        v-else-if="appointments.length === 0"
+        class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
+      >
+        <div class="p-4">
+          <h2 class="mb-2 text-xl font-semibold">No appointments</h2>
+          <p class="mb-1 text-gray-600">
+            There are no appointments available for this date
+          </p>
         </div>
       </div>
     </div>
@@ -154,9 +147,9 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <span class="text-red-500 block" id="text-error">{{
         errorMessages.prices || '&nbsp;'
-      }}</small>
+      }}</span>
 
       <!-- show appointments with price input -->
       <div>
@@ -220,9 +213,9 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <span class="text-red-500 block" id="text-error">{{
         errorMessages.employeesIds || '&nbsp;'
-      }}</small>
+      }}</span>
 
       <!-- loading employees -->
       <div v-if="loadingEmployees">
@@ -230,12 +223,10 @@
       </div>
 
       <!-- show employees -->
-      <div
-        v-if="employees && employees.usersEmployeesAvailableByDate.length > 0"
-      >
+      <div v-else-if="employees && employees.length > 0">
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div
-            v-for="user in employees.usersEmployeesAvailableByDate"
+            v-for="user in employees"
             :key="user.id"
             class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
             :class="
@@ -262,6 +253,19 @@
           </div>
         </div>
       </div>
+
+      <!-- no employees -->
+      <div
+        v-else-if="employees.length === 0"
+        class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
+      >
+        <div class="p-4">
+          <h2 class="mb-2 text-xl font-semibold">No employees</h2>
+          <p class="mb-1 text-gray-600">
+            There are no employees available for this date
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Materials -->
@@ -277,11 +281,11 @@
 
       <!-- show materials -->
       <div
+        v-else-if="materials && materials.length > 0"
         class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
         <div
-          v-if="materials && materials.materials.length > 0"
-          v-for="material of materials.materials"
+          v-for="material of materials"
           class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
           :key="material.id"
           :class="
@@ -308,6 +312,19 @@
             <h2 class="truncate text-lg">{{ material.name }}</h2>
             <p class="m-0">Loanable: {{ material.isLoan }}</p>
           </div>
+        </div>
+      </div>
+
+      <!-- no materials -->
+      <div
+        v-else-if="materials.length === 0"
+        class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
+      >
+        <div class="p-4">
+          <h2 class="mb-2 text-xl font-semibold">No materials</h2>
+          <p class="mb-1 text-gray-600">
+            There are no materials available for this date
+          </p>
         </div>
       </div>
     </div>
@@ -389,11 +406,9 @@ import { ArrowLeft, Eye } from 'lucide-vue-next'
 import Calendar from 'primevue/calendar'
 import InputNumber from 'primevue/inputnumber'
 import { useForm } from 'vee-validate'
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
-// TODO: useStepper for steps (https://vueuse.org/core/useStepper/)
-// easy to use (but dont know if it is possible to use with vee-validate)
 // TODO: fix when you refresh the page, that you dont go back to the first step
 
 // composables
@@ -406,6 +421,16 @@ const { customUser } = useCustomUser()
 // today + 1 day
 const minDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
 const loadingCreate = ref(false)
+
+const appointments = computed(
+  () => appointmentsResult.value?.appointmentsAvailableByDate || [],
+)
+
+const employees = computed(
+  () => employeesResult.value?.usersEmployeesAvailableByDate || [],
+)
+
+const materials = computed(() => materialsResult.value?.materials || [])
 
 // error messages of forms
 const errorMessages = ref<{
@@ -441,7 +466,7 @@ const { mutate: updateAppointment, error: errorUpdateAppointment } =
   useMutation(UPDATE_APPOINTMENT)
 
 const {
-  result: appointments,
+  result: appointmentsResult,
   loading: loadingAppointments,
   error: errorAppointments,
   refetch: refetchAppointments,
@@ -456,7 +481,7 @@ const {
 )
 
 const {
-  result: employees,
+  result: employeesResult,
   loading: loadingEmployees,
   error: errorEmployees,
   refetch: refetchEmployees,
@@ -471,7 +496,7 @@ const {
 )
 
 const {
-  result: materials,
+  result: materialsResult,
   loading: loadingMaterials,
   error: errorMaterials,
 } = useQuery(GET_MATERIALS_AVAILABLE, null, {
