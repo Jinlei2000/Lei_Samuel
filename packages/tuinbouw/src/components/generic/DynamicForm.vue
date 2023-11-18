@@ -1,7 +1,7 @@
 <template>
   <Form
     @submit="handleForm($event)"
-    v-slot="{ errors }"
+    v-slot="{ errors, setValues }"
     :validation-schema="validationSchema"
     :initial-values="initialValues"
     novalidate
@@ -39,7 +39,6 @@
           v-bind="attrs"
         >
         </Field>
-
         <!-- dropdown -->
         <Field
           v-if="type === 'select'"
@@ -106,7 +105,10 @@
               $event => {
                 // Set minEndDate to the selected date if setMinEndDate is true
                 // This is used to set the minEndDate of the end date field
-                if (!attrs.setMinEndDate) minEndDate = $event
+                if (!attrs.setMinEndDate) {
+                  minEndDate = $event
+                  setValues({ [attrs.linkName]: $event })
+                }
                 handleChange($event, false)
               }
             "

@@ -7,6 +7,12 @@ export const ABSENCE_TYPES = [
   { name: 'other' },
 ]
 
+export const APPOINTMENT_TYPES = [
+  { name: 'maintenance' },
+  { name: 'repair' },
+  { name: 'other' },
+]
+
 export const ORDER_DIRECTION = {
   ASC: 'ASC',
   DESC: 'DESC',

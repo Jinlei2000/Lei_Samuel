@@ -81,3 +81,11 @@ export const schedulesValidationSchema = yup.object({
   employeesIds: yup.array().required().min(1),
   materialsIds: yup.array().required(),
 })
+
+export const appointmentUpdateValidationSchema = yup.object({
+  locationId: yup.string().required(),
+  type: yup.string().required(),
+  startProposedDate: yup.string().required(),
+  endProposedDate: yup.string().required(),
+  description: yup.string().optional(),
+})
