@@ -21,7 +21,7 @@
     </div>
 
     <!-- About me -->
-    <div v-if="user" class="w-full">
+    <div v-if="user && !isEditingUser" class="w-full">
       <div class="w-full flex justify-between mb-3">
         <h2 class="text-2xl">About me</h2>
         <button
@@ -45,10 +45,37 @@
       </ul>
     </div>
 
+    <!-- Edit About me -->
+    <!-- show edit form -->
+    <div v-if="isEditingUser">
+      <!-- go back button -->
+      <button class="flex" @click="isEditingUser = false">
+        <ArrowLeft class="h-6 w-6" />
+        Go back
+      </button>
+
+      <DynamicForm
+        :schema="formUpdateUser"
+        :validationSchema="userUpdateValidationSchema"
+        :handleForm="handleUpdateUser"
+        :loading="loading.updateUser"
+        :initial-values="{
+          firstname: user!.firstname,
+          lastname: user!.lastname,
+          email: user!.email,
+          telephone: user!.telephone,
+          invoiceOption: user!.invoiceOption,
+          company: user!.company,
+          btwNumber: user!.btwNumber,
+        }"
+      />
+    </div>
+
     <!-- Absences -->
     <div class="w-full flex flex-col gap-3">
       <h2 class="text-2xl">Absences</h2>
       <button
+        @click="toggleModal(null, 'create')"
         class="w-full flex items-center justify-center border-primary-green border-[1px] rounded-2xl h-16 text-primary-green"
       >
         <PlusCircle class="mr-2" />
@@ -83,6 +110,36 @@
         <p class="text-lg">No absences</p>
       </div>
     </div>
+
+    <!-- Create Absence Modal -->
+    <!-- Create Modal -->
+    <Dialog
+      v-model:visible="visible.create"
+      modal
+      header="Create Absence"
+      :draggable="false"
+      :close-on-escape="true"
+      :pt="{
+        root: {
+          class: 'max-w-lg',
+        },
+      }"
+    >
+      <DynamicForm
+        :schema="formAbsence"
+        :validationSchema="absenceValidationSchema"
+        :handleForm="handleCreateAbsence"
+        :loading="loading.create"
+      />
+    </Dialog>
+
+    <!-- delete account -->
+    <button
+      @click="handleDeleteUser()"
+      class="bg-primary-red text-white rounded-2xl h-16"
+    >
+      Delete Account
+    </button>
 
     <!-- show user -->
     <div v-if="!isEditingUser && user">
@@ -184,31 +241,6 @@
           />
         </div>
       </div>
-    </div>
-
-    <!-- show edit form -->
-    <div v-if="isEditingUser">
-      <!-- go back button -->
-      <button class="flex" @click="isEditingUser = false">
-        <ArrowLeft class="h-6 w-6" />
-        Go back
-      </button>
-
-      <DynamicForm
-        :schema="formUpdateUser"
-        :validationSchema="userUpdateValidationSchema"
-        :handleForm="handleUpdateUser"
-        :loading="loading.updateUser"
-        :initial-values="{
-          firstname: user!.firstname,
-          lastname: user!.lastname,
-          email: user!.email,
-          telephone: user!.telephone,
-          invoiceOption: user!.invoiceOption,
-          company: user!.company,
-          btwNumber: user!.btwNumber,
-        }"
-      />
     </div>
   </div>
 
