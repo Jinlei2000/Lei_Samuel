@@ -112,6 +112,47 @@
       </div>
     </div>
 
+    <!-- Absence Detail Modal -->
+    <Dialog
+      v-model:visible="visible.detail"
+      modal
+      header="Absence Details"
+      :draggable="false"
+      :close-on-escape="true"
+      :pt="{
+        root: {
+          class: 'max-w-lg',
+        },
+      }"
+    >
+      <div v-if="selectedAbsence" class="flex flex-col gap-6">
+        <div class="flex flex-col gap-3">
+          <div>
+            <h2 class="text-xl font-semibold">
+              {{ formatAbsenceDate(selectedAbsence.startDate) }}
+            </h2>
+            <p class="text-gray-900">{{ selectedAbsence.totalDays }} days</p>
+          </div>
+          <div>
+            <h3 class="text-sm">Description:</h3>
+            <p>
+              {{ selectedAbsence.description }}
+            </p>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <button class="rounded-[4px] bg-primary-red px-3 py-1 text-white">
+            Delete
+          </button>
+          <button
+            class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue"
+          >
+            Edit
+          </button>
+        </div>
+      </div>
+    </Dialog>
+
     <!-- Create Absence Modal -->
     <Dialog
       v-model:visible="visible.create"
@@ -131,30 +172,6 @@
         :handleForm="handleCreateAbsence"
         :loading="loading.create"
       />
-    </Dialog>
-
-    <!-- Absence Detail Modal -->
-    <Dialog
-      v-model:visible="visible.detail"
-      modal
-      header="Absence Details"
-      :draggable="false"
-      :close-on-escape="true"
-      :pt="{
-        root: {
-          class: 'max-w-lg',
-        },
-      }"
-    >
-      <div v-if="selectedAbsence">
-        <h2 class="mb-2 text-xl font-semibold">
-          user id:
-          {{ selectedAbsence.user?.id }}
-        </h2>
-        <p class="text-gray-600">
-          {{ selectedAbsence.description }}
-        </p>
-      </div>
     </Dialog>
 
     <!-- delete account -->
