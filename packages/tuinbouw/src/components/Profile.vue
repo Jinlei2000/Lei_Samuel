@@ -56,10 +56,14 @@
       </button>
       <div
         v-if="absences && absences.length > 0"
-        class="w-full flex flex-col rounded-2xl bg-gray-200"
+        class="w-full flex flex-col gap-3"
       >
-        <div v-for="absence in absences" :key="absence.id">
-          {{ absence.description }}
+        <div
+          v-for="absence in absences"
+          :key="absence.id"
+          class="rounded-2xl bg-gray-200 p-3 pl-6"
+        >
+          {{ formatAbsenceDate(absence.startDate) }}
         </div>
       </div>
     </div>
@@ -951,4 +955,14 @@ watchEffect(() => {
     }
   })
 })
+
+// Change date to mm/dd/yyyy
+const formatAbsenceDate = (date: string) => {
+  const dateObj = new Date(date)
+  return new Intl.DateTimeFormat('en', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(dateObj)
+}
 </script>
