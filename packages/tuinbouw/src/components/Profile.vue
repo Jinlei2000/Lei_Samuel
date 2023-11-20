@@ -24,7 +24,12 @@
     <div class="w-full">
       <div class="w-full flex justify-between">
         <h2 class="text-2xl">About me</h2>
-        <button>Edit</button>
+        <button
+          @click="isEditingUser = true"
+          class="flex gap-2 text-lg items-center text-primary-orange"
+        >
+          <Edit2 class="w-5 h-5" /> Edit
+        </button>
       </div>
       <div class="w-full flex flex-col rounded-2xl bg-gray-200"></div>
     </div>
