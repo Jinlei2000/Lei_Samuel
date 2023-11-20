@@ -1,5 +1,11 @@
 <template>
-  <div class="flex flex-col mt-12 gap-3 max-w-xl m-auto">
+  <div class="flex flex-col mt-12 gap-6 max-w-xl m-auto">
+    <!-- loading -->
+    <div v-if="userLoading && !user">
+      <p class="text-6xl font-black">Loading User...</p>
+    </div>
+
+    <!-- Primary user info -->
     <div class="w-full flex flex-col items-center gap-6">
       <img
         class="h-24 w-24 rounded-full"
@@ -14,9 +20,25 @@
       </div>
     </div>
 
-    <!-- loading -->
-    <div v-if="userLoading && !user">
-      <p class="text-6xl font-black">Loading User...</p>
+    <!-- About me -->
+    <div class="w-full">
+      <div class="w-full flex justify-between">
+        <h2 class="text-2xl">About me</h2>
+        <button>Edit</button>
+      </div>
+      <div class="w-full flex flex-col rounded-2xl bg-gray-200"></div>
+    </div>
+
+    <!-- Absences -->
+    <div class="w-full flex flex-col gap-3">
+      <h2 class="text-2xl">Absences</h2>
+      <button
+        class="w-full flex items-center justify-center border-primary-green border-[1px] rounded-2xl h-16 text-primary-green"
+      >
+        <PlusCircle class="mr-2" />
+        Add New Absence
+      </button>
+      <div class="w-full flex flex-col rounded-2xl bg-gray-200"></div>
     </div>
 
     <!-- show user -->
@@ -371,7 +393,14 @@ import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
 import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { Pencil, Trash2, ArrowLeft, Eye } from 'lucide-vue-next'
+import {
+  Pencil,
+  Trash2,
+  ArrowLeft,
+  Eye,
+  PlusCircle,
+  Edit2,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
