@@ -141,7 +141,10 @@
           </div>
         </div>
         <div class="flex justify-between">
-          <button class="rounded-[4px] bg-primary-red px-3 py-1 text-white">
+          <button
+            @click="handleDelete(selectedAbsence)"
+            class="rounded-[4px] bg-primary-red px-3 py-1 text-white"
+          >
             Delete
           </button>
           <button
@@ -732,6 +735,7 @@ const handleDelete = async (absence: Absence) => {
     `Absence of ${absence.user.firstname} has been deleted`,
   )
   await refetch()
+  toggleModal()
 }
 
 // open or close modal
