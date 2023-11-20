@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_MATERIALS = gql`
-  query materials($filters: [String!], $searchString: String) {
-    materials(filters: $filters, searchString: $searchString) {
+  query materials($filters: [String!], $order: OrderByInput!, $searchString: String!) {
+    materials(filters: $filters, order: $order, searchString: $searchString) {
       id
       name
       isLoan
@@ -18,8 +18,8 @@ export const GET_MATERIALS = gql`
 `
 
 export const GET_MATERIALS_BY_USERID = gql`
-  query materialsByUserId($userId: String!) {
-    materialsByUserId(userId: $userId) {
+  query materialsByUserId($userId: String!, $filters: [String!], $order: OrderByInput!, $searchString: String!) {
+    materialsByUserId(userId: $userId, filters: $filters, order: $order, searchString: $searchString) {
       id
       name
       isLoan
