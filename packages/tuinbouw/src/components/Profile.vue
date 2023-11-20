@@ -72,7 +72,10 @@
     </div>
 
     <!-- Absences -->
-    <div class="w-full flex flex-col gap-3">
+    <div
+      v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
+      class="w-full flex flex-col gap-3"
+    >
       <h2 class="text-2xl">Absences</h2>
       <button
         @click="toggleModal(null, 'create')"
