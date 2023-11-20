@@ -21,8 +21,8 @@
     </div>
 
     <!-- About me -->
-    <div class="w-full">
-      <div class="w-full flex justify-between">
+    <div v-if="user" class="w-full">
+      <div class="w-full flex justify-between mb-3">
         <h2 class="text-2xl">About me</h2>
         <button
           @click="isEditingUser = true"
@@ -31,7 +31,18 @@
           <Edit2 class="w-5 h-5" /> Edit
         </button>
       </div>
-      <div class="w-full flex flex-col rounded-2xl bg-gray-200"></div>
+      <ul class="w-full flex flex-col rounded-2xl bg-gray-200 p-6">
+        <li
+          class="flex justify-between items-center pb-6 border-b-[1px] border-white"
+        >
+          <p class="text-lg">Telephone</p>
+          <p>{{ user.telephone || 'unknown' }}</p>
+        </li>
+        <li class="flex justify-between items-center pt-6">
+          <p class="text-lg">Address</p>
+          <p>{{ user.locations[0].address || 'unknown' }}</p>
+        </li>
+      </ul>
     </div>
 
     <!-- Absences -->
