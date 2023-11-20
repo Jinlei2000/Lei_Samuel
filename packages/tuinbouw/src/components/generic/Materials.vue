@@ -251,11 +251,11 @@
     <!-- loading -->
     <template v-if="loading.data">
       <div
-        class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3"
+        class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3 w-full"
       >
         <div v-for="skeleton in skeletons">
           <div class="animate-pulse flex items-center gap-6">
-            <div class="w-56 h-48 bg-neutral-200 rounded-2xl"></div>
+            <div class="w-full h-48 bg-neutral-200 rounded-2xl"></div>
           </div>
         </div>
       </div>
