@@ -76,6 +76,12 @@
           </p>
         </div>
       </div>
+      <div
+        v-else-if="absences.length === 0"
+        class="flex justify-center items-center h-20 bg-gray-200 rounded-2xl"
+      >
+        <p class="text-lg">No absences</p>
+      </div>
     </div>
 
     <!-- show user -->
