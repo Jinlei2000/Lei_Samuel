@@ -86,6 +86,7 @@
         class="w-full flex flex-col gap-3"
       >
         <div
+          @click="toggleModal(absence, 'detail')"
           v-for="absence in absences"
           :key="absence.id"
           class="flex justify-between items-center rounded-2xl bg-gray-200 p-3 pl-6"
@@ -112,7 +113,6 @@
     </div>
 
     <!-- Create Absence Modal -->
-    <!-- Create Modal -->
     <Dialog
       v-model:visible="visible.create"
       modal
@@ -131,6 +131,30 @@
         :handleForm="handleCreateAbsence"
         :loading="loading.create"
       />
+    </Dialog>
+
+    <!-- Absence Detail Modal -->
+    <Dialog
+      v-model:visible="visible.detail"
+      modal
+      header="Absence Details"
+      :draggable="false"
+      :close-on-escape="true"
+      :pt="{
+        root: {
+          class: 'max-w-lg',
+        },
+      }"
+    >
+      <div v-if="selectedAbsence">
+        <h2 class="mb-2 text-xl font-semibold">
+          user id:
+          {{ selectedAbsence.user?.id }}
+        </h2>
+        <p class="text-gray-600">
+          {{ selectedAbsence.description }}
+        </p>
+      </div>
     </Dialog>
 
     <!-- delete account -->
