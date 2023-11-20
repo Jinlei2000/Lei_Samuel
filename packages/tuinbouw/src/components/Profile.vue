@@ -208,6 +208,53 @@
       />
     </Dialog>
 
+    <!-- Locations -->
+    <div
+      v-if="customUser?.role == 'CLIENT' && user"
+      class="w-full flex flex-col gap-3"
+    >
+      <h2 class="text-2xl">Locations</h2>
+      <button
+        @click="openModal(null, 'create')"
+        class="w-full flex items-center justify-center border-primary-green border-[1px] rounded-2xl h-16 text-primary-green"
+      >
+        <PlusCircle class="mr-2" />
+        Add Location
+      </button>
+      <div
+        v-if="user.locations && user.locations.length > 0"
+        class="w-full flex flex-col gap-3"
+      >
+        <div
+          @click="openModal(location, 'detail')"
+          v-for="location in user.locations"
+          :key="location.id"
+          class="flex justify-between items-center overflow-hidden rounded-2xl bg-gray-200"
+        >
+          <div class="flex flex-col gap-2 w-1/2 pl-6 py-3">
+            <h3 class="text-lg">Home</h3>
+            <div>
+              <p class="opacity-70">
+                {{ location.address.split(',')[0] }}
+              </p>
+              <p class="opacity-70">{{ location.address.split(',')[1] }}</p>
+            </div>
+          </div>
+          <div
+            class="h-28 w-1/2 overflow-auto rounded-3xl rounded-t-none rounded-bl-none"
+          >
+            <Map :locations="[location]" />
+          </div>
+        </div>
+      </div>
+      <div
+        v-else-if="user.locations.length === 0"
+        class="flex justify-center items-center h-20 bg-gray-200 rounded-2xl"
+      >
+        <p class="text-lg">No locations</p>
+      </div>
+    </div>
+
     <!-- delete account -->
     <button
       @click="handleDeleteUser()"
