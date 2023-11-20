@@ -145,12 +145,40 @@
             Delete
           </button>
           <button
+            @click="toggleModal(selectedAbsence, 'edit')"
             class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue"
           >
             Edit
           </button>
         </div>
       </div>
+    </Dialog>
+
+    <!-- Edit Modal -->
+    <Dialog
+      v-model:visible="visible.edit"
+      modal
+      header="Edit Absence"
+      :draggable="false"
+      :close-on-escape="true"
+      :pt="{
+        root: {
+          class: 'max-w-lg',
+        },
+      }"
+    >
+      <DynamicForm
+        :schema="formAbsence"
+        :validationSchema="absenceValidationSchema"
+        :handleForm="handleUpdateAbsence"
+        :loading="loading.update"
+        :initial-values="{
+          type: selectedAbsence!.type,
+          startDate: formatDateTime(selectedAbsence!.startDate),
+          endDate: formatDateTime(selectedAbsence!.endDate),
+          description: selectedAbsence!.description,
+        }"
+      />
     </Dialog>
 
     <!-- Create Absence Modal -->
@@ -626,7 +654,7 @@ const formAbsence = {
   ],
 
   button: {
-    name: 'Create Absence',
+    name: 'Update Absence',
   },
 }
 
@@ -676,10 +704,11 @@ const handleCreateAbsence = async (values: Absence) => {
 
 // handle update absence
 const handleUpdateAbsence = async (values: Absence) => {
+  console.log(values)
   loading.value.update = true
   await updateAbsence({
     updateAbsenceInput: {
-      id: values.id,
+      id: selectedAbsence.value?.id,
       type: values.type,
       startDate: formatDateTime(values.startDate),
       endDate: formatDateTime(values.endDate),
@@ -716,6 +745,9 @@ const toggleModal = (
     edit: type === 'edit',
     create: type === 'create',
   }
+
+  console.log(visible.value)
+  console.log(selectedAbsence.value)
 }
 
 const refetch = async (): Promise<void> => {
