@@ -61,9 +61,19 @@
         <div
           v-for="absence in absences"
           :key="absence.id"
-          class="rounded-2xl bg-gray-200 p-3 pl-6"
+          class="flex justify-between items-center rounded-2xl bg-gray-200 p-3 pl-6"
         >
-          {{ formatAbsenceDate(absence.startDate) }}
+          <div class="flex w-2/3">
+            <p class="min-w-1/3">
+              {{ formatAbsenceDate(absence.startDate) }}
+            </p>
+            <p class="opacity-70">{{ absence.totalDays }} days</p>
+          </div>
+          <p
+            class="px-3 py-1 bg-primary-orange capitalize rounded-full text-white"
+          >
+            {{ absence.type }}
+          </p>
         </div>
       </div>
     </div>
