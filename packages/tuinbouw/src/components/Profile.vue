@@ -54,7 +54,14 @@
         <PlusCircle class="mr-2" />
         Add New Absence
       </button>
-      <div class="w-full flex flex-col rounded-2xl bg-gray-200"></div>
+      <div
+        v-if="absences && absences.length > 0"
+        class="w-full flex flex-col rounded-2xl bg-gray-200"
+      >
+        <div v-for="absence in absences" :key="absence.id">
+          {{ absence.description }}
+        </div>
+      </div>
     </div>
 
     <!-- show user -->
@@ -408,7 +415,7 @@ import useFirebase from '@/composables/useFirebase'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
 import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
-import { useMutation, useQuery } from '@vue/apollo-composable'
+import { useMutation, useQuery, useLazyQuery } from '@vue/apollo-composable'
 import {
   Pencil,
   Trash2,
@@ -418,7 +425,7 @@ import {
   Edit2,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { GET_USER_BY_ID } from '@/graphql/user.query'
 import {
@@ -426,7 +433,19 @@ import {
   UPDATE_LOCATION,
   DELETE_LOCATION,
 } from '@/graphql/location.mutation'
+import {
+  CREATE_ABSENCE,
+  DELETE_ABSENCE,
+  UPDATE_ABSENCE,
+} from '@/graphql/absence.mutation'
+import {
+  GET_ALL_ABSENCES,
+  GET_ALL_ABSENCES_BY_USERID,
+} from '@/graphql/absence.query'
+import { ABSENCE_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
 import type { Location } from '@/interfaces/location.interface'
+import type { Absence } from '@/interfaces/absence.interface'
+import { absenceValidationSchema } from '@/validation/schema'
 import useTomTomMap from '@/composables/useTomTomMap'
 import Map from '@/components/Map.vue'
 import {
@@ -436,6 +455,7 @@ import {
 import DynamicForm from './generic/DynamicForm.vue'
 import { INVOICE_OPTIONS } from '@/helpers/constants'
 import InputField from './generic/InputField.vue'
+import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 
 // composables
 const { customUser } = useCustomUser()
@@ -444,6 +464,21 @@ const { formatDateTime } = useTimeUtilities()
 const { firebaseUser } = useFirebase()
 const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
+
+// variables
+const selectedAbsence = ref<Absence | null>(null)
+const variables = ref<VariablesProps>({
+  filters: [],
+  order: {
+    field: 'createdAt',
+    direction: ORDER_DIRECTION.DESC,
+  },
+})
+const visible = ref({
+  detail: false,
+  edit: false,
+  create: false,
+})
 
 // variables
 const isEditingUser = ref<boolean>(false)
@@ -455,6 +490,170 @@ const visibleLocation = ref({
 })
 const selectedLocation = ref<Location | null>(null)
 const searchAddressResults = ref<Location[] | null>(null)
+
+const absences = computed<Absence[]>(
+  () => absencesByUserIdResult.value?.absencesByUserId || [],
+)
+
+// form schema absence
+const formAbsence = {
+  fields: [
+    {
+      label: 'Type',
+      name: 'type',
+      as: 'select',
+      type: 'select',
+      options: ABSENCE_TYPES,
+      placeholder: 'Select a type',
+    },
+    {
+      label: 'Start Date',
+      name: 'startDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a start date',
+      minDate: new Date(),
+    },
+    {
+      label: 'End Date',
+      name: 'endDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a end date',
+      setMinEndDate: true,
+    },
+    {
+      label: 'Description',
+      name: 'description',
+      as: 'textarea',
+      type: 'textarea',
+      placeholder: 'Reason for absence',
+      rows: 5,
+    },
+  ],
+
+  button: {
+    name: 'Create Absence',
+  },
+}
+
+// graphql
+const {
+  result: absencesByUserIdResult,
+  loading: absencesByUserIdLoading,
+  error: absencesByUserIdError,
+  refetch: refetchAbsencesByUserId,
+  load: loadAbsencesByUserId,
+} = useLazyQuery(GET_ALL_ABSENCES_BY_USERID, variables, {
+  fetchPolicy: 'cache-and-network',
+})
+
+const { mutate: deleteAbsence, error: deleteAbsenceError } =
+  useMutation(DELETE_ABSENCE)
+
+const { mutate: updateAbsence, error: updateAbsenceError } =
+  useMutation(UPDATE_ABSENCE)
+
+const { mutate: createAbsence, error: createAbsenceError } =
+  useMutation(CREATE_ABSENCE)
+
+// on mounted
+onMounted(() => {
+  variables.value.userId = customUser.value?.id
+  loadAbsencesByUserId()
+})
+
+// handle create absence
+const handleCreateAbsence = async (values: Absence) => {
+  loading.value.create = true
+  await createAbsence({
+    createAbsenceInput: {
+      userId: customUser.value?.id,
+      type: values.type,
+      startDate: formatDateTime(values.startDate),
+      endDate: formatDateTime(values.endDate),
+      description: values.description,
+    },
+  })
+  loading.value.create = false
+  showToast('success', 'Success', 'Absence has been created')
+  await refetch()
+  toggleModal()
+}
+
+// handle update absence
+const handleUpdateAbsence = async (values: Absence) => {
+  loading.value.update = true
+  await updateAbsence({
+    updateAbsenceInput: {
+      id: values.id,
+      type: values.type,
+      startDate: formatDateTime(values.startDate),
+      endDate: formatDateTime(values.endDate),
+      description: values.description,
+    },
+  })
+  loading.value.update = false
+  showToast('success', 'Success', 'Absence has been updated')
+  await refetch()
+  toggleModal()
+}
+
+// handle delete absence
+const handleDelete = async (absence: Absence) => {
+  await deleteAbsence({
+    id: absence.id,
+  })
+  showToast(
+    'success',
+    'Success',
+    `Absence of ${absence.user.firstname} has been deleted`,
+  )
+  await refetch()
+}
+
+// open or close modal
+const toggleModal = (
+  absence: Absence | null = null,
+  type: string = 'close',
+) => {
+  selectedAbsence.value = absence ? { ...absence } : null
+  visible.value = {
+    detail: type === 'detail',
+    edit: type === 'edit',
+    create: type === 'create',
+  }
+}
+
+const refetch = async (): Promise<void> => {
+  await refetchAbsencesByUserId()
+}
+
+watchEffect(() => {
+  // log the queries
+  // if (absences.value) console.log(absences.value)
+  // if (absencesByUserIdResult.value) console.log(absencesByUserIdResult.value)
+  // if (absencesResult.value) console.log(absencesResult.value)
+
+  // all errors
+  const errors = [
+    deleteAbsenceError.value,
+    updateAbsenceError.value,
+    createAbsenceError.value,
+    absencesByUserIdError.value,
+  ]
+  errors.forEach(error => {
+    if (error) {
+      loading.value = {
+        ...loading.value,
+        update: false,
+        create: false,
+      }
+
+      showToast('error', 'Error', error.message)
+    }
+  })
+})
 
 // loading states
 const loading = ref<{ [key: string]: boolean }>({
