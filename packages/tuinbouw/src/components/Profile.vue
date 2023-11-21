@@ -733,7 +733,9 @@ const { mutate: createAbsence, error: createAbsenceError } =
 // on mounted
 onMounted(() => {
   variables.value.userId = customUser.value?.id
-  loadAbsencesByUserId()
+  if (customUser.value?.role !== Role.CLIENT) {
+    loadAbsencesByUserId()
+  }
 })
 
 // handle create absence
