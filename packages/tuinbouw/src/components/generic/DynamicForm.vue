@@ -16,7 +16,12 @@
             !attrs.displayIf ||
             (switchValue &&
               attrs.displayIf === switchValue.name &&
-              switchValue.value)
+              switchValue.value &&
+              reverseSwitch === false) ||
+            (switchValue &&
+              attrs.displayIf === switchValue.name &&
+              switchValue.value === false &&
+              reverseSwitch === true)
           "
           class="block mb-2 text-sm font-medium text-gray-900"
           :for="name"
@@ -41,7 +46,7 @@
         </Field>
         <!-- dropdown -->
         <Field
-          v-if="type === 'select'"
+          v-if="type === 'select' && !attrs.displayIf"
           :name="name"
           v-slot="{ field, handleChange }"
         >
@@ -49,7 +54,7 @@
             :id="name"
             :placeholder="attrs.placeholder"
             :options="options"
-            optionLabel="name"
+            :optionLabel="attrs.optionLabel ?? 'name'"
             :optionValue="attrs.optionValue ?? 'name'"
             v-model="field.value"
             @change="handleChange($event.value, false)"
@@ -171,11 +176,13 @@
         </Field>
 
         <!-- show only if switch is true -->
+        <!-- input -->
         <Field
           v-if="
             switchValue &&
             attrs.displayIf === switchValue.name &&
-            switchValue.value
+            switchValue.value &&
+            !['date', 'select', 'password', 'switch'].includes(type)
           "
           class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
           :class="{
@@ -187,6 +194,50 @@
           :name="name"
           v-bind="attrs"
         >
+        </Field>
+
+        <!-- dropdown -->
+        <Field
+          v-if="
+            (type === 'select' &&
+              switchValue &&
+              attrs.displayIf === switchValue.name &&
+              switchValue.value &&
+              reverseSwitch === false) ||
+            (type === 'select' &&
+              switchValue &&
+              attrs.displayIf === switchValue.name &&
+              switchValue.value === false &&
+              reverseSwitch === true)
+          "
+          :name="name"
+          v-slot="{ field, handleChange }"
+        >
+          <Dropdown
+            :id="name"
+            :placeholder="attrs.placeholder"
+            :options="options"
+            :optionLabel="attrs.optionLabel ?? 'name'"
+            :optionValue="attrs.optionValue ?? 'name'"
+            v-model="field.value"
+            @change="handleChange($event.value, false)"
+            :pt="{
+              input: {
+                class: [
+                  'placeholder-gray-900 placeholder-text-sm',
+                  'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none block w-full p-3 focus:ring-primary-green-400/40 focus:ring-3',
+                  {
+                    'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                      errors[name],
+                  },
+                ],
+              },
+            }"
+          >
+            <template #dropdownicon>
+              <ChevronDownIcon />
+            </template>
+          </Dropdown>
         </Field>
 
         <ErrorMessage class="text-red-500 block text-sm" :name="name" />
@@ -229,6 +280,10 @@ const props = defineProps({
     required: true,
   },
   loading: {
+    type: Boolean,
+    default: false,
+  },
+  reverseSwitch: {
     type: Boolean,
     default: false,
   },

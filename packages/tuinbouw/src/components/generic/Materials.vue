@@ -219,6 +219,7 @@
         </button>
         <button
           v-for="material of materials"
+          @click="toggleModal(material, 'detail')"
           class="flex flex-col items-center rounded-2xl rounded-b-3xl w-full h-48 bg-gray-400 col-span-1 hover:scale-105 hover:cursor-pointer transition-all"
         >
           <div class="flex w-full h-full items-center justify-center">
@@ -263,7 +264,7 @@
     }"
   >
     <Form
-      @submit="handleCreateMaterial($event.values)"
+      @submit="handleCreateMaterial($event)"
       v-slot="{ errors }"
       :validation-schema="materialValidationSchema"
       :initial-values="{
@@ -292,7 +293,6 @@
           </Field>
           <ErrorMessage class="text-red-500 block text-sm" name="name" />
         </li>
-
         <!-- serialNumber -->
         <li key="serialNumber">
           <label
@@ -344,13 +344,13 @@
           <ErrorMessage class="text-red-500 block text-sm" name="isLoan" />
         </li>
         <!-- user -->
-        <li v-if="switchInput" key="user">
+        <li v-if="switchInput" key="userId">
           <label class="block mb-2 text-sm font-medium text-gray-900" for="user"
             >User</label
           >
-          <Field name="user" v-slot="{ field, handleChange }">
+          <Field name="userId" v-slot="{ field, handleChange }">
             <Dropdown
-              id="user"
+              id="userId"
               placeholder="Select a user"
               :options="users"
               optionLabel="fullname"
@@ -391,7 +391,7 @@
 
   <!-- Detail Modal -->
   <Dialog
-    v-model:visible="visible.create"
+    v-model:visible="visible.detail"
     modal
     header="Detail Material"
     :draggable="false"
@@ -402,7 +402,28 @@
       },
     }"
   >
-    <div></div>
+    <div v-if="!isEditing">
+      <Pencil @click="isEditing = true" />
+      <p>{{ selectedMaterial?.serialNumber }}</p>
+      <p>{{ selectedMaterial?.name }}</p>
+    </div>
+
+    <div v-if="isEditing">
+      <ArrowLeft @click="isEditing = false" />
+      <DynamicForm
+        :schema="formUpdateMaterial"
+        :validationSchema="materialValidationSchema"
+        :handleForm="handleUpdatematerial"
+        :loading="loading.update"
+        :initial-values="{
+          name: selectedMaterial?.name,
+          serialNumber: selectedMaterial?.serialNumber,
+          isLoan: selectedMaterial?.isLoan,
+          userId: selectedMaterial?.user?.id,
+        }"
+        :reverse-switch="true"
+      />
+    </div>
   </Dialog>
 </template>
 
@@ -416,7 +437,7 @@ import {
 import { ORDER_DIRECTION } from '@/helpers/constants'
 import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
-import { useLazyQuery } from '@vue/apollo-composable'
+import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import { ListFilter } from 'lucide-vue-next'
 import { PlusCircle } from 'lucide-vue-next'
 import { ArrowUpWideNarrow } from 'lucide-vue-next'
@@ -424,11 +445,21 @@ import { ArrowDownWideNarrow } from 'lucide-vue-next'
 import { Check, ChevronDown, Wrench, Filter, Search } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { materialValidationSchema } from '@/validation/schema'
-import { ErrorMessage, Field, Form, configure } from 'vee-validate'
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  configure,
+  type GenericObject,
+} from 'vee-validate'
 import CustomButton from './CustomButton.vue'
 import InputSwitch from 'primevue/inputswitch'
 import { GET_USERS } from '@/graphql/user.query'
 import { ChevronDownIcon } from 'lucide-vue-next'
+import { CREATE_MATERIAL } from '@/graphql/material.mutation'
+import { Pencil } from 'lucide-vue-next'
+import { ArrowLeft } from 'lucide-vue-next'
+import DynamicForm from './DynamicForm.vue'
 
 // props
 const props = defineProps({
@@ -457,7 +488,6 @@ const skeletons = ref<number[]>(new Array(24))
 const selectedMaterial = ref<Material | null>(null)
 const visible = ref({
   detail: false,
-  edit: false,
   create: false,
 })
 const loading = ref({
@@ -484,6 +514,46 @@ const materials = computed<Material[]>(() =>
     : materialsByUserIdResult.value?.materialsByUserId || [],
 )
 const users = computed(() => usersResult.value?.users || [])
+const isEditing = ref(false)
+
+// form
+const formUpdateMaterial = ref({
+  fields: [
+    {
+      label: 'Name',
+      name: 'name',
+      placeholder: 'Forklift',
+      as: 'input',
+    },
+    {
+      label: 'Serial Number',
+      name: 'serialNumber',
+      placeholder: '123456789',
+      as: 'input',
+    },
+    {
+      label: 'Is Loan',
+      name: 'isLoan',
+      as: 'switch',
+      type: 'switch',
+    },
+    {
+      label: 'User',
+      name: 'userId',
+      placeholder: 'Select a user',
+      as: 'select',
+      type: 'select',
+      options: users,
+      optionLabel: 'fullname',
+      optionValue: 'id',
+      displayIf: 'isLoan',
+    },
+  ],
+
+  button: {
+    name: 'Update Material',
+  },
+})
 
 // graphql
 const {
@@ -491,6 +561,7 @@ const {
   loading: materialsLoading,
   error: materialsError,
   load: loadMaterials,
+  refetch,
 } = useLazyQuery(GET_MATERIALS, variables, {
   fetchPolicy: 'cache-and-network',
 })
@@ -503,6 +574,9 @@ const {
 } = useLazyQuery(GET_MATERIALS_BY_USERID, variables, {
   fetchPolicy: 'cache-and-network',
 })
+
+const { mutate: createMaterial, error: createMaterialError } =
+  useMutation(CREATE_MATERIAL)
 
 const {
   result: usersResult,
@@ -532,22 +606,25 @@ onMounted(() => {
 })
 
 // handle create material
-const handleCreateMaterial = async (values: Material) => {
-  console.log(values)
+const handleCreateMaterial = async (values: GenericObject) => {
   loading.value.create = true
-  // await createAbsence({
-  //   createAbsenceInput: {
-  //     userId: customUser.value?.id,
-  //     type: values.type,
-  //     startDate: formatDateTime(values.startDate),
-  //     endDate: formatDateTime(values.endDate),
-  //     description: values.description,
-  //   },
-  // })
+  await createMaterial({
+    createMaterialInput: {
+      name: values.name,
+      serialNumber: parseInt(values.serialNumber),
+      isLoan: values.isLoan,
+      userId: values.userId,
+    },
+  })
   loading.value.create = false
-  showToast('success', 'Success', 'Absence has been created')
-  // await refetch()
+  showToast('success', 'Success', 'Material has been created')
+  await refetch()
   toggleModal()
+}
+
+// handle update material
+const handleUpdatematerial = async (values: GenericObject) => {
+  loading.value.update = true
 }
 
 const toggleModal = (
@@ -555,9 +632,10 @@ const toggleModal = (
   type: string = 'close',
 ) => {
   selectedMaterial.value = material ? { ...material } : null
+  switchInput.value = false
+  isEditing.value = false
   visible.value = {
     detail: type === 'detail',
-    edit: type === 'edit',
     create: type === 'create',
   }
 }
@@ -594,6 +672,7 @@ watchEffect(() => {
     materialsError.value,
     materialsByUserIdError.value,
     usersError.value,
+    createMaterialError.value,
   ]
   errors.forEach(error => {
     if (error) {

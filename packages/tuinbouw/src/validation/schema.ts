@@ -93,6 +93,6 @@ export const appointmentUpdateValidationSchema = yup.object({
 export const materialValidationSchema = yup.object({
   name: yup.string().required(),
   isLoan: yup.boolean().required(),
-  serialNumber: yup.string().required(),
-  userId: yup.string().required().optional().nullable(),
+  serialNumber: yup.string().required().matches(/^[0-9]+$/, 'Must be only digits'),
+  userId: yup.string().required().optional(),
 })
