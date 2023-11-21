@@ -77,7 +77,7 @@
     >
       <h2 class="text-2xl">Absences</h2>
       <button
-        @click="toggleModal(null, 'create')"
+        @click="toggleAbsenceModal(null, 'create')"
         class="w-full flex items-center justify-center border-primary-green border-[1px] rounded-2xl h-16 text-primary-green"
       >
         <PlusCircle class="mr-2" />
@@ -88,7 +88,7 @@
         class="w-full flex flex-col gap-3"
       >
         <button
-          @click="toggleModal(absence, 'detail')"
+          @click="toggleAbsenceModal(absence, 'detail')"
           v-for="absence in absences"
           :key="absence.id"
           class="flex justify-between text-left items-center rounded-2xl bg-gray-200 p-3 pl-6"
@@ -116,18 +116,18 @@
 
     <!-- Absence Detail Modal -->
     <Dialog
-      v-model:visible="visible.detail"
+      v-model:visible="visible.openModal"
       modal
       header="Absence Details"
       :draggable="false"
       :close-on-escape="true"
       :pt="{
         root: {
-          class: 'max-w-lg',
+          class: 'w-full mx-3 md:m-0 md:max-w-lg',
         },
       }"
     >
-      <div v-if="selectedAbsence" class="flex flex-col gap-6">
+      <div v-if="selectedAbsence && visible.detail" class="flex flex-col gap-6">
         <div class="flex flex-col gap-3">
           <div>
             <h2 class="text-xl font-semibold">
@@ -150,17 +150,30 @@
             Delete
           </button>
           <button
-            @click="toggleModal(selectedAbsence, 'edit')"
+            @click="toggleAbsenceModal(selectedAbsence, 'edit')"
             class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue"
           >
             Edit
           </button>
         </div>
       </div>
+      <DynamicForm
+        v-if="visible.edit"
+        :schema="formAbsence"
+        :validationSchema="absenceValidationSchema"
+        :handleForm="handleUpdateAbsence"
+        :loading="loading.update"
+        :initial-values="{
+          type: selectedAbsence!.type,
+          startDate: formatDateTime(selectedAbsence!.startDate),
+          endDate: formatDateTime(selectedAbsence!.endDate),
+          description: selectedAbsence!.description,
+        }"
+      />
     </Dialog>
 
-    <!-- Edit Modal -->
-    <Dialog
+    <!-- Edit Absence Modal -->
+    <!-- <Dialog
       v-model:visible="visible.edit"
       modal
       header="Edit Absence"
@@ -168,7 +181,7 @@
       :close-on-escape="true"
       :pt="{
         root: {
-          class: 'max-w-lg',
+          class: 'w-full mx-3 md:m-0 md:max-w-lg',
         },
       }"
     >
@@ -184,7 +197,7 @@
           description: selectedAbsence!.description,
         }"
       />
-    </Dialog>
+    </Dialog> -->
 
     <!-- Create Absence Modal -->
     <Dialog
@@ -195,7 +208,7 @@
       :close-on-escape="true"
       :pt="{
         root: {
-          class: 'max-w-lg',
+          class: 'w-full mx-3 md:m-0 md:max-w-lg',
         },
       }"
     >
@@ -374,7 +387,7 @@
     :close-on-escape="true"
     :pt="{
       root: {
-        class: 'max-w-lg',
+        class: 'w-full mx-3 md:m-0 md:max-w-lg',
       },
     }"
   >
@@ -401,7 +414,7 @@
     :close-on-escape="true"
     :pt="{
       root: {
-        class: 'max-w-lg',
+        class: 'w-full mx-3 md:m-0 md:max-w-lg',
       },
     }"
   >
@@ -494,7 +507,7 @@
     :close-on-escape="true"
     :pt="{
       root: {
-        class: 'max-w-lg',
+        class: 'w-full mx-3 md:m-0 md:max-w-lg',
       },
     }"
   >
@@ -648,6 +661,7 @@ const variables = ref<VariablesProps>({
   },
 })
 const visible = ref({
+  openModal: false,
   detail: false,
   edit: false,
   create: false,
@@ -753,7 +767,7 @@ const handleCreateAbsence = async (values: Absence) => {
   loading.value.create = false
   showToast('success', 'Success', 'Absence has been created')
   await refetch()
-  toggleModal()
+  toggleAbsenceModal()
 }
 
 // handle update absence
@@ -772,7 +786,7 @@ const handleUpdateAbsence = async (values: Absence) => {
   loading.value.update = false
   showToast('success', 'Success', 'Absence has been updated')
   await refetch()
-  toggleModal()
+  toggleAbsenceModal()
 }
 
 // handle delete absence
@@ -786,19 +800,53 @@ const handleDelete = async (absence: Absence) => {
     `Absence of ${absence.user.firstname} has been deleted`,
   )
   await refetch()
-  toggleModal()
+  toggleAbsenceModal()
 }
 
 // open or close modal
-const toggleModal = (
+const toggleAbsenceModal = (
   absence: Absence | null = null,
   type: string = 'close',
 ) => {
   selectedAbsence.value = absence ? { ...absence } : null
-  visible.value = {
-    detail: type === 'detail',
-    edit: type === 'edit',
-    create: type === 'create',
+  console.log(type)
+
+  // switch case for type
+  switch (type) {
+    case 'edit':
+      visible.value = {
+        openModal: true,
+        detail: false,
+        edit: true,
+        create: false,
+      }
+      break
+    case 'detail':
+      visible.value = {
+        openModal: true,
+        detail: true,
+        edit: false,
+        create: false,
+      }
+      break
+    case 'create':
+      visible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: true,
+      }
+      break
+    case 'close':
+      visible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: false,
+      }
+      break
+    default:
+      break
   }
 
   console.log(visible.value)
