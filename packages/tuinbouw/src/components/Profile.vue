@@ -162,6 +162,7 @@
         :schema="formAbsence"
         :validationSchema="absenceValidationSchema"
         :handleForm="handleUpdateAbsence"
+        :cancel="cancelDetailEdit"
         :loading="loading.update"
         :initial-values="{
           type: selectedAbsence!.type,
@@ -851,6 +852,10 @@ const toggleAbsenceModal = (
 
   console.log(visible.value)
   console.log(selectedAbsence.value)
+}
+
+const cancelDetailEdit = () => {
+  toggleAbsenceModal(selectedAbsence.value, 'detail')
 }
 
 const refetch = async (): Promise<void> => {

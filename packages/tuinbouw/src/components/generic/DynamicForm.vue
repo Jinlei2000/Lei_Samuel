@@ -193,13 +193,16 @@
       </li>
     </ul>
 
-    <CustomButton
-      class="flex ml-auto"
-      :class="schema.button.class"
-      :loading="loading"
-      type="submit"
-      :name="schema.button.name"
-    />
+    <div class="flex flex-end justify-between">
+      <CustomButton name="cancel" v-if="cancel" @click="cancel()" />
+      <CustomButton
+        class="flex ml-auto"
+        :class="schema.button.class"
+        :loading="loading"
+        type="submit"
+        :name="schema.button.name"
+      />
+    </div>
   </Form>
 </template>
 
@@ -227,6 +230,10 @@ const props = defineProps({
   handleForm: {
     type: Function,
     required: true,
+  },
+  cancel: {
+    type: Function,
+    required: false,
   },
   loading: {
     type: Boolean,

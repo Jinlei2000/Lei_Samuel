@@ -2,7 +2,12 @@
   <button
     :type="type"
     class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
-    :class="[ownClass, loading ? 'cursor-not-allowed opacity-50' : '']"
+    :class="
+      [ownClass, loading ? 'cursor-not-allowed opacity-50' : ''] &&
+      variant === 'primary'
+        ? 'bg-primary-green'
+        : 'bg-transparent border border-primary-green text-primary-green'
+    "
     :disabled="loading"
   >
     <span v-if="!loading">{{ name }}</span>
@@ -37,6 +42,10 @@ defineProps({
   type: {
     type: String as PropType<'button' | 'submit' | 'reset'>,
     default: 'button',
+  },
+  variant: {
+    variant: String as PropType<'primary' | 'secondary'>,
+    default: 'primary',
   },
   ownClass: {
     type: String,
