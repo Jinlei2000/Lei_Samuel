@@ -46,7 +46,6 @@
     </div>
 
     <!-- Edit About me -->
-    <!-- show edit form -->
     <div v-if="isEditingUser">
       <!-- go back button -->
       <button class="flex" @click="isEditingUser = false">
@@ -88,11 +87,11 @@
         v-if="absences && absences.length > 0"
         class="w-full flex flex-col gap-3"
       >
-        <div
+        <button
           @click="toggleModal(absence, 'detail')"
           v-for="absence in absences"
           :key="absence.id"
-          class="flex justify-between items-center rounded-2xl bg-gray-200 p-3 pl-6"
+          class="flex justify-between text-left items-center rounded-2xl bg-gray-200 p-3 pl-6"
         >
           <div class="flex w-2/3">
             <p class="min-w-1/3">
@@ -105,7 +104,7 @@
           >
             {{ absence.type }}
           </p>
-        </div>
+        </button>
       </div>
       <div
         v-else-if="absences.length === 0"
@@ -225,11 +224,11 @@
         v-if="user.locations && user.locations.length > 0"
         class="w-full flex flex-col gap-3"
       >
-        <div
+        <button
           @click="openModal(location, 'detail')"
           v-for="location in user.locations"
           :key="location.id"
-          class="flex justify-between items-center overflow-hidden rounded-2xl bg-gray-200"
+          class="flex justify-between items-center text-left overflow-hidden rounded-2xl bg-gray-200"
         >
           <div class="flex flex-col gap-2 w-1/2 pl-6 py-3">
             <h3 class="text-lg">Home</h3>
@@ -245,7 +244,7 @@
           >
             <Map :locations="[location]" />
           </div>
-        </div>
+        </button>
       </div>
       <div
         v-else-if="user.locations.length === 0"
