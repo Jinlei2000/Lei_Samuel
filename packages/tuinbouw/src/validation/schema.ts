@@ -89,3 +89,10 @@ export const appointmentUpdateValidationSchema = yup.object({
   endProposedDate: yup.string().required(),
   description: yup.string().optional(),
 })
+
+export const materialValidationSchema = yup.object({
+  name: yup.string().required(),
+  isLoan: yup.boolean().required(),
+  serialNumber: yup.string().required(),
+  userId: yup.string().required().optional().nullable(),
+})

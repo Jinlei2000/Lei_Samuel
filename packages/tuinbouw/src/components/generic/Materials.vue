@@ -25,8 +25,9 @@
           :class="[
             'absolute flex gap-12 top-16 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12',
             'transition-all duration-200',
-            filter ? 'opacity-100' : 'opacity-0 pointer-events-none',
+            filter ? 'opacity-100' : 'opacity-0 pointer-events-none ',
           ]"
+          v-show="filter"
         >
           <div class="flex flex-col gap-3">
             <h2 class="text-lg">Availability</h2>
@@ -37,6 +38,7 @@
                   type="radio"
                   v-model="availability"
                   value="all"
+                  name="availability"
                 />
                 <div
                   class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -51,6 +53,7 @@
                   type="radio"
                   v-model="availability"
                   value="available"
+                  name="availability"
                 />
                 <div
                   class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -65,6 +68,7 @@
                   type="radio"
                   v-model="availability"
                   value="not available"
+                  name="availability"
                 />
                 <div
                   class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -72,55 +76,6 @@
                   <Check class="h-3 w-3" />
                 </div>
                 <label for="">Not available</label>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col gap-3">
-            <h2 class="text-lg">Type</h2>
-            <div class="flex gap-12">
-              <div class="flex flex-col gap-3">
-                <div class="flex gap-2">
-                  <input
-                    type="checkbox"
-                    id="checkbox"
-                    v-model="machinery"
-                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
-                  />
-                  <div
-                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                  >
-                    <Check class="h-3 w-3" />
-                  </div>
-                  <label for="checkbox">Machinery</label>
-                </div>
-                <div class="flex gap-2">
-                  <input
-                    type="checkbox"
-                    id="checkbox"
-                    v-model="screwdrivers"
-                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
-                  />
-                  <div
-                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                  >
-                    <Check class="h-3 w-3" />
-                  </div>
-                  <label for="checkbox">Screwdrivers</label>
-                </div>
-                <div class="flex gap-2">
-                  <input
-                    type="checkbox"
-                    id="checkbox"
-                    v-model="cuttingTools"
-                    className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
-                  />
-                  <div
-                    class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                  >
-                    <Check class="h-3 w-3" />
-                  </div>
-                  <label for="checkbox">Cutting tools</label>
-                </div>
               </div>
             </div>
           </div>
@@ -189,6 +144,7 @@
               'transition-all duration-200',
               sort ? 'opacity-100' : 'opacity-0 pointer-events-none ',
             ]"
+            v-show="sort"
           >
             <div class="flex flex-col gap-3">
               <div class="flex flex-col gap-3">
@@ -199,6 +155,7 @@
                     v-model="variables.order!.field"
                     value="createdAt"
                     id="createdAt"
+                    name="sort"
                   />
                   <div
                     class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -214,6 +171,7 @@
                     v-model="variables.order!.field"
                     value="name"
                     id="name"
+                    name="sort"
                   />
                   <div
                     class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -248,14 +206,27 @@
       <div
         class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3 w-full"
       >
-        <div
+        <!-- add material -->
+        <button
+          v-if="props.showAllOverview"
+          @click="toggleModal(null, 'create')"
+          class="flex items-center justify-center border border-primary-green rounded-2xl w-full h-48 col-span-1 hover:scale-105 hover:cursor-pointer transition-all"
+        >
+          <div class="flex items-center gap-3 text-primary-green">
+            <PlusCircle class="h-6 w-6" />
+            <p class="text-lg">Add New Material</p>
+          </div>
+        </button>
+        <button
           v-for="material of materials"
-          class="flex flex-col items-center justify-end rounded-2xl rounded-b-3xl w-full h-48 bg-gray-400 col-span-1 hover:scale-105 hover:cursor-pointer transition-all"
+          class="flex flex-col items-center rounded-2xl rounded-b-3xl w-full h-48 bg-gray-400 col-span-1 hover:scale-105 hover:cursor-pointer transition-all"
         >
           <div class="flex w-full h-full items-center justify-center">
             <Wrench class="stroke-gray-800 h-10 w-10" />
           </div>
-          <div class="bg-gray-200 rounded-2xl rounded-t-none w-full px-4 py-2">
+          <div
+            class="text-left bg-gray-200 rounded-2xl rounded-t-none w-full px-4 py-2"
+          >
             <h2 class="truncate text-lg">{{ material.name }}</h2>
             <div v-if="showAllOverview">
               <p v-if="material.user?.id" class="text-primary-orange m-0">
@@ -264,7 +235,7 @@
               <p v-else class="text-base text-primary-green">Available</p>
             </div>
           </div>
-        </div>
+        </button>
       </div>
     </template>
 
@@ -277,6 +248,84 @@
       </div>
     </template>
   </div>
+
+  <!-- Create Modal -->
+  <Dialog
+    v-model:visible="visible.create"
+    modal
+    header="Create Material"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
+  >
+    <Form
+      @submit="handleCreateMaterial($event.values)"
+      v-slot="{ errors }"
+      :validation-schema="materialValidationSchema"
+      novalidate
+    >
+      <ul class="space-y-4">
+        <!-- name -->
+        <li>
+          <label class="block mb-2 text-sm font-medium text-gray-900" for="name"
+            >Name</label
+          >
+          <Field
+            class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
+            :class="{
+              'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                errors['name'],
+            }"
+            as="input"
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Forklift"
+          >
+          </Field>
+          <ErrorMessage class="text-red-500 block text-sm" name="name" />
+        </li>
+        <!-- user -->
+        <!-- isLoan -->
+        <!-- serialNumber -->
+        <li>
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900"
+            for="serialNumber"
+            >Serial Number</label
+          >
+          <Field
+            class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
+            :class="{
+              'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                errors['serialNumber'],
+            }"
+            as="input"
+            id="serialNumber"
+            name="serialNumber"
+            type="text"
+            placeholder="123456789"
+          >
+          </Field>
+          <ErrorMessage
+            class="text-red-500 block text-sm"
+            name="serialNumber"
+          />
+        </li>
+      </ul>
+
+      <CustomButton
+        class=""
+        :loading="loading.create"
+        type="submit"
+        name="Create Material"
+      />
+    </Form>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -292,10 +341,14 @@ import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useLazyQuery } from '@vue/apollo-composable'
 import { ListFilter } from 'lucide-vue-next'
+import { PlusCircle } from 'lucide-vue-next'
 import { ArrowUpWideNarrow } from 'lucide-vue-next'
 import { ArrowDownWideNarrow } from 'lucide-vue-next'
 import { Check, ChevronDown, Wrench, Filter, Search } from 'lucide-vue-next'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { materialValidationSchema } from '@/validation/schema'
+import { ErrorMessage, Form } from 'vee-validate'
+import CustomButton from './CustomButton.vue'
 
 // props
 const props = defineProps({
@@ -309,21 +362,30 @@ const props = defineProps({
 const { showToast } = useCustomToast()
 const { customUser } = useCustomUser()
 
+// variables
 // display filter dropdown
 const filter = ref(false)
+
+const availability = ref('all')
 
 // display sort dropdown
 const sort = ref(false)
 
 // skeletons
 const skeletons = ref<number[]>(new Array(24))
-
+const selectedMaterial = ref<Material | null>(null)
+const visible = ref({
+  detail: false,
+  edit: false,
+  create: false,
+})
 const loading = ref({
+  update: false,
+  create: false,
   data: computed(
     () => materialsLoading.value || materialsByUserIdLoading.value,
   ),
 })
-
 const variables = ref<VariablesProps>({
   filters: [],
   order: {
@@ -365,6 +427,48 @@ onMounted(() => {
   } else {
     variables.value.userId = customUser.value?.id
     loadMaterialsByUserId()
+  }
+})
+
+// handle create material
+const handleCreateMaterial = async (values: Material) => {
+  console.log(values)
+  loading.value.create = true
+  // await createAbsence({
+  //   createAbsenceInput: {
+  //     userId: customUser.value?.id,
+  //     type: values.type,
+  //     startDate: formatDateTime(values.startDate),
+  //     endDate: formatDateTime(values.endDate),
+  //     description: values.description,
+  //   },
+  // })
+  loading.value.create = false
+  showToast('success', 'Success', 'Absence has been created')
+  // await refetch()
+  toggleModal()
+}
+
+const toggleModal = (
+  material: Material | null = null,
+  type: string = 'close',
+) => {
+  selectedMaterial.value = material ? { ...material } : null
+  visible.value = {
+    detail: type === 'detail',
+    edit: type === 'edit',
+    create: type === 'create',
+  }
+}
+
+// watch availability
+watch(availability, () => {
+  if (availability.value === 'all') {
+    variables.value.filters = []
+  } else if (availability.value === 'available') {
+    variables.value.filters = ['A']
+  } else if (availability.value === 'not available') {
+    variables.value.filters = ['NA']
   }
 })
 

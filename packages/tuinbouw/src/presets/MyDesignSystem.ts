@@ -41,16 +41,6 @@ export default {
       leaveToClass: 'max-h-0 opacity-0 mb-0 overflow-hidden',
     },
   },
-  inputtext: {
-    root: () => ({
-      class: [
-        'm-0',
-        'border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 transition-colors duration-200 appearance-none',
-        'focus:ring-primary-green-400/40 focus:ring-3',
-        'hover:border-primary-green-400 hover:border-primary-green-400',
-      ],
-    }),
-  },
   textarea: {
     root: () => ({
       class: [
@@ -382,49 +372,49 @@ export default {
     transition: ({ props }: any) => {
       return props.position === 'top'
         ? {
-            enterFromClass:
-              'opacity-0 scale-75 translate-x-0 -translate-y-full translate-z-0',
-            enterActiveClass: 'transition-all duration-200 ease-out',
-            leaveActiveClass: 'transition-all duration-200 ease-out',
-            leaveToClass:
-              'opacity-0 scale-75 translate-x-0 -translate-y-full translate-z-0',
-          }
+          enterFromClass:
+            'opacity-0 scale-75 translate-x-0 -translate-y-full translate-z-0',
+          enterActiveClass: 'transition-all duration-200 ease-out',
+          leaveActiveClass: 'transition-all duration-200 ease-out',
+          leaveToClass:
+            'opacity-0 scale-75 translate-x-0 -translate-y-full translate-z-0',
+        }
         : props.position === 'bottom'
-        ? {
+          ? {
             enterFromClass: 'opacity-0 scale-75 translate-y-full',
             enterActiveClass: 'transition-all duration-200 ease-out',
             leaveActiveClass: 'transition-all duration-200 ease-out',
             leaveToClass:
               'opacity-0 scale-75 translate-x-0 translate-y-full translate-z-0',
           }
-        : props.position === 'left' ||
-          props.position === 'topleft' ||
-          props.position === 'bottomleft'
-        ? {
-            enterFromClass:
-              'opacity-0 scale-75 -translate-x-full translate-y-0 translate-z-0',
-            enterActiveClass: 'transition-all duration-200 ease-out',
-            leaveActiveClass: 'transition-all duration-200 ease-out',
-            leaveToClass:
-              'opacity-0 scale-75  -translate-x-full translate-y-0 translate-z-0',
-          }
-        : props.position === 'right' ||
-          props.position === 'topright' ||
-          props.position === 'bottomright'
-        ? {
-            enterFromClass:
-              'opacity-0 scale-75 translate-x-full translate-y-0 translate-z-0',
-            enterActiveClass: 'transition-all duration-200 ease-out',
-            leaveActiveClass: 'transition-all duration-200 ease-out',
-            leaveToClass:
-              'opacity-0 scale-75 opacity-0 scale-75 translate-x-full translate-y-0 translate-z-0',
-          }
-        : {
-            enterFromClass: 'opacity-0 scale-75',
-            enterActiveClass: 'transition-all duration-200 ease-out',
-            leaveActiveClass: 'transition-all duration-200 ease-out',
-            leaveToClass: 'opacity-0 scale-75',
-          }
+          : props.position === 'left' ||
+            props.position === 'topleft' ||
+            props.position === 'bottomleft'
+            ? {
+              enterFromClass:
+                'opacity-0 scale-75 -translate-x-full translate-y-0 translate-z-0',
+              enterActiveClass: 'transition-all duration-200 ease-out',
+              leaveActiveClass: 'transition-all duration-200 ease-out',
+              leaveToClass:
+                'opacity-0 scale-75  -translate-x-full translate-y-0 translate-z-0',
+            }
+            : props.position === 'right' ||
+              props.position === 'topright' ||
+              props.position === 'bottomright'
+              ? {
+                enterFromClass:
+                  'opacity-0 scale-75 translate-x-full translate-y-0 translate-z-0',
+                enterActiveClass: 'transition-all duration-200 ease-out',
+                leaveActiveClass: 'transition-all duration-200 ease-out',
+                leaveToClass:
+                  'opacity-0 scale-75 opacity-0 scale-75 translate-x-full translate-y-0 translate-z-0',
+              }
+              : {
+                enterFromClass: 'opacity-0 scale-75',
+                enterActiveClass: 'transition-all duration-200 ease-out',
+                leaveActiveClass: 'transition-all duration-200 ease-out',
+                leaveToClass: 'opacity-0 scale-75',
+              }
     },
   },
   inputswitch: {

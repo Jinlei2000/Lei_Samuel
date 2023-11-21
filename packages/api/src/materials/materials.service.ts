@@ -14,7 +14,7 @@ export class MaterialsService {
   constructor(
     @InjectRepository(Material)
     private readonly materialRepository: Repository<Material>,
-  ) {}
+  ) { }
 
   findAll(
     filters?: Array<string>,
@@ -86,24 +86,11 @@ export class MaterialsService {
     return material
   }
 
-  // findMaterialsBySearchString(searchString: string): Promise<Material[]> {
-  //   searchString = searchString.toLowerCase()
-
-  //   const materials = this.materialRepository.find({
-  //     // @ts-ignore
-  //     name: { $regex: new RegExp(searchString, 'i') },
-  //   })
-
-  //   return materials
-  // }
-
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()
-    // m.isAvailable = createMaterialInput.isAvailable
     m.userId = createMaterialInput.userId
     m.isLoan = createMaterialInput.isLoan
-    // m.isDefect = false
     m.serialNumber = createMaterialInput.serialNumber
 
     return this.materialRepository.save(m)
