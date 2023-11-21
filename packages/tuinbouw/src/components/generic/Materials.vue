@@ -266,11 +266,14 @@
       @submit="handleCreateMaterial($event.values)"
       v-slot="{ errors }"
       :validation-schema="materialValidationSchema"
+      :initial-values="{
+        isLoan: false,
+      }"
       novalidate
     >
       <ul class="space-y-4">
         <!-- name -->
-        <li>
+        <li key="name">
           <label class="block mb-2 text-sm font-medium text-gray-900" for="name"
             >Name</label
           >
@@ -289,10 +292,9 @@
           </Field>
           <ErrorMessage class="text-red-500 block text-sm" name="name" />
         </li>
-        <!-- user -->
-        <!-- isLoan -->
+
         <!-- serialNumber -->
-        <li>
+        <li key="serialNumber">
           <label
             class="block mb-2 text-sm font-medium text-gray-900"
             for="serialNumber"
@@ -316,10 +318,70 @@
             name="serialNumber"
           />
         </li>
+        <!-- isLoan -->
+        <li key="isLoan">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-900"
+            for="isLoan"
+            >Is Loan</label
+          >
+          <Field name="isLoan" v-slot="{ field, handleChange }">
+            <InputSwitch
+              id="isLoan"
+              v-model="field.value"
+              @input="
+                $event => {
+                  switchInput = $event
+                  handleChange($event, false)
+                }
+              "
+              :class="{
+                'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                  errors['isLoan'],
+              }"
+            />
+          </Field>
+          <ErrorMessage class="text-red-500 block text-sm" name="isLoan" />
+        </li>
+        <!-- user -->
+        <li v-if="switchInput" key="user">
+          <label class="block mb-2 text-sm font-medium text-gray-900" for="user"
+            >User</label
+          >
+          <Field name="user" v-slot="{ field, handleChange }">
+            <Dropdown
+              id="user"
+              placeholder="Select a user"
+              :options="users"
+              optionLabel="fullname"
+              optionValue="id"
+              v-model="field.value"
+              editable
+              @change="handleChange($event.value, false)"
+              :pt="{
+                input: {
+                  class: [
+                    'placeholder-gray-900 placeholder-text-sm',
+                    'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none block w-full p-3 focus:ring-primary-green-400/40 focus:ring-3',
+                    {
+                      'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+                        errors['user'],
+                    },
+                  ],
+                },
+              }"
+            >
+              <template #dropdownicon>
+                <ChevronDownIcon />
+              </template>
+            </Dropdown>
+          </Field>
+          <ErrorMessage class="text-red-500 block text-sm" name="user" />
+        </li>
       </ul>
 
       <CustomButton
-        class=""
+        class="flex ml-auto"
         :loading="loading.create"
         type="submit"
         name="Create Material"
@@ -347,8 +409,12 @@ import { ArrowDownWideNarrow } from 'lucide-vue-next'
 import { Check, ChevronDown, Wrench, Filter, Search } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { materialValidationSchema } from '@/validation/schema'
-import { ErrorMessage, Form } from 'vee-validate'
+import { ErrorMessage, Field, Form, configure } from 'vee-validate'
 import CustomButton from './CustomButton.vue'
+import InputSwitch from 'primevue/inputswitch'
+import { GET_USERS } from '@/graphql/user.query'
+import { ChevronDownIcon } from 'lucide-vue-next'
+import AutoComplete from 'primevue/autocomplete'
 
 // props
 const props = defineProps({
@@ -367,6 +433,7 @@ const { customUser } = useCustomUser()
 const filter = ref(false)
 
 const availability = ref('all')
+const switchInput = ref(false)
 
 // display sort dropdown
 const sort = ref(false)
@@ -383,7 +450,10 @@ const loading = ref({
   update: false,
   create: false,
   data: computed(
-    () => materialsLoading.value || materialsByUserIdLoading.value,
+    () =>
+      materialsLoading.value ||
+      materialsByUserIdLoading.value ||
+      usersLoading.value,
   ),
 })
 const variables = ref<VariablesProps>({
@@ -399,6 +469,7 @@ const materials = computed<Material[]>(() =>
     ? materialsResult.value?.materials || []
     : materialsByUserIdResult.value?.materialsByUserId || [],
 )
+const users = computed(() => usersResult.value?.users || [])
 
 // graphql
 const {
@@ -419,11 +490,27 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
+const {
+  result: usersResult,
+  loading: usersLoading,
+  error: usersError,
+  load: loadUsers,
+} = useLazyQuery(
+  GET_USERS,
+  {
+    filters: ['E'],
+  },
+  {
+    fetchPolicy: 'cache-and-network',
+  },
+)
+
 // logics
 // on mounted
 onMounted(() => {
-  if (customUser.value?.role == Role.ADMIN) {
+  if (props.showAllOverview) {
     loadMaterials()
+    loadUsers()
   } else {
     variables.value.userId = customUser.value?.id
     loadMaterialsByUserId()
@@ -461,6 +548,14 @@ const toggleModal = (
   }
 }
 
+// vee-validate config
+configure({
+  validateOnBlur: false,
+  validateOnChange: false,
+  validateOnInput: false,
+  validateOnModelUpdate: false,
+})
+
 // watch availability
 watch(availability, () => {
   if (availability.value === 'all') {
@@ -477,9 +572,15 @@ watchEffect(() => {
   // if (materials.value) console.log(materials.value)
   // if (materialsByUserIdResult.value) console.log(materialsByUserIdResult.value)
   // if (materialsResult.value) console.log(materialsResult.value)
+  // if (usersResult.value) console.log(usersResult.value)
+  if (users.value) console.log(users.value)
 
   // all errors
-  const errors = [materialsError.value, materialsByUserIdError.value]
+  const errors = [
+    materialsError.value,
+    materialsByUserIdError.value,
+    usersError.value,
+  ]
   errors.forEach(error => {
     if (error) {
       showToast('error', 'Error', error.message)
