@@ -93,11 +93,10 @@
           </div>
         </div>
         <Map
-          v-if="todaysLocations"
           class="rounded-2xl"
           :locations="todaysLocations"
+          :controls="true"
         ></Map>
-        <Map v-else class="rounded-2xl"></Map>
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>

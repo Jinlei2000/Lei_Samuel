@@ -12,6 +12,7 @@ import type { Location } from '@/interfaces/location.interface'
 const props = defineProps({
   // The locations to show on the map
   locations: Array as PropType<Location[]>,
+  controls: Boolean,
 })
 
 const mapRef = ref('')
@@ -45,9 +46,12 @@ onMounted(() => {
   }
 
   // Add controls
-  map.addControl(new tt.FullscreenControl())
-  map.addControl(new tt.GeolocateControl())
-  // map.addControl(new tt.NavigationControl())
-  // map.addControl(new tt.ScaleControl())
+  console.log(props.controls)
+  if (props.controls) {
+    map.addControl(new tt.FullscreenControl())
+    map.addControl(new tt.GeolocateControl())
+    // map.addControl(new tt.NavigationControl())
+    // map.addControl(new tt.ScaleControl())
+  }
 })
 </script>
