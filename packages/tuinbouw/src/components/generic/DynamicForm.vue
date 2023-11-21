@@ -194,7 +194,12 @@
     </ul>
 
     <div class="flex flex-end justify-between">
-      <CustomButton name="cancel" v-if="cancel" @click="cancel()" />
+      <CustomButton
+        name="cancel"
+        variant="secondary"
+        v-if="cancel"
+        @click="cancel()"
+      />
       <CustomButton
         class="flex ml-auto"
         :class="schema.button.class"

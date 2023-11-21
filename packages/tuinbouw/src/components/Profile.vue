@@ -162,7 +162,7 @@
         :schema="formAbsence"
         :validationSchema="absenceValidationSchema"
         :handleForm="handleUpdateAbsence"
-        :cancel="cancelDetailEdit"
+        :cancel="cancelAbsenceEdit"
         :loading="loading.update"
         :initial-values="{
           type: selectedAbsence!.type,
@@ -854,7 +854,7 @@ const toggleAbsenceModal = (
   console.log(selectedAbsence.value)
 }
 
-const cancelDetailEdit = () => {
+const cancelAbsenceEdit = () => {
   toggleAbsenceModal(selectedAbsence.value, 'detail')
 }
 
