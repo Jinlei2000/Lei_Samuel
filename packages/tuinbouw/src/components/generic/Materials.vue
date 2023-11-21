@@ -267,7 +267,7 @@
       v-slot="{ errors }"
       :validation-schema="materialValidationSchema"
       :initial-values="{
-        isLoan: false,
+        isLoan: true,
       }"
       novalidate
     >
@@ -331,7 +331,7 @@
               v-model="field.value"
               @input="
                 $event => {
-                  switchInput = $event
+                  switchInput = !$event
                   handleChange($event, false)
                 }
               "
@@ -388,6 +388,22 @@
       />
     </Form>
   </Dialog>
+
+  <!-- Detail Modal -->
+  <Dialog
+    v-model:visible="visible.create"
+    modal
+    header="Detail Material"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
+  >
+    <div></div>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -398,7 +414,6 @@ import {
   GET_MATERIALS_BY_USERID,
 } from '@/graphql/material.query'
 import { ORDER_DIRECTION } from '@/helpers/constants'
-import { Role } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useLazyQuery } from '@vue/apollo-composable'
@@ -414,7 +429,6 @@ import CustomButton from './CustomButton.vue'
 import InputSwitch from 'primevue/inputswitch'
 import { GET_USERS } from '@/graphql/user.query'
 import { ChevronDownIcon } from 'lucide-vue-next'
-import AutoComplete from 'primevue/autocomplete'
 
 // props
 const props = defineProps({
@@ -573,7 +587,7 @@ watchEffect(() => {
   // if (materialsByUserIdResult.value) console.log(materialsByUserIdResult.value)
   // if (materialsResult.value) console.log(materialsResult.value)
   // if (usersResult.value) console.log(usersResult.value)
-  if (users.value) console.log(users.value)
+  // if (users.value) console.log(users.value)
 
   // all errors
   const errors = [
