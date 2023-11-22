@@ -39,10 +39,7 @@ const props = defineProps({
     type: String,
   },
   modelValue: {
-    type: String,
-    required: true,
+    type: Object,
   },
 })
-
-const emit = defineEmits(['update:modelValue', 'blur'])
 </script>
