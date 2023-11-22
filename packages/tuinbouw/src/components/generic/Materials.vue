@@ -288,12 +288,21 @@
       },
     }"
   >
+    <!-- show detail -->
     <div v-if="!isEditing">
+      <!-- edit -->
       <Pencil v-if="props.showAllOverview" @click="isEditing = true" />
+      <!-- delete -->
+      <Trash2
+        v-if="props.showAllOverview"
+        @click="handleDeleteMaterial(selectedMaterial!)"
+        class="stroke-primary-red hover:cursor-pointer transition-all"
+      />
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
     </div>
 
+    <!-- edit form -->
     <div v-if="isEditing">
       <ArrowLeft @click="isEditing = false" />
       <DynamicForm
@@ -333,10 +342,15 @@ import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { materialValidationSchema } from '@/validation/schema'
 import { type GenericObject } from 'vee-validate'
 import { GET_USERS } from '@/graphql/user.query'
-import { CREATE_MATERIAL } from '@/graphql/material.mutation'
+import {
+  CREATE_MATERIAL,
+  DELETE_MATERIAL,
+  UPDATE_MATERIAL,
+} from '@/graphql/material.mutation'
 import { Pencil } from 'lucide-vue-next'
 import { ArrowLeft } from 'lucide-vue-next'
 import DynamicForm from './DynamicForm.vue'
+import { Trash2 } from 'lucide-vue-next'
 
 // props
 const props = defineProps({
@@ -495,6 +509,12 @@ const {
 const { mutate: createMaterial, error: createMaterialError } =
   useMutation(CREATE_MATERIAL)
 
+const { mutate: updateMaterial, error: updateMaterialError } =
+  useMutation(UPDATE_MATERIAL)
+
+const { mutate: deleteMaterial, error: deleteMaterialError } =
+  useMutation(DELETE_MATERIAL)
+
 const {
   result: usersResult,
   loading: usersLoading,
@@ -542,7 +562,28 @@ const handleCreateMaterial = async (values: GenericObject) => {
 // handle update material
 const handleUpdatematerial = async (values: GenericObject) => {
   console.log(values)
-  // loading.value.update = true
+  loading.value.update = true
+  await updateMaterial({
+    updateMaterialInput: {
+      id: selectedMaterial.value?.id,
+      ...values,
+    },
+  })
+  loading.value.update = false
+  showToast('success', 'Success', 'Material has been updated')
+  await refetch()
+  toggleModal()
+  loading.value.update = false
+}
+
+// handle delete material
+const handleDeleteMaterial = async (material: Material) => {
+  console.log(material.id)
+  await deleteMaterial({
+    id: material.id,
+  })
+  showToast('success', 'Success', 'Material has been deleted')
+  await refetch()
 }
 
 const toggleModal = (
