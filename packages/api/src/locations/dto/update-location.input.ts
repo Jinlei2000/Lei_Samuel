@@ -8,6 +8,9 @@ export class UpdateLocationInput extends PartialType(CreateLocationInput) {
   id: ObjectId
 
   @Field() // GraphQL type
+  title: string
+
+  @Field() // GraphQL type
   address: string
 
   @Field() // GraphQL type

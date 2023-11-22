@@ -394,7 +394,7 @@
   >
     <div v-if="selectedLocation">
       <h2 class="mb-2 text-xl font-semibold">
-        {{ selectedLocation.id }}
+        {{ selectedLocation.title }}
       </h2>
       <p class="text-gray-600">
         {{ selectedLocation.address }}
