@@ -245,7 +245,7 @@
           class="flex justify-between items-center text-left overflow-hidden rounded-2xl bg-gray-200"
         >
           <div class="flex flex-col gap-2 w-1/2 pl-6 py-3">
-            <h3 class="text-lg">Home</h3>
+            <h3 class="text-lg">{{ location.title }}</h3>
             <div>
               <p class="opacity-70">
                 {{ location.address.split(',')[0] }}
