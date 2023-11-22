@@ -263,130 +263,16 @@
       },
     }"
   >
-    <Form
-      @submit="handleCreateMaterial($event)"
-      v-slot="{ errors }"
-      :validation-schema="materialValidationSchema"
+    <DynamicForm
+      :schema="formCreateMaterial"
+      :validationSchema="materialValidationSchema"
+      :handleForm="handleCreateMaterial"
+      :loading="loading.create"
       :initial-values="{
-        isLoan: true,
+        isLoan: false,
       }"
-      novalidate
-    >
-      <ul class="space-y-4">
-        <!-- name -->
-        <li key="name">
-          <label class="block mb-2 text-sm font-medium text-gray-900" for="name"
-            >Name</label
-          >
-          <Field
-            class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
-            :class="{
-              'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
-                errors['name'],
-            }"
-            as="input"
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Forklift"
-          >
-          </Field>
-          <ErrorMessage class="text-red-500 block text-sm" name="name" />
-        </li>
-        <!-- serialNumber -->
-        <li key="serialNumber">
-          <label
-            class="block mb-2 text-sm font-medium text-gray-900"
-            for="serialNumber"
-            >Serial Number</label
-          >
-          <Field
-            class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
-            :class="{
-              'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
-                errors['serialNumber'],
-            }"
-            as="input"
-            id="serialNumber"
-            name="serialNumber"
-            type="text"
-            placeholder="123456789"
-          >
-          </Field>
-          <ErrorMessage
-            class="text-red-500 block text-sm"
-            name="serialNumber"
-          />
-        </li>
-        <!-- isLoan -->
-        <li key="isLoan">
-          <label
-            class="block mb-2 text-sm font-medium text-gray-900"
-            for="isLoan"
-            >Is Loan</label
-          >
-          <Field name="isLoan" v-slot="{ field, handleChange }">
-            <InputSwitch
-              id="isLoan"
-              v-model="field.value"
-              @input="
-                $event => {
-                  switchInput = !$event
-                  handleChange($event, false)
-                }
-              "
-              :class="{
-                'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
-                  errors['isLoan'],
-              }"
-            />
-          </Field>
-          <ErrorMessage class="text-red-500 block text-sm" name="isLoan" />
-        </li>
-        <!-- user -->
-        <li v-if="switchInput" key="userId">
-          <label class="block mb-2 text-sm font-medium text-gray-900" for="user"
-            >User</label
-          >
-          <Field name="userId" v-slot="{ field, handleChange }">
-            <Dropdown
-              id="userId"
-              placeholder="Select a user"
-              :options="users"
-              optionLabel="fullname"
-              optionValue="id"
-              v-model="field.value"
-              editable
-              @change="handleChange($event.value, false)"
-              :pt="{
-                input: {
-                  class: [
-                    'placeholder-gray-900 placeholder-text-sm',
-                    'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg hover:border-primary-green-400 transition-colors duration-200 appearance-none block w-full p-3 focus:ring-primary-green-400/40 focus:ring-3',
-                    {
-                      'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
-                        errors['user'],
-                    },
-                  ],
-                },
-              }"
-            >
-              <template #dropdownicon>
-                <ChevronDownIcon />
-              </template>
-            </Dropdown>
-          </Field>
-          <ErrorMessage class="text-red-500 block text-sm" name="user" />
-        </li>
-      </ul>
-
-      <CustomButton
-        class="flex ml-auto"
-        :loading="loading.create"
-        type="submit"
-        name="Create Material"
-      />
-    </Form>
+      :reverse-switch="true"
+    />
   </Dialog>
 
   <!-- Detail Modal -->
@@ -445,17 +331,8 @@ import { ArrowDownWideNarrow } from 'lucide-vue-next'
 import { Check, ChevronDown, Wrench, Filter, Search } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { materialValidationSchema } from '@/validation/schema'
-import {
-  ErrorMessage,
-  Field,
-  Form,
-  configure,
-  type GenericObject,
-} from 'vee-validate'
-import CustomButton from './CustomButton.vue'
-import InputSwitch from 'primevue/inputswitch'
+import { type GenericObject } from 'vee-validate'
 import { GET_USERS } from '@/graphql/user.query'
-import { ChevronDownIcon } from 'lucide-vue-next'
 import { CREATE_MATERIAL } from '@/graphql/material.mutation'
 import { Pencil } from 'lucide-vue-next'
 import { ArrowLeft } from 'lucide-vue-next'
@@ -478,7 +355,6 @@ const { customUser } = useCustomUser()
 const filter = ref(false)
 
 const availability = ref('all')
-const switchInput = ref(false)
 
 // display sort dropdown
 const sort = ref(false)
@@ -516,7 +392,7 @@ const materials = computed<Material[]>(() =>
 const users = computed(() => usersResult.value?.users || [])
 const isEditing = ref(false)
 
-// form
+// form update material
 const formUpdateMaterial = ref({
   fields: [
     {
@@ -547,11 +423,52 @@ const formUpdateMaterial = ref({
       optionLabel: 'fullname',
       optionValue: 'id',
       displayIf: 'isLoan',
+      editable: true,
     },
   ],
 
   button: {
     name: 'Update Material',
+  },
+})
+
+// form create material
+const formCreateMaterial = ref({
+  fields: [
+    {
+      label: 'Name',
+      name: 'name',
+      placeholder: 'Forklift',
+      as: 'input',
+    },
+    {
+      label: 'Serial Number',
+      name: 'serialNumber',
+      placeholder: '123456789',
+      as: 'input',
+    },
+    {
+      label: 'Is Loan',
+      name: 'isLoan',
+      as: 'switch',
+      type: 'switch',
+    },
+    {
+      label: 'User',
+      name: 'userId',
+      placeholder: 'Select a user',
+      as: 'select',
+      type: 'select',
+      options: users,
+      optionLabel: 'fullname',
+      optionValue: 'id',
+      displayIf: 'isLoan',
+      editable: true,
+    },
+  ],
+
+  button: {
+    name: 'Create Material',
   },
 })
 
@@ -624,7 +541,8 @@ const handleCreateMaterial = async (values: GenericObject) => {
 
 // handle update material
 const handleUpdatematerial = async (values: GenericObject) => {
-  loading.value.update = true
+  console.log(values)
+  // loading.value.update = true
 }
 
 const toggleModal = (
@@ -632,21 +550,12 @@ const toggleModal = (
   type: string = 'close',
 ) => {
   selectedMaterial.value = material ? { ...material } : null
-  switchInput.value = false
   isEditing.value = false
   visible.value = {
     detail: type === 'detail',
     create: type === 'create',
   }
 }
-
-// vee-validate config
-configure({
-  validateOnBlur: false,
-  validateOnChange: false,
-  validateOnInput: false,
-  validateOnModelUpdate: false,
-})
 
 // watch availability
 watch(availability, () => {

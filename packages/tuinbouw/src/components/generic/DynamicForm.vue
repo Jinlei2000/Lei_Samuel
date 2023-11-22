@@ -57,6 +57,7 @@
             :optionLabel="attrs.optionLabel ?? 'name'"
             :optionValue="attrs.optionValue ?? 'name'"
             v-model="field.value"
+            :editable="attrs.editable ?? false"
             @change="handleChange($event.value, false)"
             :pt="{
               input: {
@@ -195,7 +196,6 @@
           v-bind="attrs"
         >
         </Field>
-
         <!-- dropdown -->
         <Field
           v-if="
@@ -221,6 +221,7 @@
             :optionValue="attrs.optionValue ?? 'name'"
             v-model="field.value"
             @change="handleChange($event.value, false)"
+            :editable="attrs.editable ?? false"
             :pt="{
               input: {
                 class: [
