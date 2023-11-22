@@ -4,7 +4,8 @@
   "scripts": {
     "dev:api": "npm run dev -w api",
     "dev": "npm run dev -w tuinbouw",
-    "translate": "npm run generate:translations -w tuinbouw"
+    "translate": "npm run generate:translations -w tuinbouw",
+    "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,8 @@
     "tabWidth": 2,
     "trailingComma": "all",
     "useTabs": false
+  },
+  "devDependencies": {
+    "lerna": "^7.4.2"
   }
 }
