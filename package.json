@@ -25,9 +25,6 @@
     "trailingComma": "all",
     "useTabs": false
   },
-  "dependencies": {
-    "mongodb": "^5.9.1"
-  },
   "devDependencies": {
     "lerna": "^7.4.2"
   }
