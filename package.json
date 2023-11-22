@@ -23,5 +23,9 @@
     "tabWidth": 2,
     "trailingComma": "all",
     "useTabs": false
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^7.4.2"
   }
 }
