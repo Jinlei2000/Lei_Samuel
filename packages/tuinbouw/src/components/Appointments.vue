@@ -353,7 +353,6 @@ const appointments = computed<Appointment[]>(() =>
     : appointmentsByUserIdResult.value?.appointmentsByUserId || [],
 )
 const locations = computed(() => locationsResult.value?.locationsByUserId || [])
-const locationsOptions = ref([])
 
 // form schema update appointment client
 const formAppointment = ref({
@@ -363,8 +362,9 @@ const formAppointment = ref({
       name: 'locationId',
       as: 'select',
       type: 'select',
-      options: locationsOptions,
-      optionValue: 'value',
+      options: locations,
+      optionValue: 'id',
+      optionLabel: 'address',
       placeholder: 'Select a location',
     },
     {
@@ -537,13 +537,6 @@ const toggleModal = (
   visible.value = {
     detail: type === 'detail',
     edit: type === 'edit',
-  }
-
-  if (type === 'edit') {
-    locationsOptions.value = locations.value.map((l: Location) => ({
-      name: l.address,
-      value: l.id,
-    }))
   }
 }
 

@@ -22,9 +22,13 @@ export const userUpdateValidationSchema = yup.object({
   company: yup.boolean().optional().nullable(),
   btwNumber: yup
     .string()
-    .matches(/^[A-Za-z\d]{5,15}$/, 'Not a valid VAT Number')
-    .optional()
-    .nullable(),
+    .matches(/^[A-Za-z\d]{5,15}$/, 'Not a valid VAT Number').nullable()
+    .when('company', (company, schema) => {
+      if (company[0] === true) {
+        return schema.required()
+      }
+      return schema.optional()
+    }),
 })
 
 export const locationValidationSchema = yup.object({
@@ -88,4 +92,17 @@ export const appointmentUpdateValidationSchema = yup.object({
   startProposedDate: yup.string().required(),
   endProposedDate: yup.string().required(),
   description: yup.string().optional(),
+})
+
+export const materialValidationSchema = yup.object({
+  name: yup.string().required(),
+  serialNumber: yup.string().required().matches(/^[0-9]+$/, 'Must be only digits'),
+  isLoan: yup.boolean().required(),
+  userId: yup.string().nullable()
+    .when('isLoan', (isLoan, schema) => {
+      if (isLoan[0] === false) {
+        return schema.required()
+      }
+      return schema.optional()
+    }),
 })

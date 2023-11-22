@@ -19,7 +19,6 @@ import ToastService from 'primevue/toastservice'
 // import 'primevue/resources/themes/lara-light-teal/theme.css'
 
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
 import Calendar from 'primevue/calendar'
 
@@ -42,7 +41,6 @@ app.use(PrimeVue, {
 
 app.component('Button', Button)
 app.component('Toast', Toast)
-app.component('InputText', InputText)
 app.component('Dialog', Dialog)
 app.component('Textarea', Textarea)
 app.component('Calendar', Calendar)
@@ -53,13 +51,13 @@ app.component('InputSwitch', InputSwitch)
 app.use(ToastService)
 
 app.use(i18n) // ALTIJD VOOR DE ROUTER!
-;(async () => {
-  // Restore user session before mounting the app
-  await restoreUser()
-  // console.log('firebaseUser', firebaseUser.value)
-  // Restore custom user session before mounting the app if firebaseUser is set
-  if (firebaseUser.value) await restoreCustomUser()
+  ; (async () => {
+    // Restore user session before mounting the app
+    await restoreUser()
+    // console.log('firebaseUser', firebaseUser.value)
+    // Restore custom user session before mounting the app if firebaseUser is set
+    if (firebaseUser.value) await restoreCustomUser()
 
-  app.use(router)
-  app.mount('#app')
-})()
+    app.use(router)
+    app.mount('#app')
+  })()

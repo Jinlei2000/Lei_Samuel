@@ -50,7 +50,7 @@ export class MaterialsResolver {
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
-    @Args('searchString', { type: () => [String], nullable: true })
+    @Args('searchString', { type: () => String, nullable: true })
     searchString?: string,
   ): Promise<Material[]> {
     return this.materialsService.findAllByUserId(
