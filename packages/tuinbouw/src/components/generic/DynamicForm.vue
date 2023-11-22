@@ -8,7 +8,9 @@
   >
     <ul class="space-y-4">
       <li
-        v-for="{ as, name, label, type, options, ...attrs } in schema.fields"
+        v-for="(
+          { as, name, label, type, options, ...attrs }, index
+        ) in schema.fields"
         :key="name"
       >
         <label
@@ -293,6 +295,16 @@ const props = defineProps({
 const passwordVisible = ref(false)
 const minEndDate = ref()
 const switchValue = ref()
+
+// <!--  TODO: make a function for this (v-if="shouldDisplay(field)") -->
+// TODO: <DynamicField :field="field" :errors="errors" />
+// Check if field should be displayed
+const shouldDisplay = (fieldProps: {
+  displayIf: string
+  reverseSwitch: boolean
+}): Boolean => {
+  return true
+}
 
 // Set switchValue before mounting
 onBeforeMount(() => {

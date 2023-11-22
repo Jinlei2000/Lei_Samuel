@@ -296,7 +296,20 @@
 
     <div v-if="isEditing">
       <ArrowLeft @click="isEditing = false" />
-      <DynamicForm
+      <!-- <DynamicForm
+        :schema="formUpdateMaterial"
+        :validationSchema="materialValidationSchema"
+        :handleForm="handleUpdatematerial"
+        :loading="loading.update"
+        :initial-values="{
+          name: selectedMaterial?.name,
+          serialNumber: selectedMaterial?.serialNumber,
+          isLoan: selectedMaterial?.isLoan,
+          userId: selectedMaterial?.user?.id,
+        }"
+        :reverse-switch="true"
+      /> -->
+      <DynamicFormTest
         :schema="formUpdateMaterial"
         :validationSchema="materialValidationSchema"
         :handleForm="handleUpdatematerial"
@@ -337,6 +350,7 @@ import { CREATE_MATERIAL } from '@/graphql/material.mutation'
 import { Pencil } from 'lucide-vue-next'
 import { ArrowLeft } from 'lucide-vue-next'
 import DynamicForm from './DynamicForm.vue'
+import DynamicFormTest from './DynamicFormTest.vue'
 
 // props
 const props = defineProps({
