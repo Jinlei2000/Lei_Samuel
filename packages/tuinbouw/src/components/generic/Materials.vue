@@ -83,19 +83,7 @@
         <!-- End filter dropdown -->
 
         <!-- Searchbar -->
-        <div class="flex items-center justify-center gap-3 relative w-1/3">
-          <button
-            class="bg-transparent p-2 rounded-full hover:scale-110 transition-all absolute left-2"
-          >
-            <Search class="h-[22px] w-[22px]" />
-          </button>
-          <input
-            v-model="variables.searchString"
-            class="bg-gray-200 rounded-full h-12 py-3 pl-11 w-full text-lg"
-            type="text"
-            placeholder="Search for materials"
-          />
-        </div>
+        <Search v-model="variables.searchString" />
       </div>
 
       <!-- Title + Sort -->
@@ -333,11 +321,8 @@ import { ORDER_DIRECTION } from '@/helpers/constants'
 import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import { ListFilter } from 'lucide-vue-next'
-import { PlusCircle } from 'lucide-vue-next'
 import { ArrowUpWideNarrow } from 'lucide-vue-next'
 import { ArrowDownWideNarrow } from 'lucide-vue-next'
-import { Check, ChevronDown, Wrench, Filter, Search } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { materialValidationSchema } from '@/validation/schema'
 import { type GenericObject } from 'vee-validate'
@@ -347,10 +332,19 @@ import {
   DELETE_MATERIAL,
   UPDATE_MATERIAL,
 } from '@/graphql/material.mutation'
-import { Pencil } from 'lucide-vue-next'
-import { ArrowLeft } from 'lucide-vue-next'
+import {
+  Pencil,
+  Trash2,
+  ArrowLeft,
+  ListFilter,
+  PlusCircle,
+  Check,
+  ChevronDown,
+  Wrench,
+  Filter,
+} from 'lucide-vue-next'
 import DynamicForm from './DynamicForm.vue'
-import { Trash2 } from 'lucide-vue-next'
+import Search from './Search.vue'
 
 // props
 const props = defineProps({

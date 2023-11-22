@@ -180,7 +180,7 @@
         type="text"
         placeholder="Search Address"
         :errorMessage="errorMessages.searchAdressInput"
-        v-bind="searchAdressInput"
+        v-model="searchAdressInput"
       />
 
       <!-- show search results -->
