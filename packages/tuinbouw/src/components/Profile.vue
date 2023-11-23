@@ -512,6 +512,8 @@
         name="Update Location"
         :loading="loading.updateLocation"
       />
+
+      <CustomButton name="Cancel" @click="cancelLocationEdit()" />
     </form>
   </Dialog>
 
@@ -874,6 +876,10 @@ const toggleAbsenceModal = (
 
 const cancelAbsenceEdit = () => {
   toggleAbsenceModal(selectedAbsence.value, 'detail')
+}
+
+const cancelLocationEdit = () => {
+  toggleLocationModal(selectedLocation.value, 'detail')
 }
 
 const refetch = async (): Promise<void> => {
