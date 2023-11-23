@@ -29,6 +29,8 @@ Short description of the project.
 
 - [TomTom](https://www.tomtom.com/en_gb/) for maps
 
+- [Lerna](https://lerna.js.org/) for monorepo management
+
 ## Environment variables
 
 documentatie over de environment variables
