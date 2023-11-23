@@ -4,42 +4,17 @@
   >
     <div class="w-full flex flex-col gap-10">
       <!-- Filters + Searchbar -->
-      <div class="flex items-center justify-between w-full relative">
+      <div
+        :class="[
+          'flex items-center w-full relative',
+          props.showAllOverview ? 'justify-between' : 'justify-end',
+        ]"
+      >
         <!-- Filter -->
         <Filter
+          v-if="props.showAllOverview"
           v-model="variables.filters"
-          :options="[
-            {
-              title: 'Availability',
-              name: 'availability',
-              type: 'radio',
-              options: [
-                { label: 'All', value: '' },
-                { label: 'Available', value: 'A' },
-                { label: 'Not Available', value: 'NA' },
-              ],
-            },
-            {
-              title: 'Loanable',
-              name: 'loanable',
-              type: 'radio',
-              options: [
-                { label: 'All', value: '' },
-                { label: 'Loanable', value: 'L' },
-                { label: 'Not Loanable', value: 'NL' },
-              ],
-            },
-            {
-              title: 'Availability',
-              name: 'availability',
-              type: 'checkbox',
-              options: [
-                { label: 'All', value: '' },
-                { label: 'Available', value: 'A' },
-                { label: 'Not Available', value: 'NA' },
-              ],
-            },
-          ]"
+          :options="FILTER_OPTIONS_MATERIALS"
         />
 
         <!-- Searchbar -->
@@ -202,7 +177,11 @@ import {
   GET_MATERIALS_BY_USERID,
 } from '@/graphql/material.query'
 import { GET_USERS } from '@/graphql/user.query'
-import { ORDER_DIRECTION, SORT_OPTIONS_MATERIALS } from '@/helpers/constants'
+import {
+  FILTER_OPTIONS_MATERIALS,
+  ORDER_DIRECTION,
+  SORT_OPTIONS_MATERIALS,
+} from '@/helpers/constants'
 import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'

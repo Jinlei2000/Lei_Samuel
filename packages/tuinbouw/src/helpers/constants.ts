@@ -36,3 +36,26 @@ export const SORT_OPTIONS_MATERIALS = [
     value: 'name',
   },
 ]
+
+export const FILTER_OPTIONS_MATERIALS = [
+  {
+    title: 'Availability',
+    name: 'availability',
+    type: 'radio',
+    options: [
+      { label: 'All', value: '' },
+      { label: 'Available', value: 'A' },
+      { label: 'Not Available', value: 'NA' },
+    ],
+  },
+  {
+    title: 'Loanable',
+    name: 'loanable',
+    type: 'radio',
+    options: [
+      { label: 'All', value: '' },
+      { label: 'Loanable', value: 'L' },
+      { label: 'Not Loanable', value: 'NL' },
+    ],
+  },
+]
