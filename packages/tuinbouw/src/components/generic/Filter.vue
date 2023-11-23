@@ -29,6 +29,7 @@
       v-for="(option, index) in options"
       :key="index"
     >
+      <!-- Title -->
       <button
         class="text-left text-lg flex items-center justify-between gap-6"
         @click="toggleAccordion(index)"
@@ -41,6 +42,7 @@
           ]"
         />
       </button>
+      <!-- Options -->
       <div class="flex flex-col gap-3" v-show="isAccordionsOpen[index - 1]">
         <div v-for="(inputOption, index) in option.options" :key="index">
           <div class="flex gap-2 items-center relative">
@@ -65,7 +67,7 @@
                 :name="option.name"
                 :id="inputOption.value"
                 v-model="filters[option.name]"
-                @change="updateFiltersCheckbox(inputOption.value)"
+                @change="updateFiltersCheckbox(option.name, option.options)"
               />
             </template>
             <span
@@ -120,6 +122,12 @@ onBeforeMount(() => {
         [option.name]: '',
       }
     }
+    if (option.type === 'checkbox') {
+      filters.value = {
+        ...filters.value,
+        [option.name]: [],
+      }
+    }
   })
   // set all accordions to false
   isAccordionsOpen.value = props.options!.map(() => false)
@@ -144,7 +152,21 @@ const updateFiltersRadio = (
   props.modelValue!.push(value)
 }
 
-const updateFiltersCheckbox = (value: string) => {}
+const updateFiltersCheckbox = (
+  name: string,
+  options: { label: string; value: string }[],
+) => {
+  // clear all filters
+  options.map(option => {
+    const index = props.modelValue!.indexOf(option)
+    props.modelValue!.splice(index, 1)
+  })
+
+  // add filters
+  filters.value[name].forEach((filter: string) => {
+    props.modelValue!.push(filter)
+  })
+}
 
 const toggleAccordion = (index: number) => {
   isAccordionsOpen.value[index - 1] = !isAccordionsOpen.value[index - 1]
