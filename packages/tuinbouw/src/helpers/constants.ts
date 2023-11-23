@@ -25,3 +25,14 @@ export const SUPPORTED_LOCALES_TYPES = () => {
     return { name, value }
   })
 }
+
+export const SORT_OPTIONS_MATERIALS = [
+  {
+    label: 'Date Created',
+    value: 'createdAt',
+  },
+  {
+    label: 'Name',
+    value: 'name',
+  },
+]

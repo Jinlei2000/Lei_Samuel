@@ -2,8 +2,8 @@
   "name": "lei_samuel",
   "version": "0.0.0",
   "scripts": {
-    "dev:api": "npm run dev -w api",
-    "dev": "npm run dev -w tuinbouw",
+    "dev": "npx lerna run --scope=tuinbouw dev",
+    "dev:api": "npx lerna run --scope=api dev",
     "translate": "npm run generate:translations -w tuinbouw",
     "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev"
   },
