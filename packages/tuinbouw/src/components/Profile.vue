@@ -116,7 +116,7 @@
 
     <!-- Absence Detail Modal -->
     <Dialog
-      v-model:visible="visible.openModal"
+      v-model:visible="absenceModalVisible.openModal"
       modal
       header="Absence Details"
       :draggable="false"
@@ -127,7 +127,7 @@
         },
       }"
     >
-      <div v-if="selectedAbsence && visible.detail" class="flex flex-col gap-6">
+      <div v-if="selectedAbsence && absenceModalVisible.detail" class="flex flex-col gap-6">
         <div class="flex flex-col gap-3">
           <div>
             <h2 class="text-xl font-semibold">
@@ -158,7 +158,7 @@
         </div>
       </div>
       <DynamicForm
-        v-if="visible.edit"
+        v-if="absenceModalVisible.edit"
         :schema="formAbsence"
         :validationSchema="absenceValidationSchema"
         :handleForm="handleUpdateAbsence"
@@ -202,7 +202,7 @@
 
     <!-- Create Absence Modal -->
     <Dialog
-      v-model:visible="visible.create"
+      v-model:visible="absenceModalVisible.create"
       modal
       header="Create Absence"
       :draggable="false"
@@ -228,7 +228,7 @@
     >
       <h2 class="text-2xl">Locations</h2>
       <button
-        @click="openModal(null, 'create')"
+        @click="toggleLocationModal(null, 'create')"
         class="w-full flex items-center justify-center border-primary-green border-[1px] rounded-2xl h-16 text-primary-green"
       >
         <PlusCircle class="mr-2" />
@@ -239,7 +239,7 @@
         class="w-full flex flex-col gap-3"
       >
         <button
-          @click="openModal(location, 'detail')"
+          @click="toggleLocationModal(location, 'detail')"
           v-for="location in user.locations"
           :key="location.id"
           class="flex justify-between items-center text-left overflow-hidden rounded-2xl bg-gray-200"
@@ -323,7 +323,7 @@
               v-if="user.locations?.length === 0 || user.role === Role.CLIENT"
               name="Add New Location"
               :loading="loading.createLocation"
-              @click="openModal(null, 'create')"
+              @click="toggleLocationModal(null, 'create')"
             />
             <!-- show all locations -->
             <div
@@ -347,13 +347,13 @@
                   <!-- Edit and Delete buttons -->
                   <div class="mt-2 flex">
                     <button
-                      @click="openModal(location, 'detail')"
+                      @click="toggleLocationModal(location, 'detail')"
                       class="mr-2 rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600"
                     >
                       <Eye />
                     </button>
                     <button
-                      @click="openModal(location, 'edit')"
+                      @click="toggleLocationModal(location, 'edit')"
                       class="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                     >
                       <Pencil />
@@ -392,16 +392,36 @@
       },
     }"
   >
-    <div v-if="selectedLocation">
-      <h2 class="mb-2 text-xl font-semibold">
-        {{ selectedLocation.title }}
-      </h2>
-      <p class="text-gray-600">
-        {{ selectedLocation.address }}
-      </p>
+    <div v-if="selectedLocation" class="flex flex-col gap-6">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-xl font-semibold">
+          {{ selectedLocation.title }}
+        </h2>
+        <div>
+          <p class="opacity-70">
+            {{ selectedLocation.address.split(',')[0] }}
+          </p>
+          <p class="opacity-70">{{ selectedLocation.address.split(',')[1] }}</p>
+        </div>
+      </div>
 
-      <div class="h-80 w-full overflow-auto rounded-3xl">
+      <div class="h-48 w-full overflow-auto rounded-lg">
         <Map :locations="[selectedLocation]" />
+      </div>
+
+      <div class="flex justify-between">
+        <button
+          @click="handleDeleteLocation(selectedLocation.id)"
+          class="rounded-[4px] bg-primary-red px-3 py-1 text-white"
+        >
+          Delete
+        </button>
+        <button
+          @click="toggleLocationModal(selectedLocation, 'edit')"
+          class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue"
+        >
+          Edit
+        </button>
       </div>
     </div>
   </Dialog>
@@ -661,7 +681,14 @@ const variables = ref<VariablesProps>({
     direction: ORDER_DIRECTION.DESC,
   },
 })
-const visible = ref({
+const absenceModalVisible = ref({
+  openModal: false,
+  detail: false,
+  edit: false,
+  create: false,
+})
+
+const locationModalVisible = ref({
   openModal: false,
   detail: false,
   edit: false,
@@ -815,7 +842,7 @@ const toggleAbsenceModal = (
   // switch case for type
   switch (type) {
     case 'edit':
-      visible.value = {
+      absenceModalVisible.value = {
         openModal: true,
         detail: false,
         edit: true,
@@ -823,7 +850,7 @@ const toggleAbsenceModal = (
       }
       break
     case 'detail':
-      visible.value = {
+      absenceModalVisible.value = {
         openModal: true,
         detail: true,
         edit: false,
@@ -831,7 +858,7 @@ const toggleAbsenceModal = (
       }
       break
     case 'create':
-      visible.value = {
+      absenceModalVisible.value = {
         openModal: false,
         detail: false,
         edit: false,
@@ -839,7 +866,7 @@ const toggleAbsenceModal = (
       }
       break
     case 'close':
-      visible.value = {
+      absenceModalVisible.value = {
         openModal: false,
         detail: false,
         edit: false,
@@ -850,7 +877,7 @@ const toggleAbsenceModal = (
       break
   }
 
-  console.log(visible.value)
+  console.log(absenceModalVisible.value)
   console.log(selectedAbsence.value)
 }
 
@@ -1125,29 +1152,76 @@ const handleDeleteLocation = async (id: string) => {
   refetchUser()
 }
 
-const openModal = (location: Location | null = null, type: string) => {
-  // reset values
-  setValuesLocation({
-    searchAdressInput: '',
-    selectedAddress: null,
-  })
-  selectedLocation.value = null
-  searchAddressResults.value = null
-  errorMessages.value = {}
+const toggleLocationModal = (
+  location: Location | null = null,
+  type: string,
+) => {
+  selectedLocation.value = location ? { ...location } : null
+  console.log(type)
 
-  if (type === 'detail' && location) {
-    selectedLocation.value = { ...location }
-    visibleLocation.value.detail = true
-  } else if (type === 'edit' && location) {
-    selectedLocation.value = { ...location }
-    searchAddressResults.value = [{ ...location }]
-    setValuesLocation({
-      searchAdressInput: location.address,
-    })
-    visibleLocation.value.edit = true
-  } else if (type === 'create') {
-    visibleLocation.value.create = true
+  // switch case for type
+  switch (type) {
+    case 'edit':
+      locationModalVisible.value = {
+        openModal: true,
+        detail: false,
+        edit: true,
+        create: false,
+      }
+      break
+    case 'detail':
+      locationModalVisible.value = {
+        openModal: true,
+        detail: true,
+        edit: false,
+        create: false,
+      }
+      break
+    case 'create':
+      locationModalVisible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: true,
+      }
+      break
+    case 'close':
+      locationModalVisible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: false,
+      }
+      break
+    default:
+      break
   }
+
+  console.log(locationModalVisible.value)
+  console.log(selectedLocation.value)
+
+  // reset values
+  // setValuesLocation({
+  //   searchAdressInput: '',
+  //   selectedAddress: null,
+  // })
+  // selectedLocation.value = null
+  // searchAddressResults.value = null
+  // errorMessages.value = {}
+
+  // if (type === 'detail' && location) {
+  //   selectedLocation.value = { ...location }
+  //   visibleLocation.value.detail = true
+  // } else if (type === 'edit' && location) {
+  //   selectedLocation.value = { ...location }
+  //   searchAddressResults.value = [{ ...location }]
+  //   setValuesLocation({
+  //     searchAdressInput: location.address,
+  //   })
+  //   visibleLocation.value.edit = true
+  // } else if (type === 'create') {
+  //   visibleLocation.value.create = true
+  // }
 }
 
 const closeModal = () => {
