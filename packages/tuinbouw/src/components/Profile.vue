@@ -127,7 +127,10 @@
         },
       }"
     >
-      <div v-if="selectedAbsence && absenceModalVisible.detail" class="flex flex-col gap-6">
+      <div
+        v-if="selectedAbsence && absenceModalVisible.detail"
+        class="flex flex-col gap-6"
+      >
         <div class="flex flex-col gap-3">
           <div>
             <h2 class="text-xl font-semibold">
@@ -381,7 +384,7 @@
 
   <!-- Detail Location Modal -->
   <Dialog
-    v-model:visible="locationModalVisible.detail"
+    v-model:visible="locationModalVisible.openModal"
     modal
     header="Location Details"
     :draggable="false"
@@ -392,7 +395,10 @@
       },
     }"
   >
-    <div v-if="selectedLocation" class="flex flex-col gap-6">
+    <div
+      v-if="selectedLocation && locationModalVisible.detail"
+      class="flex flex-col gap-6"
+    >
       <div class="flex flex-col gap-1">
         <h2 class="text-xl font-semibold">
           {{ selectedLocation.title }}
@@ -424,22 +430,12 @@
         </button>
       </div>
     </div>
-  </Dialog>
 
-  <!-- Edit Location Modal -->
-  <Dialog
-    v-model:visible="locationModalVisible.edit"
-    modal
-    header="Edit Location"
-    :draggable="false"
-    :close-on-escape="true"
-    :pt="{
-      root: {
-        class: 'w-full mx-3 md:m-0 md:max-w-lg',
-      },
-    }"
-  >
-    <form @submit.prevent="handleUpdateLocation">
+    <!-- Edit Location -->
+    <form
+      v-if="locationModalVisible.edit"
+      @submit.prevent="handleUpdateLocation"
+    >
       <InputField
         name="Address"
         type="text"
