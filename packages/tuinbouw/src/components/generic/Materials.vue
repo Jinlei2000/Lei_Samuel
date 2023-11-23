@@ -29,6 +29,16 @@
                 { label: 'Not Loanable', value: 'NL' },
               ],
             },
+            {
+              title: 'Availability',
+              name: 'availability',
+              type: 'checkbox',
+              options: [
+                { label: 'All', value: '' },
+                { label: 'Available', value: 'A' },
+                { label: 'Not Available', value: 'NA' },
+              ],
+            },
           ]"
         />
 

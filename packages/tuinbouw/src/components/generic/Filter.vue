@@ -29,34 +29,54 @@
       v-for="(option, index) in options"
       :key="index"
     >
-      <button class="text-left text-lg" @click="toggleAccordion(index)">
-        {{ option.title }}
+      <button
+        class="text-left text-lg flex items-center justify-between gap-6"
+        @click="toggleAccordion(index)"
+      >
+        <p>{{ option.title }}</p>
+        <ChevronDown
+          :class="[
+            'h-[22px] w-[22px] transition-all',
+            isAccordionsOpen[index - 1] ? 'rotate-180' : '',
+          ]"
+        />
       </button>
       <div class="flex flex-col gap-3" v-show="isAccordionsOpen[index - 1]">
         <div v-for="(inputOption, index) in option.options" :key="index">
-          <!-- Radio button -->
-          <label
-            class="flex gap-2 items-center relative"
-            v-if="option.type === 'radio'"
-          >
-            <input
-              class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
-              type="radio"
-              :value="inputOption.value"
-              :name="option.name"
-              :id="inputOption.value"
-              v-model="filters[option.name]"
-              @change="updateFiltersRadio(inputOption.value, option.options)"
-            />
+          <div class="flex gap-2 items-center relative">
+            <!-- Radio button -->
+            <template v-if="option.type === 'radio'">
+              <input
+                class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+                type="radio"
+                :value="inputOption.value"
+                :name="option.name"
+                :id="inputOption.value"
+                v-model="filters[option.name]"
+                @change="updateFiltersRadio(inputOption.value, option.options)"
+              />
+            </template>
+            <!-- Checkbox -->
+            <template v-else-if="option.type === 'checkbox'">
+              <input
+                className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent checked:bg-primary-green checked:border-0"
+                type="checkbox"
+                :value="inputOption.value"
+                :name="option.name"
+                :id="inputOption.value"
+                v-model="filters[option.name]"
+                @change="updateFiltersCheckbox(inputOption.value)"
+              />
+            </template>
             <span
               class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
             >
               <Check class="h-3 w-3" />
             </span>
-            {{ inputOption.label }}
-          </label>
-          <!-- TODO: ADD Checkbox -->
-          <div v-if="option.type === 'checkbox'">CHECK</div>
+            <label :for="inputOption.value">
+              {{ inputOption.label }}
+            </label>
+          </div>
         </div>
       </div>
     </div>
