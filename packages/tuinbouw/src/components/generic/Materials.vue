@@ -5,81 +5,32 @@
     <div class="w-full flex flex-col gap-10">
       <!-- Filters + Searchbar -->
       <div class="flex items-center justify-between w-full relative">
-        <div class="flex items-center gap-3">
-          <button
-            class="group bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
-            @click="filter = !filter"
-          >
-            <Filter class="h-5 w-5" />
-            <p class="m-0 text-lg">Filter</p>
-            <ChevronDown
-              :class="[
-                'h-[22px] w-[22px] transition-all',
-                filter ? 'rotate-180' : '',
-              ]"
-            />
-          </button>
-        </div>
-        <!-- Filter dropdown -->
-        <div
-          :class="[
-            'absolute flex gap-12 top-16 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12',
-            'transition-all duration-200',
-            filter ? 'opacity-100' : 'opacity-0 pointer-events-none ',
+        <!-- Filter -->
+        <Filter
+          v-model="variables.filters"
+          :options="[
+            {
+              title: 'Availability',
+              name: 'availability',
+              type: 'radio',
+              options: [
+                { label: 'All', value: '' },
+                { label: 'Available', value: 'A' },
+                { label: 'Not Available', value: 'NA' },
+              ],
+            },
+            {
+              title: 'Loanable',
+              name: 'loanable',
+              type: 'radio',
+              options: [
+                { label: 'All', value: '' },
+                { label: 'Loanable', value: 'L' },
+                { label: 'Not Loanable', value: 'NL' },
+              ],
+            },
           ]"
-          v-show="filter"
-        >
-          <div class="flex flex-col gap-3">
-            <h2 class="text-lg">Availability</h2>
-            <div class="flex flex-col gap-3">
-              <div class="flex gap-2 items-center relative">
-                <input
-                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
-                  type="radio"
-                  v-model="availability"
-                  value="all"
-                  name="availability"
-                />
-                <div
-                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                >
-                  <Check class="h-3 w-3" />
-                </div>
-                <label for="">All</label>
-              </div>
-              <div class="flex gap-2 items-center">
-                <input
-                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
-                  type="radio"
-                  v-model="availability"
-                  value="available"
-                  name="availability"
-                />
-                <div
-                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                >
-                  <Check class="h-3 w-3" />
-                </div>
-                <label for="">Available</label>
-              </div>
-              <div class="flex gap-2 items-center">
-                <input
-                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
-                  type="radio"
-                  v-model="availability"
-                  value="not available"
-                  name="availability"
-                />
-                <div
-                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                >
-                  <Check class="h-3 w-3" />
-                </div>
-                <label for="">Not available</label>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
 
         <!-- Searchbar -->
         <Search v-model="variables.searchString" />
@@ -246,21 +197,13 @@ import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import {
-  ArrowLeft,
-  Check,
-  ChevronDown,
-  Filter,
-  Pencil,
-  PlusCircle,
-  Trash2,
-  Wrench,
-} from 'lucide-vue-next'
+import { ArrowLeft, Pencil, PlusCircle, Trash2, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import DynamicForm from './DynamicForm.vue'
 import Search from './Search.vue'
 import Sort from './Sort.vue'
+import Filter from './Filter.vue'
 
 // props
 const props = defineProps({
@@ -275,9 +218,6 @@ const { showToast } = useCustomToast()
 const { customUser } = useCustomUser()
 
 // variables
-// display filter dropdown
-const filter = ref(false)
-
 const availability = ref('all')
 
 // skeletons
