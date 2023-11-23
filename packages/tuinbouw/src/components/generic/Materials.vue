@@ -1,118 +1,56 @@
 <template>
-  <div
+  <main
     class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
   >
     <div class="w-full flex flex-col gap-10">
       <!-- Filters + Searchbar -->
-      <div class="flex items-center justify-between w-full relative">
-        <div class="flex items-center gap-3">
-          <button
-            class="group bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
-            @click="filter = !filter"
-          >
-            <Filter class="h-5 w-5" />
-            <p class="m-0 text-lg">Filter</p>
-            <ChevronDown
-              :class="[
-                'h-[22px] w-[22px] transition-all',
-                filter ? 'rotate-180' : '',
-              ]"
-            />
-          </button>
-        </div>
-        <!-- Filter dropdown -->
-        <div
-          :class="[
-            'absolute flex gap-12 top-16 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12',
-            'transition-all duration-200',
-            filter ? 'opacity-100' : 'opacity-0 pointer-events-none ',
-          ]"
-          v-show="filter"
-        >
-          <div class="flex flex-col gap-3">
-            <h2 class="text-lg">Availability</h2>
-            <div class="flex flex-col gap-3">
-              <div class="flex gap-2 items-center relative">
-                <input
-                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
-                  type="radio"
-                  v-model="availability"
-                  value="all"
-                  name="availability"
-                />
-                <div
-                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                >
-                  <Check class="h-3 w-3" />
-                </div>
-                <label for="">All</label>
-              </div>
-              <div class="flex gap-2 items-center">
-                <input
-                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
-                  type="radio"
-                  v-model="availability"
-                  value="available"
-                  name="availability"
-                />
-                <div
-                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                >
-                  <Check class="h-3 w-3" />
-                </div>
-                <label for="">Available</label>
-              </div>
-              <div class="flex gap-2 items-center">
-                <input
-                  class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
-                  type="radio"
-                  v-model="availability"
-                  value="not available"
-                  name="availability"
-                />
-                <div
-                  class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-                >
-                  <Check class="h-3 w-3" />
-                </div>
-                <label for="">Not available</label>
-              </div>
-            </div>
-          </div>
-        </div>
+      <section
+        :class="[
+          'flex items-center w-full relative',
+          props.showAllOverview ? 'justify-between' : 'justify-end',
+        ]"
+      >
+        <!-- Filter -->
+        <Filter
+          v-if="props.showAllOverview"
+          v-model="variables.filters"
+          :options="FILTER_OPTIONS_MATERIALS"
+        />
 
         <!-- Searchbar -->
         <Search v-model="variables.searchString" />
-      </div>
+      </section>
 
       <!-- Title + Sort -->
-      <div class="flex w-full items-center justify-between">
+      <header class="flex w-full items-center justify-between">
         <!-- Title -->
         <h1 class="text-2xl">Materials</h1>
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_MATERIALS" />
-      </div>
+      </header>
     </div>
 
-    <!-- loading -->
+    <!-- Loading -->
     <template v-if="loading.data">
       <div
         class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
-        <div v-for="skeleton in skeletons">
-          <div class="flex animate-pulse items-center gap-6">
-            <div class="w-full h-48 bg-neutral-200 rounded-2xl"></div>
-          </div>
+        <div
+          v-for="skeleton in skeletons"
+          :key="skeleton"
+          class="flex animate-pulse items-center gap-6"
+        >
+          <div class="w-full h-48 bg-neutral-200 rounded-2xl"></div>
         </div>
       </div>
     </template>
 
-    <!-- materials -->
+    <!-- Materials -->
     <template v-else-if="materials && materials.length > 0">
       <div
         class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3 w-full"
       >
-        <!-- add material -->
+        <!-- Add material -->
         <button
           v-if="props.showAllOverview"
           @click="toggleModal(null, 'create')"
@@ -123,6 +61,7 @@
             <p class="text-lg">Add New Material</p>
           </div>
         </button>
+        <!-- Material cards -->
         <button
           v-for="material of materials"
           @click="toggleModal(material, 'detail')"
@@ -147,14 +86,18 @@
     </template>
 
     <!-- TODO: design better -->
-    <!-- no results found -->
+    <!-- No results found -->
     <template v-else-if="materials.length === 0">
-      <div class="flex flex-col items-center justify-center gap-5">
-        <img class="h-80 w-80" src="/assets/empty.svg" />
-        <h2 class="text-2xl">Ups!... no results found</h2>
-      </div>
+      <section class="flex flex-col items-center justify-center gap-5">
+        <img
+          class="h-80 w-80"
+          src="/assets/empty.svg"
+          alt="Empty results illustration"
+        />
+        <h2 class="text-2xl">Oops! No results found.</h2>
+      </section>
     </template>
-  </div>
+  </main>
 
   <!-- Create Modal -->
   <Dialog
@@ -194,7 +137,7 @@
       },
     }"
   >
-    <!-- show detail -->
+    <!-- Show detail or edit form -->
     <div v-if="!isEditing">
       <!-- edit -->
       <Pencil v-if="props.showAllOverview" @click="isEditing = true" />
@@ -207,9 +150,8 @@
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
     </div>
-
-    <!-- edit form -->
     <div v-if="isEditing">
+      <!-- Edit form -->
       <ArrowLeft @click="isEditing = false" />
       <DynamicForm
         :schema="formUpdateMaterial"
@@ -241,26 +183,22 @@ import {
   GET_MATERIALS_BY_USERID,
 } from '@/graphql/material.query'
 import { GET_USERS } from '@/graphql/user.query'
-import { ORDER_DIRECTION, SORT_OPTIONS_MATERIALS } from '@/helpers/constants'
+import {
+  FILTER_OPTIONS_MATERIALS,
+  ORDER_DIRECTION,
+  SORT_OPTIONS_MATERIALS,
+} from '@/helpers/constants'
 import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import {
-  ArrowLeft,
-  Check,
-  ChevronDown,
-  Filter,
-  Pencil,
-  PlusCircle,
-  Trash2,
-  Wrench,
-} from 'lucide-vue-next'
+import { ArrowLeft, Pencil, PlusCircle, Trash2, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import DynamicForm from './DynamicForm.vue'
 import Search from './Search.vue'
 import Sort from './Sort.vue'
+import Filter from './Filter.vue'
 
 // props
 const props = defineProps({
@@ -275,9 +213,6 @@ const { showToast } = useCustomToast()
 const { customUser } = useCustomUser()
 
 // variables
-// display filter dropdown
-const filter = ref(false)
-
 const availability = ref('all')
 
 // skeletons
