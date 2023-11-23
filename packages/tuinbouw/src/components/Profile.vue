@@ -381,7 +381,7 @@
 
   <!-- Detail Location Modal -->
   <Dialog
-    v-model:visible="visibleLocation.detail"
+    v-model:visible="locationModalVisible.detail"
     modal
     header="Location Details"
     :draggable="false"
@@ -428,7 +428,7 @@
 
   <!-- Edit Location Modal -->
   <Dialog
-    v-model:visible="visibleLocation.edit"
+    v-model:visible="locationModalVisible.edit"
     modal
     header="Edit Location"
     :draggable="false"
@@ -521,7 +521,7 @@
 
   <!-- Create Location Modal -->
   <Dialog
-    v-model:visible="visibleLocation.create"
+    v-model:visible="locationModalVisible.create"
     modal
     header="Create Location"
     :draggable="false"
@@ -698,11 +698,6 @@ const locationModalVisible = ref({
 // variables
 const isEditingUser = ref<boolean>(false)
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
-const visibleLocation = ref({
-  detail: false,
-  edit: false,
-  create: false,
-})
 const selectedLocation = ref<Location | null>(null)
 const searchAddressResults = ref<Location[] | null>(null)
 
