@@ -1,10 +1,10 @@
 <template>
-  <div
+  <main
     class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
   >
     <div class="w-full flex flex-col gap-10">
       <!-- Filters + Searchbar -->
-      <div
+      <section
         :class="[
           'flex items-center w-full relative',
           props.showAllOverview ? 'justify-between' : 'justify-end',
@@ -19,36 +19,38 @@
 
         <!-- Searchbar -->
         <Search v-model="variables.searchString" />
-      </div>
+      </section>
 
       <!-- Title + Sort -->
-      <div class="flex w-full items-center justify-between">
+      <header class="flex w-full items-center justify-between">
         <!-- Title -->
         <h1 class="text-2xl">Materials</h1>
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_MATERIALS" />
-      </div>
+      </header>
     </div>
 
-    <!-- loading -->
+    <!-- Loading -->
     <template v-if="loading.data">
       <div
         class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
-        <div v-for="skeleton in skeletons">
-          <div class="flex animate-pulse items-center gap-6">
-            <div class="w-full h-48 bg-neutral-200 rounded-2xl"></div>
-          </div>
+        <div
+          v-for="skeleton in skeletons"
+          :key="skeleton"
+          class="flex animate-pulse items-center gap-6"
+        >
+          <div class="w-full h-48 bg-neutral-200 rounded-2xl"></div>
         </div>
       </div>
     </template>
 
-    <!-- materials -->
+    <!-- Materials -->
     <template v-else-if="materials && materials.length > 0">
       <div
         class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3 w-full"
       >
-        <!-- add material -->
+        <!-- Add material -->
         <button
           v-if="props.showAllOverview"
           @click="toggleModal(null, 'create')"
@@ -59,6 +61,7 @@
             <p class="text-lg">Add New Material</p>
           </div>
         </button>
+        <!-- Material cards -->
         <button
           v-for="material of materials"
           @click="toggleModal(material, 'detail')"
@@ -83,14 +86,18 @@
     </template>
 
     <!-- TODO: design better -->
-    <!-- no results found -->
+    <!-- No results found -->
     <template v-else-if="materials.length === 0">
-      <div class="flex flex-col items-center justify-center gap-5">
-        <img class="h-80 w-80" src="/assets/empty.svg" />
-        <h2 class="text-2xl">Ups!... no results found</h2>
-      </div>
+      <section class="flex flex-col items-center justify-center gap-5">
+        <img
+          class="h-80 w-80"
+          src="/assets/empty.svg"
+          alt="Empty results illustration"
+        />
+        <h2 class="text-2xl">Oops! No results found.</h2>
+      </section>
     </template>
-  </div>
+  </main>
 
   <!-- Create Modal -->
   <Dialog
@@ -130,7 +137,7 @@
       },
     }"
   >
-    <!-- show detail -->
+    <!-- Show detail or edit form -->
     <div v-if="!isEditing">
       <!-- edit -->
       <Pencil v-if="props.showAllOverview" @click="isEditing = true" />
@@ -143,9 +150,8 @@
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
     </div>
-
-    <!-- edit form -->
     <div v-if="isEditing">
+      <!-- Edit form -->
       <ArrowLeft @click="isEditing = false" />
       <DynamicForm
         :schema="formUpdateMaterial"
