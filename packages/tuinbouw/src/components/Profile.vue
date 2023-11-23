@@ -1111,7 +1111,6 @@ const handleCreateLocation = async () => {
     })
     loading.value.createLocation = false
     showToast('success', 'Success', `You have created a new location`)
-    closeModal()
     refetchUser()
   }
   loading.value.createLocation = false
@@ -1127,6 +1126,7 @@ const handleUpdateLocation = async () => {
     await updateLocation({
       updateLocationInput: {
         id: selectedLocation.value?.id,
+        title: selectedLocation.value?.title,
         address: valuesLocation.selectedAddress.address,
         lat: valuesLocation.selectedAddress.lat,
         lng: valuesLocation.selectedAddress.lng,
@@ -1134,10 +1134,10 @@ const handleUpdateLocation = async () => {
     })
     loading.value.updateLocation = false
     showToast('success', 'Success', `You have updated a location`)
-    closeModal()
     refetchUser()
   }
   loading.value.updateLocation = false
+  toggleLocationModal()
 }
 
 // delete location
@@ -1151,7 +1151,7 @@ const handleDeleteLocation = async (id: string) => {
 
 const toggleLocationModal = (
   location: Location | null = null,
-  type: string,
+  type: string = 'close',
 ) => {
   selectedLocation.value = location ? { ...location } : null
   console.log(type)
@@ -1219,14 +1219,6 @@ const toggleLocationModal = (
   // } else if (type === 'create') {
   //   visibleLocation.value.create = true
   // }
-}
-
-const closeModal = () => {
-  visibleLocation.value = {
-    detail: false,
-    edit: false,
-    create: false,
-  }
 }
 
 watchEffect(() => {
