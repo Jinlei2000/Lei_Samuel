@@ -80,31 +80,27 @@
             </div>
           </div>
         </div>
-        <!-- End filter dropdown -->
 
         <!-- Searchbar -->
         <Search v-model="variables.searchString" />
       </div>
 
       <!-- Title + Sort -->
-      <div class="flex items-center justify-between w-full">
+      <div class="flex w-full items-center justify-between">
         <!-- Title -->
         <h1 class="text-2xl">Materials</h1>
         <!-- Sort -->
-        <Sort
-          v-model="variables.order"
-          :options="SORT_OPTIONS_MATERIALS"
-        />
+        <Sort v-model="variables.order" :options="SORT_OPTIONS_MATERIALS" />
       </div>
     </div>
 
     <!-- loading -->
     <template v-if="loading.data">
       <div
-        class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3 w-full"
+        class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
         <div v-for="skeleton in skeletons">
-          <div class="animate-pulse flex items-center gap-6">
+          <div class="flex animate-pulse items-center gap-6">
             <div class="w-full h-48 bg-neutral-200 rounded-2xl"></div>
           </div>
         </div>
@@ -236,35 +232,32 @@
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import {
-  GET_MATERIALS,
-  GET_MATERIALS_BY_USERID,
-} from '@/graphql/material.query'
-import { ORDER_DIRECTION, SORT_OPTIONS_MATERIALS } from '@/helpers/constants'
-import type { Material } from '@/interfaces/material.interface'
-import type { VariablesProps } from '@/interfaces/variablesProps.interface'
-import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import { ArrowUpWideNarrow } from 'lucide-vue-next'
-import { ArrowDownWideNarrow } from 'lucide-vue-next'
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-import { materialValidationSchema } from '@/validation/schema'
-import { type GenericObject } from 'vee-validate'
-import { GET_USERS } from '@/graphql/user.query'
-import {
   CREATE_MATERIAL,
   DELETE_MATERIAL,
   UPDATE_MATERIAL,
 } from '@/graphql/material.mutation'
 import {
-  Pencil,
-  Trash2,
+  GET_MATERIALS,
+  GET_MATERIALS_BY_USERID,
+} from '@/graphql/material.query'
+import { GET_USERS } from '@/graphql/user.query'
+import { ORDER_DIRECTION, SORT_OPTIONS_MATERIALS } from '@/helpers/constants'
+import type { Material } from '@/interfaces/material.interface'
+import type { VariablesProps } from '@/interfaces/variablesProps.interface'
+import { materialValidationSchema } from '@/validation/schema'
+import { useLazyQuery, useMutation } from '@vue/apollo-composable'
+import {
   ArrowLeft,
-  ListFilter,
-  PlusCircle,
   Check,
   ChevronDown,
-  Wrench,
   Filter,
+  Pencil,
+  PlusCircle,
+  Trash2,
+  Wrench,
 } from 'lucide-vue-next'
+import { type GenericObject } from 'vee-validate'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import DynamicForm from './DynamicForm.vue'
 import Search from './Search.vue'
 import Sort from './Sort.vue'
@@ -286,9 +279,6 @@ const { customUser } = useCustomUser()
 const filter = ref(false)
 
 const availability = ref('all')
-
-// display sort dropdown
-const sort = ref(false)
 
 // skeletons
 const skeletons = ref<number[]>(new Array(24))
@@ -536,10 +526,12 @@ watchEffect(() => {
 
   // all errors
   const errors = [
-    materialsError.value,
-    materialsByUserIdError.value,
-    usersError.value,
     createMaterialError.value,
+    deleteMaterialError.value,
+    materialsByUserIdError.value,
+    materialsError.value,
+    updateMaterialError.value,
+    usersError.value,
   ]
   errors.forEach(error => {
     if (error) {
