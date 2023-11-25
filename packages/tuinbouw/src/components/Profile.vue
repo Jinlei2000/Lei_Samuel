@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col mt-12 gap-6 max-w-xl m-auto">
+  <div class="flex flex-col my-12 gap-6 max-w-xl m-auto">
     <!-- loading -->
     <div v-if="userLoading && !user">
       <p class="text-6xl font-black">Loading User...</p>
@@ -249,7 +249,7 @@
         >
           <div class="flex flex-col gap-2 w-1/2 pl-6 py-3">
             <!-- location or  nothing -->
-            <h3 class="text-lg">{{ location.title  }}</h3>
+            <h3 class="text-lg">{{ location.title }}</h3>
             <div>
               <p class="opacity-70">
                 {{ location.address.split(',')[0] }}
@@ -275,7 +275,7 @@
     <!-- delete account -->
     <button
       @click="handleDeleteUser()"
-      class="bg-primary-red text-white rounded-2xl h-16"
+      class="bg-primary-red text-white rounded-2xl py-3"
     >
       Delete Account
     </button>
@@ -1002,8 +1002,6 @@ const handleSearchAddress = async () => {
   }
   loading.value.searchAddress = false
 }
-
-console.log(user.value?.id)
 
 // add new location
 const handleCreateLocation = async () => {
