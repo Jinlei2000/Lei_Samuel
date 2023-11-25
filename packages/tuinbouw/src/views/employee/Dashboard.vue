@@ -1,9 +1,9 @@
 <template>
   <div
-    class="flex flex-col items-center justify-center max-w-7xl mx-auto mt-12"
+    class="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-center"
   >
-    <div class="grid grid-cols-4 w-full gap-3">
-      <div class="col-start-1 col-span-1">
+    <div class="grid w-full grid-cols-4 gap-3">
+      <div class="col-span-1 col-start-1">
         <h2 class="mb-3 text-2xl">Next Appointment</h2>
         <div class="flex flex-col">
           <AppointmentCard
@@ -11,62 +11,62 @@
             :appointment="nextAppointment"
           />
           <div
-            class="w-full h-32 bg-gray-200 rounded-2xl flex items-center justify-center"
             v-else
+            class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
           >
             <p class="text-gray-500">No appointments for today</p>
           </div>
         </div>
-        <div class="flex justify-between items-center mb-3 mt-6">
+        <div class="mb-3 mt-6 flex items-center justify-between">
           <h2 class="text-2xl">Schedule</h2>
           <RouterLink
             :to="`/employee/calendar`"
-            class="flex text-base text-primary-orange group"
+            class="text-primary-orange group flex text-base"
           >
             Calendar
             <ChevronRight
-              class="group-hover:translate-x-1 transition-all"
+              class="transition-all group-hover:translate-x-1"
               stroke-width="1"
             />
           </RouterLink>
         </div>
 
         <div
-          class="bg-gray-500 p-1 flex justify-between items-center rounded-2xl mb-3"
+          class="mb-3 flex items-center justify-between rounded-2xl bg-gray-500 p-1"
         >
           <button
-            class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+            class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowLeft @click="prevDay" class="text-white" />
+            <ArrowLeft class="text-white" @click="prevDay" />
           </button>
           <p class="">{{ dateDisplay }}</p>
           <button
-            class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+            class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowRight @click="nextDay" class="text-white" />
+            <ArrowRight class="text-white" @click="nextDay" />
           </button>
         </div>
         <div class="flex flex-col gap-3">
-          <template v-if="appointments" v-for="(item, index) in appointments">
+          <template v-for="(item, index) in appointments" v-if="appointments">
             <AppointmentCard
-              :key="index"
               v-if="item !== nextAppointment"
+              :key="index"
               :appointment="item"
             />
           </template>
           <template
-            v-if="finishedAppointments"
             v-for="(item, index) in finishedAppointments"
+            v-if="finishedAppointments"
           >
             <AppointmentCard
-              :key="index"
               v-if="item !== nextAppointment"
+              :key="index"
               :appointment="item"
             />
           </template>
           <div
-            class="w-full h-32 bg-gray-200 rounded-2xl flex items-center justify-center"
             v-else
+            class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
           >
             <p class="text-gray-500">No appointments for today</p>
           </div>
@@ -76,18 +76,18 @@
         <div class="mb-3">
           <h2 class="mb-3 text-2xl">Weather</h2>
           <div
-            class="bg-gray-200 rounded-2xl min-h-24 px-5 py-3 flex justify-center items-center"
+            class="min-h-24 flex items-center justify-center rounded-2xl bg-gray-200 px-5 py-3"
           >
-            <Loader2 v-if="!forecast" class="animate-spin text-primary-green" />
-            <div v-if="forecast" class="flex justify-between w-full h-full">
+            <Loader2 v-if="!forecast" class="text-primary-green animate-spin" />
+            <div v-if="forecast" class="flex h-full w-full justify-between">
               <div
                 v-for="(item, index) in forecast"
-                class="flex flex-col items-center"
                 :key="index"
+                class="flex flex-col items-center"
               >
                 <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
                 <img
-                  class="mix-blend-multiply w-20 h-20"
+                  class="h-20 w-20 mix-blend-multiply"
                   :src="getWeatherIconUrl(item.weather[0].icon)"
                   alt=""
                 />
@@ -115,8 +115,8 @@
           />
         </div>
         <div
-          class="w-full h-12 bg-gray-200 rounded-2xl flex items-center justify-center"
           v-else
+          class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
         >
           <p class="text-gray-500">No materials for today</p>
         </div>

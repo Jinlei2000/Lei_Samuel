@@ -1,5 +1,5 @@
 <template>
-  <Appointments :show-all-overview="true"/>
+  <Appointments :show-all-overview="true" />
 </template>
 
 <script setup lang="ts">

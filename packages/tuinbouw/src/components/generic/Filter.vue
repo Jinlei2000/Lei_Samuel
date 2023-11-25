@@ -2,7 +2,7 @@
   <!-- Filter button -->
   <div class="flex items-center gap-3">
     <button
-      class="group bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
+      class="border-1 group flex h-12 items-center gap-[6px] rounded-2xl border-black bg-transparent p-3 text-black"
       @click="toggleFilterDropdown"
     >
       <FilterIcon class="h-5 w-5" />
@@ -17,21 +17,21 @@
   </div>
   <!-- Filter dropdown -->
   <section
-    :class="[
-      'absolute flex flex-col gap-3 top-16 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12',
-      'transition-all duration-200',
-      isDropdownOpen ? 'opacity-100' : 'opacity-0 pointer-events-none ',
-    ]"
     v-show="isDropdownOpen"
+    :class="[
+      'border-1 absolute top-16 z-50 flex flex-col gap-3 rounded-2xl border-black bg-gray-200 px-12 py-6',
+      'transition-all duration-200',
+      isDropdownOpen ? 'opacity-100' : 'pointer-events-none opacity-0 ',
+    ]"
   >
     <div
-      class="flex flex-col gap-3"
       v-for="(option, index) in options"
       :key="index"
+      class="flex flex-col gap-3"
     >
       <!-- Title -->
       <button
-        class="text-left text-lg flex items-center justify-between gap-6"
+        class="flex items-center justify-between gap-6 text-left text-lg"
         @click="toggleAccordion(index)"
       >
         <p>{{ option.title }}</p>
@@ -43,30 +43,30 @@
         />
       </button>
       <!-- Options -->
-      <div class="flex flex-col gap-3" v-show="isAccordionsOpen[index - 1]">
+      <div v-show="isAccordionsOpen[index - 1]" class="flex flex-col gap-3">
         <div v-for="(inputOption, index) in option.options" :key="index">
-          <div class="flex gap-2 items-center relative">
+          <div class="relative flex items-center gap-2">
             <!-- Radio button -->
             <template v-if="option.type === 'radio'">
               <input
-                class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+                :id="inputOption.value"
+                v-model="filters[option.name]"
+                class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
                 type="radio"
                 :value="inputOption.value"
                 :name="option.name"
-                :id="inputOption.value"
-                v-model="filters[option.name]"
-                @change="updateFiltersRadio(inputOption.value, option.options)"
+                @change="updateFiltersRadio(option.options)"
               />
             </template>
             <!-- Checkbox -->
             <template v-else-if="option.type === 'checkbox'">
               <input
+                :id="inputOption.value"
+                v-model="filters[option.name]"
                 className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent checked:bg-primary-green checked:border-0"
                 type="checkbox"
                 :value="inputOption.value"
                 :name="option.name"
-                :id="inputOption.value"
-                v-model="filters[option.name]"
                 @change="updateFiltersCheckbox(option.name, option.options)"
               />
             </template>
@@ -133,23 +133,23 @@ onBeforeMount(() => {
   isAccordionsOpen.value = props.options!.map(() => false)
 })
 
-const updateFiltersRadio = (
-  value: string,
-  options: { label: string; value: string }[],
-) => {
+const updateFiltersRadio = (options: { label: string; value: string }[]) => {
   // clear all filters
   options.map(option => {
     const index = props.modelValue!.indexOf(option)
     props.modelValue!.splice(index, 1)
   })
 
-  // check if value is empty
-  if (value === '') {
-    return
-  }
+  // get all filters from filters object
+  let selectedFilters = Object.values(filters.value)
 
-  // add filter
-  props.modelValue!.push(value)
+  // remove empty strings
+  selectedFilters = selectedFilters.filter(filter => filter !== '')
+
+  // add filters
+  selectedFilters.forEach(filter => {
+    props.modelValue!.push(filter)
+  })
 }
 
 const updateFiltersCheckbox = (

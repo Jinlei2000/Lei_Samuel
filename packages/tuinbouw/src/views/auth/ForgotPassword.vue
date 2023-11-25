@@ -15,8 +15,8 @@
           }}</span>
           <DynamicForm
             :schema="formForgotPwd"
-            :validationSchema="forgotPasswordValidationSchema"
-            :handleForm="handleForgotPwd"
+            :validation-schema="forgotPasswordValidationSchema"
+            :handle-form="handleForgotPwd"
             :loading="loading"
           />
           <p class="text-sm font-light text-gray-500">

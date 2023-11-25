@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -37,7 +37,7 @@
         >
           Absent Count: {{ user.absentCount }}
         </p>
-        <p class="mt-2 text-sm font-medium text-gray-600" v-if="user.telephone">
+        <p v-if="user.telephone" class="mt-2 text-sm font-medium text-gray-600">
           Telephone: {{ user.telephone }}
         </p>
         <div v-if="user.role == Role.CLIENT && user.company">
@@ -78,20 +78,20 @@
                 <!-- Edit and Delete buttons -->
                 <div class="mt-2 flex">
                   <button
-                    @click="openModal(location, 'detail')"
                     class="mr-2 rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                    @click="openModal(location, 'detail')"
                   >
                     <Eye />
                   </button>
                   <button
-                    @click="openModal(location, 'edit')"
                     class="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                    @click="openModal(location, 'edit')"
                   >
                     <Pencil />
                   </button>
                   <button
-                    @click="handleDeleteLocation(location.id)"
                     class="rounded-md bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                    @click="handleDeleteLocation(location.id)"
                   >
                     <Trash2 />
                   </button>
@@ -119,8 +119,8 @@
 
     <DynamicForm
       :schema="formUpdateUser"
-      :validationSchema="userUpdateValidationSchema"
-      :handleForm="handleUpdateUser"
+      :validation-schema="userUpdateValidationSchema"
+      :handle-form="handleUpdateUser"
       :loading="loading.updateUser"
       :initial-values="{
         firstname: user!.firstname,
@@ -176,19 +176,19 @@
   >
     <form @submit.prevent="handleUpdateLocation">
       <InputField
+        v-model="searchAdressInput"
         name="Address"
         type="text"
         placeholder="Search Address"
-        :errorMessage="errorMessages.searchAdressInput"
-        v-model="searchAdressInput"
+        :error-message="errorMessages.searchAdressInput"
       />
 
       <!-- show search results -->
       <div v-if="searchAddressResults">
         <div
-          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
           v-for="coordinate in searchAddressResults"
           :key="coordinate.address"
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
         >
           <div class="flex flex-col">
             <!-- Add a radio button input -->
@@ -225,7 +225,7 @@
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              class="w-8 h-8 mx-auto text-gray-400"
+              class="mx-auto h-8 w-8 text-gray-400"
             >
               <path
                 stroke-linecap="round"
@@ -235,7 +235,7 @@
               />
             </svg>
           </p>
-          <p class="text-gray-600 text-center">No results</p>
+          <p class="text-center text-gray-600">No results</p>
         </div>
       </div>
 
@@ -272,16 +272,16 @@
         name="Address"
         type="text"
         placeholder="Search Address"
-        :errorMessage="errorMessages.searchAdressInput"
+        :error-message="errorMessages.searchAdressInput"
         v-bind="searchAdressInput"
       />
 
       <!-- show search results -->
       <div v-if="searchAddressResults">
         <div
-          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
           v-for="coordinate in searchAddressResults"
           :key="coordinate.address"
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
         >
           <div class="flex flex-col">
             <!-- Add a radio button input -->
@@ -315,7 +315,7 @@
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              class="w-8 h-8 mx-auto text-gray-400"
+              class="mx-auto h-8 w-8 text-gray-400"
             >
               <path
                 stroke-linecap="round"
@@ -325,7 +325,7 @@
               />
             </svg>
           </p>
-          <p class="text-gray-600 text-center">No results</p>
+          <p class="text-center text-gray-600">No results</p>
         </div>
       </div>
 

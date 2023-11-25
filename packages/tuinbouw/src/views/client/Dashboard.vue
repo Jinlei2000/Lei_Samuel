@@ -9,6 +9,7 @@
     <div class="flex gap-2">
       <Router-link
         v-for="b in ['add-appointment', 'appointments']"
+        :key="b"
         class="focus:shadow-outline-red mt-4 rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
         :to="`/client/${b}`"
         >{{ b }}</Router-link
@@ -17,10 +18,4 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  setup() {
-    return {}
-  },
-}
-</script>
+<script setup lang="ts"></script>

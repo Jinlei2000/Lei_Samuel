@@ -23,11 +23,11 @@
 
       <label class="block" for="language">Select Language</label>
       <select
+        id="language"
+        v-model="locale"
         class="mb-3 block"
         name="language"
-        id="language"
         @change="setLanguage"
-        v-model="locale"
       >
         <option
           v-for="(value, key) in SUPPORTED_LOCALES"
@@ -42,6 +42,7 @@
       <!-- make a list of buttons go to the right page -->
       <Router-link
         v-for="b in listButtons"
+        :key="b"
         class="focus:shadow-outline-red mt-4 rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
         :to="`/admin/${b.toLowerCase()}`"
         >{{ b }}</Router-link

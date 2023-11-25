@@ -1,0 +1,49 @@
+{
+  "root": true,
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "plugins": ["@typescript-eslint", "prettier", "simple-import-sort"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:vue/vue3-recommended",
+    "prettier" // always at the last
+  ],
+  "rules": {
+    "vue/no-reserved-component-names": "off", // component name error
+    "vue/multi-word-component-names": "off", // component name error
+    "vue/no-use-v-if-with-v-for": "off", // v-if v-for error
+    "vue/no-template-shadow": "off", // template shadow error
+    "vue/require-default-prop": "off", // default prop error
+    "no-unused-vars": "off", // unused vars error
+    "no-var": "error", // no var error
+
+    // prettier
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto",
+        "plugins": ["prettier-plugin-tailwindcss"]
+      }
+    ],
+
+    // import sort
+    "simple-import-sort/imports": [
+      // "warn",
+      "off",
+      {
+        // No grouping, only alphabetical sorting
+        "groups": []
+      }
+    ]
+  },
+  "ignorePatterns": ["node_modules", "dist", "*.d.ts", "env.d.ts", ".*"]
+}

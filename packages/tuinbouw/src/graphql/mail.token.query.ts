@@ -11,7 +11,3 @@ export const GET_MAILTOKEN_BY_TOKEN = gql`
     }
   }
 `
-
-
-
-

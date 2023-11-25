@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="mt-20 flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -11,7 +11,7 @@
   </h1>
 
   <!-- reset all values back -->
-  <CustomButton @click="reset()" type="button" name="Reset" />
+  <CustomButton type="button" name="Reset" @click="reset()" />
 
   <!-- loading -->
   <div
@@ -33,7 +33,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <small id="text-error" class="p-error block">{{
         errorMessages.finalDate || '&nbsp;'
       }}</small>
 
@@ -53,10 +53,10 @@
         <Calendar
           id="finalDate"
           inline
-          :manualInput="false"
+          :manual-input="false"
           v-bind="finalDate"
-          :minDate="minDate"
-          dateFormat="yy-mm-dd"
+          :min-date="minDate"
+          date-format="yy-mm-dd"
           @date-select="checkAvailability()"
         >
         </Calendar>
@@ -70,7 +70,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <small id="text-error" class="p-error block">{{
         errorMessages.appointmentsIds || '&nbsp;'
       }}</small>
 
@@ -84,8 +84,8 @@
       <div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div
-            v-if="selectedAppointmentsEdit.length > 0"
             v-for="a of selectedAppointmentsEdit"
+            v-if="selectedAppointmentsEdit.length > 0"
             :key="a.id"
           >
             <div
@@ -101,13 +101,13 @@
                 <input
                   type="checkbox"
                   class="mr-2"
-                  @click="addSelectedAppointment(a)"
                   :checked="isItemSelected(a.id!, appointmentsIds.modelValue)"
+                  @click="addSelectedAppointment(a)"
                 />
                 <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
                 <p class="mb-1 text-gray-600">{{ a.description }}</p>
                 <p class="mb-1 text-gray-600">{{ a.id }}</p>
-                <p class="text-gray-600" v-if="a.finalDate">
+                <p v-if="a.finalDate" class="text-gray-600">
                   {{ formatDateTime(a.finalDate.toString()) }}
                 </p>
               </div>
@@ -142,11 +142,11 @@
       <div>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div
+            v-for="a of appointments.appointmentsAvailableByDate"
             v-if="
               appointments &&
               appointments.appointmentsAvailableByDate.length > 0
             "
-            v-for="a of appointments.appointmentsAvailableByDate"
             :key="a.id"
           >
             <div
@@ -162,13 +162,13 @@
                 <input
                   type="checkbox"
                   class="mr-2"
-                  @click="addSelectedAppointment(a)"
                   :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
+                  @click="addSelectedAppointment(a)"
                 />
                 <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
                 <p class="mb-1 text-gray-600">{{ a.description }}</p>
                 <p class="mb-1 text-gray-600">{{ a.id }}</p>
-                <p class="text-gray-600" v-if="a.finalDate">
+                <p v-if="a.finalDate" class="text-gray-600">
                   {{ formatDateTime(a.finalDate) }}
                 </p>
               </div>
@@ -223,7 +223,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <small id="text-error" class="p-error block">{{
         errorMessages.prices || '&nbsp;'
       }}</small>
 
@@ -240,8 +240,8 @@
                 >Price</label
               >
               <InputNumber
-                v-model="a.price"
                 id="price"
+                v-model="a.price"
                 name="price"
                 mode="currency"
                 currency="EUR"
@@ -252,7 +252,7 @@
               <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
               <p class="mb-1 text-gray-600">{{ a.description }}</p>
               <p class="mb-1 text-gray-600">{{ a.id }}</p>
-              <p class="text-gray-600" v-if="a.finalDate">
+              <p v-if="a.finalDate" class="text-gray-600">
                 {{ formatDateTime(a.finalDate.toString()) }}
               </p>
             </div>
@@ -289,7 +289,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <small class="p-error block" id="text-error">{{
+      <small id="text-error" class="p-error block">{{
         errorMessages.employeesIds || '&nbsp;'
       }}</small>
 
@@ -316,8 +316,8 @@
             <input
               type="checkbox"
               class="mr-2"
-              @click="addSelectedEmployee(user)"
               :checked="isItemSelected(user.id, employeesIds.modelValue)"
+              @click="addSelectedEmployee(user)"
             />
             <div class="p-6">
               <h2 class="mb-2 text-2xl font-semibold">
@@ -351,8 +351,8 @@
             <input
               type="checkbox"
               class="mr-2"
-              @click="addSelectedEmployee(user)"
               :checked="isItemSelected(user.id, employeesIds.modelValue)"
+              @click="addSelectedEmployee(user)"
             />
             <div class="p-6">
               <h2 class="mb-2 text-2xl font-semibold">
@@ -384,10 +384,10 @@
         class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
         <div
-          v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
           v-for="material of selectedMaterialsEdit"
-          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+          v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
           :key="material.id"
+          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
           :class="
             isItemSelected(material.id, materialsIds.modelValue)
               ? 'border-2 border-green-500'
@@ -398,8 +398,8 @@
           <input
             type="checkbox"
             class="mr-2"
-            @click="addSelectedMaterial(material)"
             :checked="isItemSelected(material.id, materialsIds.modelValue)"
+            @click="addSelectedMaterial(material)"
           />
           <img
             class="w-full rounded-2xl rounded-b-3xl"
@@ -421,10 +421,10 @@
         class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
         <div
-          v-if="materials && materials.materials.length > 0"
           v-for="material of materials.materials"
-          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+          v-if="materials && materials.materials.length > 0"
           :key="material.id"
+          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
           :class="
             isItemSelected(material.id, materialsIds.modelValue)
               ? 'border-2 border-green-500'
@@ -435,8 +435,8 @@
           <input
             type="checkbox"
             class="mr-2"
-            @click="addSelectedMaterial(material)"
             :checked="isItemSelected(material.id, materialsIds.modelValue)"
+            @click="addSelectedMaterial(material)"
           />
           <img
             class="w-full rounded-2xl rounded-b-3xl"
@@ -473,8 +473,8 @@
       <div>
         <h1>Appointments</h1>
         <div
-          v-if="selectedAppointments.length > 0"
           v-for="a of selectedAppointments"
+          v-if="selectedAppointments.length > 0"
           :key="a.id"
         >
           {{ a.id }}
@@ -485,8 +485,8 @@
       <div>
         <h1>Employees</h1>
         <div
-          v-if="selectedEmployees.length > 0"
           v-for="user of selectedEmployees"
+          v-if="selectedEmployees.length > 0"
           :key="user.id"
         >
           {{ user.id }}
@@ -497,8 +497,8 @@
       <div>
         <h1>Materials</h1>
         <div
-          v-if="selectedMaterials.length > 0"
           v-for="material of selectedMaterials"
+          v-if="selectedMaterials.length > 0"
           :key="material.id"
         >
           {{ material.id }}

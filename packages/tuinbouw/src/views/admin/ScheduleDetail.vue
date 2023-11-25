@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="mt-20 flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>

@@ -1,16 +1,16 @@
 <template>
   <div
-    class="w-full p-1 pl-4 bg-gray-200 rounded-2xl flex justify-between items-center"
+    class="flex w-full items-center justify-between rounded-2xl bg-gray-200 p-1 pl-4"
     @click="toggleChecked"
   >
     <p class="text-lg">{{ material?.name }}</p>
     <div
-      class="bg-white rounded-xl h-9 w-9 hover:cursor-pointer"
       v-if="!checked"
+      class="h-9 w-9 rounded-xl bg-white hover:cursor-pointer"
     />
     <div
-      class="bg-primary-green flex items-center justify-center rounded-xl h-9 w-9 hover:cursor-pointer text-white"
       v-if="checked"
+      class="bg-primary-green flex h-9 w-9 items-center justify-center rounded-xl text-white hover:cursor-pointer"
     >
       <Check :size="24" />
     </div>

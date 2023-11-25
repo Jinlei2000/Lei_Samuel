@@ -31,6 +31,9 @@ Short description of the project.
 
 - [Lerna](https://lerna.js.org/) for monorepo management
 
+- [Prettier](https://prettier.io/) for code formatting
+- [ESLint](https://eslint.org/) for code linting
+
 ## Environment variables
 
 documentatie over de environment variables

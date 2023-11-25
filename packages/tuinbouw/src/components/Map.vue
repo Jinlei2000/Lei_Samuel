@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full" id="map" ref="mapRef"></div>
+  <div id="map" ref="mapRef" class="h-full w-full"></div>
 </template>
 
 <script setup lang="ts">

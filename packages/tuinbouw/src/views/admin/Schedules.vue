@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -72,8 +72,8 @@
 
           <!-- Edit Button -->
           <Router-link
-            :to="`/admin/schedules/${schedule.id}/edit`"
             v-if="isNotInPastOrToday(schedule.finalDate)"
+            :to="`/admin/schedules/${schedule.id}/edit`"
           >
             <button class="text-blue-500">
               <Pencil />
@@ -83,8 +83,8 @@
           <!-- Delete Button -->
           <button
             v-if="isNotInPastOrToday(schedule.finalDate)"
-            @click="handleDeleteSchedule(schedule)"
             class="text-red-500"
+            @click="handleDeleteSchedule(schedule)"
           >
             <Trash2 />
           </button>

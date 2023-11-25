@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -61,21 +61,21 @@
         >
           <!-- View More Button -->
           <button
-            @click="toggleModal(a, 'detail')"
             class="text-green-500 hover:underline"
+            @click="toggleModal(a, 'detail')"
           >
             <Eye />
           </button>
           <!-- Edit Button -->
           <button
             v-if="a.user.id === customUser?.id"
-            @click="toggleModal(a, 'edit')"
             class="text-blue-500 hover:underline"
+            @click="toggleModal(a, 'edit')"
           >
             <Pencil />
           </button>
           <!-- Delete Button -->
-          <button @click="handleDelete(a)" class="text-red-500 hover:underline">
+          <button class="text-red-500 hover:underline" @click="handleDelete(a)">
             <Trash2 />
           </button>
         </div>
@@ -127,8 +127,8 @@
   >
     <DynamicForm
       :schema="formAbsence"
-      :validationSchema="absenceValidationSchema"
-      :handleForm="handleUpdateAbsence"
+      :validation-schema="absenceValidationSchema"
+      :handle-form="handleUpdateAbsence"
       :loading="loading.update"
       :initial-values="{
         type: selectedAbsence!.type,
@@ -154,8 +154,8 @@
   >
     <DynamicForm
       :schema="formAbsence"
-      :validationSchema="absenceValidationSchema"
-      :handleForm="handleCreateAbsence"
+      :validation-schema="absenceValidationSchema"
+      :handle-form="handleCreateAbsence"
       :loading="loading.create"
     />
   </Dialog>

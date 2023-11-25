@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="mt-20 flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="mt-20 flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -17,7 +17,7 @@
     <div class="flex items-center gap-3">
       <button
         class="border-1 group flex h-12 items-center gap-[6px] rounded-2xl border-black bg-transparent p-3 text-black"
-        v-on:click="filter = !filter"
+        @click="filter = !filter"
       >
         <Filter class="h-5 w-5" />
         <p class="m-0 text-lg">Filter</p>
@@ -42,11 +42,11 @@
           <div class="flex flex-col gap-3">
             <div class="flex gap-2">
               <input
-                type="checkbox"
                 id="maintenance"
+                type="checkbox"
                 name="maintenance"
-                @change="updateFilters('M')"
                 className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                @change="updateFilters('M')"
               />
               <div
                 class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -59,11 +59,11 @@
           <div class="flex flex-col gap-3">
             <div class="flex gap-2">
               <input
-                type="checkbox"
                 id="repair"
+                type="checkbox"
                 name="repair"
-                @change="updateFilters('R')"
                 className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
+                @change="updateFilters('R')"
               />
               <div
                 class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -81,13 +81,13 @@
           <div class="flex flex-col gap-3">
             <div class="relative flex items-center gap-2">
               <input
+                id="all"
                 class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
                 type="radio"
-                id="all"
                 name="status"
                 value="all"
-                @change="updateFiltersRadio(['D', 'ND'], true)"
                 checked
+                @change="updateFiltersRadio(['D', 'ND'], true)"
               />
               <div
                 class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -100,9 +100,9 @@
           <div class="flex flex-col gap-3">
             <div class="relative flex items-center gap-2">
               <input
+                id="done"
                 class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
                 type="radio"
-                id="done"
                 name="status"
                 value="done"
                 @change="updateFiltersRadio(['D'])"
@@ -118,9 +118,9 @@
           <div class="flex flex-col gap-3">
             <div class="relative flex items-center gap-2">
               <input
+                id="not-done"
                 class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
                 type="radio"
-                id="not-done"
                 name="status"
                 value="not-done"
                 @change="updateFiltersRadio(['ND'])"
@@ -162,7 +162,7 @@
             <p class="mb-1 text-gray-600">{{ a.description }}</p>
             <p class="mb-1 text-gray-600">{{ a.location.address }}</p>
             <p class="mb-1 text-gray-600">{{ a.id }}</p>
-            <p class="text-gray-600" v-if="a.finalDate">
+            <p v-if="a.finalDate" class="text-gray-600">
               {{ formatDateTime(a.finalDate) }}
             </p>
           </div>
@@ -191,8 +191,8 @@
           >
             <!-- View More Button -->
             <button
-              @click="toggleModal(a, 'detail')"
               class="text-green-500 hover:underline"
+              @click="toggleModal(a, 'detail')"
             >
               <Eye />
             </button>
@@ -203,16 +203,16 @@
                 (!showAllOverview && !a.isDone && isOverToday(a)) ||
                 (!showAllOverview && !a.isDone && !a.isScheduled)
               "
-              @click.stop="toggleModal(a, 'edit')"
               class="text-blue-500 hover:underline"
+              @click.stop="toggleModal(a, 'edit')"
             >
               <Pencil />
             </button>
             <!-- Delete button (only if not done) -->
             <button
               v-if="!a.isDone"
-              @click.stop="handleDeleteAppointment(a.id)"
               class="text-red-500 hover:underline"
+              @click.stop="handleDeleteAppointment(a.id)"
             >
               <Trash2 />
             </button>
@@ -265,8 +265,8 @@
   >
     <DynamicForm
       :schema="formAppointment"
-      :validationSchema="appointmentUpdateValidationSchema"
-      :handleForm="handleUpdateAppointment"
+      :validation-schema="appointmentUpdateValidationSchema"
+      :handle-form="handleUpdateAppointment"
       :loading="loading.update"
       :initial-values="{
         locationId: selectedAppointment!.location!.id,

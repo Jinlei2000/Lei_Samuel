@@ -4,13 +4,13 @@
     v-if="
       !['date', 'select', 'password', 'switch'].includes(field.type) && show
     "
-    class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
+    :id="field.name"
+    class="hover:border-primary-green-400 focus:ring-primary-green-400/40 focus:ring-3 block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none transition-colors duration-200"
     :class="{
       'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
         error,
     }"
     :as="field.as"
-    :id="field.name"
     :name="field.name"
     v-bind="field"
   >
@@ -19,18 +19,17 @@
   <!-- dropdown -->
   <Field
     v-if="field.type === 'select' && show"
-    :name="field.name"
     v-slot="{ field: fieldProps, handleChange }"
+    :name="field.name"
   >
     <Dropdown
       :id="field.name"
+      v-model="fieldProps.value"
       :placeholder="field.placeholder"
       :options="field.options"
-      :optionLabel="field.optionLabel ?? 'name'"
-      :optionValue="field.optionValue ?? 'name'"
-      v-model="fieldProps.value"
+      :option-label="field.optionLabel ?? 'name'"
+      :option-value="field.optionValue ?? 'name'"
       :editable="field.editable ?? false"
-      @change="handleChange($event.value, false)"
       :pt="{
         input: {
           class: [
@@ -44,6 +43,7 @@
         },
       }"
       v-bind="field"
+      @change="handleChange($event.value, false)"
     >
       <template #dropdownicon>
         <ChevronDownIcon />
@@ -54,15 +54,16 @@
   <!-- date -->
   <Field
     v-if="field.type === 'date' && show"
-    :name="field.name"
     v-slot="{ field: fieldProps, handleChange }"
+    :name="field.name"
   >
     <Calendar
       :id="field.name"
-      :manualInput="false"
-      :minDate="field.setMinEndDate ? minEndDate : field.minDate"
-      showIcon
-      dateFormat="yy-mm-dd"
+      v-model="fieldProps.value"
+      :manual-input="false"
+      :min-date="field.setMinEndDate ? minEndDate : field.minDate"
+      show-icon
+      date-format="yy-mm-dd"
       :placeholder="field.placeholder"
       :pt="{
         root: {
@@ -79,7 +80,7 @@
           ],
         },
       }"
-      v-model="fieldProps.value"
+      v-bind="field"
       @date-select="
         $event => {
           // Set minEndDate to the selected date if setMinEndDate is true
@@ -91,7 +92,6 @@
           handleChange($event, false)
         }
       "
-      v-bind="field"
     >
       <template #dropdownicon>
         <CalendarIcon class="h-5 w-5" />
@@ -102,13 +102,13 @@
   <!-- password with toggle -->
   <div v-if="field.type === 'password'" class="relative">
     <Field
-      class="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg transition-colors duration-200 appearance-none hover:border-primary-green-400 block w-full p-2.5 focus:ring-primary-green-400/40 focus:ring-3"
+      :id="field.name"
+      class="hover:border-primary-green-400 focus:ring-primary-green-400/40 focus:ring-3 block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 outline-none transition-colors duration-200"
       :class="{
         'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
           error,
       }"
       :as="field.as"
-      :id="field.name"
       :name="field.name"
       :type="passwordVisible ? 'text' : 'password'"
       :placeholder="field.placeholder"
@@ -119,20 +119,24 @@
       class="absolute inset-y-0 right-0 flex items-center px-3"
       @click="passwordVisible = !passwordVisible"
     >
-      <Eye class="stroke-gray-900" v-if="!passwordVisible" />
-      <EyeOff class="stroke-gray-900" v-else />
+      <Eye v-if="!passwordVisible" class="stroke-gray-900" />
+      <EyeOff v-else class="stroke-gray-900" />
     </button>
   </div>
 
   <!-- switch -->
   <Field
     v-if="field.type === 'switch'"
-    :name="field.name"
     v-slot="{ field: fieldProps, handleChange }"
+    :name="field.name"
   >
     <InputSwitch
       :id="field.name"
       v-model="fieldProps.value"
+      :class="{
+        'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
+          error,
+      }"
       @input="
         $event => {
           // Set switchValue to the selected value
@@ -140,10 +144,6 @@
           handleChange($event, false)
         }
       "
-      :class="{
-        'border-primary-red border-1 hover:border-primary-red focus:ring-primary-red/40':
-          error,
-      }"
     />
   </Field>
 </template>

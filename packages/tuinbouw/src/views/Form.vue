@@ -1,13 +1,12 @@
 <!-- TODO: delete this example code -->
-
 <template>
   <div class="mt-10">
     <DynamicForm
       :schema="formSchema"
-      :validationSchema="validationSchema"
-      :handleForm="handleSubmit"
+      :validation-schema="validationSchema"
+      :handle-form="handleSubmit"
       :loading="false"
-      :initialValues="{}"
+      :initial-values="{}"
     />
   </div>
 </template>
