@@ -9,7 +9,9 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "run:pwa": "npm run build && npm serve dist",
-    "generate:translations": "npx tsx ./src/utils/sheet.ts"
+    "generate:translations": "npx tsx ./src/utils/sheet.ts",
+    "lint": "npx eslint . --ext .ts,.vue",
+    "lint:fix": "npx eslint . --ext .ts,.vue --fix"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
