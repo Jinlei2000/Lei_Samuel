@@ -51,7 +51,7 @@
             :loading="
               sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
             "
-            ownClass="block w-full"
+            class="block w-full"
           />
           <!-- Add other user information as needed -->
         </div>
@@ -117,7 +117,7 @@
         name="Upgrade to Admin"
         @click="handleUpgradeToAdmin(selectedUser)"
         :loading="upgradeToAdminLoading"
-        ownClass="block w-full"
+        class="block w-full"
       />
     </div>
   </Dialog>

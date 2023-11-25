@@ -80,7 +80,7 @@ import { ChevronDown } from 'lucide-vue-next'
 import { Check } from 'lucide-vue-next'
 import { ListFilter } from 'lucide-vue-next'
 import { ArrowDownWideNarrow } from 'lucide-vue-next'
-import { ref, type PropType, computed, toRefs } from 'vue'
+import { ref, type PropType, computed } from 'vue'
 
 // props
 const props = defineProps({

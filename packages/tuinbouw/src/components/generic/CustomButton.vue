@@ -4,6 +4,7 @@
     class="bg-primary-green mt-4 rounded-md px-4 py-2 text-white"
     :class="[ownClass, loading ? 'cursor-not-allowed opacity-50' : '']"
     :disabled="loading"
+    v-bind="$attrs"
   >
     <span v-if="!loading">{{ name }}</span>
     <span v-else class="flex py-1">

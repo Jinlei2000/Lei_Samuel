@@ -111,7 +111,7 @@
       :id="field.name"
       :name="field.name"
       :type="passwordVisible ? 'text' : 'password'"
-      v-bind="field"
+      :placeholder="field.placeholder"
     >
     </Field>
     <button
