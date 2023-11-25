@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-3 relative">
+  <div class="relative flex items-center gap-3">
     <!-- Display selected field label and sorting icons -->
     <div class="flex flex-row-reverse items-center justify-center gap-1">
       <p>
@@ -8,23 +8,23 @@
       <div>
         <ArrowDownWideNarrow
           v-if="isDescending"
-          @click="toggleSortDirection"
           class="h-6 w-6"
+          @click="toggleSortDirection"
         />
         <ArrowUpWideNarrow
           v-else-if="isAscending"
-          @click="toggleSortDirection"
           class="h-6 w-6"
+          @click="toggleSortDirection"
         />
       </div>
     </div>
     <!-- Sort button -->
     <div class="flex items-center gap-3">
       <button
-        class="bg-transparent p-3 h-12 rounded-2xl flex items-center gap-[6px] border-black border-1 text-black"
+        class="border-1 flex h-12 items-center gap-[6px] rounded-2xl border-black bg-transparent p-3 text-black"
         @click="toggleSortDropdown"
       >
-        <ListFilter class="h-5 w-5 m-1" />
+        <ListFilter class="m-1 h-5 w-5" />
         <p class="m-0 text-lg">Sort</p>
         <ChevronDown
           :class="[
@@ -36,28 +36,28 @@
     </div>
     <!-- Sort dropdown -->
     <div
-      :class="[
-        'absolute flex gap-12 top-16 right-0 z-50 bg-gray-200 rounded-2xl border-1 border-black py-6 px-12',
-        'transition-all duration-200',
-        sort ? 'opacity-100' : 'opacity-0 pointer-events-none ',
-      ]"
       v-show="sort"
+      :class="[
+        'border-1 absolute right-0 top-16 z-50 flex gap-12 rounded-2xl border-black bg-gray-200 px-12 py-6',
+        'transition-all duration-200',
+        sort ? 'opacity-100' : 'pointer-events-none opacity-0 ',
+      ]"
     >
       <div class="flex flex-col gap-3">
         <ul class="flex flex-col gap-3">
           <li
-            class="flex gap-2 items-center"
             v-for="(option, index) in options"
             :key="index"
+            class="flex items-center gap-2"
           >
             <input
-              class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green hover:before:opacity-10"
+              :id="option.value"
+              class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
               type="radio"
               name="sort"
               :modelValue="modelValue!.field"
               :checked="modelValue!.field === option.value"
               :value="option.value"
-              :id="option.value"
               @change="updateSortField(option.value)"
             />
             <div

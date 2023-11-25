@@ -1,13 +1,13 @@
 <template>
-  <div class="flex items-center justify-center gap-3 relative w-1/3">
+  <div class="relative flex w-1/3 items-center justify-center gap-3">
     <button
-      class="bg-transparent p-2 rounded-full hover:scale-110 transition-all absolute left-2"
+      class="absolute left-2 rounded-full bg-transparent p-2 transition-all hover:scale-110"
     >
       <Search class="h-[22px] w-[22px]" />
     </button>
     <input
       :value="modelValue"
-      class="bg-gray-200 rounded-full h-12 py-3 pl-11 w-full text-lg"
+      class="h-12 w-full rounded-full bg-gray-200 py-3 pl-11 text-lg"
       type="text"
       placeholder="Search for materials"
       @input="

@@ -1,16 +1,16 @@
 <template>
-  <div class="flex flex-col mt-12 gap-3 max-w-7xl m-auto">
+  <div class="m-auto mt-12 flex max-w-7xl flex-col gap-3">
     <!-- Week selection -->
-    <div class="w-full md:grid grid-cols-3 gap-3 md:gap-0 flex flex-col">
+    <div class="flex w-full grid-cols-3 flex-col gap-3 md:grid md:gap-0">
       <h1 class="col-start-1 text-2xl">Calendar</h1>
       <div class="flex gap-3">
         <div
-          class="w-full col-start-2 row-start-2 md:row-start-1 justify-self-center bg-gray-500 p-1 flex justify-between items-center rounded-2xl"
+          class="col-start-2 row-start-2 flex w-full items-center justify-between justify-self-center rounded-2xl bg-gray-500 p-1 md:row-start-1"
         >
           <button
-            class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+            class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowLeft @click="getPreviousWeekBounds" class="text-white" />
+            <ArrowLeft class="text-white" @click="getPreviousWeekBounds" />
           </button>
           <div v-if="firstDay && lastDay" class="flex gap-4">
             <p>
@@ -22,13 +22,13 @@
             </p>
           </div>
           <button
-            class="bg-primary-orange p-1 rounded-xl hover:scale-110 transition-all"
+            class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowRight @click="getNextWeekBounds" class="text-white" />
+            <ArrowRight class="text-white" @click="getNextWeekBounds" />
           </button>
         </div>
         <button
-          class="border-primary-green border rounded-2xl text-primary-green w-fit px-[18px] hover:scale-105 transition-all flex items-center justify-center gap-3"
+          class="border-primary-green text-primary-green flex w-fit items-center justify-center gap-3 rounded-2xl border px-[18px] transition-all hover:scale-105"
           @click="getWeekBounds"
         >
           Today
@@ -38,15 +38,15 @@
 
     <!-- Calendar for the selected week -->
 
-    <div class="w-full flex flex-col md:grid grid-cols-5 gap-3">
+    <div class="flex w-full grid-cols-5 flex-col gap-3 md:grid">
       <div
-        v-if="firstDay"
         v-for="index in 5"
+        v-if="firstDay"
         :key="index"
         class="flex flex-col gap-3"
       >
         <div
-          class="bg-gray-500 p-2 flex justify-center items-center rounded-2xl relative"
+          class="relative flex items-center justify-center rounded-2xl bg-gray-500 p-2"
           @click="toggleAccordion(index)"
         >
           <p class="text-lg">
@@ -57,7 +57,7 @@
             }}
           </p>
           <div
-            class="sm:hidden absolute right-1 bg-primary-green text-white flex justify-center items-center h-9 w-9 rounded-xl"
+            class="bg-primary-green absolute right-1 flex h-9 w-9 items-center justify-center rounded-xl text-white sm:hidden"
           >
             {{ getAppointmentAmountForDay(getDateWithOffset(index)) }}
           </div>
@@ -72,13 +72,13 @@
         >
           <div
             v-for="n in Math.floor(Math.random() * 3) + 1"
-            class="h-32 w-full bg-gray-200 rounded-2xl flex flex-col gap-2 p-3 animate-pulse"
+            class="flex h-32 w-full animate-pulse flex-col gap-2 rounded-2xl bg-gray-200 p-3"
           >
-            <div class="h-4 w-full bg-gray-500 rounded-full"></div>
-            <div class="h-16 w-full rounded-2xl flex flex-col gap-2">
-              <div class="h-3 w-2/3 bg-gray-400 rounded-full"></div>
-              <div class="h-3 w-1/2 bg-gray-400 rounded-full"></div>
-              <div class="h-3 w-3/4 bg-gray-400 rounded-full"></div>
+            <div class="h-4 w-full rounded-full bg-gray-500"></div>
+            <div class="flex h-16 w-full flex-col gap-2 rounded-2xl">
+              <div class="h-3 w-2/3 rounded-full bg-gray-400"></div>
+              <div class="h-3 w-1/2 rounded-full bg-gray-400"></div>
+              <div class="h-3 w-3/4 rounded-full bg-gray-400"></div>
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@
         >
           <div
             v-if="!schedulesLoading"
-            class="w-full h-20 bg-gray-200 p-3 rounded-2xl flex justify-center items-center"
+            class="flex h-20 w-full items-center justify-center rounded-2xl bg-gray-200 p-3"
           >
             <p>No Appointments this day</p>
           </div>
@@ -123,7 +123,7 @@
       </div>
       <div
         v-if="!schedulesLoading && weekSchedules && weekSchedules.length < 1"
-        class="w-full col-span-5 h-36 bg-gray-200 rounded-2xl flex justify-center items-center"
+        class="col-span-5 flex h-36 w-full items-center justify-center rounded-2xl bg-gray-200"
       >
         <p>No Appointments this week</p>
       </div>

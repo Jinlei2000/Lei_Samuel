@@ -1,16 +1,16 @@
 <template>
   <Form
-    @submit="handleForm($event)"
     v-slot="{ errors, setValues }"
     :validation-schema="validationSchema"
     :initial-values="initialValues"
     novalidate
+    @submit="handleForm($event)"
   >
     <ul class="space-y-4">
       <li v-for="(field, index) in schema.fields" :key="index">
         <label
           v-if="shouldDisplay(field.displayIf, switchValue, reverseSwitch)"
-          class="block mb-2 text-sm font-medium text-gray-900"
+          class="mb-2 block text-sm font-medium text-gray-900"
           :for="field.name"
           >{{ field.label }}</label
         >
@@ -18,14 +18,14 @@
         <DynamicField
           :field="field"
           :error="errors[field.name]"
-          :minEndDate="minEndDate"
-          :handleSetMinEndDate="
+          :min-end-date="minEndDate"
+          :handle-set-min-end-date="
             (value: Date, link: string) => {
               minEndDate = value
               setValues({ [link]: value })
             }
           "
-          :handleSetSwitchValue="
+          :handle-set-switch-value="
             (value: Object) => {
               switchValue = { ...value }
             }
@@ -33,12 +33,12 @@
           :show="shouldDisplay(field.displayIf, switchValue, reverseSwitch)"
         />
 
-        <ErrorMessage class="text-red-500 block text-sm" :name="field.name" />
+        <ErrorMessage class="block text-sm text-red-500" :name="field.name" />
       </li>
     </ul>
 
     <CustomButton
-      class="flex ml-auto"
+      class="ml-auto flex"
       :class="schema.button.class"
       :loading="loading"
       type="submit"

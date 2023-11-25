@@ -70,11 +70,11 @@
             class="border-black py-2 pl-12"
           >
             <select
+              id="language"
+              v-model="locale"
               class="block bg-transparent hover:cursor-pointer"
               name="language"
-              id="language"
               @change="setLanguage"
-              v-model="locale"
             >
               <option
                 v-for="(value, key) in SUPPORTED_LOCALES"
@@ -88,7 +88,7 @@
           </li>
         </ul>
         <div v-if="checkPath()" class="relative flex w-1/6 justify-end">
-          <div @click="showProfileDropdown()" class="hover:cursor-pointer">
+          <div class="hover:cursor-pointer" @click="showProfileDropdown()">
             <img
               class="h-12 w-12 rounded-full"
               src="https://i.pravatar.cc/300"
@@ -120,8 +120,8 @@
                 </button>
               </Router-link>
               <button
-                @click="handleLogout()"
                 class="hover:text-primary-green flex gap-3"
+                @click="handleLogout()"
               >
                 <LogOut /> Logout
               </button>
@@ -130,8 +130,8 @@
         </div>
 
         <RouterLink
-          to="auth/login"
           v-if="$route.path === '/'"
+          to="auth/login"
           class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >Login<LogIn
         /></RouterLink>

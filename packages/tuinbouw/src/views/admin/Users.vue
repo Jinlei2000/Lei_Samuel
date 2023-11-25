@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -47,11 +47,11 @@
           <CustomButton
             v-if="user.uid === null"
             name="Send email to create account"
-            @click="handleSendMailToEmployee(user)"
             :loading="
               sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
             "
             class="block w-full"
+            @click="handleSendMailToEmployee(user)"
           />
           <!-- Add other user information as needed -->
         </div>
@@ -60,24 +60,24 @@
         >
           <!-- View More Button -->
           <button
-            @click="toggleModal(user, 'detail')"
             class="text-green-500 hover:underline"
+            @click="toggleModal(user, 'detail')"
           >
             <Eye />
           </button>
           <!-- Edit Button -->
           <button
             v-if="user.role === 'EMPLOYEE'"
-            @click="toggleModal(user, 'edit')"
             class="text-blue-500 hover:underline"
+            @click="toggleModal(user, 'edit')"
           >
             <Pencil />
           </button>
           <!-- Delete Button -->
           <button
             v-if="user.role === 'EMPLOYEE'"
-            @click="handleDelete(user)"
             class="text-red-500 hover:underline"
+            @click="handleDelete(user)"
           >
             <Trash2 />
           </button>
@@ -115,9 +115,9 @@
       <CustomButton
         v-if="selectedUser.role === 'EMPLOYEE'"
         name="Upgrade to Admin"
-        @click="handleUpgradeToAdmin(selectedUser)"
         :loading="upgradeToAdminLoading"
         class="block w-full"
+        @click="handleUpgradeToAdmin(selectedUser)"
       />
     </div>
   </Dialog>
@@ -137,8 +137,8 @@
   >
     <DynamicForm
       :schema="formUpdateEmployee"
-      :validationSchema="userUpdateAdminValidationSchema"
-      :handleForm="handleUpdateEmployee"
+      :validation-schema="userUpdateAdminValidationSchema"
+      :handle-form="handleUpdateEmployee"
       :loading="loading.updateEmployee"
       :initial-values="{
         firstname: selectedUser?.firstname,
@@ -164,8 +164,8 @@
   >
     <DynamicForm
       :schema="formCreateEmployee"
-      :validationSchema="userCreateEmployeeValidationSchema"
-      :handleForm="handleCreateEmployee"
+      :validation-schema="userCreateEmployeeValidationSchema"
+      :handle-form="handleCreateEmployee"
       :loading="loading.createEmployee"
     />
   </Dialog>

@@ -23,11 +23,11 @@
 
       <label class="block" for="language">Select Language</label>
       <select
+        id="language"
+        v-model="locale"
         class="mb-3 block"
         name="language"
-        id="language"
         @change="setLanguage"
-        v-model="locale"
       >
         <option
           v-for="(value, key) in SUPPORTED_LOCALES"

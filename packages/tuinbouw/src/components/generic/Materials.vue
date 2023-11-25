@@ -1,12 +1,12 @@
 <template>
   <main
-    class="flex flex-col items-center justify-center mt-12 gap-5 max-w-7xl m-auto"
+    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
-    <div class="w-full flex flex-col gap-10">
+    <div class="flex w-full flex-col gap-10">
       <!-- Filters + Searchbar -->
       <section
         :class="[
-          'flex items-center w-full relative',
+          'relative flex w-full items-center',
           props.showAllOverview ? 'justify-between' : 'justify-end',
         ]"
       >
@@ -40,7 +40,7 @@
           :key="skeleton"
           class="flex animate-pulse items-center gap-6"
         >
-          <div class="w-full h-48 bg-neutral-200 rounded-2xl"></div>
+          <div class="h-48 w-full rounded-2xl bg-neutral-200"></div>
         </div>
       </div>
     </template>
@@ -48,15 +48,15 @@
     <!-- Materials -->
     <template v-else-if="materials && materials.length > 0">
       <div
-        class="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-rows-auto gap-3 w-full"
+        class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
         <!-- Add material -->
         <button
           v-if="props.showAllOverview"
+          class="border-primary-green col-span-1 flex h-48 w-full items-center justify-center rounded-2xl border transition-all hover:scale-105 hover:cursor-pointer"
           @click="toggleModal(null, 'create')"
-          class="flex items-center justify-center border border-primary-green rounded-2xl w-full h-48 col-span-1 hover:scale-105 hover:cursor-pointer transition-all"
         >
-          <div class="flex items-center gap-3 text-primary-green">
+          <div class="text-primary-green flex items-center gap-3">
             <PlusCircle class="h-6 w-6" />
             <p class="text-lg">Add New Material</p>
           </div>
@@ -64,21 +64,21 @@
         <!-- Material cards -->
         <button
           v-for="material of materials"
+          class="col-span-1 flex h-48 w-full flex-col items-center rounded-2xl rounded-b-3xl bg-gray-400 transition-all hover:scale-105 hover:cursor-pointer"
           @click="toggleModal(material, 'detail')"
-          class="flex flex-col items-center rounded-2xl rounded-b-3xl w-full h-48 bg-gray-400 col-span-1 hover:scale-105 hover:cursor-pointer transition-all"
         >
-          <div class="flex w-full h-full items-center justify-center">
-            <Wrench class="stroke-gray-800 h-10 w-10" />
+          <div class="flex h-full w-full items-center justify-center">
+            <Wrench class="h-10 w-10 stroke-gray-800" />
           </div>
           <div
-            class="text-left bg-gray-200 rounded-2xl rounded-t-none w-full px-4 py-2"
+            class="w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2 text-left"
           >
             <h2 class="truncate text-lg">{{ material.name }}</h2>
             <div v-if="showAllOverview">
               <p v-if="material.user?.id" class="text-primary-orange m-0">
                 Not available
               </p>
-              <p v-else class="text-base text-primary-green">Available</p>
+              <p v-else class="text-primary-green text-base">Available</p>
             </div>
           </div>
         </button>
@@ -114,8 +114,8 @@
   >
     <DynamicForm
       :schema="formCreateMaterial"
-      :validationSchema="materialValidationSchema"
-      :handleForm="handleCreateMaterial"
+      :validation-schema="materialValidationSchema"
+      :handle-form="handleCreateMaterial"
       :loading="loading.create"
       :initial-values="{
         isLoan: false,
@@ -144,8 +144,8 @@
       <!-- delete -->
       <Trash2
         v-if="props.showAllOverview"
+        class="stroke-primary-red transition-all hover:cursor-pointer"
         @click="handleDeleteMaterial(selectedMaterial!)"
-        class="stroke-primary-red hover:cursor-pointer transition-all"
       />
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
@@ -155,8 +155,8 @@
       <ArrowLeft @click="isEditing = false" />
       <DynamicForm
         :schema="formUpdateMaterial"
-        :validationSchema="materialValidationSchema"
-        :handleForm="handleUpdatematerial"
+        :validation-schema="materialValidationSchema"
+        :handle-form="handleUpdatematerial"
         :loading="loading.update"
         :initial-values="{
           name: selectedMaterial?.name,

@@ -2,7 +2,7 @@
   <div class="m-auto max-w-7xl">
     <div class="mb-3 mt-12 flex items-center gap-4">
       <!-- go back button -->
-      <button @click="$router.go(-1)" v-bind="$attrs">
+      <button v-bind="$attrs" @click="$router.go(-1)">
         <ArrowLeft class="h-6 w-6" />
       </button>
       <h1 class="text-2xl">Nieuwe afspraak maken</h1>
@@ -11,8 +11,8 @@
       <div class="flex w-1/3 flex-col gap-12">
         <div class="flex w-full flex-col gap-3 rounded-2xl bg-gray-200 p-3">
           <div
-            v-if="allLocations && allLocations.locationsByUserId"
             v-for="location of allLocations.locationsByUserId"
+            v-if="allLocations && allLocations.locationsByUserId"
             class="hover:bg-primary-green hover:outline-primary-green relative flex w-full items-center rounded p-3 hover:cursor-pointer hover:bg-opacity-10 hover:outline"
             :class="{
               'bg-primary-green outline-primary-green bg-opacity-10 outline':
@@ -40,10 +40,10 @@
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Type afspraak</label>
           <select
+            id=""
             v-model="appointmentType"
             class="w-fit rounded bg-gray-400 p-3"
             name=""
-            id=""
           >
             <option value="" disabled selected>Selecteer een type</option>
             <option value="Maintenance">Onderhoud</option>
@@ -54,10 +54,10 @@
         <div class="flex flex-col gap-3">
           <label for="" class="text-xl">Omschrijving</label>
           <textarea
+            id=""
             v-model="description"
             class="rounded bg-gray-400 p-3"
             name=""
-            id=""
             rows="5"
           ></textarea>
         </div>
@@ -72,13 +72,13 @@
             <!-- TODO: fix styling -->
             <Calendar
               v-model="startProposedDate"
-              showIcon
+              show-icon
               :pt="{
                 root: { class: 'w-1/3' },
                 input: { class: 'h-fit p-3 bg-gray-400' },
               }"
-              :minDate="minDate"
-              dateFormat="yy-mm-dd"
+              :min-date="minDate"
+              date-format="yy-mm-dd"
             >
               <template #dropdownicon>
                 <CalendarIcon class="h-5 w-5" />
@@ -87,13 +87,13 @@
             <img src="/assets/doubleArrow.svg" />
             <Calendar
               v-model="endProposedDate"
-              showIcon
+              show-icon
               :pt="{
                 root: { class: 'w-1/3' },
                 input: { class: 'h-fit p-3 bg-gray-400' },
               }"
-              :minDate="startProposedDate"
-              dateFormat="yy-mm-dd"
+              :min-date="startProposedDate"
+              date-format="yy-mm-dd"
             >
               <template #dropdownicon>
                 <CalendarIcon class="h-5 w-5" />
@@ -103,8 +103,8 @@
         </div>
         <div class="flex justify-end">
           <button
-            @click="handleFormSubmit"
             class="bg-primary-green hover:outline-primary-green hover:text-primary-green relative rounded px-4 py-2 text-white transition-all hover:cursor-pointer hover:bg-transparent hover:outline"
+            @click="handleFormSubmit"
           >
             <div :class="submitting ? 'invisible' : ''">Afspraak maken</div>
             <div

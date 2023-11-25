@@ -9,7 +9,7 @@ export const DELETE_MATERIAL = gql`
 export const UPDATE_MATERIAL = gql`
   mutation updateMaterial($updateMaterialInput: UpdateMaterialInput!) {
     updateMaterial(updateMaterialInput: $updateMaterialInput) {
-       id
+      id
       name
       isLoan
       user {

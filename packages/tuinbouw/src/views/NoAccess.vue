@@ -1,10 +1,10 @@
 <!-- TODO: make better design -->
 <template>
   <div
-    class="flex flex-col items-center justify-center w-screen h-screen gap-12 py-8"
+    class="flex h-screen w-screen flex-col items-center justify-center gap-12 py-8"
   >
     <svg
-      class="h-[50vh] aspect-video"
+      class="aspect-video h-[50vh]"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 500 500"
     >
@@ -783,8 +783,8 @@
       </g>
     </svg>
     <div class="flex flex-col items-center gap-4">
-      <h1 class="text-3xl font-medium text-center">You are not authorized</h1>
-      <p class="text-xl text-center">
+      <h1 class="text-center text-3xl font-medium">You are not authorized</h1>
+      <p class="text-center text-xl">
         You tried to access a page you did not have prior authorization for.
       </p>
       <router-link to="/auth/login" class="text-blue-500 underline"

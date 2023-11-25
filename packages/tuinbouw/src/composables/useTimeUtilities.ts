@@ -4,9 +4,9 @@ export default () => {
   // format date to yyyy-mm-dd
   const formatDateTime = (date: string) => {
     const d = new Date(date)
-    var DD = String(d.getDate()).padStart(2, '0')
-    var MM = String(d.getMonth() + 1).padStart(2, '0') //January is 0!
-    var YYYY = d.getFullYear()
+    let DD = String(d.getDate()).padStart(2, '0')
+    let MM = String(d.getMonth() + 1).padStart(2, '0') //January is 0!
+    let YYYY = d.getFullYear()
     return `${YYYY}-${MM}-${DD}`
   }
 

@@ -15,8 +15,8 @@
           }}</span>
           <DynamicForm
             :schema="formRegister"
-            :validationSchema="registerValidationSchema"
-            :handleForm="handleRegister"
+            :validation-schema="registerValidationSchema"
+            :handle-form="handleRegister"
             :loading="loading"
           />
           <p class="text-sm font-light text-gray-500">

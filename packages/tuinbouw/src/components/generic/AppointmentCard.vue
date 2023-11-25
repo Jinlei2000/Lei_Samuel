@@ -1,9 +1,9 @@
 <template>
   <div
     v-if="appointment"
-    @click="openModal()"
     class="relative max-h-32 w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
     :class="appointment.isDone ? 'opacity-50' : ''"
+    @click="openModal()"
   >
     <div
       class="absolute left-0 top-0 h-full w-1"
@@ -11,10 +11,10 @@
         appointment?.type === 'maintenance'
           ? 'bg-primary-green'
           : appointment?.type === 'repair'
-          ? 'bg-primary-orange'
-          : appointment?.type === 'inspection'
-          ? 'bg-primary-blue'
-          : 'bg-transparent'
+            ? 'bg-primary-orange'
+            : appointment?.type === 'inspection'
+              ? 'bg-primary-blue'
+              : 'bg-transparent'
       "
     ></div>
     <h2 class="mb-1 text-xl">{{ appointment.user?.fullname }}</h2>
@@ -24,16 +24,16 @@
       </p>
       <button
         v-if="nav"
-        @click="navigateToLocation(appointment.location!)"
-        v-on:click.stop
         class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        @click="navigateToLocation(appointment.location!)"
+        @click.stop
       >
         Navigate <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
       </button>
     </div>
     <button
-      @click="openModal()"
       class="absolute right-3 top-3 transition-all hover:scale-105"
+      @click="openModal()"
     >
       <Info class="h-[24px] w-[24px]" />
     </button>
@@ -41,10 +41,10 @@
 
   <!-- Appointment Detail Modal -->
   <Dialog
+    v-if="appointment"
     v-model:visible="showModal"
     modal
     :header="appointment.user!.fullname"
-    v-if="appointment"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -59,10 +59,10 @@
         appointment.type === 'maintenance'
           ? 'bg-primary-green'
           : appointment.type === 'repair'
-          ? 'bg-primary-orange'
-          : appointment.type === 'inspection'
-          ? 'bg-primary-blue'
-          : 'bg-transparent'
+            ? 'bg-primary-orange'
+            : appointment.type === 'inspection'
+              ? 'bg-primary-blue'
+              : 'bg-transparent'
       "
     ></div>
     <div class="flex flex-col gap-3">
@@ -75,8 +75,8 @@
           appointment.type == 'maintenance'
             ? 'text-primary-green'
             : appointment.type == 'repair'
-            ? 'text-primary-orange'
-            : ''
+              ? 'text-primary-orange'
+              : ''
         "
       >
         {{ appointment.type }}
@@ -97,17 +97,17 @@
         </p>
       </div>
     </div>
-    <div class="flex gap-3 justify-between w-full">
+    <div class="flex w-full justify-between gap-3">
       <button
+        class="flex h-fit items-center gap-2 rounded-[4px] bg-transparent px-3 py-[6px] outline outline-[1px] hover:bg-black hover:text-gray-200"
         @click="closeModal()"
-        class="bg-transparent outline outline-[1px] flex h-fit items-center gap-2 rounded-[4px] py-[6px] px-3 hover:bg-black hover:text-gray-200"
       >
         Cancel
       </button>
       <button
-        @click="handleAppointmentUpdate()"
         class="bg-primary-green flex h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
         :class="appointmentIsDone ? 'bg-primary-orange' : 'bg-primary-green'"
+        @click="handleAppointmentUpdate()"
       >
         {{ appointmentIsDone ? 'Unfinish' : 'Finish'
         }}<XCircle

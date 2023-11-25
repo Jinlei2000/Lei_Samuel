@@ -13,8 +13,8 @@
           <span v-if="errorLogin" class="text-red-600">{{ errorLogin }}</span>
           <DynamicForm
             :schema="formLogin"
-            :validationSchema="loginValidationSchema"
-            :handleForm="handleLogin"
+            :validation-schema="loginValidationSchema"
+            :handle-form="handleLogin"
             :loading="loading"
           />
           <div>

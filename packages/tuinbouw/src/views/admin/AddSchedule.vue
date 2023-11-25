@@ -1,6 +1,6 @@
 <template>
   <!-- go back button -->
-  <button class="flex" @click="$router.go(-1)" v-bind="$attrs">
+  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
     <ArrowLeft class="h-6 w-6" />
     Go back
   </button>
@@ -18,7 +18,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <span class="text-red-500 block" id="text-error">{{
+      <span id="text-error" class="block text-red-500">{{
         errorMessages.finalDate || '&nbsp;'
       }}</span>
 
@@ -37,9 +37,9 @@
           id="finalDate"
           inline
           v-bind="finalDate"
-          :manualInput="false"
-          :minDate="minDate"
-          dateFormat="yy-mm-dd"
+          :manual-input="false"
+          :min-date="minDate"
+          date-format="yy-mm-dd"
           @date-select="checkAvailability()"
         >
         </Calendar>
@@ -53,7 +53,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <span class="text-red-500 block" id="text-error">{{
+      <span id="text-error" class="block text-red-500">{{
         errorMessages.appointmentsIds || '&nbsp;'
       }}</span>
 
@@ -79,13 +79,13 @@
                 <input
                   type="checkbox"
                   class="mr-2"
-                  @click="addSelectedAppointment(a)"
                   :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
+                  @click="addSelectedAppointment(a)"
                 />
                 <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
                 <p class="mb-1 text-gray-600">{{ a.description }}</p>
                 <p class="mb-1 text-gray-600">{{ a.id }}</p>
-                <p class="text-gray-600" v-if="a.finalDate">
+                <p v-if="a.finalDate" class="text-gray-600">
                   {{ formatDateTime(a.finalDate) }}
                 </p>
               </div>
@@ -147,7 +147,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <span class="text-red-500 block" id="text-error">{{
+      <span id="text-error" class="block text-red-500">{{
         errorMessages.prices || '&nbsp;'
       }}</span>
 
@@ -164,8 +164,8 @@
                 >Price</label
               >
               <InputNumber
-                v-model="a.price"
                 id="price"
+                v-model="a.price"
                 name="price"
                 mode="currency"
                 currency="EUR"
@@ -176,7 +176,7 @@
               <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
               <p class="mb-1 text-gray-600">{{ a.description }}</p>
               <p class="mb-1 text-gray-600">{{ a.id }}</p>
-              <p class="text-gray-600" v-if="a.finalDate">
+              <p v-if="a.finalDate" class="text-gray-600">
                 {{ formatDateTime(a.finalDate.toString()) }}
               </p>
             </div>
@@ -213,7 +213,7 @@
       <CustomButton name="Next" type="button" @click="handleNext()" />
 
       <!-- validation -->
-      <span class="text-red-500 block" id="text-error">{{
+      <span id="text-error" class="block text-red-500">{{
         errorMessages.employeesIds || '&nbsp;'
       }}</span>
 
@@ -239,8 +239,8 @@
             <input
               type="checkbox"
               class="mr-2"
-              @click="addSelectedEmployee(user)"
               :checked="isItemSelected(user.id, employeesIds.modelValue)"
+              @click="addSelectedEmployee(user)"
             />
             <div class="p-6">
               <h2 class="mb-2 text-2xl font-semibold">
@@ -286,8 +286,8 @@
       >
         <div
           v-for="material of materials"
-          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
           :key="material.id"
+          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
           :class="
             isItemSelected(material.id, materialsIds.modelValue)
               ? 'border-2 border-green-500'
@@ -298,8 +298,8 @@
           <input
             type="checkbox"
             class="mr-2"
-            @click="addSelectedMaterial(material)"
             :checked="isItemSelected(material.id, materialsIds.modelValue)"
+            @click="addSelectedMaterial(material)"
           />
           <img
             class="w-full rounded-2xl rounded-b-3xl"
@@ -349,8 +349,8 @@
       <div>
         <h1>Appointments</h1>
         <div
-          v-if="selectedAppointments.length > 0"
           v-for="a of selectedAppointments"
+          v-if="selectedAppointments.length > 0"
           :key="a.id"
         >
           {{ a.id }}
@@ -361,8 +361,8 @@
       <div>
         <h1>Employees</h1>
         <div
-          v-if="selectedEmployees.length > 0"
           v-for="user of selectedEmployees"
+          v-if="selectedEmployees.length > 0"
           :key="user.id"
         >
           {{ user.id }}
@@ -373,8 +373,8 @@
       <div>
         <h1>Materials</h1>
         <div
-          v-if="selectedMaterials.length > 0"
           v-for="material of selectedMaterials"
+          v-if="selectedMaterials.length > 0"
           :key="material.id"
         >
           {{ material.id }}
