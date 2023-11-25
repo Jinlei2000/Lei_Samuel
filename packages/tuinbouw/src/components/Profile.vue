@@ -304,7 +304,6 @@
         <h2 class="text-xl font-semibold">
           {{ selectedLocation.title }}
         </h2>
-        <p>{{ user!.locations[0].id == selectedLocation.id }}</p>
         <div>
           <p class="opacity-70">
             {{ selectedLocation.address.split(',')[0] }}
@@ -346,19 +345,28 @@
       v-if="locationModalVisible.edit"
       @submit.prevent="handleUpdateLocation"
     >
-      <InputField
-        name="Title"
-        type="text"
-        placeholder="Title"
-        v-bind="locationTitle"
-      />
-      <InputField
-        name="Address"
-        type="text"
-        placeholder="Search Address"
-        :errorMessage="errorMessages.searchAdressInput"
-        v-bind="searchAdressInput"
-      />
+      <div class="flex flex-col gap-3">
+        <InputField
+          name="Title"
+          type="text"
+          :placeholder="selectedLocation?.title"
+          v-bind="locationTitle"
+        />
+        <div class="flex items-end justify-between w-full gap-3">
+          <InputField
+            name="Address"
+            type="text"
+            placeholder="Search Address"
+            :errorMessage="errorMessages.searchAdressInput"
+            v-bind="searchAdressInput"
+          />
+          <CustomButton
+            name="Search"
+            :loading="loading.searchAddress"
+            @click="handleSearchAddress()"
+          />
+        </div>
+      </div>
 
       <!-- show search results -->
       <div v-if="searchAddressResults">
@@ -367,25 +375,16 @@
           v-for="coordinate in searchAddressResults"
           :key="coordinate.address"
         >
-          <div class="flex flex-col">
+          <div class="flex items-center">
             <!-- Add a radio button input -->
             <input
               type="radio"
               name="selectedAddress"
               v-bind="selectedAddress"
-              class="mr-2"
+              class="mr-3"
               :value="coordinate"
             />
-            <h2 class="mb-2 text-xl font-semibold">{{ coordinate.address }}</h2>
-
-            <div class="flex justify-between">
-              <p class="text-gray-600">
-                Latitude: <span>{{ coordinate.lat }}</span>
-              </p>
-              <p class="text-gray-600">
-                Longitude: <span>{{ coordinate.lng }}</span>
-              </p>
-            </div>
+            <h2 class="text-lg">{{ coordinate.address }}</h2>
           </div>
         </div>
       </div>
@@ -395,7 +394,7 @@
 
       <!-- show no results -->
       <div v-if="searchAddressResults?.length === 0 || !searchAddressResults">
-        <div class="mt-4">
+        <div class="my-4">
           <p class="text-gray-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -415,21 +414,19 @@
           <p class="text-gray-600 text-center">No results</p>
         </div>
       </div>
-
-      <CustomButton
-        class="block"
-        name="Search Address"
-        :loading="loading.searchAddress"
-        @click="handleSearchAddress()"
-      />
-
-      <CustomButton
-        type="submit"
-        name="Update Location"
-        :loading="loading.updateLocation"
-      />
-
-      <CustomButton name="Cancel" @click="cancelLocationEdit()" />
+      <div class="flex justify-between">
+        <CustomButton
+          name="Cancel"
+          variant="secondary"
+          @click="cancelLocationEdit()"
+        />
+        <CustomButton
+          type="submit"
+          variant="primary"
+          name="Update Location"
+          :loading="loading.updateLocation"
+        />
+      </div>
     </form>
   </Dialog>
 
