@@ -449,7 +449,7 @@
           name="Title"
           type="text"
           placeholder="Office"
-          :errorMessage="errorMessages.locationTitle"
+          :errorMessage="errorMessages.title"
           v-bind="locationTitle"
         />
         <div class="flex items-end justify-between w-full gap-3">
@@ -1022,6 +1022,7 @@ const handleSearchAddress = async () => {
 const handleCreateLocation = async () => {
   loading.value.createLocation = true
   await validateLocation()
+  console.log(errorsLocation.value)
   errorMessages.value = errorsLocation.value
   if (Object.keys(errorsLocation.value).length === 0) {
     console.log('no errors', valuesLocation)
