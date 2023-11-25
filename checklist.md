@@ -33,13 +33,13 @@
 
 ## Framework
 
-- [ ] Een geschikte projectstructuur is gekozen.
+- [x] Een geschikte projectstructuur is gekozen.
 - [x] Een seeder maakt de database automatisch aan bij het opstarten van de applicatie.
 
 ## Foutcontrole
 
-- [ ] Het crashen van de applicatie wordt voorkomen door het gebruik van een try/catch-structuur met gedetailleerde logging.
-- [ ] Foutboodschappen worden altijd in JSON-formaat naar de frontend gestuurd.
+- [x] Het crashen van de applicatie wordt voorkomen door het gebruik van een try/catch-structuur met gedetailleerde logging.
+- [x] Foutboodschappen worden altijd in JSON-formaat naar de frontend gestuurd.
 
 ## Source Controle
 
