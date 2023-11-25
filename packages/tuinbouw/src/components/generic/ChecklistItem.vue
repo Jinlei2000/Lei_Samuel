@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type PropType, watch } from 'vue'
+import type { Material } from '@/interfaces/material.interface'
 import { Check } from 'lucide-vue-next'
-import type { Material } from '@/interfaces/material.interface';
+import { ref, watch, type PropType } from 'vue'
 
 const checked = ref(false)
 
@@ -28,10 +28,13 @@ const props = defineProps({
   material: Object as PropType<Material>,
 })
 
-watch(() => props.material, (newProp, oldProp) => {
-      // Reset the ref state when props change
-      checked.value = false;
-    });
+watch(
+  () => props.material,
+  (newProp, oldProp) => {
+    // Reset the ref state when props change
+    checked.value = false
+  },
+)
 
 const toggleChecked = () => {
   checked.value = !checked.value

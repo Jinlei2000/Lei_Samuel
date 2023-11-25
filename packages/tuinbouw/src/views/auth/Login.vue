@@ -44,14 +44,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import useFirebase from '@/composables/useFirebase'
-import router from '@/router'
-import useCustomUser from '@/composables/useCustomUser'
-import { type GenericObject } from 'vee-validate'
-import useLanguage from '@/composables/useLanguage'
-import { loginValidationSchema } from '@/validation/schema'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
+import useCustomUser from '@/composables/useCustomUser'
+import useFirebase from '@/composables/useFirebase'
+import useLanguage from '@/composables/useLanguage'
+import router from '@/router'
+import { loginValidationSchema } from '@/validation/schema'
+import { type GenericObject } from 'vee-validate'
+import { ref } from 'vue'
 
 // composables
 const { login } = useFirebase()
