@@ -72,6 +72,7 @@
         >
           <div
             v-for="n in Math.floor(Math.random() * 3) + 1"
+            :key="n"
             class="flex h-32 w-full animate-pulse flex-col gap-2 rounded-2xl bg-gray-200 p-3"
           >
             <div class="h-4 w-full rounded-full bg-gray-500"></div>
@@ -98,9 +99,12 @@
               "
               class="flex flex-col gap-3"
             >
-              <template v-for="(item, index) in schedule.appointments">
-                <AppointmentCard :appointment="item" :nav="false" />
-              </template>
+              <AppointmentCard
+                v-for="(item, index) in schedule.appointments"
+                :key="index"
+                :appointment="item"
+                :nav="false"
+              />
             </div>
           </div>
         </div>

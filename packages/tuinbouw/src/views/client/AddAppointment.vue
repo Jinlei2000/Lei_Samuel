@@ -13,6 +13,7 @@
           <div
             v-for="location of allLocations.locationsByUserId"
             v-if="allLocations && allLocations.locationsByUserId"
+            :key="location.id"
             class="hover:bg-primary-green hover:outline-primary-green relative flex w-full items-center rounded p-3 hover:cursor-pointer hover:bg-opacity-10 hover:outline"
             :class="{
               'bg-primary-green outline-primary-green bg-opacity-10 outline':

@@ -64,6 +64,7 @@
         <!-- Material cards -->
         <button
           v-for="material of materials"
+          :key="material.id"
           class="col-span-1 flex h-48 w-full flex-col items-center rounded-2xl rounded-b-3xl bg-gray-400 transition-all hover:scale-105 hover:cursor-pointer"
           @click="toggleModal(material, 'detail')"
         >

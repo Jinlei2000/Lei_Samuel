@@ -351,7 +351,6 @@ export default {
       class: [
         'overflow-y-auto',
         'bg-white text-black px-6 pb-8 pt-0',
-        ,
         {
           grow: state.maximized,
         },
