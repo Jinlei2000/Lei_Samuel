@@ -46,7 +46,6 @@ onMounted(() => {
   }
 
   // Add controls
-  console.log(props.controls)
   if (props.controls) {
     map.addControl(new tt.FullscreenControl())
     map.addControl(new tt.GeolocateControl())
