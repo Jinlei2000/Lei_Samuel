@@ -248,7 +248,8 @@
           class="flex justify-between items-center text-left overflow-hidden rounded-2xl bg-gray-200"
         >
           <div class="flex flex-col gap-2 w-1/2 pl-6 py-3">
-            <h3 class="text-lg">{{ location.title }}</h3>
+            <!-- location or  nothing -->
+            <h3 class="text-lg">{{ location.title  }}</h3>
             <div>
               <p class="opacity-70">
                 {{ location.address.split(',')[0] }}
@@ -429,6 +430,14 @@
     }"
   >
     <form @submit.prevent="handleCreateLocation">
+      <InputField
+        name="Title"
+        type="text"
+        placeholder="Title"
+        :errorMessage="errorMessages.title"
+        v-bind="locationTitle"
+      />
+
       <InputField
         name="Address"
         type="text"
@@ -882,6 +891,7 @@ const formUpdateUser = {
 const errorMessages = ref<{
   [key: string]: string | undefined
 }>({
+  locationTitle: '',
   searchAdressInput: '',
   selectedAddress: '',
 })
@@ -898,6 +908,7 @@ const {
   validationSchema: locationValidationSchema,
 })
 
+const locationTitle = defineComponentBindsLocation('locationTitle')
 const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
 const selectedAddress = defineInputBindsLocation('selectedAddress')
 
@@ -992,6 +1003,8 @@ const handleSearchAddress = async () => {
   loading.value.searchAddress = false
 }
 
+console.log(user.value?.id)
+
 // add new location
 const handleCreateLocation = async () => {
   loading.value.createLocation = true
@@ -1001,6 +1014,7 @@ const handleCreateLocation = async () => {
     console.log('no errors', valuesLocation)
     await createLocation({
       createLocationInput: {
+        title: valuesLocation.locationTitle,
         address: valuesLocation.selectedAddress.address,
         lat: valuesLocation.selectedAddress.lat,
         lng: valuesLocation.selectedAddress.lng,
