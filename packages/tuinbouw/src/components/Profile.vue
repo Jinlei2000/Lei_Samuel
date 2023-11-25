@@ -40,7 +40,9 @@
         </li>
         <li class="flex justify-between items-center pt-6">
           <p class="text-lg">Address</p>
-          <p>{{ user.locations[0].address || 'unknown' }}</p>
+          <p>
+            {{ user.locations[0].address || 'unknown' }}
+          </p>
         </li>
       </ul>
     </div>
@@ -302,6 +304,7 @@
         <h2 class="text-xl font-semibold">
           {{ selectedLocation.title }}
         </h2>
+        <p>{{ user!.locations[0].id == selectedLocation.id }}</p>
         <div>
           <p class="opacity-70">
             {{ selectedLocation.address.split(',')[0] }}
@@ -314,16 +317,24 @@
         <Map :locations="[selectedLocation]" />
       </div>
 
-      <div class="flex justify-between">
+      <div
+        class="flex"
+        :class="
+          user!.locations[0].id == selectedLocation.id
+            ? 'justify-end'
+            : 'justify-between'
+        "
+      >
         <button
           @click="handleDeleteLocation(selectedLocation.id)"
           class="rounded-[4px] bg-primary-red px-3 py-1 text-white"
+          v-if="user!.locations[0].id != selectedLocation.id"
         >
           Delete
         </button>
         <button
           @click="toggleLocationModal(selectedLocation, 'edit')"
-          class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue"
+          class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue justify-self-end"
         >
           Edit
         </button>
@@ -335,6 +346,12 @@
       v-if="locationModalVisible.edit"
       @submit.prevent="handleUpdateLocation"
     >
+      <InputField
+        name="Title"
+        type="text"
+        placeholder="Title"
+        v-bind="locationTitle"
+      />
       <InputField
         name="Address"
         type="text"
