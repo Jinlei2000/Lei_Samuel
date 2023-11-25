@@ -444,21 +444,29 @@
     }"
   >
     <form @submit.prevent="handleCreateLocation">
-      <InputField
-        name="Title"
-        type="text"
-        placeholder="Title"
-        :errorMessage="errorMessages.title"
-        v-bind="locationTitle"
-      />
-
-      <InputField
-        name="Address"
-        type="text"
-        placeholder="Search Address"
-        :errorMessage="errorMessages.searchAdressInput"
-        v-bind="searchAdressInput"
-      />
+      <div class="flex flex-col gap-3">
+        <InputField
+          name="Title"
+          type="text"
+          placeholder="Office"
+          :errorMessage="errorMessages.locationTitle"
+          v-bind="locationTitle"
+        />
+        <div class="flex items-end justify-between w-full gap-3">
+          <InputField
+            name="Address"
+            type="text"
+            placeholder="Search Address"
+            :errorMessage="errorMessages.searchAdressInput"
+            v-bind="searchAdressInput"
+          />
+          <CustomButton
+            name="Search"
+            :loading="loading.searchAddress"
+            @click="handleSearchAddress()"
+          />
+        </div>
+      </div>
 
       <!-- show search results -->
       <div v-if="searchAddressResults">
@@ -512,23 +520,16 @@
           <p class="text-gray-600 text-center">No results</p>
         </div>
       </div>
-
-      <small class="p-error">{{
+      <small class="text-primary-red">{{
         errorMessages.selectedAddress || '&nbsp;'
       }}</small>
-
-      <CustomButton
-        class="block"
-        name="Search Address"
-        :loading="loading.searchAddress"
-        @click="handleSearchAddress()"
-      />
-
-      <CustomButton
-        type="submit"
-        name="Create Location"
-        :loading="loading.createLocation"
-      />
+      <div class="w-full flex justify-end">
+        <CustomButton
+          type="submit"
+          name="Create Location"
+          :loading="loading.createLocation"
+        />
+      </div>
     </form>
   </Dialog>
 </template>
