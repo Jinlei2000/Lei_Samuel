@@ -55,7 +55,7 @@
                 type="radio"
                 :value="inputOption.value"
                 :name="option.name"
-                @change="updateFiltersRadio(inputOption.value, option.options)"
+                @change="updateFiltersRadio(option.options)"
               />
             </template>
             <!-- Checkbox -->
@@ -133,23 +133,23 @@ onBeforeMount(() => {
   isAccordionsOpen.value = props.options!.map(() => false)
 })
 
-const updateFiltersRadio = (
-  value: string,
-  options: { label: string; value: string }[],
-) => {
+const updateFiltersRadio = (options: { label: string; value: string }[]) => {
   // clear all filters
   options.map(option => {
     const index = props.modelValue!.indexOf(option)
     props.modelValue!.splice(index, 1)
   })
 
-  // check if value is empty
-  if (value === '') {
-    return
-  }
+  // get all filters from filters object
+  let selectedFilters = Object.values(filters.value)
 
-  // add filter
-  props.modelValue!.push(value)
+  // remove empty strings
+  selectedFilters = selectedFilters.filter(filter => filter !== '')
+
+  // add filters
+  selectedFilters.forEach(filter => {
+    props.modelValue!.push(filter)
+  })
 }
 
 const updateFiltersCheckbox = (
