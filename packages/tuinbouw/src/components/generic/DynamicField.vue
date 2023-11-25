@@ -111,7 +111,7 @@
       :id="field.name"
       :name="field.name"
       :type="passwordVisible ? 'text' : 'password'"
-      v-bind="field"
+      :placeholder="field.placeholder"
     >
     </Field>
     <button
@@ -149,10 +149,7 @@
 </template>
 
 <script setup lang="ts">
-import { CalendarIcon } from 'lucide-vue-next'
-import { Eye } from 'lucide-vue-next'
-import { EyeOff } from 'lucide-vue-next'
-import { ChevronDownIcon } from 'lucide-vue-next'
+import { CalendarIcon, ChevronDownIcon, Eye, EyeOff } from 'lucide-vue-next'
 import { Field } from 'vee-validate'
 import { ref } from 'vue'
 
@@ -183,5 +180,6 @@ const props = defineProps({
   },
 })
 
+// variables
 const passwordVisible = ref(false)
 </script>

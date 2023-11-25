@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+// props
 const props = defineProps({
   name: {
     type: String,
@@ -42,4 +43,7 @@ const props = defineProps({
     type: Object,
   },
 })
+
+// emits
+const emits = defineEmits(['update:modelValue'])
 </script>

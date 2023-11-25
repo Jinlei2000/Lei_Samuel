@@ -101,7 +101,10 @@
               class="border-1 mt-3 flex flex-col gap-4 rounded-2xl border-black border-opacity-10 bg-gray-200 py-3 pl-3 pr-6"
             >
               <Router-link :to="`/${role}/profile`">
-                <button class="hover:text-primary-green flex gap-3" @click="showProfileDropdown()">
+                <button
+                  class="hover:text-primary-green flex gap-3"
+                  @click="showProfileDropdown()"
+                >
                   <User /> Profile
                 </button>
               </Router-link>
@@ -109,7 +112,10 @@
                 v-if="role === 'employee' || role === 'admin'"
                 :to="goToAbsences()"
               >
-                <button class="hover:text-primary-green flex gap-3" @click="showProfileDropdown()">
+                <button
+                  class="hover:text-primary-green flex gap-3"
+                  @click="showProfileDropdown()"
+                >
                   <Hourglass /> Absences
                 </button>
               </Router-link>
@@ -134,18 +140,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
-import { User, LogOut, LogIn, Hourglass } from 'lucide-vue-next'
-import useFirebase from '@/composables/useFirebase'
-import router from '@/router'
-
-import Container from '../wrapper/Container.vue'
-import Logo from '../Logo.vue'
-import useLanguage from '@/composables/useLanguage'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
+import useFirebase from '@/composables/useFirebase'
+import useLanguage from '@/composables/useLanguage'
+import router from '@/router'
+import { Hourglass, LogIn, LogOut, User } from 'lucide-vue-next'
+import { ref, watchEffect } from 'vue'
+import Logo from '../Logo.vue'
+import Container from '../wrapper/Container.vue'
 
-const { firebaseUser, logout } = useFirebase()
+const { logout } = useFirebase()
 
 const { setLocale, locale } = useLanguage()
 
@@ -202,6 +207,4 @@ watchEffect(() => {
     role.value = customUser.value.role.toLowerCase()
   }
 })
-
-const user = ref<Object | null>(null)
 </script>

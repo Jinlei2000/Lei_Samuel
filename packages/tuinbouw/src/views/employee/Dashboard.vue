@@ -49,6 +49,7 @@
         <div class="flex flex-col gap-3">
           <template v-if="appointments" v-for="(item, index) in appointments">
             <AppointmentCard
+              :key="index"
               v-if="item !== nextAppointment"
               :appointment="item"
             />
@@ -58,6 +59,7 @@
             v-for="(item, index) in finishedAppointments"
           >
             <AppointmentCard
+              :key="index"
               v-if="item !== nextAppointment"
               :appointment="item"
             />
@@ -78,7 +80,11 @@
           >
             <Loader2 v-if="!forecast" class="animate-spin text-primary-green" />
             <div v-if="forecast" class="flex justify-between w-full h-full">
-              <div v-for="item in forecast" class="flex flex-col items-center">
+              <div
+                v-for="(item, index) in forecast"
+                class="flex flex-col items-center"
+                :key="index"
+              >
                 <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
                 <img
                   class="mix-blend-multiply w-20 h-20"
@@ -120,28 +126,22 @@
 </template>
 
 <script setup lang="ts">
+import { getForecastForWeek } from '@/api/openWeather'
+import Map from '@/components/Map.vue'
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
-import Map from '@/components/Map.vue'
+import useCustomToast from '@/composables/useCustomToast'
+import useCustomUser from '@/composables/useCustomUser'
+import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
+import type { Location } from '@/interfaces/location.interface'
+import type { Material } from '@/interfaces/material.interface'
+import { useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
 import { ref, watch, watchEffect } from 'vue'
-import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
-import { useMutation, useQuery } from '@vue/apollo-composable'
-import { getForecast, getForecastForWeek } from '@/api/openWeather'
 
-import Button from 'primevue/button'
-
-import useFirebase from '@/composables/useFirebase'
-import useCustomUser from '@/composables/useCustomUser'
-import type { Appointment } from '@/interfaces/appointment.user.interface'
-import Materials from './Materials.vue'
-import type { Material } from '@/interfaces/material.interface'
-import type { Forecast } from '@/interfaces/forecast.interface'
-import type { Location } from '@/interfaces/location.interface'
-import { time } from 'console'
-import { finished } from 'stream'
-const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
+const { showToast } = useCustomToast()
 
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
@@ -229,7 +229,7 @@ const setFinishedAppointments = () => {
 
 watch(schedule, () => {
   if (schedule.value && schedule.value.scheduleByDateAndUserId.length > 0) {
-    const now = new Date()
+    // const now = new Date()
     // // check if there is an appointment that has finalDate withing 30 minutes of current time
     // schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
     //   (appointment: Appointment) => {
@@ -267,10 +267,6 @@ watch(schedule, () => {
 
     materials.value = schedule.value.scheduleByDateAndUserId[0].materials
   }
-})
-
-firebaseUser.value?.getIdToken().then(token => {
-  console.log(`{"Authorization": "Bearer ${token}"}`)
 })
 
 const days = [
@@ -328,5 +324,17 @@ watch(myDate, () => {
         ')'
       break
   }
+})
+
+watchEffect(() => {
+  // log the queries
+
+  // all errors
+  const errors = [scheduleError.value]
+  errors.forEach(error => {
+    if (error) {
+      showToast('error', 'Error', error.message)
+    }
+  })
 })
 </script>
