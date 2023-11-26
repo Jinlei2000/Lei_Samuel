@@ -30,7 +30,6 @@
     "prettier/prettier": [
       "warn",
       {
-        "endOfLine": "auto",
         "plugins": ["prettier-plugin-tailwindcss"]
       }
     ],
