@@ -1047,6 +1047,7 @@ const handleUpdateLocation = async () => {
   loading.value.updateLocation = true
   await validateLocation()
   errorMessages.value = errorsLocation.value
+  console.log(errorsLocation.value)
   if (Object.keys(errorsLocation.value).length === 0) {
     console.log('no errors', valuesLocation)
     await updateLocation({
@@ -1061,9 +1062,9 @@ const handleUpdateLocation = async () => {
     loading.value.updateLocation = false
     showToast('success', 'Success', `You have updated a location`)
     refetchUser()
+    toggleLocationModal()
   }
   loading.value.updateLocation = false
-  toggleLocationModal()
 }
 
 // delete location
