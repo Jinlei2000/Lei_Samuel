@@ -753,7 +753,6 @@ const toggleAbsenceModal = (
   type: string = 'close',
 ) => {
   selectedAbsence.value = absence ? { ...absence } : null
-  console.log(type)
 
   // switch case for type
   switch (type) {
@@ -792,9 +791,6 @@ const toggleAbsenceModal = (
     default:
       break
   }
-
-  console.log(absenceModalVisible.value)
-  console.log(selectedAbsence.value)
 }
 
 const cancelAbsenceEdit = () => {
@@ -1022,9 +1018,7 @@ const handleSearchAddress = async () => {
 // add new location
 const handleCreateLocation = async () => {
   loading.value.createLocation = true
-  console.log(valuesLocation)
   await validateLocation()
-  console.log(errorsLocation.value)
   errorMessages.value = errorsLocation.value
   if (Object.keys(errorsLocation.value).length === 0) {
     console.log('no errors', valuesLocation)
@@ -1049,7 +1043,6 @@ const handleUpdateLocation = async () => {
   loading.value.updateLocation = true
   await validateLocation()
   errorMessages.value = errorsLocation.value
-  console.log(errorsLocation.value)
   if (Object.keys(errorsLocation.value).length === 0) {
     console.log('no errors', valuesLocation)
     await updateLocation({
@@ -1097,7 +1090,6 @@ const toggleLocationModal = (
   type: string = 'close',
 ) => {
   selectedLocation.value = location ? { ...location } : null
-  console.log(type)
 
   // switch case for type
   switch (type) {
@@ -1136,32 +1128,6 @@ const toggleLocationModal = (
     default:
       break
   }
-
-  console.log(locationModalVisible.value)
-  console.log(selectedLocation.value)
-
-  // reset values
-  // setValuesLocation({
-  //   searchAdressInput: '',
-  //   selectedAddress: null,
-  // })
-  // selectedLocation.value = null
-  // searchAddressResults.value = null
-  // errorMessages.value = {}
-
-  // if (type === 'detail' && location) {
-  //   selectedLocation.value = { ...location }
-  //   visibleLocation.value.detail = true
-  // } else if (type === 'edit' && location) {
-  //   selectedLocation.value = { ...location }
-  //   searchAddressResults.value = [{ ...location }]
-  //   setValuesLocation({
-  //     searchAdressInput: location.address,
-  //   })
-  //   visibleLocation.value.edit = true
-  // } else if (type === 'create') {
-  //   visibleLocation.value.create = true
-  // }
 }
 
 watchEffect(() => {
