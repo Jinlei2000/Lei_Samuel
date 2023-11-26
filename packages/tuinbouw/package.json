@@ -10,8 +10,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "run:pwa": "npm run build && npm serve dist",
     "generate:translations": "npx tsx ./src/utils/sheet.ts",
-    "lint": "npx eslint . --ext .ts,.vue",
-    "lint:fix": "npx eslint . --ext .ts,.vue --fix"
+    "lint": "npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",

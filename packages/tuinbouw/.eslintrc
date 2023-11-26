@@ -37,13 +37,11 @@
 
     // import sort
     "simple-import-sort/imports": [
-      // "warn",
-      "off",
+      "warn",
       {
         // No grouping, only alphabetical sorting
         "groups": []
       }
     ]
-  },
-  "ignorePatterns": ["node_modules", "dist", "*.d.ts", "env.d.ts", ".*"]
+  }
 }
