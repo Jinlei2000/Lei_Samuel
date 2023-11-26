@@ -1,9 +1,9 @@
-import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
+import useFirebase from './useFirebase'
+import useGraphql from './useGraphql'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
+import { type CustomUser, Role } from '@/interfaces/custom.user.interface'
 import { provideApolloClient, useQuery } from '@vue/apollo-composable'
 import { ref } from 'vue'
-import useFirebase from './useFirebase'
-import { GET_USER_BY_UID } from '@/graphql/user.query'
-import useGraphql from './useGraphql'
 
 const customUser = ref<CustomUser | null>()
 

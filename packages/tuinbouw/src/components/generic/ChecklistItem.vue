@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import type { Material } from '@/interfaces/material.interface'
 import { Check } from 'lucide-vue-next'
-import { ref, watch, type PropType } from 'vue'
+import { type PropType, ref, watch } from 'vue'
 
 const checked = ref(false)
 

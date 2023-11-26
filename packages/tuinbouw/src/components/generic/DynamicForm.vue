@@ -48,10 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import CustomButton from '@/components/generic/CustomButton.vue'
-import { ErrorMessage, Form, configure } from 'vee-validate'
-import { onBeforeMount, ref } from 'vue'
 import DynamicField from './DynamicField.vue'
+import CustomButton from '@/components/generic/CustomButton.vue'
+import { configure, ErrorMessage, Form } from 'vee-validate'
+import { onBeforeMount, ref } from 'vue'
 
 const props = defineProps({
   schema: {

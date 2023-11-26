@@ -1,11 +1,11 @@
+import useFirebase from './useFirebase'
 import {
-  from,
   ApolloClient,
-  InMemoryCache,
   createHttpLink,
+  from,
+  InMemoryCache,
 } from '@apollo/client/core'
 import { setContext } from '@apollo/client/link/context'
-import useFirebase from './useFirebase'
 import { onError } from '@apollo/client/link/error'
 import { logErrorMessages } from '@vue/apollo-util'
 

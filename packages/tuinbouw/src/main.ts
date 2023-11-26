@@ -1,15 +1,11 @@
-import { createApp } from 'vue'
-
 import '@unocss/reset/tailwind.css'
 import 'virtual:uno.css'
-
 import App from './App.vue'
-import router from './router'
-
-import useFirebase from '@/composables/useFirebase'
 import { i18n } from './bootstrap/i18n'
 import useCustomUser from './composables/useCustomUser'
-
+import MyDesignSystem from './presets/MyDesignSystem'
+import router from './router'
+import useFirebase from '@/composables/useFirebase'
 // PrimeVue
 import Calendar from 'primevue/calendar'
 import PrimeVue from 'primevue/config'
@@ -20,7 +16,7 @@ import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 import Toast from 'primevue/toast'
 import ToastService from 'primevue/toastservice'
-import MyDesignSystem from './presets/MyDesignSystem'
+import { createApp } from 'vue'
 
 const app = createApp(App)
 const { restoreUser, firebaseUser } = useFirebase()

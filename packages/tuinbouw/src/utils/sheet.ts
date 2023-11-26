@@ -1,12 +1,11 @@
 // @ts-nocheck
 
+import { SUPPORTED_LOCALES } from '../bootstrap/i18n'
+import { authenticate } from '@google-cloud/local-auth'
 import { promises as fs } from 'fs'
+import { google } from 'googleapis'
 import path from 'path'
 import process from 'process'
-import { authenticate } from '@google-cloud/local-auth'
-import { google } from 'googleapis'
-
-import { SUPPORTED_LOCALES } from '../bootstrap/i18n'
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']

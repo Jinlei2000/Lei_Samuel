@@ -52,12 +52,12 @@
 </template>
 
 <script lang="ts">
+import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
+import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
 import { ref } from 'vue'
-import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
-import useLanguage from '@/composables/useLanguage'
-import useCustomUser from '@/composables/useCustomUser'
 
 export default {
   setup() {

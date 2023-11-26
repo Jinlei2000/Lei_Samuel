@@ -281,6 +281,7 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+import DynamicForm from './generic/DynamicForm.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -311,7 +312,6 @@ import {
 import Dialog from 'primevue/dialog'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
-import DynamicForm from './generic/DynamicForm.vue'
 
 // props
 const props = defineProps({

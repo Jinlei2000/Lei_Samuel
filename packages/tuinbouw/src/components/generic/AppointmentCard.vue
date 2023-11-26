@@ -122,13 +122,13 @@
 </template>
 
 <script setup lang="ts">
-import { Navigation, Info } from 'lucide-vue-next'
-import { Clock, MapPin, CheckCircle, XCircle } from 'lucide-vue-next'
-import type { Appointment } from '@/interfaces/appointment.user.interface'
-import { ref, type PropType } from 'vue'
 import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation'
-import { useMutation } from '@vue/apollo-composable'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { Location } from '@/interfaces/location.interface'
+import { useMutation } from '@vue/apollo-composable'
+import { Info, Navigation } from 'lucide-vue-next'
+import { CheckCircle, Clock, MapPin, XCircle } from 'lucide-vue-next'
+import { type PropType, ref } from 'vue'
 
 const { mutate: updateAppointment, error: updateAppointmentError } =
   useMutation<Appointment>(UPDATE_APPOINTMENT)

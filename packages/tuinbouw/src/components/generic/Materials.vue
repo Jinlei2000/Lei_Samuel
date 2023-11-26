@@ -172,6 +172,10 @@
 </template>
 
 <script setup lang="ts">
+import DynamicForm from './DynamicForm.vue'
+import Filter from './Filter.vue'
+import Search from './Search.vue'
+import Sort from './Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import {
@@ -196,10 +200,6 @@ import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import { ArrowLeft, Pencil, PlusCircle, Trash2, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-import DynamicForm from './DynamicForm.vue'
-import Search from './Search.vue'
-import Sort from './Sort.vue'
-import Filter from './Filter.vue'
 
 // props
 const props = defineProps({

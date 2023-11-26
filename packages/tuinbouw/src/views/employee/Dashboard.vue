@@ -127,9 +127,9 @@
 
 <script setup lang="ts">
 import { getForecastForWeek } from '@/api/openWeather'
-import Map from '@/components/Map.vue'
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
 import ChecklistItem from '@/components/generic/ChecklistItem.vue'
+import Map from '@/components/Map.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
