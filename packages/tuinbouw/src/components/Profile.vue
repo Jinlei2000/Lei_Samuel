@@ -1087,6 +1087,7 @@ const handleDeleteLocation = async (id: string) => {
   await deleteLocation({
     id: id,
   })
+  toggleLocationModal() // close modal
   showToast('success', 'Success', `You have deleted a location`)
   refetchUser()
 }
