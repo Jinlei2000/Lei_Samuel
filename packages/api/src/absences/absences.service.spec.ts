@@ -75,29 +75,11 @@ describe('AbsencesService', () => {
         expect(saveSPy).toBeCalledTimes(1)
       })
 
-      // BUG: ID is not being generated
-      // it('should call absenceRepository.save with the correct parameters', async () => {
-      //   const absenceTestInput: CreateAbsenceInput = createabsenceInputStub()
-      //   const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
-      //   await service.create(absenceTestInput)
-      //   // expect(saveSPy).toBeCalledWith(
-      //   //   expect.objectContaining({
-      //   //     description: 'Example description',
-      //   //     endDate: new Date('2021-01-02'),
-      //   //     startDate: new Date('2021-01-01'),
-      //   //     totalDays: 2,
-      //   //     type: 'sick',
-      //   //     userId: '652e5989204b1d8ef65ed992',
-      //   //   }),
-      //   // )
-      //   expect(saveSPy).toBeCalledWith(absenceTestInput)
-      // })
-
-      // SHORT
-      // it('should call absenceRepository.save with the correct parameters', async () => {
-      //   const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
-      //   expect(saveSPy).toBeCalledWith(absenceTestInput)
-      // })
+      // BUG: SHORT VERSION
+      it('should call absenceRepository.save with the correct parameters', async () => {
+        const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
+        expect(saveSPy).toBeCalledWith(absenceResult)
+      })
 
       it('should return the created absence', async () => {
         expect(absenceResult).toEqual(absenceStub())
