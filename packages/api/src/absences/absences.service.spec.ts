@@ -70,7 +70,7 @@ describe('AbsencesService', () => {
     })
 
     describe('when create is called', () => {
-      it('should call absenceRepository.create one time', async () => {
+      it('should call absenceRepository.save one time', async () => {
         const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
         expect(saveSPy).toBeCalledTimes(1)
       })
@@ -78,6 +78,7 @@ describe('AbsencesService', () => {
       // BUG: SHORT VERSION
       it('should call absenceRepository.save with the correct parameters', async () => {
         const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
+        // BUG: het faalt omdat er een geen id is
         expect(saveSPy).toBeCalledWith(absenceResult)
       })
 
