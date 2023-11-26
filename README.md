@@ -34,6 +34,9 @@ Short description of the project.
 - [Prettier](https://prettier.io/) for code formatting
 - [ESLint](https://eslint.org/) for code linting
 
+- [eslint-plugin-tailwindcss](https://github.com/francoismassart/eslint-plugin-tailwindcss) for tailwindcss linting
+- [simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort) for import sorting
+
 ## Environment variables
 
 documentatie over de environment variables

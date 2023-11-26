@@ -6,7 +6,12 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "prettier", "simple-import-sort"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "simple-import-sort",
+    "eslint-plugin-tailwindcss"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:vue/vue3-recommended",
@@ -21,13 +26,8 @@
     // TODO: remove this rule
     "no-unused-vars": "off", // unused vars error
 
-    // prettier
-    "prettier/prettier": [
-      "warn",
-      {
-        "plugins": ["prettier-plugin-tailwindcss"]
-      }
-    ],
+    "prettier/prettier": "warn",
+    "tailwindcss/classnames-order": "warn",
 
     // import sort
     "simple-import-sort/imports": [

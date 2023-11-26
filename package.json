@@ -17,6 +17,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "eslint-plugin-tailwindcss": "^3.13.0",
     "lerna": "^7.4.2"
   }
 }
