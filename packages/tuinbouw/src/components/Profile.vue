@@ -350,6 +350,7 @@
           name="Title"
           type="text"
           :placeholder="selectedLocation?.title"
+          :error-message="errorMessages.title"
           v-bind="locationTitle"
         />
         <div class="flex items-end justify-between w-full gap-3">
@@ -1021,6 +1022,7 @@ const handleSearchAddress = async () => {
 // add new location
 const handleCreateLocation = async () => {
   loading.value.createLocation = true
+  console.log(valuesLocation)
   await validateLocation()
   console.log(errorsLocation.value)
   errorMessages.value = errorsLocation.value
@@ -1053,7 +1055,7 @@ const handleUpdateLocation = async () => {
     await updateLocation({
       updateLocationInput: {
         id: selectedLocation.value?.id,
-        title: selectedLocation.value?.title,
+        title: valuesLocation.locationTitle,
         address: valuesLocation.selectedAddress.address,
         lat: valuesLocation.selectedAddress.lat,
         lng: valuesLocation.selectedAddress.lng,
