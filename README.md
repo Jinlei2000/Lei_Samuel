@@ -34,6 +34,8 @@ Short description of the project.
 - [Prettier](https://prettier.io/) for code formatting
 - [ESLint](https://eslint.org/) for code linting
 
+- [Jest](https://jestjs.io/) for testing
+
 ## Environment variables
 
 documentatie over de environment variables
