@@ -1063,10 +1063,23 @@ const handleUpdateLocation = async () => {
     })
     loading.value.updateLocation = false
     showToast('success', 'Success', `You have updated a location`)
+    resetInputfields()
     refetchUser()
     toggleLocationModal()
   }
   loading.value.updateLocation = false
+}
+
+// reset input fields
+const resetInputfields = () => {
+  setValuesLocation({
+    locationTitle: '',
+    searchAdressInput: '',
+    selectedAddress: null,
+  })
+  selectedLocation.value = null
+  searchAddressResults.value = null
+  errorMessages.value = {}
 }
 
 // delete location
