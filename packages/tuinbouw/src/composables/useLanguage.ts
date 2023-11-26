@@ -1,9 +1,9 @@
+import useCustomUser from './useCustomUser'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import { UPDATE_LOCALE } from '@/graphql/user.mutation'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import { useMutation } from '@vue/apollo-composable'
 import { useI18n } from 'vue-i18n'
-import useCustomUser from './useCustomUser'
 
 export default () => {
   const { locale, setLocaleMessage } = useI18n()

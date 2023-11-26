@@ -122,22 +122,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import useCustomToast from '@/composables/useCustomToast'
+import useCustomUser from '@/composables/useCustomUser'
+import useFirebase from '@/composables/useFirebase'
+import useTimeUtilities from '@/composables/useTimeUtilities'
+import { CREATE_APPOINTMENT } from '@/graphql/appointment.mutation'
+import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
 import { useQuery } from '@vue/apollo-composable'
+import { useMutation } from '@vue/apollo-composable'
 import { Check, Loader2 } from 'lucide-vue-next'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
-import * as yup from 'yup'
-import { useMutation } from '@vue/apollo-composable'
-import type { Appointment } from '@/interfaces/appointment.user.interface'
-import { CREATE_APPOINTMENT } from '@/graphql/appointment.mutation'
-import useFirebase from '@/composables/useFirebase'
-import useCustomUser from '@/composables/useCustomUser'
-import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
-import { useForm } from 'vee-validate'
-import useTimeUtilities from '@/composables/useTimeUtilities'
-import useCustomToast from '@/composables/useCustomToast'
-import { useRouter } from 'vue-router'
 import { ArrowLeft } from 'lucide-vue-next'
+import { useForm } from 'vee-validate'
+import { ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
+import * as yup from 'yup'
 
 // composables
 const { firebaseUser } = useFirebase()

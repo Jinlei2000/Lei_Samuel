@@ -86,9 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import { Filter as FilterIcon, Check } from 'lucide-vue-next'
+import { Check, Filter as FilterIcon } from 'lucide-vue-next'
 import { ChevronDown } from 'lucide-vue-next'
-import { ref, type PropType, onBeforeMount } from 'vue'
+import { onBeforeMount, type PropType, ref } from 'vue'
 
 interface FilterOption {
   title: string

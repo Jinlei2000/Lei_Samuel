@@ -1,4 +1,3 @@
-import { ref } from 'vue'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,
@@ -11,6 +10,7 @@ import {
   signOut,
   type User,
 } from 'firebase/auth'
+import { ref } from 'vue'
 
 // Shared state
 const app = initializeApp({

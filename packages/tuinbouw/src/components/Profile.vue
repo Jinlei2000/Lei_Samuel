@@ -350,34 +350,34 @@
 </template>
 
 <script setup lang="ts">
+import DynamicForm from './generic/DynamicForm.vue'
+import InputField from './generic/InputField.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
+import Map from '@/components/Map.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useTimeUtilities from '@/composables/useTimeUtilities'
-import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
-import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
-import { useMutation, useQuery } from '@vue/apollo-composable'
-import { Pencil, Trash2, ArrowLeft, Eye } from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
-import { computed, ref, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
-import { GET_USER_BY_ID } from '@/graphql/user.query'
+import useTomTomMap from '@/composables/useTomTomMap'
 import {
   CREATE_LOCATION,
-  UPDATE_LOCATION,
   DELETE_LOCATION,
+  UPDATE_LOCATION,
 } from '@/graphql/location.mutation'
+import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
+import { GET_USER_BY_ID } from '@/graphql/user.query'
+import { INVOICE_OPTIONS } from '@/helpers/constants'
+import { type CustomUser, Role } from '@/interfaces/custom.user.interface'
 import type { Location } from '@/interfaces/location.interface'
-import useTomTomMap from '@/composables/useTomTomMap'
-import Map from '@/components/Map.vue'
 import {
   locationValidationSchema,
   userUpdateValidationSchema,
 } from '@/validation/schema'
-import DynamicForm from './generic/DynamicForm.vue'
-import { INVOICE_OPTIONS } from '@/helpers/constants'
-import InputField from './generic/InputField.vue'
+import { useMutation, useQuery } from '@vue/apollo-composable'
+import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
+import { useForm } from 'vee-validate'
+import { computed, ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 
 // composables
 const { customUser } = useCustomUser()

@@ -35,17 +35,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
-import router from '@/router'
-import { type GenericObject } from 'vee-validate'
+import useLanguage from '@/composables/useLanguage'
 import { CREATE_CLIENT } from '@/graphql/user.mutation'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
-import { useMutation } from '@vue/apollo-composable'
-import useLanguage from '@/composables/useLanguage'
-import useCustomUser from '@/composables/useCustomUser'
-import DynamicForm from '@/components/generic/DynamicForm.vue'
+import router from '@/router'
 import { registerValidationSchema } from '@/validation/schema'
+import { useMutation } from '@vue/apollo-composable'
+import { type GenericObject } from 'vee-validate'
+import { ref, watch } from 'vue'
 
 // composables
 const { register } = useFirebase()

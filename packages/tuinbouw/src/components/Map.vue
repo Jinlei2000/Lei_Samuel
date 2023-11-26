@@ -4,9 +4,9 @@
 
 <script setup lang="ts">
 import useTomTomMap from '@/composables/useTomTomMap'
-import { onMounted, ref, type PropType } from 'vue'
-import tt from '@tomtom-international/web-sdk-maps'
 import type { Location } from '@/interfaces/location.interface'
+import tt from '@tomtom-international/web-sdk-maps'
+import { onMounted, type PropType, ref } from 'vue'
 
 // Props
 const props = defineProps({

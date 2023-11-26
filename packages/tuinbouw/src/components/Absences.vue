@@ -162,6 +162,7 @@
 </template>
 
 <script setup lang="ts">
+import DynamicForm from './generic/DynamicForm.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -179,9 +180,8 @@ import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { absenceValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import { Eye, ArrowLeft, Trash2, Pencil } from 'lucide-vue-next'
+import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { computed, onMounted, ref, watchEffect } from 'vue'
-import DynamicForm from './generic/DynamicForm.vue'
 
 // props
 const props = defineProps({

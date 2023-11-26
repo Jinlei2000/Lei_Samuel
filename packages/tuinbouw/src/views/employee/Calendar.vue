@@ -137,19 +137,16 @@
 
 <script setup lang="ts">
 // Icons
-import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
-
-// Vue
-import { ref, watch } from 'vue'
-import { useQuery } from '@vue/apollo-composable'
-
 // Components
 import AppointmentCard from '@/components/generic/AppointmentCard.vue'
-
+import useCustomUser from '@/composables/useCustomUser'
 // GraphQL
 import { GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID } from '@/graphql/schedule.query'
-import useCustomUser from '@/composables/useCustomUser'
 import type { Schedule } from '@/interfaces/schedule.interface'
+import { useQuery } from '@vue/apollo-composable'
+import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
+// Vue
+import { ref, watch } from 'vue'
 
 // Variables
 const firstDay = ref<Date>()

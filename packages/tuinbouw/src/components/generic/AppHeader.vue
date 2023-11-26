@@ -140,6 +140,8 @@
 </template>
 
 <script setup lang="ts">
+import Logo from '../Logo.vue'
+import Container from '../wrapper/Container.vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
@@ -147,8 +149,6 @@ import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
 import { Hourglass, LogIn, LogOut, User } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
-import Logo from '../Logo.vue'
-import Container from '../wrapper/Container.vue'
 
 const { logout } = useFirebase()
 

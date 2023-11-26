@@ -1,4 +1,4 @@
-import { type I18nOptions, createI18n } from 'vue-i18n'
+import { createI18n, type I18nOptions } from 'vue-i18n'
 
 export const SUPPORTED_LOCALES: Record<string, string> = {
   en: 'English',

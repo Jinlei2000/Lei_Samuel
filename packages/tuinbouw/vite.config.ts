@@ -1,11 +1,10 @@
-import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import UnoCSS from 'unocss/vite'
-import { VitePWA } from 'vite-plugin-pwa'
-import presetUno from '@unocss/preset-uno'
 import presetAttributify from '@unocss/preset-attributify'
+import presetUno from '@unocss/preset-uno'
+import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url'
+import UnoCSS from 'unocss/vite'
+import { defineConfig } from 'vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
