@@ -79,11 +79,12 @@ describe('AbsencesService', () => {
         expect(saveSPy).toHaveBeenCalledTimes(1)
       })
 
-      // BUG: SHORT VERSION
+      // BUG: ask more info about this test
       it('should call absenceRepository.save with the correct parameters', async () => {
         const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
-        // BUG: het faalt omdat er een geen id is
-        expect(saveSPy).toBeCalledWith(absenceResult)
+        const myInput: Partial<Absence> = createabsenceInputStub()
+        myInput.totalDays = 2
+        expect(saveSPy).toHaveBeenCalledWith(myInput)
       })
 
       it('should return the created absence', async () => {
