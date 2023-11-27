@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col my-12 gap-6 max-w-xl m-auto">
+  <div class="m-auto my-12 flex max-w-xl flex-col gap-6">
     <!-- loading -->
     <div v-if="userLoading && !user">
       <p class="text-6xl font-black">Loading User...</p>
     </div>
 
     <!-- Primary user info -->
-    <div class="w-full flex flex-col items-center gap-6">
+    <div class="flex w-full flex-col items-center gap-6">
       <img
         class="h-24 w-24 rounded-full"
         src="https://i.pravatar.cc/300"
@@ -22,23 +22,23 @@
 
     <!-- About me -->
     <div v-if="user && !isEditingUser" class="w-full">
-      <div class="w-full flex justify-between mb-3">
+      <div class="mb-3 flex w-full justify-between">
         <h2 class="text-2xl">About me</h2>
         <button
+          class="text-primary-orange flex items-center gap-2 text-lg"
           @click="isEditingUser = true"
-          class="flex gap-2 text-lg items-center text-primary-orange"
         >
-          <Edit2 class="w-5 h-5" /> Edit
+          <Edit2 class="h-5 w-5" /> Edit
         </button>
       </div>
-      <ul class="w-full flex flex-col rounded-2xl bg-gray-200 p-6">
+      <ul class="flex w-full flex-col rounded-2xl bg-gray-200 p-6">
         <li
-          class="flex justify-between items-center pb-6 border-b-[1px] border-white"
+          class="flex items-center justify-between border-b-[1px] border-white pb-6"
         >
           <p class="text-lg">Telephone</p>
           <p>{{ user.telephone || 'unknown' }}</p>
         </li>
-        <li class="flex justify-between items-center pt-6">
+        <li class="flex items-center justify-between pt-6">
           <p class="text-lg">Address</p>
           <p>
             {{ user.locations[0].address || 'unknown' }}
@@ -57,8 +57,8 @@
 
       <DynamicForm
         :schema="formUpdateUser"
-        :validationSchema="userUpdateValidationSchema"
-        :handleForm="handleUpdateUser"
+        :validation-schema="userUpdateValidationSchema"
+        :handle-form="handleUpdateUser"
         :loading="loading.updateUser"
         :initial-values="{
           firstname: user!.firstname,
@@ -75,25 +75,25 @@
     <!-- Absences -->
     <div
       v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
-      class="w-full flex flex-col gap-3"
+      class="flex w-full flex-col gap-3"
     >
       <h2 class="text-2xl">Absences</h2>
       <button
+        class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
         @click="toggleAbsenceModal(null, 'create')"
-        class="w-full flex items-center justify-center border-primary-green border-[1px] rounded-2xl h-16 text-primary-green"
       >
         <PlusCircle class="mr-2" />
         Add New Absence
       </button>
       <div
         v-if="absences && absences.length > 0"
-        class="w-full flex flex-col gap-3"
+        class="flex w-full flex-col gap-3"
       >
         <button
-          @click="toggleAbsenceModal(absence, 'detail')"
           v-for="absence in absences"
           :key="absence.id"
-          class="flex justify-between text-left items-center rounded-2xl bg-gray-200 p-3 pl-6"
+          class="flex items-center justify-between rounded-2xl bg-gray-200 p-3 pl-6 text-left"
+          @click="toggleAbsenceModal(absence, 'detail')"
         >
           <div class="flex w-2/3">
             <p class="min-w-1/3">
@@ -102,7 +102,7 @@
             <p class="opacity-70">{{ absence.totalDays }} days</p>
           </div>
           <p
-            class="px-3 py-1 bg-primary-orange capitalize rounded-full text-white"
+            class="bg-primary-orange rounded-full px-3 py-1 capitalize text-white"
           >
             {{ absence.type }}
           </p>
@@ -110,7 +110,7 @@
       </div>
       <div
         v-else-if="absences.length === 0"
-        class="flex justify-center items-center h-20 bg-gray-200 rounded-2xl"
+        class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
       >
         <p class="text-lg">No absences</p>
       </div>
@@ -149,14 +149,14 @@
         </div>
         <div class="flex justify-between">
           <button
+            class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
             @click="handleDelete(selectedAbsence)"
-            class="rounded-[4px] bg-primary-red px-3 py-1 text-white"
           >
             Delete
           </button>
           <button
+            class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
             @click="toggleAbsenceModal(selectedAbsence, 'edit')"
-            class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue"
           >
             Edit
           </button>
@@ -165,8 +165,8 @@
       <DynamicForm
         v-if="absenceModalVisible.edit"
         :schema="formAbsence"
-        :validationSchema="absenceValidationSchema"
-        :handleForm="handleUpdateAbsence"
+        :validation-schema="absenceValidationSchema"
+        :handle-form="handleUpdateAbsence"
         :cancel="cancelAbsenceEdit"
         :loading="loading.update"
         :initial-values="{
@@ -220,8 +220,8 @@
     >
       <DynamicForm
         :schema="formAbsence"
-        :validationSchema="absenceValidationSchema"
-        :handleForm="handleCreateAbsence"
+        :validation-schema="absenceValidationSchema"
+        :handle-form="handleCreateAbsence"
         :loading="loading.create"
       />
     </Dialog>
@@ -229,27 +229,27 @@
     <!-- Locations -->
     <div
       v-if="customUser?.role == 'CLIENT' && user"
-      class="w-full flex flex-col gap-3"
+      class="flex w-full flex-col gap-3"
     >
       <h2 class="text-2xl">Locations</h2>
       <button
+        class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
         @click="toggleLocationModal(null, 'create')"
-        class="w-full flex items-center justify-center border-primary-green border-[1px] rounded-2xl h-16 text-primary-green"
       >
         <PlusCircle class="mr-2" />
         Add Location
       </button>
       <div
         v-if="user.locations && user.locations.length > 0"
-        class="w-full flex flex-col gap-3"
+        class="flex w-full flex-col gap-3"
       >
         <button
-          @click="toggleLocationModal(location, 'detail')"
           v-for="location in user.locations"
           :key="location.id"
-          class="flex justify-between items-center text-left overflow-hidden rounded-2xl bg-gray-200"
+          class="flex items-center justify-between overflow-hidden rounded-2xl bg-gray-200 text-left"
+          @click="toggleLocationModal(location, 'detail')"
         >
-          <div class="flex flex-col gap-2 w-1/2 pl-6 py-3">
+          <div class="flex w-1/2 flex-col gap-2 py-3 pl-6">
             <!-- location or  nothing -->
             <h3 class="text-lg">{{ location.title }}</h3>
             <div>
@@ -268,7 +268,7 @@
       </div>
       <div
         v-else-if="user.locations.length === 0"
-        class="flex justify-center items-center h-20 bg-gray-200 rounded-2xl"
+        class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
       >
         <p class="text-lg">No locations</p>
       </div>
@@ -276,8 +276,8 @@
 
     <!-- delete account -->
     <button
+      class="bg-primary-red rounded-2xl py-3 text-white"
       @click="handleDeleteUser()"
-      class="bg-primary-red text-white rounded-2xl py-3"
     >
       Delete Account
     </button>
@@ -325,15 +325,15 @@
         "
       >
         <button
-          @click="handleDeleteLocation(selectedLocation.id)"
-          class="rounded-[4px] bg-primary-red px-3 py-1 text-white"
           v-if="user!.locations[0].id != selectedLocation.id"
+          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+          @click="handleDeleteLocation(selectedLocation.id)"
         >
           Delete
         </button>
         <button
+          class="border-primary-blue text-primary-blue justify-self-end rounded-[4px] border px-3 py-1"
           @click="toggleLocationModal(selectedLocation, 'edit')"
-          class="rounded-[4px] px-3 py-1 border-primary-blue border text-primary-blue justify-self-end"
         >
           Edit
         </button>
@@ -353,12 +353,12 @@
           :error-message="errorMessages.title"
           v-bind="locationTitle"
         />
-        <div class="flex items-end justify-between w-full gap-3">
+        <div class="flex w-full items-end justify-between gap-3">
           <InputField
             name="Address"
             type="text"
             placeholder="Search Address"
-            :errorMessage="errorMessages.searchAdressInput"
+            :error-message="errorMessages.searchAdressInput"
             v-bind="searchAdressInput"
           />
           <CustomButton
@@ -450,15 +450,15 @@
           name="Title"
           type="text"
           placeholder="Office"
-          :errorMessage="errorMessages.title"
+          :error-message="errorMessages.title"
           v-bind="locationTitle"
         />
-        <div class="flex items-end justify-between w-full gap-3">
+        <div class="flex w-full items-end justify-between gap-3">
           <InputField
             name="Address"
             type="text"
             placeholder="Search Address"
-            :errorMessage="errorMessages.searchAdressInput"
+            :error-message="errorMessages.searchAdressInput"
             v-bind="searchAdressInput"
           />
           <CustomButton
@@ -524,7 +524,7 @@
       <small class="text-primary-red">{{
         errorMessages.selectedAddress || '&nbsp;'
       }}</small>
-      <div class="w-full flex justify-end">
+      <div class="flex w-full justify-end">
         <CustomButton
           type="submit"
           name="Create Location"
@@ -536,31 +536,15 @@
 </template>
 
 <script setup lang="ts">
+import DynamicForm from './generic/DynamicForm.vue'
+import InputField from './generic/InputField.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
+import Map from '@/components/Map.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useTimeUtilities from '@/composables/useTimeUtilities'
-import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
-import { Role, type CustomUser } from '@/interfaces/custom.user.interface'
-import { useMutation, useQuery, useLazyQuery } from '@vue/apollo-composable'
-import {
-  Pencil,
-  Trash2,
-  ArrowLeft,
-  Eye,
-  PlusCircle,
-  Edit2,
-} from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
-import { computed, onMounted, ref, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
-import { GET_USER_BY_ID } from '@/graphql/user.query'
-import {
-  CREATE_LOCATION,
-  DELETE_LOCATION,
-  UPDATE_LOCATION,
-} from '@/graphql/location.mutation'
+import useTomTomMap from '@/composables/useTomTomMap'
 import {
   CREATE_ABSENCE,
   DELETE_ABSENCE,
@@ -570,20 +554,36 @@ import {
   GET_ALL_ABSENCES,
   GET_ALL_ABSENCES_BY_USERID,
 } from '@/graphql/absence.query'
+import {
+  CREATE_LOCATION,
+  DELETE_LOCATION,
+  UPDATE_LOCATION,
+} from '@/graphql/location.mutation'
+import { DELETE_USER, UPDATE_USER } from '@/graphql/user.mutation'
+import { GET_USER_BY_ID } from '@/graphql/user.query'
 import { ABSENCE_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
-import type { Location } from '@/interfaces/location.interface'
+import { INVOICE_OPTIONS } from '@/helpers/constants'
 import type { Absence } from '@/interfaces/absence.interface'
+import { type CustomUser, Role } from '@/interfaces/custom.user.interface'
+import type { Location } from '@/interfaces/location.interface'
+import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { absenceValidationSchema } from '@/validation/schema'
-import useTomTomMap from '@/composables/useTomTomMap'
-import Map from '@/components/Map.vue'
 import {
   locationValidationSchema,
   userUpdateValidationSchema,
 } from '@/validation/schema'
-import DynamicForm from './generic/DynamicForm.vue'
-import { INVOICE_OPTIONS } from '@/helpers/constants'
-import InputField from './generic/InputField.vue'
-import type { VariablesProps } from '@/interfaces/variablesProps.interface'
+import { useLazyQuery, useMutation, useQuery } from '@vue/apollo-composable'
+import {
+  ArrowLeft,
+  Edit2,
+  Eye,
+  Pencil,
+  PlusCircle,
+  Trash2,
+} from 'lucide-vue-next'
+import { useForm } from 'vee-validate'
+import { computed, onMounted, ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 
 // composables
 const { customUser } = useCustomUser()

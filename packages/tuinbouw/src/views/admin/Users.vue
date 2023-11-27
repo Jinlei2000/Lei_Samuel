@@ -8,16 +8,9 @@
   >
     <div class="flex w-full flex-col gap-3">
       <!-- Filters + Searchbar -->
-      <section
-        :class="[
-          'relative flex w-full items-center justify-between'
-        ]"
-      >
+      <section :class="['relative flex w-full items-center justify-between']">
         <!-- Filter -->
-        <Filter
-          v-model="variables.filters"
-          :options="FILTER_OPTIONS_USERS"
-        />
+        <Filter v-model="variables.filters" :options="FILTER_OPTIONS_USERS" />
 
         <!-- Searchbar -->
         <Search v-model="variables.searchString" />
@@ -30,7 +23,7 @@
         <div class="flex gap-3">
           <!-- Sort -->
           <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
-           <!-- add employee button -->
+          <!-- add employee button -->
           <button
             class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
             @click="toggleModal(null, 'create')"
@@ -38,7 +31,6 @@
             Add Employee
           </button>
         </div>
-        
       </header>
     </div>
   </main>
@@ -54,18 +46,18 @@
       <button
         v-for="user in users"
         :key="user.id"
-        class="overflow-hidden rounded-2xl bg-gray-200 hover:scale-101 hover:cursor-pointer transition-all duration-100"
+        class="hover:scale-101 overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer"
         :class="user.uid === null ?? 'border-red-500'"
         @click="toggleModal(user, 'detail')"
       >
         <div class="flex h-11 items-center justify-between">
           <img
-            class="h-full block p-1 rounded-2xl"
+            class="block h-full rounded-2xl p-1"
             src="https://i.pravatar.cc/300"
             alt="Profile picture"
           />
           <div class="flex w-full p-3">
-            <h2 class="text-lg text-left w-1/5 min-w-fit">
+            <h2 class="w-1/5 min-w-fit text-left text-lg">
               {{ user.firstname }} {{ user.lastname }}
             </h2>
             <p class="text-gray-600">{{ user.email }}</p>
@@ -80,30 +72,43 @@
               @click="handleSendMailToEmployee(user)"
             />
           </div>
-          <div class="flex justify-end gap-6 p-3 w-1/6 min-w-fit">
-            <p class="text-white px-3 py-1 rounded-full lowercase" :class="user.role === 'EMPLOYEE' ? 'bg-primary-green' : user.role === 'CLIENT' ? 'bg-primary-blue' : user.role === 'ADMIN' ? 'bg-primary-orange' : ''">{{ user.role }}</p>
+          <div class="flex w-1/6 min-w-fit justify-end gap-6 p-3">
+            <p
+              class="rounded-full px-3 py-1 lowercase text-white"
+              :class="
+                user.role === 'EMPLOYEE'
+                  ? 'bg-primary-green'
+                  : user.role === 'CLIENT'
+                    ? 'bg-primary-blue'
+                    : user.role === 'ADMIN'
+                      ? 'bg-primary-orange'
+                      : ''
+              "
+            >
+              {{ user.role }}
+            </p>
           </div>
         </div>
         <!-- <div
           class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
         > -->
-          <!-- View More Button -->
-          <!-- <button
+        <!-- View More Button -->
+        <!-- <button
             class="text-green-500 hover:underline"
             @click="toggleModal(user, 'detail')"
           >
             <Eye />
           </button> -->
-          <!-- Edit Button -->
-          <!-- <button
+        <!-- Edit Button -->
+        <!-- <button
             v-if="user.role === 'EMPLOYEE'"
             class="text-blue-500 hover:underline"
             @click="toggleModal(user, 'edit')"
           >
             <Pencil />
           </button> -->
-          <!-- Delete Button -->
-          <!-- <button
+        <!-- Delete Button -->
+        <!-- <button
             v-if="user.role === 'EMPLOYEE'"
             class="text-red-500 hover:underline"
             @click="handleDelete(user)"
@@ -133,7 +138,7 @@
       },
     }"
   >
-    <div v-if="selectedUser &&  visible.detail">
+    <div v-if="selectedUser && visible.detail">
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedUser.fullname }}
       </h2>
@@ -236,6 +241,10 @@
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
+// components
+import Filter from '@/components/generic/Filter.vue'
+import Search from '@/components/generic/Search.vue'
+import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
 import {
@@ -244,13 +253,13 @@ import {
   UPDATE_USER,
   UPDATE_USER_TO_ADMIN,
 } from '@/graphql/user.mutation'
+import { GET_USERS } from '@/graphql/user.query'
 import {
   FILTER_OPTIONS_USERS,
   ORDER_DIRECTION,
   SORT_OPTIONS_USERS,
-  SUPPORTED_LOCALES_TYPES
+  SUPPORTED_LOCALES_TYPES,
 } from '@/helpers/constants'
-import { GET_USERS } from '@/graphql/user.query'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import {
@@ -260,11 +269,6 @@ import {
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { computed, ref, watchEffect } from 'vue'
-
-// components
-import Filter from '@/components/generic/Filter.vue'
-import Search from '@/components/generic/Search.vue'
-import Sort from '@/components/generic/Sort.vue'
 
 // composables
 const { showToast } = useCustomToast()
@@ -387,7 +391,11 @@ const {
 const { mutate: createEmployee, error: createEmployeeError } =
   useMutation(CREATE_EMPLOYEE)
 
-const { mutate: deleteUser, loading: deleteUserLoading, error: deleteUserError } = useMutation(DELETE_USER)
+const {
+  mutate: deleteUser,
+  loading: deleteUserLoading,
+  error: deleteUserError,
+} = useMutation(DELETE_USER)
 
 const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
@@ -478,7 +486,7 @@ const toggleModal = (
   type: string = 'close',
 ) => {
   selectedUser.value = user ? { ...user } : null
-  
+
   // switch case for type
   switch (type) {
     case 'edit':
