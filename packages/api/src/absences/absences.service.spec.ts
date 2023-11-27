@@ -26,6 +26,7 @@ describe('AbsencesService', () => {
             save: jest.fn().mockResolvedValue(absenceStub()),
             find: jest.fn().mockResolvedValue([]),
             findOne: jest.fn().mockResolvedValue(absenceStub()),
+            findAll: jest.fn().mockResolvedValue([absenceStub()]),
           },
         },
         {
@@ -88,7 +89,7 @@ describe('AbsencesService', () => {
 
       it('should call userService.findOne with the correct parameters', async () => {
         const findOneSpy = jest.spyOn(mockUsersService, 'findOne')
-        expect(findOneSpy).toBeCalledWith(absenceTestInput.userId)
+        expect(findOneSpy).toHaveBeenCalledWith(absenceTestInput.userId)
       })
 
       it('should call userService.incrementAbsencesCount with the correct parameters', async () => {
@@ -129,6 +130,25 @@ describe('AbsencesService', () => {
         await expect(result).rejects.toThrow(
           'User already has an absence on the same date!',
         )
+      })
+    })
+  })
+
+  describe('findAll', () => {
+    let absenceResult: Absence[]
+
+    beforeEach(async () => {
+      absenceResult = await service.findAll()
+    })
+
+    describe('when findAll is called', () => {
+      it('should call absenceRepository.find one time', async () => {
+        const findSpy = jest.spyOn(mockAbsencesRepository, 'find')
+        expect(findSpy).toHaveBeenCalledTimes(1)
+      })
+
+      it('should return an array of absences', async () => {
+        expect(absenceResult).toEqual([absenceStub()])
       })
     })
   })
