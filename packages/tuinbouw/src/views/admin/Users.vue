@@ -65,7 +65,7 @@
             alt="Profile picture"
           />
           <div class="flex w-full p-3">
-            <h2 class="text-lg w-1/5 min-w-fit">
+            <h2 class="text-lg text-left w-1/5 min-w-fit">
               {{ user.firstname }} {{ user.lastname }}
             </h2>
             <p class="text-gray-600">{{ user.email }}</p>
