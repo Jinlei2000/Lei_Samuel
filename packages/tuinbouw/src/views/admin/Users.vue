@@ -82,17 +82,7 @@
           </div>
           <div class="flex justify-end gap-6 p-3 w-1/6 min-w-fit">
             <p class="text-white px-3 py-1 rounded-full lowercase" :class="user.role === 'EMPLOYEE' ? 'bg-primary-green' : user.role === 'CLIENT' ? 'bg-primary-blue' : user.role === 'ADMIN' ? 'bg-primary-orange' : ''">{{ user.role }}</p>
-            <!-- <button
-              v-if="user.role === 'EMPLOYEE'"
-              class="text-blue-500 hover:underline"
-              @click="toggleModal(user, 'edit')"
-            >
-              <Pencil />
-            </button> -->
           </div>
-         
-          
-          <!-- Add other user information as needed -->
         </div>
         <!-- <div
           class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
@@ -156,7 +146,7 @@
       <div class="flex justify-between">
         <CustomButton
           name="Delete"
-          :loading="upgradeToAdminLoading"
+          :loading="deleteUserLoading"
           variant="warning"
           @click="handleDelete(selectedUser)"
         />
@@ -385,7 +375,7 @@ const {
 const { mutate: createEmployee, error: createEmployeeError } =
   useMutation(CREATE_EMPLOYEE)
 
-const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
+const { mutate: deleteUser, loading: deleteUserLoading, error: deleteUserError } = useMutation(DELETE_USER)
 
 const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
