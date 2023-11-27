@@ -122,7 +122,7 @@
 
   <!-- Detail Modal -->
   <Dialog
-    v-model:visible="visible.detail"
+    v-model:visible="visible.openModal"
     modal
     header="User Details"
     :draggable="false"
@@ -133,7 +133,7 @@
       },
     }"
   >
-    <div v-if="selectedUser">
+    <div v-if="selectedUser &&  visible.detail">
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedUser.fullname }}
       </h2>
@@ -165,15 +165,26 @@
             @click="toggleModal(selectedUser, 'edit')"
           />
         </div>
-        
-        
       </div>
-      
     </div>
+    <DynamicForm
+      v-if="selectedUser && visible.edit"
+      :schema="formUpdateEmployee"
+      :validation-schema="userUpdateAdminValidationSchema"
+      :handle-form="handleUpdateEmployee"
+      :loading="loading.updateEmployee"
+      :cancel="cancelUserEdit"
+      :initial-values="{
+        firstname: selectedUser?.firstname,
+        lastname: selectedUser?.lastname,
+        email: selectedUser?.email,
+        telephone: selectedUser?.telephone,
+      }"
+    />
   </Dialog>
 
   <!-- Edit Modal -->
-  <Dialog
+  <!-- <Dialog
     v-model:visible="visible.edit"
     modal
     header="Edit User"
@@ -198,7 +209,7 @@
         telephone: selectedUser?.telephone,
       }"
     />
-  </Dialog>
+  </Dialog> -->
 
   <!-- Create Employee Modal -->
   <Dialog
@@ -268,6 +279,7 @@ const variables = ref<VariablesProps>({
   searchString: '',
 })
 const visible = ref({
+  openModal: false,
   detail: false,
   edit: false,
   create: false,
@@ -466,10 +478,43 @@ const toggleModal = (
   type: string = 'close',
 ) => {
   selectedUser.value = user ? { ...user } : null
-  visible.value = {
-    detail: type === 'detail',
-    edit: type === 'edit',
-    create: type === 'create',
+  
+  // switch case for type
+  switch (type) {
+    case 'edit':
+      visible.value = {
+        openModal: true,
+        detail: false,
+        edit: true,
+        create: false,
+      }
+      break
+    case 'detail':
+      visible.value = {
+        openModal: true,
+        detail: true,
+        edit: false,
+        create: false,
+      }
+      break
+    case 'create':
+      visible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: true,
+      }
+      break
+    case 'close':
+      visible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: false,
+      }
+      break
+    default:
+      break
   }
 }
 
