@@ -24,9 +24,8 @@ describe('AbsencesService', () => {
           provide: getRepositoryToken(Absence),
           useValue: {
             save: jest.fn().mockResolvedValue(absenceStub()),
-            find: jest.fn().mockResolvedValue([]),
+            find: jest.fn().mockResolvedValue([absenceStub()]),
             findOne: jest.fn().mockResolvedValue(absenceStub()),
-            findAll: jest.fn().mockResolvedValue([absenceStub()]),
           },
         },
         {
@@ -66,6 +65,10 @@ describe('AbsencesService', () => {
     let absenceResult: Absence
 
     beforeEach(async () => {
+      // set mockAbsencesRepository.find to return an empty array
+      // so that the absence can be created without any errors
+      jest.spyOn(mockAbsencesRepository, 'find').mockResolvedValueOnce([])
+
       absenceTestInput = createabsenceInputStub()
       absenceResult = await service.create(absenceTestInput)
     })
@@ -73,7 +76,7 @@ describe('AbsencesService', () => {
     describe('when create is called', () => {
       it('should call absenceRepository.save one time', async () => {
         const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
-        expect(saveSPy).toBeCalledTimes(1)
+        expect(saveSPy).toHaveBeenCalledTimes(1)
       })
 
       // BUG: SHORT VERSION
@@ -147,11 +150,37 @@ describe('AbsencesService', () => {
         expect(findSpy).toHaveBeenCalledTimes(1)
       })
 
-      // it('should return an array of absences', async () => {
-      //   const absenceTest = absenceStub()
-      //   const result = await service.findAll()
-      //   expect(result).toEqual([absenceTest])
-      // })
+      it('should return an array of absences', async () => {
+        expect(absenceResult).toEqual([absenceStub()])
+      })
+    })
+  })
+
+  describe('findOne', () => {
+    let absenceResult: Absence
+
+    beforeEach(async () => {
+      absenceResult = await service.findOne('5f9d4a3f9d6c6a1d9c9bce1a')
+    })
+
+    describe('when findOne is called', () => {
+      it('should call absenceRepository.findOne one time', async () => {
+        const findOneSpy = jest.spyOn(mockAbsencesRepository, 'findOne')
+        expect(findOneSpy).toHaveBeenCalledTimes(1)
+      })
+
+      it('should return an absence', async () => {
+        expect(absenceResult).toEqual(absenceStub())
+      })
+
+      it('should throw an error if absence is not found', async () => {
+        try {
+          // invalid id
+          await service.findOne('111111111111111111111111')
+        } catch (e) {
+          expect(e.message).toEqual('Absence not found!')
+        }
+      })
     })
   })
 })
