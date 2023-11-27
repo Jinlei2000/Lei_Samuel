@@ -51,11 +51,12 @@
   <!-- show users -->
   <div v-else-if="users && users.length > 0">
     <div class="flex flex-col gap-3">
-      <div
+      <button
         v-for="user in users"
         :key="user.id"
         class="overflow-hidden rounded-2xl bg-gray-200 hover:scale-101 hover:cursor-pointer transition-all duration-100"
         :class="user.uid === null ?? 'border-red-500'"
+        @click="toggleModal(user, 'detail')"
       >
         <div class="flex h-11 items-center justify-between">
           <img
@@ -120,7 +121,7 @@
             <Trash2 />
           </button>
         </div> -->
-      </div>
+      </button>
     </div>
   </div>
 
@@ -149,14 +150,31 @@
       <p class="text-gray-600">
         {{ selectedUser.email }}
       </p>
-      <!-- upgrade to admin button -->
-      <CustomButton
-        v-if="selectedUser.role === 'EMPLOYEE'"
-        name="Upgrade to Admin"
-        :loading="upgradeToAdminLoading"
-        class="block w-full"
-        @click="handleUpgradeToAdmin(selectedUser)"
-      />
+      <div class="flex justify-between">
+        <CustomButton
+          name="Delete"
+          :loading="upgradeToAdminLoading"
+          @click="handleDelete(selectedUser)"
+        />
+        <div class="flex gap-3">
+          <!-- upgrade to admin button -->
+          <CustomButton
+            v-if="selectedUser.role === 'EMPLOYEE'"
+            name="Upgrade to Admin"
+            :loading="upgradeToAdminLoading"
+            @click="handleUpgradeToAdmin(selectedUser)"
+          />
+          <!-- edit button -->
+          <CustomButton
+            name="Edit"
+            :loading="upgradeToAdminLoading"
+            @click="toggleModal(selectedUser, 'edit')"
+          />
+        </div>
+        
+        
+      </div>
+      
     </div>
   </Dialog>
 
