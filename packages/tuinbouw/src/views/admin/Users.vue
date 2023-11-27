@@ -46,7 +46,7 @@
 
   <!-- show users -->
   <div v-else-if="users && users.length > 0">
-    <div class="flex flex-col gap-3">
+    <div class="mb-4 flex flex-col gap-3">
       <button
         v-for="user in users"
         :key="user.id"
@@ -54,17 +54,19 @@
         :class="user.uid === null ?? 'border-red-500'"
         @click="toggleModal(user, 'detail')"
       >
-        <div class="flex h-11 items-center justify-between">
+        <div class="flex h-16 items-center justify-between sm:h-11">
           <img
             class="block h-full rounded-2xl p-1"
             src="https://i.pravatar.cc/300"
             alt="Profile picture"
           />
           <div class="flex w-full p-3">
-            <h2 class="w-1/5 min-w-fit text-left text-lg">
+            <h2
+              class="w-1/3 min-w-fit text-left text-xl sm:text-lg md:w-1/4 lg:w-1/5"
+            >
               {{ user.firstname }} {{ user.lastname }}
             </h2>
-            <p class="text-gray-600">{{ user.email }}</p>
+            <p class="hidden text-gray-600 sm:block">{{ user.email }}</p>
             <!-- send email button -->
             <CustomButton
               v-if="user.uid === null"
@@ -76,9 +78,9 @@
               @click="handleSendMailToEmployee(user)"
             />
           </div>
-          <div class="flex w-1/6 min-w-fit justify-end gap-6 p-3">
+          <div class="flex w-1/4 min-w-fit justify-end gap-6 p-3 md:w-1/6">
             <p
-              class="rounded-full px-3 py-1 lowercase text-white"
+              class="rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
               :class="
                 user.role === 'EMPLOYEE'
                   ? 'bg-primary-green'
