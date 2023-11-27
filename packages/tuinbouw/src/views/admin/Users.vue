@@ -36,8 +36,12 @@
   </main>
 
   <!-- show loading -->
-  <div v-if="loading.data">
-    <p class="text-6xl font-black">Loading Users...</p>
+  <div v-if="loading.data" class="flex flex-col gap-3">
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
   </div>
 
   <!-- show users -->
