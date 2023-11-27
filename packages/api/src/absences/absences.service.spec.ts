@@ -153,6 +153,25 @@ describe('AbsencesService', () => {
       it('should return an array of absences', async () => {
         expect(absenceResult).toEqual([absenceStub()])
       })
+
+      // VALID FILTERS (S, V, O)
+      it('should return an array of absences filtered by absence type', async () => {
+        const filters = ['s', 'v', 'o']
+        const result = await service.findAll(filters)
+        expect(result).toEqual([absenceStub()])
+      })
+
+      // ERROR
+      it('should throw an error if absence type is not valid', async () => {
+        const filters = ['invalid']
+        const result = service.findAll(filters)
+        // ALL UPPER CASE FILTERS
+        await expect(result).rejects.toThrow(
+          `Invalid filter in filters = [${filters.map(f =>
+            f.toUpperCase(),
+          )}]! Supported filters are: S = Sick, V = Vacation, O = Other`,
+        )
+      })
     })
   })
 
@@ -180,6 +199,25 @@ describe('AbsencesService', () => {
         } catch (e) {
           expect(e.message).toEqual('Absence not found!')
         }
+      })
+    })
+  })
+
+  describe('findAllByUserId', () => {
+    let absenceResult: Absence[]
+
+    beforeEach(async () => {
+      absenceResult = await service.findAllByUserId('5f9d4a3f9d6c6a1d9c9bce1a')
+    })
+
+    describe('when findAllByUserId is called', () => {
+      it('should call absenceRepository.find one time', async () => {
+        const findSpy = jest.spyOn(mockAbsencesRepository, 'find')
+        expect(findSpy).toHaveBeenCalledTimes(1)
+      })
+
+      it('should return an array of absences', async () => {
+        expect(absenceResult).toEqual([absenceStub()])
       })
     })
   })
