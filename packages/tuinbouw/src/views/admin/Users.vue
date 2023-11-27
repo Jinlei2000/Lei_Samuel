@@ -150,6 +150,9 @@
       <p class="text-gray-600">
         {{ selectedUser.email }}
       </p>
+      <p class="text-gray-600">
+        {{ selectedUser.telephone }}
+      </p>
       <div class="flex justify-between">
         <CustomButton
           name="Delete"
@@ -197,6 +200,7 @@
       :validation-schema="userUpdateAdminValidationSchema"
       :handle-form="handleUpdateEmployee"
       :loading="loading.updateEmployee"
+      :cancel="cancelUserEdit"
       :initial-values="{
         firstname: selectedUser?.firstname,
         lastname: selectedUser?.lastname,
@@ -477,6 +481,10 @@ const toggleModal = (
     edit: type === 'edit',
     create: type === 'create',
   }
+}
+
+const cancelUserEdit = () => {
+  toggleModal(selectedUser.value, 'detail')
 }
 
 watchEffect(() => {
