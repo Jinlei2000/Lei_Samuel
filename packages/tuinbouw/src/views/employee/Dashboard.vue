@@ -99,10 +99,12 @@
           </div>
         </div>
         <Map
+          v-if="todaysLocations"
           class="rounded-2xl"
           :locations="todaysLocations"
           :controls="true"
         ></Map>
+        <Map v-else class="rounded-2xl" :controls="true"></Map>
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
@@ -137,6 +139,7 @@ import type { Location } from '@/interfaces/location.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
+import { computed } from 'vue'
 import { ref, watch, watchEffect } from 'vue'
 
 const { customUser } = useCustomUser()
