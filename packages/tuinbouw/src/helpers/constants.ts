@@ -67,7 +67,7 @@ export const SORT_OPTIONS_USERS = [
   },
   {
     label: 'Name',
-    value: 'name',
+    value: 'fullname',
   },
 ]
 
@@ -75,22 +75,11 @@ export const FILTER_OPTIONS_USERS = [
   {
     title: 'Role',
     name: 'role',
-    type: 'radio',
+    type: 'checkbox',
     options: [
-      { label: 'All', value: '' },
       { label: 'Admin', value: 'A' },
       { label: 'Employee', value: 'E' },
       { label: 'Client', value: 'C' },
-    ],
-  },
-  {
-    title: 'Loanable',
-    name: 'loanable',
-    type: 'radio',
-    options: [
-      { label: 'All', value: '' },
-      { label: 'Loanable', value: 'L' },
-      { label: 'Not Loanable', value: 'NL' },
     ],
   },
 ]
