@@ -50,59 +50,76 @@
 
   <!-- show users -->
   <div v-else-if="users && users.length > 0">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="flex flex-col gap-3">
       <div
         v-for="user in users"
         :key="user.id"
-        class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+        class="overflow-hidden rounded-2xl bg-gray-200 hover:scale-101 hover:cursor-pointer transition-all duration-100"
         :class="user.uid === null ?? 'border-red-500'"
       >
-        <div class="p-6">
-          <h2 class="mb-2 text-2xl font-semibold">
-            {{ user.firstname }} {{ user.lastname }}
-          </h2>
-          <p class="text-gray-600">{{ user.email }}</p>
-          <p class="text-gray-600">{{ user.role }}</p>
-          <p class="text-gray-600">{{ user.uid }}</p>
-          <!-- send email button -->
-          <CustomButton
-            v-if="user.uid === null"
-            name="Send email to create account"
-            :loading="
-              sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
-            "
-            class="block w-full"
-            @click="handleSendMailToEmployee(user)"
+        <div class="flex h-11 items-center justify-between">
+          <img
+            class="h-full block p-1 rounded-2xl"
+            src="https://i.pravatar.cc/300"
+            alt="Profile picture"
           />
+          <div class="flex w-full p-3">
+            <h2 class="text-lg w-1/5 min-w-fit">
+              {{ user.firstname }} {{ user.lastname }}
+            </h2>
+            <p class="text-gray-600">{{ user.email }}</p>
+            <!-- send email button -->
+            <CustomButton
+              v-if="user.uid === null"
+              name="Send email to create account"
+              :loading="
+                sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
+              "
+              class="block w-full"
+              @click="handleSendMailToEmployee(user)"
+            />
+          </div>
+          <div class="flex justify-end gap-6 p-3 w-1/6 min-w-fit">
+            <p class="text-white px-3 py-1 rounded-full lowercase" :class="user.role === 'EMPLOYEE' ? 'bg-primary-green' : user.role === 'CLIENT' ? 'bg-primary-blue' : user.role === 'ADMIN' ? 'bg-primary-orange' : ''">{{ user.role }}</p>
+            <!-- <button
+              v-if="user.role === 'EMPLOYEE'"
+              class="text-blue-500 hover:underline"
+              @click="toggleModal(user, 'edit')"
+            >
+              <Pencil />
+            </button> -->
+          </div>
+         
+          
           <!-- Add other user information as needed -->
         </div>
-        <div
+        <!-- <div
           class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-        >
+        > -->
           <!-- View More Button -->
-          <button
+          <!-- <button
             class="text-green-500 hover:underline"
             @click="toggleModal(user, 'detail')"
           >
             <Eye />
-          </button>
+          </button> -->
           <!-- Edit Button -->
-          <button
+          <!-- <button
             v-if="user.role === 'EMPLOYEE'"
             class="text-blue-500 hover:underline"
             @click="toggleModal(user, 'edit')"
           >
             <Pencil />
-          </button>
+          </button> -->
           <!-- Delete Button -->
-          <button
+          <!-- <button
             v-if="user.role === 'EMPLOYEE'"
             class="text-red-500 hover:underline"
             @click="handleDelete(user)"
           >
             <Trash2 />
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
