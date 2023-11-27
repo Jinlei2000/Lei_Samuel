@@ -536,10 +536,7 @@
 </template>
 
 <script setup lang="ts">
-import DynamicForm from './generic/DynamicForm.vue'
-import InputField from './generic/InputField.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
-import Map from '@/components/Map.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
