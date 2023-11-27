@@ -139,7 +139,6 @@ import type { Location } from '@/interfaces/location.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
-import { computed } from 'vue'
 import { ref, watch, watchEffect } from 'vue'
 
 const { customUser } = useCustomUser()
