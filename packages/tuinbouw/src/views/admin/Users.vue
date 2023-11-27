@@ -1,26 +1,47 @@
 <template>
-  <!-- go back button -->
-  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
-    <ArrowLeft class="h-6 w-6" />
-    Go back
-  </button>
-  <h1
-    class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
-  >
-    Users
-  </h1>
-
-  <!-- add employee button -->
-  <button
-    class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
-    @click="toggleModal(null, 'create')"
-  >
-    Add Employee
-  </button>
-
   <!-- TODO: filters & orders -->
 
   <!-- TODO: search bar -->
+
+  <main
+    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+  >
+    <div class="flex w-full flex-col gap-3">
+      <!-- Filters + Searchbar -->
+      <section
+        :class="[
+          'relative flex w-full items-center justify-between'
+        ]"
+      >
+        <!-- Filter -->
+        <Filter
+          v-model="variables.filters"
+          :options="FILTER_OPTIONS_USERS"
+        />
+
+        <!-- Searchbar -->
+        <Search v-model="variables.searchString" />
+      </section>
+
+      <!-- Title + Sort -->
+      <header class="flex w-full items-center justify-between">
+        <!-- Title -->
+        <h1 class="text-2xl">Materials</h1>
+        <div class="flex gap-3">
+          <!-- Sort -->
+          <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
+           <!-- add employee button -->
+          <button
+            class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
+            @click="toggleModal(null, 'create')"
+          >
+            Add Employee
+          </button>
+        </div>
+        
+      </header>
+    </div>
+  </main>
 
   <!-- show loading -->
   <div v-if="loading.data">
@@ -182,8 +203,13 @@ import {
   UPDATE_USER,
   UPDATE_USER_TO_ADMIN,
 } from '@/graphql/user.mutation'
+import {
+  FILTER_OPTIONS_USERS,
+  ORDER_DIRECTION,
+  SORT_OPTIONS_USERS,
+  SUPPORTED_LOCALES_TYPES
+} from '@/helpers/constants'
 import { GET_USERS } from '@/graphql/user.query'
-import { ORDER_DIRECTION, SUPPORTED_LOCALES_TYPES } from '@/helpers/constants'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import {
@@ -193,6 +219,11 @@ import {
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { computed, ref, watchEffect } from 'vue'
+
+// components
+import Filter from '@/components/generic/Filter.vue'
+import Search from '@/components/generic/Search.vue'
+import Sort from '@/components/generic/Sort.vue'
 
 // composables
 const { showToast } = useCustomToast()

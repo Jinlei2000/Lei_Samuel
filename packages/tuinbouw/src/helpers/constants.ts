@@ -59,3 +59,38 @@ export const FILTER_OPTIONS_MATERIALS = [
     ],
   },
 ]
+
+export const SORT_OPTIONS_USERS = [
+  {
+    label: 'Date Created',
+    value: 'createdAt',
+  },
+  {
+    label: 'Name',
+    value: 'name',
+  },
+]
+
+export const FILTER_OPTIONS_USERS = [
+  {
+    title: 'Role',
+    name: 'role',
+    type: 'radio',
+    options: [
+      { label: 'All', value: '' },
+      { label: 'Admin', value: 'A' },
+      { label: 'Employee', value: 'E' },
+      { label: 'Client', value: 'C' },
+    ],
+  },
+  {
+    title: 'Loanable',
+    name: 'loanable',
+    type: 'radio',
+    options: [
+      { label: 'All', value: '' },
+      { label: 'Loanable', value: 'L' },
+      { label: 'Not Loanable', value: 'NL' },
+    ],
+  },
+]
