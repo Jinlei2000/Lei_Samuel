@@ -154,6 +154,7 @@
         <CustomButton
           name="Delete"
           :loading="upgradeToAdminLoading"
+          variant="warning"
           @click="handleDelete(selectedUser)"
         />
         <div class="flex gap-3">
