@@ -21,6 +21,10 @@ export class Location {
 
   @Column() // Database link - Typeorm
   @Field() // GraphQL type
+  title: string
+
+  @Column() // Database link - Typeorm
+  @Field() // GraphQL type
   address: string
 
   @Column() // Database link - Typeorm

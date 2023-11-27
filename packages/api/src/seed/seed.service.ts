@@ -67,7 +67,8 @@ export class SeedService {
       u.locale = user.locale
       u.locationIds = []
       if (user.role === 'CLIENT') u.invoiceOption = user.invoiceOption
-      if (user.role === 'ADMIN' || user.role === 'EMPLOYEE') u.absentCount = user.absences.length
+      if (user.role === 'ADMIN' || user.role === 'EMPLOYEE')
+        u.absentCount = user.absences.length
 
       theUsers.push(u)
     }
@@ -82,9 +83,10 @@ export class SeedService {
         let theLocationIds: string[] = []
         for (let location of users[num].locations) {
           const l = new Location()
+          l.title = location.title
           l.address = location.address
           l.userId = user.id.toString()
-          l.lat = location.lat 
+          l.lat = location.lat
           l.lng = location.lng
 
           const newLoc = await this.locationsService.save(l)

@@ -8,6 +8,7 @@
     "role": "ADMIN",
     "locations": [
       {
+        "title": "Home",
         "address": "Marksesteenweg 58, 8500 Kortrijk",
         "lat": 50.821816,
         "lng": 3.250669
@@ -49,6 +50,7 @@
     "role": "ADMIN",
     "locations": [
       {
+        "title": "Home",
         "address": "Sint-Janslaan 5, 8500 Kortrijk",
         "lat": 50.826003,
         "lng": 3.271554
@@ -78,6 +80,7 @@
     "role": "ADMIN",
     "locations": [
       {
+        "title": "Home",
         "address": "Pater Pirestraat 8, 8800 Roeselare",
         "lat": 50.957262,
         "lng": 3.138505
@@ -101,6 +104,7 @@
     "role": "EMPLOYEE",
     "locations": [
       {
+        "title": "Home",
         "address": "Printaniastraat 7, 8650 Houthulst",
         "lat": 50.978933,
         "lng": 2.94778
@@ -156,6 +160,7 @@
     "role": "EMPLOYEE",
     "locations": [
       {
+        "title": "Home",
         "address": "Antwerpsesteenweg 309, 9040 Gent",
         "lat": 51.064311,
         "lng": 3.752078
@@ -193,6 +198,7 @@
     "role": "EMPLOYEE",
     "locations": [
       {
+        "title": "Home",
         "address": "Ten Rodelaan 7, 9800 Deinze",
         "lat": 50.975829,
         "lng": 3.538805
@@ -231,6 +237,7 @@
     "invoiceOption": "post",
     "locations": [
       {
+        "title": "Home",
         "address": "Waalstraat 27, 9870 Zulte",
         "lat": 50.922204,
         "lng": 3.448845
@@ -406,11 +413,13 @@
     "invoiceOption": "email",
     "locations": [
       {
+        "title": "Home",
         "address": "Kortrijksesteenweg 500, 9000 Gent",
         "lat": 51.033257,
         "lng": 3.714729
       },
       {
+        "title": "Office",
         "address": "Astridlaan 400, 8310 Brugge",
         "lat": 51.192622,
         "lng": 3.26829
@@ -586,11 +595,13 @@
     "invoiceOption": "post",
     "locations": [
       {
+        "title": "Home",
         "address": "Sint-Janslaan 5, 8500 Kortrijk",
         "lat": 50.826003,
         "lng": 3.271554
       },
       {
+        "title": "Office",
         "address": "Spei 8, 8790 Waregem",
         "lat": 50.888032,
         "lng": 3.439033
@@ -766,6 +777,7 @@
     "invoiceOption": "post",
     "locations": [
       {
+        "title": "Home",
         "address": "Rue du Curé du Château 1, 7500 Tournai",
         "lat": 50.611128,
         "lng": 3.390047
@@ -941,11 +953,13 @@
     "invoiceOption": "email",
     "locations": [
       {
+        "title": "Home",
         "address": "Broekstraat 114, 9700 Oudenaarde",
         "lat": 50.852814,
         "lng": 3.605134
       },
       {
+        "title": "Office",
         "address": "René D'Huyvetterstraat 24, 9770 Kruisem",
         "lat": 50.906383,
         "lng": 3.525543

@@ -81,6 +81,7 @@ export class LocationsService {
   // Create location and update user with new locationId
   async create(createLocationInput: CreateLocationInput): Promise<Location> {
     const l = new Location()
+    l.title = createLocationInput.title
     l.address = createLocationInput.address
     l.userId = createLocationInput.userId
     l.lat = createLocationInput.lat

@@ -33,6 +33,7 @@ export const userUpdateValidationSchema = yup.object({
 })
 
 export const locationValidationSchema = yup.object({
+  locationTitle: yup.string().required(),
   searchAdressInput: yup.string().required().trim(),
   selectedAddress: yup.object().required(),
 })

@@ -1,10 +1,13 @@
 <template>
   <button
     :type="type"
-    :class="[
-      'bg-primary-green mt-4 rounded-md px-4 py-2 text-white',
-      loading ? 'cursor-not-allowed opacity-50' : '',
-    ]"
+    class="bg-primary-green mt-4 rounded-md px-4 py-2"
+    :class="
+      [ownClass, loading ? 'cursor-not-allowed opacity-50' : ''] &&
+      variant === 'primary'
+        ? 'bg-primary-green text-white'
+        : 'bg-transparent border border-primary-green text-primary-green'
+    "
     :disabled="loading"
     v-bind="$attrs"
   >
@@ -34,12 +37,20 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 
-defineProps({
+const props = defineProps({
   loading: Boolean,
   name: String,
   type: {
     type: String as PropType<'button' | 'submit' | 'reset'>,
     default: 'button',
+  },
+  variant: {
+    variant: String as PropType<'primary' | 'secondary'>,
+    default: 'primary',
+  },
+  ownClass: {
+    type: String,
+    default: '',
   },
 })
 </script>
