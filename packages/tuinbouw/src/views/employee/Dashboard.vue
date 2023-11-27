@@ -7,8 +7,8 @@
         <h2 class="mb-3 text-2xl">Next Appointment</h2>
         <div class="flex flex-col">
           <AppointmentCard
-            v-if="nextAppointment"
-            :appointment="nextAppointment"
+            v-if="scheduleData.nextAppointment"
+            :appointment="scheduleData.nextAppointment"
           />
           <div
             v-else
@@ -47,19 +47,22 @@
           </button>
         </div>
         <div class="flex flex-col gap-3">
-          <template v-for="(item, index) in appointments" v-if="appointments">
+          <template
+            v-for="(item, index) in scheduleData.appointments"
+            v-if="scheduleData.appointments"
+          >
             <AppointmentCard
-              v-if="item !== nextAppointment"
+              v-if="item !== scheduleData.nextAppointment"
               :key="index"
               :appointment="item"
             />
           </template>
           <template
-            v-for="(item, index) in finishedAppointments"
-            v-if="finishedAppointments"
+            v-for="(item, index) in scheduleData.finishedAppointments"
+            v-if="scheduleData.finishedAppointments"
           >
             <AppointmentCard
-              v-if="item !== nextAppointment"
+              v-if="item !== scheduleData.nextAppointment"
               :key="index"
               :appointment="item"
             />
@@ -99,18 +102,18 @@
           </div>
         </div>
         <Map
-          v-if="todaysLocations"
+          v-if="scheduleData.todaysLocations"
           class="rounded-2xl"
-          :locations="todaysLocations"
+          :locations="scheduleData.todaysLocations"
           :controls="true"
         ></Map>
         <Map v-else class="rounded-2xl" :controls="true"></Map>
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
-        <div v-if="materials" class="flex flex-col gap-3">
+        <div v-if="scheduleData.materials" class="flex flex-col gap-3">
           <ChecklistItem
-            v-for="item in materials"
+            v-for="item in scheduleData.materials"
             :key="item.id"
             :material="item"
           />
@@ -135,11 +138,9 @@ import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
-import type { Location } from '@/interfaces/location.interface'
-import type { Material } from '@/interfaces/material.interface'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
-import { ref, watch, watchEffect } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
@@ -147,8 +148,6 @@ const { showToast } = useCustomToast()
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
 const forecast = ref<any>()
-
-const todaysLocations = ref<Location[]>()
 
 const getWeekForecast = async (lon: string, lat: string) => {
   await getForecastForWeek(lon, lat).then(data => {
@@ -168,7 +167,7 @@ navigator.geolocation.getCurrentPosition(position => {
 })
 
 const {
-  result: schedule,
+  result: scheduleResult,
   error: scheduleError,
   refetch: scheduleRefetch,
   loading: scheduleLoading,
@@ -183,91 +182,42 @@ const {
   },
 )
 
-const appointments = ref<[Appointment]>()
-const nextAppointment = ref<Appointment>()
-const finishedAppointments = ref<[Appointment]>()
+const schedule = computed(() => {
+  return scheduleResult.value?.scheduleByDateAndUserId[0] ?? null
+})
 
-const materials = ref<[Material]>()
-
-const setNextAppointment = () => {
-  // get only first appointment in schedule.value.scheduleByDateAndUserId[0].appointments with isDone false
-  nextAppointment.value =
-    schedule.value.scheduleByDateAndUserId[0].appointments.find(
+const scheduleData = ref({
+  appointments: computed(() => {
+    return schedule.value?.appointments.filter(
       (appointment: Appointment) => appointment.isDone === false,
     )
-}
-
-const setAppointments = () => {
-  // set appointments to appointments of schedule where isDone is false
-  appointments.value =
-    schedule.value.scheduleByDateAndUserId[0].appointments.filter(
-      (appointment: Appointment) => appointment.isDone === false,
-    )
-}
-
-const setTodaysLocations = () => {
-  // set appointments to appointments of schedule where isDone is false
-  todaysLocations.value = schedule.value.scheduleByDateAndUserId[0].appointments
-    .filter((appointment: Appointment) => appointment.isDone === false)
-    .map((appointment: Appointment) => {
-      return {
-        id: appointment.location?.id,
-        userId: appointment.location?.userId,
-        address: appointment.location?.address,
-        lat: appointment.location?.lat,
-        lng: appointment.location?.lng,
-      }
-    })
-}
-
-const setFinishedAppointments = () => {
-  // set appointments to appointments of schedule where isDone is true
-  finishedAppointments.value =
-    schedule.value.scheduleByDateAndUserId[0].appointments.filter(
+  }),
+  materials: computed(() => {
+    return schedule.value?.materials
+  }),
+  finishedAppointments: computed(() => {
+    return schedule.value?.appointments.filter(
       (appointment: Appointment) => appointment.isDone === true,
     )
-}
-
-watch(schedule, () => {
-  if (schedule.value && schedule.value.scheduleByDateAndUserId.length > 0) {
-    // const now = new Date()
-    // // check if there is an appointment that has finalDate withing 30 minutes of current time
-    // schedule.value.scheduleByDateAndUserId[0].appointments.forEach(
-    //   (appointment: Appointment) => {
-    //     const finalDate = new Date(appointment.finalDate!)
-    //     finalDate.setHours(finalDate.getHours() - 1)
-    //     const diff = Math.abs(finalDate.getTime() - now.getTime())
-    //     const minutes = Math.floor(diff / 1000 / 60)
-    //     if (minutes < 30) {
-    //       console.log('next appointment found', appointment)
-    //       nextAppointment.value = appointment
-    //     } else {
-    //       console.log('no appointment found')
-    //     }
-
-    //   }
-    // )
-
-    setNextAppointment()
-    setAppointments()
-    setFinishedAppointments()
-    setTodaysLocations()
-
-    // set appointments to appointments of schedule
-    // appointments.value = schedule.value.scheduleByDateAndUserId[0].appointments
-
-    // // if appointment has finaldate that has passed remove it from appointments
-    // appointments.value?.forEach((appointment: Appointment) => {
-    //   const finalDate = new Date(appointment.finalDate!)
-    //   finalDate.setHours(finalDate.getHours() - 1)
-    //   const now = new Date()
-    //   if (finalDate < now) {
-    //     appointments.value?.splice(appointments.value.indexOf(appointment), 1)
-    //   }
-    // })
-
-    materials.value = schedule.value.scheduleByDateAndUserId[0].materials
-  }
+  }),
+  nextAppointment: computed(() => {
+    return schedule.value?.appointments.find(
+      (appointment: Appointment) => appointment.isDone === false,
+    )
+  }),
+  todaysLocations: computed(() => {
+    return schedule.value?.appointments
+      .filter((appointment: Appointment) => appointment.isDone === false)
+      .map((appointment: Appointment) => {
+        return {
+          id: appointment.location?.id,
+          userId: appointment.location?.userId,
+          address: appointment.location?.address,
+          lat: appointment.location?.lat,
+          lng: appointment.location?.lng,
+        }
+      })
+  }),
 })
 
 const days = [
@@ -282,28 +232,19 @@ const days = [
 
 // nextday function
 const nextDay = () => {
-  resetAppointments()
+  scheduleRefetch()
   const currentDate = myDate.value
   const nextDay = new Date(currentDate.setDate(currentDate.getDate() + 1))
   myDate.value = nextDay
 }
 
 const prevDay = () => {
-  resetAppointments()
+  scheduleRefetch()
   const currentDate = myDate.value
   const prevDay = new Date(currentDate.setDate(currentDate.getDate() - 1))
   myDate.value = prevDay
 }
 
-const resetAppointments = () => {
-  nextAppointment.value = undefined
-  appointments.value = undefined
-  finishedAppointments.value = undefined
-  materials.value = undefined
-  todaysLocations.value = undefined
-}
-
-// @ts-ignore
 watch(myDate, () => {
   switch (myDate.value.getDate()) {
     case new Date().getDate():
