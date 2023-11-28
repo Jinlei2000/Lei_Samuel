@@ -6,7 +6,8 @@
     "dev:api": "npx lerna run --scope=api dev",
     "translate": "npm run generate:translations -w tuinbouw",
     "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev",
-    "dev:lint": "npx lerna run --scope=tuinbouw lint"
+    "dev:lint": "npx lerna run --scope=tuinbouw lint",
+    "lint": "npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore"
   },
   "repository": {
     "type": "git",
