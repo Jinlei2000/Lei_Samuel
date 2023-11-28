@@ -1,6 +1,6 @@
 <template>
   <div
-    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+    class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
     <div class="flex w-full flex-col gap-3">
       <!-- Filters + Searchbar -->
@@ -33,83 +33,98 @@
     </div>
   </div>
 
-  <div v-if="loading.data">
-    <p class="text-6xl font-black">Loading...</p>
+  <!-- show loading -->
+  <div v-if="loading.data" class="flex flex-col gap-3">
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
   </div>
 
   <!-- show all appointments -->
   <div v-else-if="appointments && appointments.length > 0">
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mb-4 flex flex-col gap-3">
       <div v-for="a of appointments" :key="a.id">
-        <div
+        <button
           :class="[
-            'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
+            'hover:scale-101 w-full overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer',
             {
               ' border border-red-400': isOverToday(a),
             },
           ]"
+          @click="toggleModal(a, 'detail')"
         >
-          <div class="p-4">
-            <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-            <p class="mb-1 text-gray-600">{{ a.description }}</p>
-            <p class="mb-1 text-gray-600">{{ a.location.address }}</p>
-            <p class="mb-1 text-gray-600">{{ a.id }}</p>
-            <p v-if="a.finalDate" class="text-gray-600">
-              {{ formatDateTime(a.finalDate) }}
-            </p>
-          </div>
-          <div class="border-t border-gray-200 p-4">
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-500"
-                >{{ formatDateTime(a.startProposedDate) }} -
-                {{ formatDateTime(a.endProposedDate) }}</span
+          <div flex h-16 items-center justify-between sm:h-11>
+            <div class="flex w-full p-3">
+              <h2
+                class="w-1/3 min-w-fit text-left text-xl sm:text-lg md:w-1/4 lg:w-1/5"
               >
-              <span v-if="a.isScheduled" class="text-green-500">Scheduled</span>
-              <span v-else class="text-gray-500">Not Scheduled</span>
+                {{ a.user.fullname }}
+              </h2>
+              <p class="hidden text-gray-600 sm:block">{{ a.description }}</p>
             </div>
-          </div>
-          <div class="border-t border-gray-200 p-4">
-            <div class="flex items-center justify-between">
-              <span v-if="a.isDone" class="text-green-500">Done</span>
-              <span v-else class="text-gray-500">Not Done</span>
-              <span class="text-sm text-gray-500"
-                >Priority: {{ a.priority }}</span
-              >
+            <div class="p-4">
+              <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
+              <p v-if="a.finalDate" class="text-gray-600">
+                {{ formatDateTime(a.finalDate) }}
+              </p>
             </div>
-          </div>
+            <div class="border-t border-gray-200 p-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500"
+                  >{{ formatDateTime(a.startProposedDate) }} -
+                  {{ formatDateTime(a.endProposedDate) }}</span
+                >
+                <span v-if="a.isScheduled" class="text-green-500"
+                  >Scheduled</span
+                >
+                <span v-else class="text-gray-500">Not Scheduled</span>
+              </div>
+            </div>
+            <div class="border-t border-gray-200 p-4">
+              <div class="flex items-center justify-between">
+                <span v-if="a.isDone" class="text-green-500">Done</span>
+                <span v-else class="text-gray-500">Not Done</span>
+                <span class="text-sm text-gray-500"
+                  >Priority: {{ a.priority }}</span
+                >
+              </div>
+            </div>
 
-          <div
-            class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-          >
-            <!-- View More Button -->
-            <button
-              class="text-green-500 hover:underline"
-              @click="toggleModal(a, 'detail')"
+            <div
+              class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
             >
-              <Eye />
-            </button>
-            <!-- Edit button (only if not done) -->
-            <button
-              v-if="
-                // check if is not done and is over today or not done and not scheduled
-                (!showAllOverview && !a.isDone && isOverToday(a)) ||
-                (!showAllOverview && !a.isDone && !a.isScheduled)
-              "
-              class="text-blue-500 hover:underline"
-              @click.stop="toggleModal(a, 'edit')"
-            >
-              <Pencil />
-            </button>
-            <!-- Delete button (only if not done) -->
-            <button
-              v-if="!a.isDone"
-              class="text-red-500 hover:underline"
-              @click.stop="handleDeleteAppointment(a.id)"
-            >
-              <Trash2 />
-            </button>
+              <!-- View More Button -->
+              <button
+                class="text-green-500 hover:underline"
+                @click="toggleModal(a, 'detail')"
+              >
+                <Eye />
+              </button>
+              <!-- Edit button (only if not done) -->
+              <button
+                v-if="
+                  // check if is not done and is over today or not done and not scheduled
+                  (!showAllOverview && !a.isDone && isOverToday(a)) ||
+                  (!showAllOverview && !a.isDone && !a.isScheduled)
+                "
+                class="text-blue-500 hover:underline"
+                @click.stop="toggleModal(a, 'edit')"
+              >
+                <Pencil />
+              </button>
+              <!-- Delete button (only if not done) -->
+              <button
+                v-if="!a.isDone"
+                class="text-red-500 hover:underline"
+                @click.stop="handleDeleteAppointment(a.id)"
+              >
+                <Trash2 />
+              </button>
+            </div>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   </div>
@@ -450,7 +465,7 @@ const refetch = async (): Promise<void> => {
 // log the queries
 watchEffect(() => {
   // if (locations.value) console.log('locations: ', locations.value)
-  // if (appointments.value) console.log('appointments: ', appointments.value)
+  if (appointments.value) console.log('appointments: ', appointments.value)
 
   const errors = [
     appointmentsError.value,
