@@ -1,12 +1,16 @@
 <template>
   <button
     :type="type"
-    class="bg-primary-green mt-4 rounded-md px-4 py-2"
+    class="mt-4 rounded-md px-4 py-2"
     :class="
       [ownClass, loading ? 'cursor-not-allowed opacity-50' : ''] &&
       variant === 'primary'
         ? 'bg-primary-green text-white'
-        : 'bg-transparent border border-primary-green text-primary-green'
+        : variant === 'secondary'
+          ? 'bg-transparent border border-primary-green text-primary-green'
+          : variant === 'warning'
+            ? 'bg-primary-red text-white'
+            : ''
     "
     :disabled="loading"
     v-bind="$attrs"
@@ -45,7 +49,7 @@ const props = defineProps({
     default: 'button',
   },
   variant: {
-    variant: String as PropType<'primary' | 'secondary'>,
+    type: String as PropType<'primary' | 'secondary' | 'warning'>,
     default: 'primary',
   },
   ownClass: {

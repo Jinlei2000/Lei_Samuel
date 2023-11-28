@@ -1,88 +1,128 @@
 <template>
-  <!-- go back button -->
-  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
-    <ArrowLeft class="h-6 w-6" />
-    Go back
-  </button>
-  <h1
-    class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
-  >
-    Users
-  </h1>
-
-  <!-- add employee button -->
-  <button
-    class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
-    @click="toggleModal(null, 'create')"
-  >
-    Add Employee
-  </button>
-
   <!-- TODO: filters & orders -->
 
   <!-- TODO: search bar -->
 
+  <main
+    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+  >
+    <div class="flex w-full flex-col gap-3">
+      <!-- Filters + Searchbar -->
+      <section :class="['relative flex w-full items-center justify-between']">
+        <!-- Filter -->
+        <Filter v-model="variables.filters" :options="FILTER_OPTIONS_USERS" />
+
+        <!-- Searchbar -->
+        <Search v-model="variables.searchString" />
+      </section>
+
+      <!-- Title + Sort -->
+      <header class="flex w-full items-center justify-between">
+        <!-- Title -->
+        <h1 class="text-2xl">Materials</h1>
+        <div class="flex gap-3">
+          <!-- Sort -->
+          <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
+          <!-- add employee button -->
+          <button
+            class="bg-primary-green my-4 rounded px-4 py-2 text-white"
+            @click="toggleModal(null, 'create')"
+          >
+            Add Employee
+          </button>
+        </div>
+      </header>
+    </div>
+  </main>
+
   <!-- show loading -->
-  <div v-if="loading.data">
-    <p class="text-6xl font-black">Loading Users...</p>
+  <div v-if="loading.data" class="flex flex-col gap-3">
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
   </div>
 
   <!-- show users -->
   <div v-else-if="users && users.length > 0">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <div
+    <div class="mb-4 flex flex-col gap-3">
+      <button
         v-for="user in users"
         :key="user.id"
-        class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+        class="hover:scale-101 overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer"
         :class="user.uid === null ?? 'border-red-500'"
+        @click="toggleModal(user, 'detail')"
       >
-        <div class="p-6">
-          <h2 class="mb-2 text-2xl font-semibold">
-            {{ user.firstname }} {{ user.lastname }}
-          </h2>
-          <p class="text-gray-600">{{ user.email }}</p>
-          <p class="text-gray-600">{{ user.role }}</p>
-          <p class="text-gray-600">{{ user.uid }}</p>
-          <!-- send email button -->
-          <CustomButton
-            v-if="user.uid === null"
-            name="Send email to create account"
-            :loading="
-              sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
-            "
-            class="block w-full"
-            @click="handleSendMailToEmployee(user)"
+        <div class="flex h-16 items-center justify-between sm:h-11">
+          <img
+            class="block h-full rounded-2xl p-1"
+            src="https://i.pravatar.cc/300"
+            alt="Profile picture"
           />
-          <!-- Add other user information as needed -->
+          <div class="flex w-full p-3">
+            <h2
+              class="w-1/3 min-w-fit text-left text-xl sm:text-lg md:w-1/4 lg:w-1/5"
+            >
+              {{ user.firstname }} {{ user.lastname }}
+            </h2>
+            <p class="hidden text-gray-600 sm:block">{{ user.email }}</p>
+            <!-- send email button -->
+            <CustomButton
+              v-if="user.uid === null"
+              name="Send email to create account"
+              :loading="
+                sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
+              "
+              class="block w-full"
+              @click="handleSendMailToEmployee(user)"
+            />
+          </div>
+          <div class="flex w-1/4 min-w-fit justify-end gap-6 p-3 md:w-1/6">
+            <p
+              class="rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
+              :class="
+                user.role === 'EMPLOYEE'
+                  ? 'bg-primary-green'
+                  : user.role === 'CLIENT'
+                    ? 'bg-primary-blue'
+                    : user.role === 'ADMIN'
+                      ? 'bg-primary-orange'
+                      : ''
+              "
+            >
+              {{ user.role }}
+            </p>
+          </div>
         </div>
-        <div
+        <!-- <div
           class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-        >
-          <!-- View More Button -->
-          <button
+        > -->
+        <!-- View More Button -->
+        <!-- <button
             class="text-green-500 hover:underline"
             @click="toggleModal(user, 'detail')"
           >
             <Eye />
-          </button>
-          <!-- Edit Button -->
-          <button
+          </button> -->
+        <!-- Edit Button -->
+        <!-- <button
             v-if="user.role === 'EMPLOYEE'"
             class="text-blue-500 hover:underline"
             @click="toggleModal(user, 'edit')"
           >
             <Pencil />
-          </button>
-          <!-- Delete Button -->
-          <button
+          </button> -->
+        <!-- Delete Button -->
+        <!-- <button
             v-if="user.role === 'EMPLOYEE'"
             class="text-red-500 hover:underline"
             @click="handleDelete(user)"
           >
             <Trash2 />
           </button>
-        </div>
-      </div>
+        </div> -->
+      </button>
     </div>
   </div>
 
@@ -93,7 +133,7 @@
 
   <!-- Detail Modal -->
   <Dialog
-    v-model:visible="visible.detail"
+    v-model:visible="visible.openModal"
     modal
     header="User Details"
     :draggable="false"
@@ -104,26 +144,58 @@
       },
     }"
   >
-    <div v-if="selectedUser">
+    <div v-if="selectedUser && visible.detail">
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedUser.fullname }}
       </h2>
       <p class="text-gray-600">
         {{ selectedUser.email }}
       </p>
-      <!-- upgrade to admin button -->
-      <CustomButton
-        v-if="selectedUser.role === 'EMPLOYEE'"
-        name="Upgrade to Admin"
-        :loading="upgradeToAdminLoading"
-        class="block w-full"
-        @click="handleUpgradeToAdmin(selectedUser)"
-      />
+      <p class="text-gray-600">
+        {{ selectedUser.telephone }}
+      </p>
+      <div class="flex justify-between">
+        <CustomButton
+          name="Delete"
+          :loading="deleteUserLoading"
+          variant="warning"
+          @click="handleDelete(selectedUser)"
+        />
+        <div class="flex gap-3">
+          <!-- upgrade to admin button -->
+          <CustomButton
+            v-if="selectedUser.role === 'EMPLOYEE'"
+            name="Upgrade to Admin"
+            :loading="upgradeToAdminLoading"
+            @click="handleUpgradeToAdmin(selectedUser)"
+          />
+          <!-- edit button -->
+          <CustomButton
+            name="Edit"
+            :loading="upgradeToAdminLoading"
+            @click="toggleModal(selectedUser, 'edit')"
+          />
+        </div>
+      </div>
     </div>
+    <DynamicForm
+      v-if="selectedUser && visible.edit"
+      :schema="formUpdateEmployee"
+      :validation-schema="userUpdateAdminValidationSchema"
+      :handle-form="handleUpdateEmployee"
+      :loading="loading.updateEmployee"
+      :cancel="cancelUserEdit"
+      :initial-values="{
+        firstname: selectedUser?.firstname,
+        lastname: selectedUser?.lastname,
+        email: selectedUser?.email,
+        telephone: selectedUser?.telephone,
+      }"
+    />
   </Dialog>
 
   <!-- Edit Modal -->
-  <Dialog
+  <!-- <Dialog
     v-model:visible="visible.edit"
     modal
     header="Edit User"
@@ -140,6 +212,7 @@
       :validation-schema="userUpdateAdminValidationSchema"
       :handle-form="handleUpdateEmployee"
       :loading="loading.updateEmployee"
+      :cancel="cancelUserEdit"
       :initial-values="{
         firstname: selectedUser?.firstname,
         lastname: selectedUser?.lastname,
@@ -147,7 +220,7 @@
         telephone: selectedUser?.telephone,
       }"
     />
-  </Dialog>
+  </Dialog> -->
 
   <!-- Create Employee Modal -->
   <Dialog
@@ -174,6 +247,10 @@
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
+// components
+import Filter from '@/components/generic/Filter.vue'
+import Search from '@/components/generic/Search.vue'
+import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
 import {
@@ -183,7 +260,12 @@ import {
   UPDATE_USER_TO_ADMIN,
 } from '@/graphql/user.mutation'
 import { GET_USERS } from '@/graphql/user.query'
-import { ORDER_DIRECTION, SUPPORTED_LOCALES_TYPES } from '@/helpers/constants'
+import {
+  FILTER_OPTIONS_USERS,
+  ORDER_DIRECTION,
+  SORT_OPTIONS_USERS,
+  SUPPORTED_LOCALES_TYPES,
+} from '@/helpers/constants'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import {
@@ -207,6 +289,7 @@ const variables = ref<VariablesProps>({
   searchString: '',
 })
 const visible = ref({
+  openModal: false,
   detail: false,
   edit: false,
   create: false,
@@ -314,7 +397,11 @@ const {
 const { mutate: createEmployee, error: createEmployeeError } =
   useMutation(CREATE_EMPLOYEE)
 
-const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
+const {
+  mutate: deleteUser,
+  loading: deleteUserLoading,
+  error: deleteUserError,
+} = useMutation(DELETE_USER)
 
 const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
@@ -405,11 +492,48 @@ const toggleModal = (
   type: string = 'close',
 ) => {
   selectedUser.value = user ? { ...user } : null
-  visible.value = {
-    detail: type === 'detail',
-    edit: type === 'edit',
-    create: type === 'create',
+
+  // switch case for type
+  switch (type) {
+    case 'edit':
+      visible.value = {
+        openModal: true,
+        detail: false,
+        edit: true,
+        create: false,
+      }
+      break
+    case 'detail':
+      visible.value = {
+        openModal: true,
+        detail: true,
+        edit: false,
+        create: false,
+      }
+      break
+    case 'create':
+      visible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: true,
+      }
+      break
+    case 'close':
+      visible.value = {
+        openModal: false,
+        detail: false,
+        edit: false,
+        create: false,
+      }
+      break
+    default:
+      break
   }
+}
+
+const cancelUserEdit = () => {
+  toggleModal(selectedUser.value, 'detail')
 }
 
 watchEffect(() => {

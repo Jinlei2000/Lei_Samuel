@@ -37,15 +37,15 @@
       </li>
     </ul>
 
-    <div class="flex flex-end justify-between">
+    <div class="flex-end flex justify-between">
       <CustomButton
+        v-if="cancel"
         name="cancel"
         variant="secondary"
-        v-if="cancel"
         @click="cancel()"
       />
       <CustomButton
-        class="flex ml-auto"
+        class="ml-auto flex"
         :class="schema.button.class"
         :loading="loading"
         type="submit"
