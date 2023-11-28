@@ -1,15 +1,34 @@
 <template>
-  <!-- go back button -->
-  <button class="mt-20 flex" v-bind="$attrs" @click="$router.go(-1)">
-    <ArrowLeft class="h-6 w-6" />
-    Go back
-  </button>
-
-  <h1
-    class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
+  <div
+    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
-    AllAppointment
-  </h1>
+    <div class="flex w-full flex-col gap-3">
+      <!-- Filters + Searchbar -->
+      <section :class="['relative flex w-full items-center justify-between']">
+        <!-- Filter -->
+        <Filter
+          v-model="variables.filters"
+          :options="FILTER_OPTIONS_APPOINTMENTS"
+        />
+
+        <!-- Searchbar -->
+        <Search v-model="variables.searchString" />
+      </section>
+
+      <!-- Title + Sort -->
+      <header class="flex w-full items-center justify-between">
+        <!-- Title -->
+        <h1 class="text-2xl">Appointments</h1>
+        <div class="flex gap-3">
+          <!-- Sort -->
+          <Sort
+            v-model="variables.order"
+            :options="SORT_OPTIONS_APPOINTMENTS"
+          />
+        </div>
+      </header>
+    </div>
+  </div>
 
   <!-- TODO: make a filter component and use Accordion  -->
   <div class="relative flex w-full items-center justify-between">
@@ -19,7 +38,7 @@
         class="border-1 group flex h-12 items-center gap-[6px] rounded-2xl border-black bg-transparent p-3 text-black"
         @click="filter = !filter"
       >
-        <Filter class="h-5 w-5" />
+        <FilterIcon class="h-5 w-5" />
         <p class="m-0 text-lg">Filter</p>
         <ChevronDown
           :class="filter ? 'rotate-180 transition-all' : 'transition-all'"
@@ -282,6 +301,10 @@
 </template>
 <script setup lang="ts">
 import DynamicForm from './generic/DynamicForm.vue'
+// components
+import Filter from '@/components/generic/Filter.vue'
+import Search from '@/components/generic/Search.vue'
+import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -294,7 +317,13 @@ import {
   GET_ALL_APPOINTMENT_BY_USERID,
 } from '@/graphql/appointment.query'
 import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
-import { APPOINTMENT_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
+import {
+  APPOINTMENT_TYPES,
+  FILTER_OPTIONS_APPOINTMENTS,
+  ORDER_DIRECTION,
+  SORT_OPTIONS_APPOINTMENTS,
+  SUPPORTED_LOCALES_TYPES,
+} from '@/helpers/constants'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { Location } from '@/interfaces/location.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
@@ -305,7 +334,7 @@ import {
   Check,
   ChevronDown,
   Eye,
-  Filter,
+  Filter as FilterIcon,
   Pencil,
   Trash2,
 } from 'lucide-vue-next'

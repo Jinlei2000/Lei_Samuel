@@ -3,7 +3,7 @@
 
   <!-- TODO: search bar -->
 
-  <main
+  <div
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
     <div class="flex w-full flex-col gap-3">
@@ -33,7 +33,7 @@
         </div>
       </header>
     </div>
-  </main>
+  </div>
 
   <!-- show loading -->
   <div v-if="loading.data" class="flex flex-col gap-3">
