@@ -34,7 +34,7 @@
   </div>
 
   <!-- show loading -->
-  <div v-if="loading.data" class="flex flex-col gap-3">
+  <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
@@ -44,7 +44,7 @@
 
   <!-- show all appointments -->
   <div v-else-if="appointments && appointments.length > 0">
-    <div class="mb-4 flex flex-col gap-3">
+    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
       <div v-for="a of appointments" :key="a.id">
         <button
           :class="[
@@ -85,7 +85,6 @@
                 </div>
               </div>
               <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
-
               <div class="flex w-1/2 justify-end">
                 <p
                   class="w-fit rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
