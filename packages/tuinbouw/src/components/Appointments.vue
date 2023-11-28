@@ -64,16 +64,6 @@
               </h2>
               <p class="hidden text-gray-600 sm:block">{{ a.description }}</p>
             </div>
-
-            <!-- <div class="border-t border-gray-200 p-4">
-              <div class="flex items-center justify-between">
-                <span v-if="a.isScheduled" class="text-green-500">{{
-                  formatDateTime(a.finalDate)
-                }}</span>
-                <span v-else class="text-gray-500">Not Scheduled</span>
-              </div>
-            </div> -->
-
             <div
               class="flex w-1/4 min-w-fit items-center justify-end gap-3 p-3 md:w-1/4"
             >
