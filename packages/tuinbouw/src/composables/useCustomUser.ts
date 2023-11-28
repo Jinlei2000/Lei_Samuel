@@ -3,6 +3,7 @@ import useGraphql from './useGraphql'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import { type CustomUser, Role } from '@/interfaces/custom.user.interface'
 import { provideApolloClient, useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { ref } from 'vue'
 
 const customUser = ref<CustomUser | null>()
@@ -17,11 +18,20 @@ const restoreCustomUser = async () => {
     const { onResult } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     })
-    // console.log('testtttttttttt', firebaseUser.value?.uid)
     onResult(result => {
       if (result.data) {
         // console.log(result)
         customUser.value = result.data.userByUid
+
+        // Identify user for LogRocket
+        LogRocket.identify(customUser.value!.uid, {
+          name: customUser.value!.fullname,
+          email: customUser.value!.email,
+
+          // Add your own custom user variables here
+          role: customUser.value!.role,
+        })
+
         resolve()
       }
     })

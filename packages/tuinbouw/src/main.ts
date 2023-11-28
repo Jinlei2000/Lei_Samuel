@@ -6,6 +6,7 @@ import useCustomUser from './composables/useCustomUser'
 import MyDesignSystem from './presets/MyDesignSystem'
 import router from './router'
 import useFirebase from '@/composables/useFirebase'
+import LogRocket from 'logrocket'
 // PrimeVue
 import Calendar from 'primevue/calendar'
 import PrimeVue from 'primevue/config'
@@ -41,9 +42,12 @@ app.use(ToastService)
 
 app.use(i18n) // ALTIJD VOOR DE ROUTER!
 ;(async () => {
-  // Restore user session before mounting the app
+  // LogRocket
+  LogRocket.init(import.meta.env.VITE_LOGROCKET_ID)
+
+  // Restore user session before mounting the app (firebaseUser)
   await restoreUser()
-  // console.log('firebaseUser', firebaseUser.value)
+
   // Restore custom user session before mounting the app if firebaseUser is set
   if (firebaseUser.value) await restoreCustomUser()
 

@@ -296,10 +296,10 @@ import {
 import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
 import { APPOINTMENT_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
-import type { Location } from '@/interfaces/location.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { appointmentUpdateValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import {
   ArrowLeft,
   Check,
@@ -502,31 +502,41 @@ const updateFiltersRadio = (filters: string[], reset: boolean = false) => {
 
 // delete appointment
 const handleDeleteAppointment = async (id: string) => {
-  await deleteAppointment({
-    id,
-  })
-  showToast('success', 'Success', 'Appointment deleted')
-  refetch()
+  try {
+    await deleteAppointment({
+      id,
+    })
+    showToast('success', 'Success', 'Appointment deleted')
+    refetch()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 // update appointment
 const handleUpdateAppointment = async (values: GenericObject) => {
-  console.log('values: ', values)
-  loading.value.update = true
-  updateAppointment({
-    updateAppointmentInput: {
-      id: selectedAppointment.value?.id,
-      type: values.type,
-      locationId: values.locationId,
-      startProposedDate: formatDateTime(values.startProposedDate),
-      endProposedDate: formatDateTime(values.endProposedDate),
-      description: values.description,
-    },
-  })
-  loading.value.update = false
-  showToast('success', 'Success', 'Appointment updated')
-  await refetch()
-  toggleModal()
+  try {
+    // console.log('values: ', values)
+    loading.value.update = true
+    updateAppointment({
+      updateAppointmentInput: {
+        id: selectedAppointment.value?.id,
+        type: values.type,
+        locationId: values.locationId,
+        startProposedDate: formatDateTime(values.startProposedDate),
+        endProposedDate: formatDateTime(values.endProposedDate),
+        description: values.description,
+      },
+    })
+    loading.value.update = false
+    showToast('success', 'Success', 'Appointment updated')
+    await refetch()
+    toggleModal()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 const toggleModal = (
@@ -564,6 +574,7 @@ watchEffect(() => {
         update: false,
       }
 
+      LogRocket.captureException(error)
       showToast('error', 'Error', error.message)
     }
   })

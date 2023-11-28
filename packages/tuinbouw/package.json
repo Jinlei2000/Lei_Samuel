@@ -21,6 +21,7 @@
     "@vue/apollo-util": "^4.0.0-beta.6",
     "firebase": "^10.4.0",
     "googleapis": "^105.0.0",
+    "logrocket": "^7.0.0",
     "lucide-vue-next": "^0.279.0",
     "primevue": "^3.37.0",
     "vee-validate": "^4.11.8",
