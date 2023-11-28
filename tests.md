@@ -1,6 +1,6 @@
 # Tests
 
-## BACKEND
+## Backend unit tests
 
 Go to the backend folder
 
@@ -8,10 +8,17 @@ Go to the backend folder
 cd packages/api
 ```
 
-### Absences
+### Absences 
 
 ```bash
 npx jest absences/absences.service.spec
+```
+
+# Backend e2e tests
+
+
+```bash
+npm run test:e2e -w api
 ```
 
 
