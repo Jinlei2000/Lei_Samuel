@@ -3,5 +3,10 @@
   "parserOptions": {
     "parser": "tsconfig.json"
   },
-  "env": { "browser": true, "es6": true, "node": true, "jest": true }
+  "env": { "jest": true, "node": true },
+  "rules": {
+    "no-unused-vars": "off",
+    "no-redeclare": "off",
+    "no-constant-condition": "off"
+  }
 }

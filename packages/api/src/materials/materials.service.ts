@@ -14,7 +14,7 @@ export class MaterialsService {
   constructor(
     @InjectRepository(Material)
     private readonly materialRepository: Repository<Material>,
-  ) { }
+  ) {}
 
   findAll(
     filters?: Array<string>,
