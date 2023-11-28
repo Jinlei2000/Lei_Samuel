@@ -25,7 +25,7 @@
           <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
           <!-- add employee button -->
           <button
-            class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
+            class="bg-primary-green my-4 rounded px-4 py-2 text-white"
             @click="toggleModal(null, 'create')"
           >
             Add Employee
