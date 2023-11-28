@@ -144,7 +144,7 @@ export class SchedulesService {
   }
 
   async update(id: ObjectId, updateScheduleInput: UpdateScheduleInput) {
-    const currentSchedule = await this.findOne(id.toString())
+    await this.findOne(id.toString())
 
     // remove id from updateScheduleInput
     delete updateScheduleInput.id

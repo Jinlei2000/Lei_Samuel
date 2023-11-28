@@ -88,9 +88,9 @@ export const calculateTotalDays = (startDate: Date, endDate: Date): number => {
   }
 
   // calculate total days
-  const totalDays = Math.round(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24),
-  ) + 1
+  const totalDays =
+    Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) +
+    1
 
   return totalDays
 }

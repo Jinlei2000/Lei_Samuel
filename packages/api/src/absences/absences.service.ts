@@ -170,8 +170,8 @@ export class AbsencesService {
   ): Promise<Absence> {
     const currentAbsence = await this.findOne(id.toString())
 
-    // remove id and make a new variable with the rest of the data
-    const { id: _, ...updatedData } = updateAbsenceInput
+    // remove id
+    delete updateAbsenceInput.id
 
     // check if start or end date has changed
     if (
@@ -203,13 +203,13 @@ export class AbsencesService {
         throw new GraphQLError('User already has an absence on the same date!')
 
       // calculate total days
-      updatedData.totalDays = calculateTotalDays(
+      updateAbsenceInput.totalDays = calculateTotalDays(
         new Date(updateAbsenceInput.startDate),
         new Date(updateAbsenceInput.endDate),
       )
     }
 
-    await this.absenceRepository.update(id, updatedData)
+    await this.absenceRepository.update(id, updateAbsenceInput)
 
     return this.findOne(id.toString())
   }

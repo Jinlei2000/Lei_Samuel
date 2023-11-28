@@ -16,7 +16,7 @@ import { AppointmentsService } from 'src/appointments/appointments.service'
 import { Appointment } from 'src/appointments/entities/appointment.entity'
 import { OrderByInput } from 'src/interfaces/order.input'
 import { AllowedRoles } from 'src/users/decorators/role.decorator'
-import { Role, User } from 'src/users/entities/user.entity'
+import { Role } from 'src/users/entities/user.entity'
 import { RolesGuard } from 'src/users/guards/roles.guard'
 
 @Resolver(() => Schedule)

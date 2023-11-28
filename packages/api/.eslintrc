@@ -1,0 +1,12 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "parser": "tsconfig.json"
+  },
+  "env": { "jest": true, "node": true },
+  "rules": {
+    "no-unused-vars": ["error", { "args": "none" }],
+    "no-redeclare": "off",
+    "no-constant-condition": "off"
+  }
+}

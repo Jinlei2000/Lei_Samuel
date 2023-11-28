@@ -1,6 +1,4 @@
-import { Appointment } from 'src/appointments/entities/appointment.entity'
 import { resetTime } from './genericFunctions'
-import { User } from 'src/users/entities/user.entity'
 
 // get days that are not weekend days from now until amountDays (saturday and sunday) and do something with it
 export const generateNonWeekendDates = async (amountDays: number) => {

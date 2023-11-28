@@ -10,10 +10,10 @@ import { AuthenticationModule } from './authentication/authentication.module'
 import { ConfigModule } from '@nestjs/config'
 import { LocationsModule } from './locations/locations.module'
 import { UsersModule } from './users/users.module'
-import { MailModule } from './mail/mail.module';
-import { AbsencesModule } from './absences/absences.module';
+import { MailModule } from './mail/mail.module'
+import { AbsencesModule } from './absences/absences.module'
 import { AppointmentsModule } from './appointments/appointments.module'
-import { SchedulesModule } from './schedules/schedules.module';
+import { SchedulesModule } from './schedules/schedules.module'
 
 @Module({
   imports: [

@@ -5,8 +5,8 @@
     "dev": "npx lerna run --scope=tuinbouw dev",
     "dev:api": "npx lerna run --scope=api dev",
     "translate": "npm run generate:translations -w tuinbouw",
-    "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev",
-    "dev:lint": "npx lerna run --scope=tuinbouw lint"
+    "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev --stream",
+    "lint": "npx lerna run --scope={tuinbouw,api} lint --stream"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,6 @@
     "packages/*"
   ],
   "devDependencies": {
-    "eslint-plugin-tailwindcss": "^3.13.0",
     "lerna": "^7.4.2"
   }
 }
