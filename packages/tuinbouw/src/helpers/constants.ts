@@ -105,4 +105,22 @@ export const FILTER_OPTIONS_APPOINTMENTS = [
       { label: 'Not Scheduled', value: 'NS' },
     ],
   },
+  {
+    title: 'Type',
+    name: 'type',
+    type: 'checkbox',
+    options: [
+      { label: 'Repair', value: 'R' },
+      { label: 'Maintenance', value: 'M' },
+    ],
+  },
+  {
+    title: 'Status',
+    name: 'status',
+    type: 'checkbox',
+    options: [
+      { label: 'Done', value: 'D' },
+      { label: 'Not Done', value: 'ND' },
+    ],
+  },
 ]
