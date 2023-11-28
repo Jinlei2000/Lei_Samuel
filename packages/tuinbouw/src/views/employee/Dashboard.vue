@@ -102,12 +102,10 @@
           </div>
         </div>
         <Map
-          v-if="scheduleData.todaysLocations"
-          class="rounded-2xl"
+          class="h-72 w-full overflow-hidden rounded-2xl"
           :locations="scheduleData.todaysLocations"
           :controls="true"
-        ></Map>
-        <Map v-else class="rounded-2xl" :controls="true"></Map>
+        />
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
