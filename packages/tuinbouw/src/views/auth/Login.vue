@@ -50,6 +50,7 @@ import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
 import { loginValidationSchema } from '@/validation/schema'
+import LogRocket from 'logrocket'
 import { type GenericObject } from 'vee-validate'
 import { ref } from 'vue'
 
@@ -99,6 +100,7 @@ const handleLogin = async (values: GenericObject) => {
     await setLocale(customUser.value!.locale!)
   } catch (error) {
     console.log(error)
+    LogRocket.captureException(error as Error)
     errorLogin.value = (error as Error).message
   }
   loading.value = false
