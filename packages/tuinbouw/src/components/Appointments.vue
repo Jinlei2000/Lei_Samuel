@@ -48,7 +48,7 @@
       <div v-for="a of appointments" :key="a.id">
         <button
           :class="[
-            'hover:scale-101 w-full overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer',
+            'hover:scale-101 relative  w-full overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer',
             {
               ' border border-red-400': isOverToday(a),
             },
@@ -56,16 +56,18 @@
           @click="toggleModal(a, 'detail')"
         >
           <div class="flex h-16 items-center justify-between sm:h-11">
-            <div class="flex w-3/4 p-3">
+            <div class="flex w-1/2 p-3 sm:w-3/4">
               <h2
-                class="w-1/3 min-w-fit text-left text-xl sm:text-lg md:w-1/4 lg:w-1/6"
+                class="w-1/2 min-w-fit text-left text-lg capitalize sm:w-1/3 sm:text-lg md:w-1/4 md:text-xl lg:w-1/6"
               >
                 {{ a.user.fullname }}
               </h2>
-              <p class="hidden text-gray-600 sm:block">{{ a.description }}</p>
+              <p class="hidden truncate text-gray-600 sm:block">
+                {{ a.description }}
+              </p>
             </div>
             <div
-              class="flex w-1/4 min-w-fit items-center justify-end gap-3 p-3 md:w-1/4"
+              class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
             >
               <div v-if="!a.isDone">
                 <p v-if="a.isScheduled" class="text-gray-600">
@@ -85,20 +87,16 @@
                 </div>
               </div>
               <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
-              <div class="flex w-1/2 justify-end">
-                <p
-                  class="w-fit rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
-                  :class="
-                    a.type === 'repair'
-                      ? 'bg-primary-green'
-                      : a.type === 'maintenance'
-                        ? 'bg-primary-blue'
-                        : ''
-                  "
-                >
-                  {{ a.type }}
-                </p>
-              </div>
+              <div
+                class="h-2 w-2 rounded-full"
+                :class="
+                  a.type === 'repair'
+                    ? 'bg-primary-green'
+                    : a.type === 'maintenance'
+                      ? 'bg-primary-blue'
+                      : ''
+                "
+              ></div>
             </div>
           </div>
         </button>
