@@ -108,17 +108,6 @@
                   <User /> Profile
                 </button>
               </Router-link>
-              <Router-link
-                v-if="role === 'employee' || role === 'admin'"
-                :to="goToAbsences()"
-              >
-                <button
-                  class="hover:text-primary-green flex gap-3"
-                  @click="showProfileDropdown()"
-                >
-                  <Hourglass /> Absences
-                </button>
-              </Router-link>
               <button
                 class="hover:text-primary-green flex gap-3"
                 @click="handleLogout()"
@@ -147,7 +136,7 @@ import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
-import { Hourglass, LogIn, LogOut, User } from 'lucide-vue-next'
+import { LogIn, LogOut, User } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
 
 const { logout } = useFirebase()
@@ -192,14 +181,6 @@ const checkPath = () => {
   }
 
   return false
-}
-
-const goToAbsences = () => {
-  let path = ''
-  if (role.value === 'employee') path = '/employee/absences'
-  else if (role.value === 'admin') path = '/admin/absences-own'
-
-  return path
 }
 
 watchEffect(() => {
