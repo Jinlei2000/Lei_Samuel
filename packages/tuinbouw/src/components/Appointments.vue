@@ -12,7 +12,10 @@
         />
 
         <!-- Searchbar -->
-        <Search v-model="variables.searchString" />
+        <Search
+          v-model="variables.searchString"
+          placeholder="Search for appointments"
+        />
       </section>
 
       <!-- Title + Sort -->
