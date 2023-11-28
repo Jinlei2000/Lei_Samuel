@@ -55,8 +55,8 @@
           ]"
           @click="toggleModal(a, 'detail')"
         >
-          <div flex h-16 items-center justify-between sm:h-11>
-            <div class="flex w-full p-3">
+          <div class="flex h-16 items-center justify-between sm:h-11">
+            <div class="flex w-3/4 p-3">
               <h2
                 class="w-1/3 min-w-fit text-left text-xl sm:text-lg md:w-1/4 lg:w-1/6"
               >
@@ -64,6 +64,7 @@
               </h2>
               <p class="hidden text-gray-600 sm:block">{{ a.description }}</p>
             </div>
+
             <!-- <div class="border-t border-gray-200 p-4">
               <div class="flex items-center justify-between">
                 <span v-if="a.isScheduled" class="text-green-500">{{
@@ -72,19 +73,43 @@
                 <span v-else class="text-gray-500">Not Scheduled</span>
               </div>
             </div> -->
-            <div class="flex w-1/4 min-w-fit justify-end gap-6 p-3 md:w-1/6">
-              <p
-                class="rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
-                :class="
-                  a.type === 'repair'
-                    ? 'bg-primary-green'
-                    : a.type === 'maintenance'
-                      ? 'bg-primary-blue'
-                      : ''
-                "
-              >
-                {{ a.type }}
-              </p>
+
+            <div
+              class="flex w-1/4 min-w-fit items-center justify-end gap-3 p-3 md:w-1/4"
+            >
+              <div v-if="!a.isDone">
+                <p v-if="a.isScheduled" class="text-gray-600">
+                  {{ formatDateTime(a.finalDate) }}
+                </p>
+                <div v-else class="flex gap-3">
+                  <Star
+                    v-if="a.priority"
+                    class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
+                  />
+                  <div class="w-5">
+                    <CalendarX
+                      v-if="!a.isScheduled"
+                      class="stroke-primary-red h-5 w-5"
+                    />
+                  </div>
+                </div>
+              </div>
+              <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
+
+              <div class="flex w-1/2 justify-end">
+                <p
+                  class="w-fit rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
+                  :class="
+                    a.type === 'repair'
+                      ? 'bg-primary-green'
+                      : a.type === 'maintenance'
+                        ? 'bg-primary-blue'
+                        : ''
+                  "
+                >
+                  {{ a.type }}
+                </p>
+              </div>
             </div>
           </div>
         </button>
@@ -180,15 +205,7 @@ import type { Location } from '@/interfaces/location.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { appointmentUpdateValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import {
-  ArrowLeft,
-  Check,
-  ChevronDown,
-  Eye,
-  Filter as FilterIcon,
-  Pencil,
-  Trash2,
-} from 'lucide-vue-next'
+import { CalendarX, CheckCircle2, Star } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
