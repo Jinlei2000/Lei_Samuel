@@ -1,11 +1,14 @@
 <template>
-  <div id="map" ref="mapRef" class="h-full w-full"></div>
+  <div v-bind="$attrs">
+    <div id="map" ref="mapRef" class="h-full w-full"></div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import useTomTomMap from '@/composables/useTomTomMap'
 import type { Location } from '@/interfaces/location.interface'
 import tt from '@tomtom-international/web-sdk-maps'
+import { watch } from 'vue'
 import { onMounted, type PropType, ref } from 'vue'
 
 // Props
@@ -15,13 +18,31 @@ const props = defineProps({
   controls: Boolean,
 })
 
-const mapRef = ref('')
-
 const { createMap, createMarker } = useTomTomMap()
 
-onMounted(() => {
-  const map = createMap(mapRef.value)
+const mapRef = ref('')
+let map: tt.Map
 
+// Logics
+onMounted(() => {
+  setMap()
+  setMarkers()
+})
+
+const setMap = () => {
+  // Create map
+  map = createMap(mapRef.value)
+
+  // Add controls
+  if (props.controls) {
+    map.addControl(new tt.FullscreenControl())
+    map.addControl(new tt.GeolocateControl())
+    // map.addControl(new tt.NavigationControl())
+    // map.addControl(new tt.ScaleControl())
+  }
+}
+
+const setMarkers = () => {
   // Show markers for each location & add to bounds
   if (props.locations && props.locations.length > 0) {
     const bounds = new tt.LngLatBounds()
@@ -43,14 +64,12 @@ onMounted(() => {
       padding: 50,
       maxZoom: 13,
     })
+  } else {
+    // No locations, center map on Belgium
+    setMap()
   }
+}
 
-  // Add controls
-  if (props.controls) {
-    map.addControl(new tt.FullscreenControl())
-    map.addControl(new tt.GeolocateControl())
-    // map.addControl(new tt.NavigationControl())
-    // map.addControl(new tt.ScaleControl())
-  }
-})
+// watch props
+watch(() => props.locations, setMarkers)
 </script>
