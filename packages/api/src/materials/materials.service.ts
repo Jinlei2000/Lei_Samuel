@@ -102,10 +102,10 @@ export class MaterialsService {
   ): Promise<Material | GraphQLError> {
     await this.findOne(id.toString())
 
-    // remove id and make a new variable with the rest of the data
-    const { id: _, ...updatedData } = updateMaterialInput
+    // remove id
+    delete updateMaterialInput.id
 
-    await this.materialRepository.update(id, updatedData)
+    await this.materialRepository.update(id, updateMaterialInput)
 
     return this.findOne(id.toString())
   }

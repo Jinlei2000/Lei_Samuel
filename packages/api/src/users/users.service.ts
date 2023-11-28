@@ -106,7 +106,7 @@ export class UsersService {
 
   // find of a user is available today (absent && scheduled)
   async findStaffIsAvailableToday(userId: string): Promise<boolean> {
-    const user = await this.findOne(userId)
+    await this.findOne(userId)
     // delete all behind the time of today
     let date = resetTime(new Date()) // reset time to 00:00:00
 
@@ -156,10 +156,10 @@ export class UsersService {
     if (currentUser.role !== Role.ADMIN && currentUser.uid !== user.uid)
       throw new GraphQLError('You are not allowed to update someone else')
 
-    // remove id and make a new variable with the rest of the data
-    const { id: _, ...updatedData } = updateUserInput
+    // remove id
+    delete updateUserInput.id
 
-    await this.userRepository.update(id, updatedData)
+    await this.userRepository.update(id, updateUserInput)
 
     return this.findOne(id.toString())
   }
@@ -180,10 +180,10 @@ export class UsersService {
       updateUserInput.fullname = `${updateUserInput.firstname.toLowerCase()} ${updateUserInput.lastname.toLowerCase()}`
     }
 
-    // remove id and make a new variable with the rest of the data
-    const { id: _, ...updatedData } = updateUserInput
+    // remove id
+    delete updateUserInput.id
 
-    await this.userRepository.update(id, updatedData)
+    await this.userRepository.update(id, updateUserInput)
 
     return this.findOne(id.toString())
   }
