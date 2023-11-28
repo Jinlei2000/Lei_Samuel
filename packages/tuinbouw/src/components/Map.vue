@@ -8,6 +8,7 @@
 import useTomTomMap from '@/composables/useTomTomMap'
 import type { Location } from '@/interfaces/location.interface'
 import tt from '@tomtom-international/web-sdk-maps'
+import LogRocket from 'logrocket'
 import { watch } from 'vue'
 import { onMounted, type PropType, ref } from 'vue'
 
@@ -30,43 +31,53 @@ onMounted(() => {
 })
 
 const setMap = () => {
-  // Create map
-  map = createMap(mapRef.value)
+  try {
+    // Create map
+    map = createMap(mapRef.value)
 
-  // Add controls
-  if (props.controls) {
-    map.addControl(new tt.FullscreenControl())
-    map.addControl(new tt.GeolocateControl())
-    // map.addControl(new tt.NavigationControl())
-    // map.addControl(new tt.ScaleControl())
+    // Add controls
+    if (props.controls) {
+      map.addControl(new tt.FullscreenControl())
+      map.addControl(new tt.GeolocateControl())
+      // map.addControl(new tt.NavigationControl())
+      // map.addControl(new tt.ScaleControl())
+    }
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
   }
 }
 
 const setMarkers = () => {
-  // Show markers for each location & add to bounds
-  if (props.locations && props.locations.length > 0) {
-    const bounds = new tt.LngLatBounds()
-    props.locations.forEach(l => {
-      createMarker(map, l)
-      bounds.extend(new tt.LngLat(l.lng, l.lat))
-    })
+  try {
+    // Show markers for each location & add to bounds
+    if (props.locations && props.locations.length > 0) {
+      const bounds = new tt.LngLatBounds()
+      props.locations.forEach(l => {
+        createMarker(map, l)
+        bounds.extend(new tt.LngLat(l.lng, l.lat))
+      })
 
-    // Get center of bounds
-    const centerBounds = bounds.getCenter()
-    // Center map
-    map.setCenter({
-      lat: centerBounds.lat,
-      lng: centerBounds.lng,
-    })
+      // Get center of bounds
+      const centerBounds = bounds.getCenter()
+      // Center map
+      map.setCenter({
+        lat: centerBounds.lat,
+        lng: centerBounds.lng,
+      })
 
-    // Zoom to fit all markers
-    map.fitBounds(bounds, {
-      padding: 50,
-      maxZoom: 13,
-    })
-  } else {
-    // No locations, center map on Belgium
-    setMap()
+      // Zoom to fit all markers
+      map.fitBounds(bounds, {
+        padding: 50,
+        maxZoom: 13,
+      })
+    } else {
+      // No locations, center map on Belgium
+      setMap()
+    }
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
   }
 }
 
