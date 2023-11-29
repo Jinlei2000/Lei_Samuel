@@ -490,6 +490,8 @@ describe('AppController (e2e)', () => {
             })
         })
       })
+      describe('updateAbsence', () => {})
+      describe('removeAbsence', () => {})
     })
 
     describe('USERS', () => {
