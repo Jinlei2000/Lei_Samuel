@@ -7,7 +7,7 @@ import { UsersService } from 'src/users/users.service'
 import { SchedulesService } from 'src/schedules/schedules.service'
 import { CreateAbsenceInput } from './dto/create-absence.input'
 import { absenceStub, createabsenceInputStub } from './stubs/absences.stub'
-import { userStaffStub } from 'src/users/stubs/users.stub'
+import { userEmployeeStub } from 'src/users/stubs/users.stub'
 import { scheduleStub } from 'src/schedules/stubs/schedules.stub'
 
 describe('AbsencesService', () => {
@@ -31,10 +31,10 @@ describe('AbsencesService', () => {
         {
           provide: UsersService,
           useValue: {
-            findOne: jest.fn().mockResolvedValue(userStaffStub()),
+            findOne: jest.fn().mockResolvedValue(userEmployeeStub()),
             incrementAbsencesCount: jest
               .fn()
-              .mockResolvedValue(userStaffStub()),
+              .mockResolvedValue(userEmployeeStub()),
           },
         },
         {
@@ -112,7 +112,7 @@ describe('AbsencesService', () => {
           'updateAllByEmployeeWithDateRange',
         )
         expect(updateAllByEmployeeWithDateRangeSpy).toHaveBeenCalledWith(
-          userStaffStub(),
+          userEmployeeStub(),
           new Date(absenceTestInput.startDate),
           new Date(absenceTestInput.endDate),
         )
