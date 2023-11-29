@@ -13,6 +13,8 @@ import {
   userClientStub,
   userEmployeeStub,
 } from 'src/users/stubs/users.stub'
+import { CreateAbsenceInput } from 'src/absences/dto/create-absence.input'
+import { Absence } from 'src/absences/entities/absence.entity'
 
 const GQL_ENDPOINT = '/graphql'
 const dummyJwtToken =
@@ -27,6 +29,7 @@ describe('AppController (e2e)', () => {
     findAll: () => [absenceStub()],
     findAllByUserId: () => [absenceStub()],
     findOne: () => absenceStub(),
+    create: () => absenceStub(),
   }
 
   beforeAll(async () => {
@@ -344,6 +347,143 @@ describe('AppController (e2e)', () => {
             .expect(200)
             .expect(res => {
               expect(res.body.data.absence).toEqual({
+                id: '5f9d4a3f9d6c6a1d9c9bce1a',
+                type: 'sick',
+              })
+            })
+        })
+      })
+      describe('createAbsence', () => {
+        it('createAbsence should give Unauthorized when no bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { createAbsence(createAbsenceInput: { type: "sick", startDate: "2020-10-30T00:00:00.000Z", endDate: "2020-10-31T00:00:00.000Z", userId: "5f9d4a3f9d6c6a1d9c9bce1a" }) { id } }',
+            })
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
+
+        it('createAbsence should give Unauthorized when invalid bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { createAbsence(createAbsenceInput: { type: "sick", startDate: "2020-10-30T00:00:00.000Z", endDate: "2020-10-31T00:00:00.000Z", userId: "5f9d4a3f9d6c6a1d9c9bce1a" }) { id } }',
+            })
+            .set('Authorization', `Bearer ${dummyInvalidJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
+
+        it('should createAbsence with role ADMIN', () => {
+          const absencesService = app.get(AbsencesService)
+          jest
+            .spyOn(absencesService, 'create')
+            .mockImplementation(
+              (createAbsenceInput: CreateAbsenceInput): Promise<Absence> => {
+                const createdAbsence = {
+                  ...absenceStub(),
+                  ...createAbsenceInput,
+                }
+                return Promise.resolve(createdAbsence)
+              },
+            )
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userAdminStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { createAbsence(createAbsenceInput: { type: "sick", startDate: "2020-10-30T00:00:00.000Z", endDate: "2020-10-31T00:00:00.000Z", userId: "5f9d4a3f9d6c6a1d9c9bce1a" }) { id, type } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              console.log(res.body)
+              expect(res.body.data.createAbsence).toEqual({
+                id: '5f9d4a3f9d6c6a1d9c9bce1a',
+                type: 'sick',
+              })
+            })
+        })
+
+        it('should createAbsence, but role CLIENT not allowed', () => {
+          const absencesService = app.get(AbsencesService)
+          jest
+            .spyOn(absencesService, 'create')
+            .mockImplementation(
+              (createAbsenceInput: CreateAbsenceInput): Promise<Absence> => {
+                const createdAbsence = {
+                  ...absenceStub(),
+                  ...createAbsenceInput,
+                }
+                return Promise.resolve(createdAbsence)
+              },
+            )
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userClientStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { createAbsence(createAbsenceInput: { type: "sick", startDate: "2020-10-30T00:00:00.000Z", endDate: "2020-10-31T00:00:00.000Z", userId: "5f9d4a3f9d6c6a1d9c9bce1a" }) { id, type } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Forbidden resource')
+            })
+        })
+
+        it('should createAbsence with role EMPLOYEE', () => {
+          const absencesService = app.get(AbsencesService)
+          jest
+            .spyOn(absencesService, 'create')
+            .mockImplementation(
+              (createAbsenceInput: CreateAbsenceInput): Promise<Absence> => {
+                const createdAbsence = {
+                  ...absenceStub(),
+                  ...createAbsenceInput,
+                }
+                return Promise.resolve(createdAbsence)
+              },
+            )
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userEmployeeStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { createAbsence(createAbsenceInput: { type: "sick", startDate: "2020-10-30T00:00:00.000Z", endDate: "2020-10-31T00:00:00.000Z", userId: "5f9d4a3f9d6c6a1d9c9bce1a" }) { id, type } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.data.createAbsence).toEqual({
                 id: '5f9d4a3f9d6c6a1d9c9bce1a',
                 type: 'sick',
               })
