@@ -129,6 +129,19 @@
       <p class="text-gray-600">
         {{ selectedAppointment.description }}
       </p>
+      <div class="mt-6 flex flex-col gap-3">
+        <div v-if="selectedAppointment.priority" class="flex gap-3">
+          <Star class="fill-primary-yellow stroke-primary-yellow" />
+          <p>Priority</p>
+        </div>
+        <div class="flex gap-3">
+          <CalendarIcon />
+          <p v-if="selectedAppointment.isScheduled">
+            {{ formatDateTime(selectedAppointment.finalDate) }}
+          </p>
+          <p v-else>Not scheduled</p>
+        </div>
+      </div>
     </div>
   </Dialog>
 
@@ -192,10 +205,16 @@ import type { Location } from '@/interfaces/location.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { appointmentUpdateValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import { CalendarX, CheckCircle2, Star } from 'lucide-vue-next'
+import {
+  Calendar as CalendarIcon,
+  CalendarX,
+  CheckCircle2,
+  Star,
+} from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
+import type { DatetimeFormat } from 'vue-i18n'
 
 // props
 const props = defineProps({
