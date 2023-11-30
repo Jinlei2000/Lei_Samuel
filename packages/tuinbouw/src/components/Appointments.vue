@@ -143,11 +143,23 @@
           <p>Priority</p>
         </div>
         <div class="flex gap-3">
-          <CalendarIcon />
-          <p v-if="selectedAppointment.isScheduled">
+          <CalendarIcon
+            :class="
+              isOverToday(selectedAppointment) ? 'stroke-primary-red' : ''
+            "
+          />
+          <p
+            v-if="
+              selectedAppointment.isScheduled &&
+              !isOverToday(selectedAppointment)
+            "
+          >
             {{ formatDateTime(selectedAppointment.finalDate) }}
           </p>
-          <p v-else>Not scheduled</p>
+          <p v-if="isOverToday(selectedAppointment)" class="text-primary-red">
+            Reschedule
+          </p>
+          <p v-if="!selectedAppointment.isScheduled">Not scheduled</p>
         </div>
       </div>
     </div>
