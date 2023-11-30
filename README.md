@@ -109,3 +109,36 @@ For our Advanced Fullstack Development class project, we're crafting a comprehen
 
 documentatie over de environment variables
 
+#### Logrocket
+
+#### Firebase
+
+#### TomTom
+
+#### Nodemailer
+
+
+### Running the application 
+
+### Docker Desktop
+
+### Seed firebase authentication data (users)
+
+### Seed data in the database
+
+
+
+## Testing
+
+### Backend
+
+#### Unit tests (Jest)
+
+#### E2E tests (Supertest)
+
+### Frontend
+
+#### E2E tests (Playwright)
+
+
+
