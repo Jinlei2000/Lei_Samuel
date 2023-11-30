@@ -13,9 +13,6 @@ import {
   userClientStub,
   userEmployeeStub,
 } from 'src/users/stubs/users.stub'
-import { CreateAbsenceInput } from 'src/absences/dto/create-absence.input'
-import { Absence } from 'src/absences/entities/absence.entity'
-import { UpdateAbsenceInput } from 'src/absences/dto/update-absence.input'
 
 const GQL_ENDPOINT = '/graphql'
 const dummyJwtToken =
