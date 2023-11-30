@@ -1,27 +1,27 @@
 <template>
-  <!-- go back button -->
-  <button class="flex" v-bind="$attrs" @click="$router.go(-1)">
-    <ArrowLeft class="h-6 w-6" />
-    Go back
-  </button>
-  <h1
-    class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
+  <div
+    class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-center justify-center gap-3"
   >
-    Schedules
-  </h1>
-
-  <!-- add schedule button -->
-  <Router-link :to="`/admin/add-schedule`">
-    <button
-      class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
-    >
-      Add Schedule
-    </button>
-  </Router-link>
-
-  <!-- TODO: filters & orders -->
-
-  <!-- TODO: search bar -->
+    <div class="flex w-full flex-col gap-3">
+      <!-- Title + Sort -->
+      <header class="flex w-full items-center justify-between">
+        <!-- Title -->
+        <h1 class="text-2xl">Appointments</h1>
+        <div class="flex gap-3">
+          <!-- Sort -->
+          <Sort v-model="variables.order" :options="SORT_OPTIONS_SCHEDULES" />
+        </div>
+      </header>
+    </div>
+    <div class="flex w-full justify-end">
+      <!-- add schedule button -->
+      <Router-link :to="`/admin/add-schedule`">
+        <button class="bg-primary-green rounded px-4 py-2 font-bold text-white">
+          Add Schedule
+        </button>
+      </Router-link>
+    </div>
+  </div>
 
   <!-- show loading -->
   <div v-if="schedulesLoading">
@@ -100,11 +100,12 @@
 </template>
 
 <script setup lang="ts">
+import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_SCHEDULE } from '@/graphql/schedule.mutation'
 import { GET_ALL_SCHEDULES } from '@/graphql/schedule.query'
-import { ORDER_DIRECTION } from '@/helpers/constants'
+import { ORDER_DIRECTION, SORT_OPTIONS_SCHEDULES } from '@/helpers/constants'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
