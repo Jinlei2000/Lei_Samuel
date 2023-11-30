@@ -48,7 +48,7 @@
       <div v-for="a of appointments" :key="a.id">
         <button
           :class="[
-            'hover:scale-101 relative  w-full overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer',
+            'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
             {
               ' border border-red-400': isOverToday(a),
             },
@@ -62,7 +62,7 @@
               >
                 {{ a.user.fullname }}
               </h2>
-              <p class="hidden truncate text-gray-600 sm:block">
+              <p class="hidden truncate text-gray-900 sm:block">
                 {{ a.description }}
               </p>
             </div>
@@ -134,7 +134,7 @@
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedAppointment.type }}
       </h2>
-      <p class="text-gray-600">
+      <p class="text-gray-900">
         {{ selectedAppointment.description }}
       </p>
       <div class="mt-6 flex flex-col gap-3">
