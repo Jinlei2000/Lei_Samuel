@@ -24,8 +24,12 @@
   </div>
 
   <!-- show loading -->
-  <div v-if="schedulesLoading">
-    <p class="text-6xl font-black">Loading Schedules...</p>
+  <div v-if="schedulesLoading" class="m-auto flex max-w-7xl flex-col gap-3">
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
   </div>
 
   <!-- show schedules -->
