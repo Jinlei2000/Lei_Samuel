@@ -1,12 +1,7 @@
-import {
-  ForbiddenException,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-http-bearer'
-import { auth, FirebaseError } from 'firebase-admin'
+import { auth } from 'firebase-admin'
 
 import { FirebaseService } from '../src/authentication/services/firebase.service'
 
