@@ -29,6 +29,7 @@ For our Advanced Fullstack Development class project, we're crafting a comprehen
 - [Prettier](https://prettier.io/) for consistent code formatting.
 - [ESLint](https://eslint.org/) for maintaining code integrity.
 - [Lerna](https://lerna.js.org/) for simplified development.
+- [LogRocket](https://logrocket.com/) for detailed frontend error logging.
 
 
 <br/>
