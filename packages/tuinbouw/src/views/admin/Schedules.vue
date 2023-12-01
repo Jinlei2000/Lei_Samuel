@@ -151,6 +151,22 @@
           </li>
         </ul>
       </div>
+      <div class="flex justify-between">
+        <CustomButton
+          name="Delete"
+          :loading="deleteScheduleLoading"
+          variant="warning"
+          @click="handleDeleteSchedule(selectedSchedule)"
+        />
+
+        <!-- edit button -->
+        <Router-link
+          v-if="isNotInPastOrToday(selectedSchedule.finalDate.toString())"
+          :to="`/admin/schedules/${selectedSchedule.id}/edit`"
+        >
+          <CustomButton name="Edit" />
+        </Router-link>
+      </div>
     </div>
   </Dialog>
 
@@ -161,6 +177,7 @@
 </template>
 
 <script setup lang="ts">
+import CustomButton from '@/components/generic/CustomButton.vue'
 import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -204,8 +221,11 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const { mutate: deleteSchedule, error: deleteScheduleError } =
-  useMutation(DELETE_SCHEDULE)
+const {
+  mutate: deleteSchedule,
+  error: deleteScheduleError,
+  loading: deleteScheduleLoading,
+} = useMutation(DELETE_SCHEDULE)
 
 // logics
 // delete schedule
