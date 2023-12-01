@@ -11,7 +11,7 @@
     "run:pwa": "npm run build && npm serve dist",
     "generate:translations": "npx tsx ./src/utils/sheet.ts",
     "lint": "npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "dev:emulate": "VITE_EMULATION=true npm run dev | npx firebase-tools emulators:start --only auth"
+    "dev:emulate": "set VITE_EMULATION=true npm run dev | npx firebase-tools emulators:start --only auth"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
