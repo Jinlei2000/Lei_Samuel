@@ -6,7 +6,7 @@
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
-        <h1 class="text-2xl">Appointments</h1>
+        <h1 class="text-2xl">Schedules</h1>
         <div class="flex gap-3">
           <!-- Sort -->
           <Sort v-model="variables.order" :options="SORT_OPTIONS_SCHEDULES" />

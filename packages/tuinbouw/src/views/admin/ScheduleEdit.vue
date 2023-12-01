@@ -1,109 +1,252 @@
 <template>
-  <!-- go back button -->
-  <button class="mt-20 flex" v-bind="$attrs" @click="$router.go(-1)">
-    <ArrowLeft class="h-6 w-6" />
-    Go back
-  </button>
-  <h1
-    class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
-  >
-    Schedules Edit
-  </h1>
-
-  <!-- reset all values back -->
-  <CustomButton type="button" name="Reset" @click="reset()" />
-
-  <!-- loading -->
   <div
-    v-if="
-      scheduleLoading &&
-      loadingAppointments &&
-      loadingEmployees &&
-      loadingMaterials
-    "
+    class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-start justify-center gap-3"
   >
-    <p class="text-6xl font-black">Loading Schedule...</p>
-  </div>
+    <!-- go back button -->
+    <button
+      class="flex items-center gap-1"
+      v-bind="$attrs"
+      @click="$router.go(-1)"
+    >
+      <ArrowLeft class="h-5 w-5" />
+      Go back
+    </button>
 
-  <!-- show schedule -->
-  <form v-if="schedule" @submit.prevent="handleUpdateSchedule">
-    <!-- Final Date -->
-    <div v-if="next === 0">
-      <h1>Final Date</h1>
-      <CustomButton name="Next" type="button" @click="handleNext()" />
+    <div class="mt-6 flex w-full items-center justify-between">
+      <h1 class="text-2xl">Schedule Edit</h1>
+      <!-- reset all values back -->
+      <CustomButton
+        type="button"
+        variant="secondary"
+        name="Reset"
+        @click="reset()"
+      />
+    </div>
 
-      <!-- validation -->
-      <small id="text-error" class="p-error block">{{
-        errorMessages.finalDate || '&nbsp;'
-      }}</small>
+    <!-- show schedule -->
+    <form v-if="schedule" @submit.prevent="handleUpdateSchedule">
+      <!-- Final Date -->
+      <div v-if="next === 0">
+        <h1>Final Date</h1>
+        <CustomButton name="Next" type="button" @click="handleNext()" />
 
-      <div class="flex flex-col">
-        <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">
-          Your selected date is: {{ formatDateTime(values.finalDate) }}
-          <hr />
-          Do you want to change it?
-        </h1>
+        <!-- validation -->
+        <small id="text-error" class="p-error block">{{
+          errorMessages.finalDate || '&nbsp;'
+        }}</small>
 
-        <!-- loading appointments & employees -->
-        <div v-if="loadingAppointments || loadingEmployees">
+        <div class="flex flex-col">
+          <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">
+            Your selected date is: {{ formatDateTime(values.finalDate) }}
+            <hr />
+            Do you want to change it?
+          </h1>
+
+          <!-- loading appointments & employees -->
+          <div v-if="loadingAppointments || loadingEmployees">
+            <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+          </div>
+
+          <!-- show calendar -->
+          <Calendar
+            id="finalDate"
+            inline
+            :manual-input="false"
+            v-bind="finalDate"
+            :min-date="minDate"
+            date-format="yy-mm-dd"
+            @date-select="checkAvailability()"
+          >
+          </Calendar>
+        </div>
+      </div>
+
+      <!-- Appointments -->
+      <div v-if="next === 1">
+        <h1>Appointments</h1>
+        <CustomButton name="Back" type="button" @click="handleBack()" />
+        <CustomButton name="Next" type="button" @click="handleNext()" />
+
+        <!-- validation -->
+        <small id="text-error" class="p-error block">{{
+          errorMessages.appointmentsIds || '&nbsp;'
+        }}</small>
+
+        <!-- loading appointments -->
+        <div v-if="loadingAppointments">
           <h1 class="flex animate-pulse space-x-4">Loading...</h1>
         </div>
 
-        <!-- show calendar -->
-        <Calendar
-          id="finalDate"
-          inline
-          :manual-input="false"
-          v-bind="finalDate"
-          :min-date="minDate"
-          date-format="yy-mm-dd"
-          @date-select="checkAvailability()"
-        >
-        </Calendar>
-      </div>
-    </div>
-
-    <!-- Appointments -->
-    <div v-if="next === 1">
-      <h1>Appointments</h1>
-      <CustomButton name="Back" type="button" @click="handleBack()" />
-      <CustomButton name="Next" type="button" @click="handleNext()" />
-
-      <!-- validation -->
-      <small id="text-error" class="p-error block">{{
-        errorMessages.appointmentsIds || '&nbsp;'
-      }}</small>
-
-      <!-- loading appointments -->
-      <div v-if="loadingAppointments">
-        <h1 class="flex animate-pulse space-x-4">Loading...</h1>
-      </div>
-
-      <!-- show selected appointments -->
-      <h1>Your selected</h1>
-      <div>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div
-            v-for="a of selectedAppointmentsEdit"
-            v-if="selectedAppointmentsEdit.length > 0"
-            :key="a.id"
-          >
+        <!-- show selected appointments -->
+        <h1>Your selected</h1>
+        <div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div
-              :class="[
-                'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
-                isItemSelected(a.id!, appointmentsIds.modelValue)
-                  ? 'border-2 border-green-500'
-                  : '',
-              ]"
+              v-for="a of selectedAppointmentsEdit"
+              v-if="selectedAppointmentsEdit.length > 0"
+              :key="a.id"
+            >
+              <div
+                :class="[
+                  'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
+                  isItemSelected(a.id!, appointmentsIds.modelValue)
+                    ? 'border-2 border-green-500'
+                    : '',
+                ]"
+              >
+                <div class="p-4">
+                  <!-- Add checkbox for selection -->
+                  <input
+                    type="checkbox"
+                    class="mr-2"
+                    :checked="isItemSelected(a.id!, appointmentsIds.modelValue)"
+                    @click="addSelectedAppointment(a)"
+                  />
+                  <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
+                  <p class="mb-1 text-gray-600">{{ a.description }}</p>
+                  <p class="mb-1 text-gray-600">{{ a.id }}</p>
+                  <p v-if="a.finalDate" class="text-gray-600">
+                    {{ formatDateTime(a.finalDate.toString()) }}
+                  </p>
+                </div>
+                <div class="border-t border-gray-200 p-4">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-500"
+                      >{{ formatDateTime(a.startProposedDate!.toString()) }} -
+                      {{ formatDateTime(a.endProposedDate!.toString()) }}</span
+                    >
+                    <span v-if="a.isScheduled" class="text-green-500"
+                      >Scheduled</span
+                    >
+                    <span v-else class="text-gray-500">Not Scheduled</span>
+                  </div>
+                </div>
+                <div class="border-t border-gray-200 p-4">
+                  <div class="flex items-center justify-between">
+                    <span v-if="a.isDone" class="text-green-500">Done</span>
+                    <span v-else class="text-gray-500">Not Done</span>
+                    <span class="text-sm text-gray-500"
+                      >Priority: {{ a.priority }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- show appointments -->
+        <h1>Available appointments</h1>
+        <div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+              v-for="a of appointments.appointmentsAvailableByDate"
+              v-if="
+                appointments &&
+                appointments.appointmentsAvailableByDate.length > 0
+              "
+              :key="a.id"
+            >
+              <div
+                :class="[
+                  'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
+                  isItemSelected(a.id, appointmentsIds.modelValue)
+                    ? 'border-2 border-green-500'
+                    : '',
+                ]"
+              >
+                <div class="p-4">
+                  <!-- Add checkbox for selection -->
+                  <input
+                    type="checkbox"
+                    class="mr-2"
+                    :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
+                    @click="addSelectedAppointment(a)"
+                  />
+                  <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
+                  <p class="mb-1 text-gray-600">{{ a.description }}</p>
+                  <p class="mb-1 text-gray-600">{{ a.id }}</p>
+                  <p v-if="a.finalDate" class="text-gray-600">
+                    {{ formatDateTime(a.finalDate) }}
+                  </p>
+                </div>
+                <div class="border-t border-gray-200 p-4">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-500"
+                      >{{ formatDateTime(a.startProposedDate) }} -
+                      {{ formatDateTime(a.endProposedDate) }}</span
+                    >
+                    <span v-if="a.isScheduled" class="text-green-500"
+                      >Scheduled</span
+                    >
+                    <span v-else class="text-gray-500">Not Scheduled</span>
+                  </div>
+                </div>
+                <div class="border-t border-gray-200 p-4">
+                  <div class="flex items-center justify-between">
+                    <span v-if="a.isDone" class="text-green-500">Done</span>
+                    <span v-else class="text-gray-500">Not Done</span>
+                    <span class="text-sm text-gray-500"
+                      >Priority: {{ a.priority }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- no appointments -->
+        <div
+          v-if="
+            appointments &&
+            appointments.appointmentsAvailableByDate.length === 0 &&
+            selectedAppointmentsEdit.length === 0
+          "
+          class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
+        >
+          <div class="p-4">
+            <h2 class="mb-2 text-xl font-semibold">No appointments</h2>
+            <p class="mb-1 text-gray-600">
+              There are no appointments available for this date
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fill in price of appointments -->
+      <div v-if="next === 2">
+        <h1>Fill in price of appointments</h1>
+        <CustomButton name="Back" type="button" @click="handleBack()" />
+        <CustomButton name="Next" type="button" @click="handleNext()" />
+
+        <!-- validation -->
+        <small id="text-error" class="p-error block">{{
+          errorMessages.prices || '&nbsp;'
+        }}</small>
+
+        <!-- show appointments with price input -->
+        <div>
+          <div v-for="a of selectedAppointments" :key="a.id">
+            <div
+              class="mx-auto mb-3 max-w-md overflow-hidden rounded-md bg-white shadow-md"
             >
               <div class="p-4">
-                <!-- Add checkbox for selection -->
-                <input
-                  type="checkbox"
-                  class="mr-2"
-                  :checked="isItemSelected(a.id!, appointmentsIds.modelValue)"
-                  @click="addSelectedAppointment(a)"
+                <label
+                  class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
+                  for="price"
+                  >Price</label
+                >
+                <InputNumber
+                  id="price"
+                  v-model="a.price"
+                  name="price"
+                  mode="currency"
+                  currency="EUR"
+                  locale="de-BE"
                 />
+              </div>
+              <div class="p-4">
                 <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
                 <p class="mb-1 text-gray-600">{{ a.description }}</p>
                 <p class="mb-1 text-gray-600">{{ a.id }}</p>
@@ -137,378 +280,246 @@
         </div>
       </div>
 
-      <!-- show appointments -->
-      <h1>Available appointments</h1>
-      <div>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Employees -->
+      <div v-if="next === 3">
+        <h1>Employees</h1>
+        <CustomButton name="Back" type="button" @click="handleBack()" />
+        <CustomButton name="Next" type="button" @click="handleNext()" />
+
+        <!-- validation -->
+        <small id="text-error" class="p-error block">{{
+          errorMessages.employeesIds || '&nbsp;'
+        }}</small>
+
+        <!-- loading employees -->
+        <div v-if="loadingEmployees">
+          <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+        </div>
+
+        <!-- show selected employees -->
+        <h1>Your selected</h1>
+        <div v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+              v-for="user in selectedEmployeesEdit"
+              :key="user.id"
+              class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+              :class="
+                isItemSelected(user.id, employeesIds.modelValue)
+                  ? 'border border-green-500'
+                  : ''
+              "
+            >
+              <!-- Add checkbox for selection -->
+              <input
+                type="checkbox"
+                class="mr-2"
+                :checked="isItemSelected(user.id, employeesIds.modelValue)"
+                @click="addSelectedEmployee(user)"
+              />
+              <div class="p-6">
+                <h2 class="mb-2 text-2xl font-semibold">
+                  {{ user.firstname }} {{ user.lastname }}
+                </h2>
+                <p class="text-gray-600">{{ user.email }}</p>
+                <p class="text-gray-600">{{ user.role }}</p>
+                <p class="text-gray-600">{{ user.uid }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- show employees -->
+        <h1>Available employees</h1>
+        <div
+          v-if="employees && employees.usersEmployeesAvailableByDate.length > 0"
+        >
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+              v-for="user in employees.usersEmployeesAvailableByDate"
+              :key="user.id"
+              class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+              :class="
+                isItemSelected(user.id, employeesIds.modelValue)
+                  ? 'border border-green-500'
+                  : ''
+              "
+            >
+              <!-- Add checkbox for selection -->
+              <input
+                type="checkbox"
+                class="mr-2"
+                :checked="isItemSelected(user.id, employeesIds.modelValue)"
+                @click="addSelectedEmployee(user)"
+              />
+              <div class="p-6">
+                <h2 class="mb-2 text-2xl font-semibold">
+                  {{ user.firstname }} {{ user.lastname }}
+                </h2>
+                <p class="text-gray-600">{{ user.email }}</p>
+                <p class="text-gray-600">{{ user.role }}</p>
+                <p class="text-gray-600">{{ user.uid }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Materials -->
+      <div v-if="next === 4">
+        <h1>Materials</h1>
+        <CustomButton name="Back" type="button" @click="handleBack()" />
+        <CustomButton name="Next" type="button" @click="handleNext()" />
+
+        <!-- loading -->
+        <div v-if="loadingMaterials">
+          <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+        </div>
+
+        <!-- show selected materials -->
+        <h1>Your selected</h1>
+        <div
+          class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+        >
           <div
-            v-for="a of appointments.appointmentsAvailableByDate"
-            v-if="
-              appointments &&
-              appointments.appointmentsAvailableByDate.length > 0
+            v-for="material of selectedMaterialsEdit"
+            v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
+            :key="material.id"
+            class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+            :class="
+              isItemSelected(material.id, materialsIds.modelValue)
+                ? 'border-2 border-green-500'
+                : ''
             "
+          >
+            <!-- Add checkbox for selection -->
+            <input
+              type="checkbox"
+              class="mr-2"
+              :checked="isItemSelected(material.id, materialsIds.modelValue)"
+              @click="addSelectedMaterial(material)"
+            />
+            <img
+              class="w-full rounded-2xl rounded-b-3xl"
+              src="https://picsum.photos/200"
+              alt="random picture"
+            />
+            <div
+              class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
+            >
+              <h2 class="truncate text-lg">{{ material.name }}</h2>
+              <p class="m-0">Loanable: {{ material.isLoan }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- show materials -->
+        <h1>Available materials</h1>
+        <div
+          class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+        >
+          <div
+            v-for="material of materials.materials"
+            v-if="materials && materials.materials.length > 0"
+            :key="material.id"
+            class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+            :class="
+              isItemSelected(material.id, materialsIds.modelValue)
+                ? 'border-2 border-green-500'
+                : ''
+            "
+          >
+            <!-- Add checkbox for selection -->
+            <input
+              type="checkbox"
+              class="mr-2"
+              :checked="isItemSelected(material.id, materialsIds.modelValue)"
+              @click="addSelectedMaterial(material)"
+            />
+            <img
+              class="w-full rounded-2xl rounded-b-3xl"
+              src="https://picsum.photos/200"
+              alt="random picture"
+            />
+            <div
+              class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
+            >
+              <h2 class="truncate text-lg">{{ material.name }}</h2>
+              <p class="m-0">Loanable: {{ material.isLoan }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- See All -->
+      <div v-if="next === 5">
+        <h1>See All</h1>
+        <CustomButton name="Back" type="button" @click="handleBack()" />
+        <CustomButton
+          name="Update Schedule"
+          :loading="loadingUpdate"
+          type="submit"
+        />
+
+        <!-- show schedule detail -->
+        <!-- show selected final date -->
+        <div>
+          <h1>Final Date</h1>
+          <div>{{ formatDateTime(values.finalDate) }}</div>
+        </div>
+        <!-- show selected appointments -->
+        <div>
+          <h1>Appointments</h1>
+          <div
+            v-for="a of selectedAppointments"
+            v-if="selectedAppointments.length > 0"
             :key="a.id"
           >
-            <div
-              :class="[
-                'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
-                isItemSelected(a.id, appointmentsIds.modelValue)
-                  ? 'border-2 border-green-500'
-                  : '',
-              ]"
-            >
-              <div class="p-4">
-                <!-- Add checkbox for selection -->
-                <input
-                  type="checkbox"
-                  class="mr-2"
-                  :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
-                  @click="addSelectedAppointment(a)"
-                />
-                <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-                <p class="mb-1 text-gray-600">{{ a.description }}</p>
-                <p class="mb-1 text-gray-600">{{ a.id }}</p>
-                <p v-if="a.finalDate" class="text-gray-600">
-                  {{ formatDateTime(a.finalDate) }}
-                </p>
-              </div>
-              <div class="border-t border-gray-200 p-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500"
-                    >{{ formatDateTime(a.startProposedDate) }} -
-                    {{ formatDateTime(a.endProposedDate) }}</span
-                  >
-                  <span v-if="a.isScheduled" class="text-green-500"
-                    >Scheduled</span
-                  >
-                  <span v-else class="text-gray-500">Not Scheduled</span>
-                </div>
-              </div>
-              <div class="border-t border-gray-200 p-4">
-                <div class="flex items-center justify-between">
-                  <span v-if="a.isDone" class="text-green-500">Done</span>
-                  <span v-else class="text-gray-500">Not Done</span>
-                  <span class="text-sm text-gray-500"
-                    >Priority: {{ a.priority }}</span
-                  >
-                </div>
-              </div>
-            </div>
+            {{ a.id }}
           </div>
         </div>
-      </div>
 
-      <!-- no appointments -->
-      <div
-        v-if="
-          appointments &&
-          appointments.appointmentsAvailableByDate.length === 0 &&
-          selectedAppointmentsEdit.length === 0
-        "
-        class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
-      >
-        <div class="p-4">
-          <h2 class="mb-2 text-xl font-semibold">No appointments</h2>
-          <p class="mb-1 text-gray-600">
-            There are no appointments available for this date
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Fill in price of appointments -->
-    <div v-if="next === 2">
-      <h1>Fill in price of appointments</h1>
-      <CustomButton name="Back" type="button" @click="handleBack()" />
-      <CustomButton name="Next" type="button" @click="handleNext()" />
-
-      <!-- validation -->
-      <small id="text-error" class="p-error block">{{
-        errorMessages.prices || '&nbsp;'
-      }}</small>
-
-      <!-- show appointments with price input -->
-      <div>
-        <div v-for="a of selectedAppointments" :key="a.id">
+        <!-- show selected employees -->
+        <div>
+          <h1>Employees</h1>
           <div
-            class="mx-auto mb-3 max-w-md overflow-hidden rounded-md bg-white shadow-md"
-          >
-            <div class="p-4">
-              <label
-                class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-                for="price"
-                >Price</label
-              >
-              <InputNumber
-                id="price"
-                v-model="a.price"
-                name="price"
-                mode="currency"
-                currency="EUR"
-                locale="de-BE"
-              />
-            </div>
-            <div class="p-4">
-              <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-              <p class="mb-1 text-gray-600">{{ a.description }}</p>
-              <p class="mb-1 text-gray-600">{{ a.id }}</p>
-              <p v-if="a.finalDate" class="text-gray-600">
-                {{ formatDateTime(a.finalDate.toString()) }}
-              </p>
-            </div>
-            <div class="border-t border-gray-200 p-4">
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500"
-                  >{{ formatDateTime(a.startProposedDate!.toString()) }} -
-                  {{ formatDateTime(a.endProposedDate!.toString()) }}</span
-                >
-                <span v-if="a.isScheduled" class="text-green-500"
-                  >Scheduled</span
-                >
-                <span v-else class="text-gray-500">Not Scheduled</span>
-              </div>
-            </div>
-            <div class="border-t border-gray-200 p-4">
-              <div class="flex items-center justify-between">
-                <span v-if="a.isDone" class="text-green-500">Done</span>
-                <span v-else class="text-gray-500">Not Done</span>
-                <span class="text-sm text-gray-500"
-                  >Priority: {{ a.priority }}</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Employees -->
-    <div v-if="next === 3">
-      <h1>Employees</h1>
-      <CustomButton name="Back" type="button" @click="handleBack()" />
-      <CustomButton name="Next" type="button" @click="handleNext()" />
-
-      <!-- validation -->
-      <small id="text-error" class="p-error block">{{
-        errorMessages.employeesIds || '&nbsp;'
-      }}</small>
-
-      <!-- loading employees -->
-      <div v-if="loadingEmployees">
-        <h1 class="flex animate-pulse space-x-4">Loading...</h1>
-      </div>
-
-      <!-- show selected employees -->
-      <h1>Your selected</h1>
-      <div v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0">
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div
-            v-for="user in selectedEmployeesEdit"
+            v-for="user of selectedEmployees"
+            v-if="selectedEmployees.length > 0"
             :key="user.id"
-            class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
-            :class="
-              isItemSelected(user.id, employeesIds.modelValue)
-                ? 'border border-green-500'
-                : ''
-            "
           >
-            <!-- Add checkbox for selection -->
-            <input
-              type="checkbox"
-              class="mr-2"
-              :checked="isItemSelected(user.id, employeesIds.modelValue)"
-              @click="addSelectedEmployee(user)"
-            />
-            <div class="p-6">
-              <h2 class="mb-2 text-2xl font-semibold">
-                {{ user.firstname }} {{ user.lastname }}
-              </h2>
-              <p class="text-gray-600">{{ user.email }}</p>
-              <p class="text-gray-600">{{ user.role }}</p>
-              <p class="text-gray-600">{{ user.uid }}</p>
-            </div>
+            {{ user.id }}
           </div>
         </div>
-      </div>
 
-      <!-- show employees -->
-      <h1>Available employees</h1>
-      <div
-        v-if="employees && employees.usersEmployeesAvailableByDate.length > 0"
-      >
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- show selected materials -->
+        <div>
+          <h1>Materials</h1>
           <div
-            v-for="user in employees.usersEmployeesAvailableByDate"
-            :key="user.id"
-            class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
-            :class="
-              isItemSelected(user.id, employeesIds.modelValue)
-                ? 'border border-green-500'
-                : ''
-            "
+            v-for="material of selectedMaterials"
+            v-if="selectedMaterials.length > 0"
+            :key="material.id"
           >
-            <!-- Add checkbox for selection -->
-            <input
-              type="checkbox"
-              class="mr-2"
-              :checked="isItemSelected(user.id, employeesIds.modelValue)"
-              @click="addSelectedEmployee(user)"
-            />
-            <div class="p-6">
-              <h2 class="mb-2 text-2xl font-semibold">
-                {{ user.firstname }} {{ user.lastname }}
-              </h2>
-              <p class="text-gray-600">{{ user.email }}</p>
-              <p class="text-gray-600">{{ user.role }}</p>
-              <p class="text-gray-600">{{ user.uid }}</p>
-            </div>
+            {{ material.id }}
           </div>
+
+          <!-- no selected materials -->
+          <div v-else>No materials selected</div>
         </div>
       </div>
+    </form>
+
+    <!-- loading -->
+    <div
+      v-if="
+        scheduleLoading &&
+        loadingAppointments &&
+        loadingEmployees &&
+        loadingMaterials
+      "
+    >
+      <p class="text-6xl font-black">Loading Schedule...</p>
     </div>
-
-    <!-- Materials -->
-    <div v-if="next === 4">
-      <h1>Materials</h1>
-      <CustomButton name="Back" type="button" @click="handleBack()" />
-      <CustomButton name="Next" type="button" @click="handleNext()" />
-
-      <!-- loading -->
-      <div v-if="loadingMaterials">
-        <h1 class="flex animate-pulse space-x-4">Loading...</h1>
-      </div>
-
-      <!-- show selected materials -->
-      <h1>Your selected</h1>
-      <div
-        class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
-      >
-        <div
-          v-for="material of selectedMaterialsEdit"
-          v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
-          :key="material.id"
-          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
-          :class="
-            isItemSelected(material.id, materialsIds.modelValue)
-              ? 'border-2 border-green-500'
-              : ''
-          "
-        >
-          <!-- Add checkbox for selection -->
-          <input
-            type="checkbox"
-            class="mr-2"
-            :checked="isItemSelected(material.id, materialsIds.modelValue)"
-            @click="addSelectedMaterial(material)"
-          />
-          <img
-            class="w-full rounded-2xl rounded-b-3xl"
-            src="https://picsum.photos/200"
-            alt="random picture"
-          />
-          <div
-            class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
-          >
-            <h2 class="truncate text-lg">{{ material.name }}</h2>
-            <p class="m-0">Loanable: {{ material.isLoan }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- show materials -->
-      <h1>Available materials</h1>
-      <div
-        class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
-      >
-        <div
-          v-for="material of materials.materials"
-          v-if="materials && materials.materials.length > 0"
-          :key="material.id"
-          class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
-          :class="
-            isItemSelected(material.id, materialsIds.modelValue)
-              ? 'border-2 border-green-500'
-              : ''
-          "
-        >
-          <!-- Add checkbox for selection -->
-          <input
-            type="checkbox"
-            class="mr-2"
-            :checked="isItemSelected(material.id, materialsIds.modelValue)"
-            @click="addSelectedMaterial(material)"
-          />
-          <img
-            class="w-full rounded-2xl rounded-b-3xl"
-            src="https://picsum.photos/200"
-            alt="random picture"
-          />
-          <div
-            class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
-          >
-            <h2 class="truncate text-lg">{{ material.name }}</h2>
-            <p class="m-0">Loanable: {{ material.isLoan }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- See All -->
-    <div v-if="next === 5">
-      <h1>See All</h1>
-      <CustomButton name="Back" type="button" @click="handleBack()" />
-      <CustomButton
-        name="Update Schedule"
-        :loading="loadingUpdate"
-        type="submit"
-      />
-
-      <!-- show schedule detail -->
-      <!-- show selected final date -->
-      <div>
-        <h1>Final Date</h1>
-        <div>{{ formatDateTime(values.finalDate) }}</div>
-      </div>
-      <!-- show selected appointments -->
-      <div>
-        <h1>Appointments</h1>
-        <div
-          v-for="a of selectedAppointments"
-          v-if="selectedAppointments.length > 0"
-          :key="a.id"
-        >
-          {{ a.id }}
-        </div>
-      </div>
-
-      <!-- show selected employees -->
-      <div>
-        <h1>Employees</h1>
-        <div
-          v-for="user of selectedEmployees"
-          v-if="selectedEmployees.length > 0"
-          :key="user.id"
-        >
-          {{ user.id }}
-        </div>
-      </div>
-
-      <!-- show selected materials -->
-      <div>
-        <h1>Materials</h1>
-        <div
-          v-for="material of selectedMaterials"
-          v-if="selectedMaterials.length > 0"
-          :key="material.id"
-        >
-          {{ material.id }}
-        </div>
-
-        <!-- no selected materials -->
-        <div v-else>No materials selected</div>
-      </div>
-    </div>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
