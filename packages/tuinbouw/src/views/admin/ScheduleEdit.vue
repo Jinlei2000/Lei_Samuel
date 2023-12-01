@@ -24,25 +24,24 @@
     </div>
 
     <!-- show schedule -->
-    <form v-if="schedule" @submit.prevent="handleUpdateSchedule">
+    <form v-if="schedule" class="w-full" @submit.prevent="handleUpdateSchedule">
       <!-- Final Date -->
-      <div v-if="next === 0">
-        <h1>Final Date</h1>
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+      <div v-if="next === 0" class="w-full">
+        <h2 class="text-xl">Final Date</h2>
+        <div class="flex w-full justify-end">
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- validation -->
         <small id="text-error" class="p-error block">{{
           errorMessages.finalDate || '&nbsp;'
         }}</small>
 
-        <div class="flex flex-col">
-          <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">
+        <div class="m-auto flex w-fit flex-col items-center gap-6">
+          <p class="text-lg font-semibold text-gray-900">
             Your selected date is: {{ formatDateTime(values.finalDate) }}
-            <hr />
-            Do you want to change it?
-          </h1>
+          </p>
 
-          <!-- loading appointments & employees -->
           <div v-if="loadingAppointments || loadingEmployees">
             <h1 class="flex animate-pulse space-x-4">Loading...</h1>
           </div>
@@ -63,7 +62,7 @@
 
       <!-- Appointments -->
       <div v-if="next === 1">
-        <h1>Appointments</h1>
+        <h2>Appointments</h2>
         <CustomButton name="Back" type="button" @click="handleBack()" />
         <CustomButton name="Next" type="button" @click="handleNext()" />
 
@@ -216,7 +215,7 @@
 
       <!-- Fill in price of appointments -->
       <div v-if="next === 2">
-        <h1>Fill in price of appointments</h1>
+        <h2>Fill in price of appointments</h2>
         <CustomButton name="Back" type="button" @click="handleBack()" />
         <CustomButton name="Next" type="button" @click="handleNext()" />
 
