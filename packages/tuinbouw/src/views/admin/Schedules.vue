@@ -25,11 +25,11 @@
 
   <!-- show loading -->
   <div v-if="schedulesLoading" class="m-auto flex max-w-7xl flex-col gap-3">
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
   </div>
 
   <!-- show schedules -->
@@ -38,6 +38,7 @@
       <div v-for="schedule in schedules" :key="schedule.id">
         <button
           class="relative w-full rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
+          @click="toggleModal(schedule, 'detail')"
         >
           <div class="flex h-16 items-center justify-between sm:h-11">
             <h2
@@ -45,28 +46,6 @@
             >
               {{ formatDateTime(schedule.finalDate) }}
             </h2>
-            <!-- <div class="p-6">
-              <h2 class="mb-2 text-2xl font-semibold">
-                {{ schedule.id }}
-              </h2>
-              <p class="text-gray-600">Created By: {{ schedule.createdBy }}</p>
-              <p class="text-gray-600">
-                Final Date: {{ formatDateTime(schedule.finalDate) }}
-              </p>
-
-             
-              <div>
-                <p class="text-gray-600">
-                  Appointments: {{ schedule.appointments.length }}
-                </p>
-                <p class="text-gray-600">
-                  Employees: {{ schedule.employees.length }}
-                </p>
-                <p class="text-gray-600">
-                  Materials: {{ schedule.materials.length }}
-                </p>
-              </div>
-            </div> -->
 
             <div class="flex items-center justify-end gap-12 p-1">
               <ul class="flex -space-x-6 transition-all hover:space-x-1">
@@ -126,8 +105,57 @@
     </div>
   </div>
 
+  <!-- Detail Modal -->
+  <Dialog
+    v-model:visible="visible.detail"
+    modal
+    header="Appointment Detail"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
+  >
+    <div v-if="selectedSchedule" class="flex flex-col gap-6">
+      <h2 class="mb-2 text-xl font-semibold">
+        {{ formatDateTime(selectedSchedule.finalDate.toString()) }}
+      </h2>
+      <div class="flex flex-col gap-3">
+        <h3 class="text-lg">Appointments:</h3>
+        <ul class="flex flex-col gap-1">
+          <li
+            v-for="appointment in selectedSchedule.appointments"
+            :key="appointment.id"
+            class="flex items-center gap-3"
+          >
+            <p>{{ appointment.location.address }}</p>
+          </li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-3">
+        <h3 class="text-lg">Employees:</h3>
+        <ul class="flex flex-col gap-3">
+          <li
+            v-for="employee in selectedSchedule.employees"
+            :key="employee.id"
+            class="flex items-center gap-3"
+          >
+            <img
+              class="h-8 w-8 rounded-full"
+              src="https://i.pravatar.cc/300"
+              alt="Profile picture"
+            />
+            <p>{{ employee.fullname }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </Dialog>
+
   <!-- show no schedules -->
-  <div v-else-if="schedules.length === 0">
+  <div v-if="schedules.length === 0">
     <p class="text-6xl font-black">No Schedules Found</p>
   </div>
 </template>
@@ -160,6 +188,12 @@ const variables = ref<VariablesProps>({
 
 const schedules = computed(() => schedulesResult.value?.schedules || [])
 
+const selectedSchedule = ref<Schedule | null>(null)
+const visible = ref({
+  detail: false,
+  edit: false,
+})
+
 // graphql
 const {
   result: schedulesResult,
@@ -181,6 +215,17 @@ const handleDeleteSchedule = async (schedule: Schedule) => {
   })
   showToast('success', 'Success', `Schedule deleted`)
   refetchSchedules()
+}
+
+const toggleModal = (
+  schedule: Schedule | null = null,
+  type: string = 'close',
+) => {
+  selectedSchedule.value = schedule ? { ...schedule } : null
+  visible.value = {
+    detail: type === 'detail',
+    edit: type === 'edit',
+  }
 }
 
 watchEffect(() => {
