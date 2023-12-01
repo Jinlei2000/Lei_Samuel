@@ -57,7 +57,7 @@
                       alt="Profile picture"
                     />
                     <p
-                      class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 opacity-0 transition-all group-hover:opacity-100"
+                      class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 capitalize opacity-0 transition-all group-hover:opacity-100"
                     >
                       {{ employee.firstname }}
                     </p>
@@ -147,10 +147,29 @@
               src="https://i.pravatar.cc/300"
               alt="Profile picture"
             />
-            <p>{{ employee.fullname }}</p>
+            <p class="capitalize">{{ employee.fullname }}</p>
           </li>
         </ul>
       </div>
+      <div class="flex flex-col gap-3">
+        <div
+          class="flex cursor-pointer justify-between"
+          @click="toggleCollapsible()"
+        >
+          <h3 class="text-lg">Materials:</h3>
+          <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
+        </div>
+        <ul v-if="!collapsed" class="flex flex-col gap-3">
+          <li
+            v-for="material in selectedSchedule.materials"
+            :key="material.id"
+            class="flex items-center gap-3"
+          >
+            <p class="capitalize">{{ material.name }}</p>
+          </li>
+        </ul>
+      </div>
+
       <div class="flex justify-between">
         <CustomButton
           name="Delete"
@@ -187,7 +206,7 @@ import { ORDER_DIRECTION, SORT_OPTIONS_SCHEDULES } from '@/helpers/constants'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
+import { ArrowLeft, ChevronDown, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { computed, ref, watchEffect } from 'vue'
 
 // composables
@@ -202,6 +221,8 @@ const variables = ref<VariablesProps>({
     direction: ORDER_DIRECTION.DESC,
   },
 })
+
+const collapsed = ref(true)
 
 const schedules = computed(() => schedulesResult.value?.schedules || [])
 
@@ -247,6 +268,10 @@ const toggleModal = (
     detail: type === 'detail',
     edit: type === 'edit',
   }
+}
+
+function toggleCollapsible() {
+  collapsed.value = !collapsed.value
 }
 
 watchEffect(() => {
