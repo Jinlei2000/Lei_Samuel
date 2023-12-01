@@ -9,6 +9,7 @@ export const GET_ALL_SCHEDULES = gql`
       }
       employees {
         id
+        firstname
       }
       materials {
         id

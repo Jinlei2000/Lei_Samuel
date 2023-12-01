@@ -37,7 +37,7 @@
     <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
       <div v-for="schedule in schedules" :key="schedule.id">
         <button
-          class="relative w-full overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
+          class="relative w-full rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
         >
           <div class="flex h-16 items-center justify-between sm:h-11">
             <h2
@@ -77,8 +77,10 @@
                       src="https://i.pravatar.cc/300"
                       alt="Profile picture"
                     />
-                    <p class="absolute left-0 top-0 hidden group-hover:block">
-                      {{ employee.firstName }}
+                    <p
+                      class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 opacity-0 transition-all group-hover:opacity-100"
+                    >
+                      {{ employee.firstname }}
                     </p>
                   </div>
                 </li>
