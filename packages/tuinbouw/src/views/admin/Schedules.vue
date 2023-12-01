@@ -34,65 +34,92 @@
 
   <!-- show schedules -->
   <div v-else-if="schedules && schedules.length > 0">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <div
-        v-for="schedule in schedules"
-        :key="schedule.id"
-        class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
-      >
-        <div class="p-6">
-          <h2 class="mb-2 text-2xl font-semibold">
-            {{ schedule.id }}
-          </h2>
-          <p class="text-gray-600">Created By: {{ schedule.createdBy }}</p>
-          <p class="text-gray-600">
-            Final Date: {{ formatDateTime(schedule.finalDate) }}
-          </p>
-
-          <!-- Add other schedule information as needed -->
-
-          <!-- Appointments, Employees, Materials -->
-          <div>
-            <p class="text-gray-600">
-              Appointments: {{ schedule.appointments.length }}
-            </p>
-            <p class="text-gray-600">
-              Employees: {{ schedule.employees.length }}
-            </p>
-            <p class="text-gray-600">
-              Materials: {{ schedule.materials.length }}
-            </p>
-          </div>
-        </div>
-        <div
-          class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
+    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+      <div v-for="schedule in schedules" :key="schedule.id">
+        <button
+          class="relative w-full overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
         >
-          <!-- View More Button -->
-          <Router-link :to="`/admin/schedules/${schedule.id}`">
-            <button class="text-green-500">
-              <Eye />
-            </button>
-          </Router-link>
+          <div class="flex h-16 items-center justify-between sm:h-11">
+            <h2
+              class="ml-3 w-1/2 min-w-fit text-left text-base sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+            >
+              {{ formatDateTime(schedule.finalDate) }}
+            </h2>
+            <!-- <div class="p-6">
+              <h2 class="mb-2 text-2xl font-semibold">
+                {{ schedule.id }}
+              </h2>
+              <p class="text-gray-600">Created By: {{ schedule.createdBy }}</p>
+              <p class="text-gray-600">
+                Final Date: {{ formatDateTime(schedule.finalDate) }}
+              </p>
 
-          <!-- Edit Button -->
-          <Router-link
-            v-if="isNotInPastOrToday(schedule.finalDate)"
-            :to="`/admin/schedules/${schedule.id}/edit`"
-          >
-            <button class="text-blue-500">
-              <Pencil />
-            </button>
-          </Router-link>
+             
+              <div>
+                <p class="text-gray-600">
+                  Appointments: {{ schedule.appointments.length }}
+                </p>
+                <p class="text-gray-600">
+                  Employees: {{ schedule.employees.length }}
+                </p>
+                <p class="text-gray-600">
+                  Materials: {{ schedule.materials.length }}
+                </p>
+              </div>
+            </div> -->
 
-          <!-- Delete Button -->
-          <button
-            v-if="isNotInPastOrToday(schedule.finalDate)"
-            class="text-red-500"
-            @click="handleDeleteSchedule(schedule)"
-          >
-            <Trash2 />
-          </button>
-        </div>
+            <div class="flex items-center justify-end gap-12 p-1">
+              <ul class="flex -space-x-6 transition-all hover:space-x-1">
+                <li v-for="employee in schedule.employees" :key="employee.id">
+                  <div class="group relative">
+                    <img
+                      class="h-8 w-8 rounded-full"
+                      src="https://i.pravatar.cc/300"
+                      alt="Profile picture"
+                    />
+                    <p class="absolute left-0 top-0 hidden group-hover:block">
+                      {{ employee.firstName }}
+                    </p>
+                  </div>
+                </li>
+              </ul>
+              <div
+                class="bg-primary-green flex h-9 w-9 items-center justify-center rounded-xl"
+              >
+                <p class="text-white">
+                  {{ schedule.appointments.length }}
+                </p>
+              </div>
+            </div>
+
+            <!-- <div
+              class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
+            >
+              <Router-link :to="`/admin/schedules/${schedule.id}`">
+                <button class="text-green-500">
+                  <Eye />
+                </button>
+              </Router-link>
+
+              <Router-link
+                v-if="isNotInPastOrToday(schedule.finalDate)"
+                :to="`/admin/schedules/${schedule.id}/edit`"
+              >
+                <button class="text-blue-500">
+                  <Pencil />
+                </button>
+              </Router-link>
+
+              <button
+                v-if="isNotInPastOrToday(schedule.finalDate)"
+                class="text-red-500"
+                @click="handleDeleteSchedule(schedule)"
+              >
+                <Trash2 />
+              </button>
+            </div> -->
+          </div>
+        </button>
       </div>
     </div>
   </div>
