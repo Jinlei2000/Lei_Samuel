@@ -235,6 +235,7 @@ const handleDeleteSchedule = async (schedule: Schedule) => {
   })
   showToast('success', 'Success', `Schedule deleted`)
   refetchSchedules()
+  toggleModal()
 }
 
 const toggleModal = (
