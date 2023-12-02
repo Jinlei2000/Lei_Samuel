@@ -109,35 +109,16 @@
                 <div
                   class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
                 >
-                  <div v-if="!a.isDone">
-                    <p
-                      v-if="a.isScheduled && !isOverToday(a)"
-                      class="text-gray-600"
-                    >
-                      {{ formatDateTime(a.finalDate) }}
-                    </p>
-                    <div v-else class="flex gap-3">
-                      <div
-                        v-if="isOverToday(a)"
-                        class="flex items-center gap-2"
-                      >
-                        <Clock class="stroke-primary-red h-5 w-5" />
-                        <p class="text-primary-red">Reschedule</p>
-                      </div>
-
-                      <Star
-                        v-if="a.priority && !isOverToday(a)"
-                        class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
-                      />
-                      <div v-if="!isOverToday(a)" class="w-5">
-                        <CalendarX
-                          v-if="!a.isScheduled"
-                          class="stroke-primary-red h-5 w-5"
-                        />
-                      </div>
-                    </div>
+                  <p>
+                    {{ formatDateTime(a.startProposedDate) }} -
+                    {{ formatDateTime(a.endProposedDate) }}
+                  </p>
+                  <div class="h-5 w-5">
+                    <Star
+                      v-if="a.priority && !isOverToday(a)"
+                      class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
+                    />
                   </div>
-                  <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
                   <div
                     class="h-2 w-2 rounded-full"
                     :class="
@@ -186,35 +167,16 @@
                 <div
                   class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
                 >
-                  <div v-if="!a.isDone">
-                    <p
-                      v-if="a.isScheduled && !isOverToday(a)"
-                      class="text-gray-600"
-                    >
-                      {{ formatDateTime(a.finalDate) }}
-                    </p>
-                    <div v-else class="flex gap-3">
-                      <div
-                        v-if="isOverToday(a)"
-                        class="flex items-center gap-2"
-                      >
-                        <Clock class="stroke-primary-red h-5 w-5" />
-                        <p class="text-primary-red">Reschedule</p>
-                      </div>
-
-                      <Star
-                        v-if="a.priority && !isOverToday(a)"
-                        class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
-                      />
-                      <div v-if="!isOverToday(a)" class="w-5">
-                        <CalendarX
-                          v-if="!a.isScheduled"
-                          class="stroke-primary-red h-5 w-5"
-                        />
-                      </div>
-                    </div>
+                  <p>
+                    {{ formatDateTime(a.startProposedDate) }} -
+                    {{ formatDateTime(a.endProposedDate) }}
+                  </p>
+                  <div class="h-5 w-5">
+                    <Star
+                      v-if="a.priority && !isOverToday(a)"
+                      class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
+                    />
                   </div>
-                  <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
                   <div
                     class="h-2 w-2 rounded-full"
                     :class="
