@@ -35,6 +35,7 @@ export const GET_SCHEDULE_BY_ID = gql`
         id
         user {
           id
+          fullname
         }
         location {
           id

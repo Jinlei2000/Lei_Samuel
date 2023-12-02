@@ -61,10 +61,12 @@
       </div>
 
       <!-- Appointments -->
-      <div v-if="next === 1">
-        <h2>Appointments</h2>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+      <div v-if="next === 1" class="w-full">
+        <h2 class="text-xl">Appointments</h2>
+        <div class="flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- validation -->
         <small id="text-error" class="p-error block">{{
@@ -74,6 +76,159 @@
         <!-- loading appointments -->
         <div v-if="loadingAppointments">
           <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+        </div>
+
+        <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+          <!-- Selected Appointments -->
+          <div v-for="a of selectedAppointmentsEdit" :key="a.id">
+            <div
+              :class="[
+                'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
+                isItemSelected(a.id!, appointmentsIds.modelValue)
+                  ? 'outline-primary-green outline'
+                  : '',
+              ]"
+            >
+              <div class="flex h-16 items-center justify-between sm:h-11">
+                <div class="flex w-1/2 p-3 sm:w-3/4">
+                  <input
+                    type="checkbox"
+                    class="mr-2"
+                    :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
+                    @click="addSelectedAppointment(a)"
+                  />
+                  <h2
+                    class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+                  >
+                    {{ a.user.fullname }}
+                  </h2>
+                  <p class="hidden truncate text-gray-900 sm:block">
+                    {{ a.description }}
+                  </p>
+                </div>
+                <div
+                  class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
+                >
+                  <div v-if="!a.isDone">
+                    <p
+                      v-if="a.isScheduled && !isOverToday(a)"
+                      class="text-gray-600"
+                    >
+                      {{ formatDateTime(a.finalDate) }}
+                    </p>
+                    <div v-else class="flex gap-3">
+                      <div
+                        v-if="isOverToday(a)"
+                        class="flex items-center gap-2"
+                      >
+                        <Clock class="stroke-primary-red h-5 w-5" />
+                        <p class="text-primary-red">Reschedule</p>
+                      </div>
+
+                      <Star
+                        v-if="a.priority && !isOverToday(a)"
+                        class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
+                      />
+                      <div v-if="!isOverToday(a)" class="w-5">
+                        <CalendarX
+                          v-if="!a.isScheduled"
+                          class="stroke-primary-red h-5 w-5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
+                  <div
+                    class="h-2 w-2 rounded-full"
+                    :class="
+                      a.type === 'repair'
+                        ? 'bg-primary-green'
+                        : a.type === 'maintenance'
+                          ? 'bg-primary-blue'
+                          : ''
+                    "
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Available Appointments -->
+          <div
+            v-for="a of appointments.appointmentsAvailableByDate"
+            :key="a.id"
+          >
+            <div
+              :class="[
+                'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
+                isItemSelected(a.id!, appointmentsIds.modelValue)
+                  ? 'outline-primary-green outline'
+                  : '',
+              ]"
+            >
+              <div class="flex h-16 items-center justify-between sm:h-11">
+                <div class="flex w-1/2 p-3 sm:w-3/4">
+                  <input
+                    type="checkbox"
+                    class="mr-2"
+                    :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
+                    @click="addSelectedAppointment(a)"
+                  />
+                  <h2
+                    class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+                  >
+                    {{ a.user.fullname }}
+                  </h2>
+                  <p class="hidden truncate text-gray-900 sm:block">
+                    {{ a.description }}
+                  </p>
+                </div>
+                <div
+                  class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
+                >
+                  <div v-if="!a.isDone">
+                    <p
+                      v-if="a.isScheduled && !isOverToday(a)"
+                      class="text-gray-600"
+                    >
+                      {{ formatDateTime(a.finalDate) }}
+                    </p>
+                    <div v-else class="flex gap-3">
+                      <div
+                        v-if="isOverToday(a)"
+                        class="flex items-center gap-2"
+                      >
+                        <Clock class="stroke-primary-red h-5 w-5" />
+                        <p class="text-primary-red">Reschedule</p>
+                      </div>
+
+                      <Star
+                        v-if="a.priority && !isOverToday(a)"
+                        class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
+                      />
+                      <div v-if="!isOverToday(a)" class="w-5">
+                        <CalendarX
+                          v-if="!a.isScheduled"
+                          class="stroke-primary-red h-5 w-5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
+                  <div
+                    class="h-2 w-2 rounded-full"
+                    :class="
+                      a.type === 'repair'
+                        ? 'bg-primary-green'
+                        : a.type === 'maintenance'
+                          ? 'bg-primary-blue'
+                          : ''
+                    "
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- show selected appointments -->
@@ -536,7 +691,14 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft } from 'lucide-vue-next'
+import {
+  ArrowLeft,
+  Calendar as CalendarIcon,
+  CalendarX,
+  CheckCircle2,
+  Clock,
+  Star,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
@@ -546,7 +708,7 @@ import { useRouter } from 'vue-router'
 
 // composables
 const { showToast } = useCustomToast()
-const { formatDateTime } = useTimeUtilities()
+const { formatDateTime, isOverToday } = useTimeUtilities()
 const { currentRoute, go } = useRouter()
 
 // variables
@@ -786,6 +948,8 @@ const addSelectedAppointment = (appointment: Appointment) => {
   // check if appointment is already selected
   const index = values.appointmentsIds.indexOf(appointment.id!)
 
+  console.log('index', index)
+
   // if appointment is already selected, remove it
   if (index > -1) {
     const newValues = [...values.appointmentsIds]
@@ -969,6 +1133,11 @@ watchEffect(() => {
   // set all values
   if (schedule.value) {
     setAllValues()
+    console.log(schedule.value)
+  }
+
+  if (appointments.value) {
+    console.log(appointments.value.appointmentsAvailableByDate)
   }
 
   // all errors
