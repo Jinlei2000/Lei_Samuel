@@ -7,7 +7,7 @@ export default () => {
     let DD = String(d.getDate()).padStart(2, '0')
     let MM = String(d.getMonth() + 1).padStart(2, '0') //January is 0!
     let YYYY = d.getFullYear()
-    return `${YYYY}-${MM}-${DD}`
+    return `${DD}/${MM}/${YYYY}`
   }
 
   // check if finalDate is over today and not done
