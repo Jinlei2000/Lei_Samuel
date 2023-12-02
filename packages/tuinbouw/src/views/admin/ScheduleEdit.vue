@@ -109,10 +109,16 @@
                 <div
                   class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
                 >
-                  <p>
-                    {{ formatDateTime(a.startProposedDate) }} -
-                    {{ formatDateTime(a.endProposedDate) }}
-                  </p>
+                  <div class="flex items-center gap-3">
+                    <p>
+                      {{ formatDateTime(a.startProposedDate) }}
+                    </p>
+                    <ArrowRight class="h-4 w-4" />
+                    <p>
+                      {{ formatDateTime(a.endProposedDate) }}
+                    </p>
+                  </div>
+
                   <div class="h-5 w-5">
                     <Star
                       v-if="a.priority && !isOverToday(a)"
@@ -167,10 +173,15 @@
                 <div
                   class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
                 >
-                  <p>
-                    {{ formatDateTime(a.startProposedDate) }} -
-                    {{ formatDateTime(a.endProposedDate) }}
-                  </p>
+                  <div class="flex items-center gap-3">
+                    <p>
+                      {{ formatDateTime(a.startProposedDate) }}
+                    </p>
+                    <ArrowRight class="h-4 w-4" />
+                    <p>
+                      {{ formatDateTime(a.endProposedDate) }}
+                    </p>
+                  </div>
                   <div class="h-5 w-5">
                     <Star
                       v-if="a.priority && !isOverToday(a)"
@@ -534,14 +545,7 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import {
-  ArrowLeft,
-  Calendar as CalendarIcon,
-  CalendarX,
-  CheckCircle2,
-  Clock,
-  Star,
-} from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, Star } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
