@@ -1,26 +1,67 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFirebaseUserInput } from './dto/create-firebase-user.input';
-import { UpdateFirebaseUserInput } from './dto/update-firebase-user.input';
+import { Injectable } from '@nestjs/common'
+import { getAuth } from 'firebase-admin/auth'
+import { App, applicationDefault, initializeApp } from 'firebase-admin/app'
+import { FirebaseUser } from './models/firebase-user.model'
 
 @Injectable()
 export class FirebaseUsersService {
-  create(createFirebaseUserInput: CreateFirebaseUserInput) {
-    return 'This action adds a new firebaseUser';
+  private readonly firebaseApp: App
+  constructor() {
+    this.firebaseApp = initializeApp({
+      credential: applicationDefault(), // Environment variable GOOGLE_APPLICATION_CREDENTIALS
+    })
   }
 
-  findAll() {
-    return `This action returns all firebaseUsers`;
+  create(user: FirebaseUser) {
+    getAuth()
+      .createUser({
+        email: user.email,
+        password: user.password,
+        uid: user.uid,
+      })
+      .then(userRecord => {
+        // See the UserRecord reference doc for the contents of userRecord.
+        console.log('Successfully created new user:', userRecord.uid)
+
+        return `Successfully created new user: ${userRecord.uid}`
+      })
+      .catch(error => {
+        console.log('Error creating new user:', error)
+
+        return `Error creating new user: ${error}`
+      })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} firebaseUser`;
+  remove(uid: string) {
+    getAuth()
+      .deleteUser(uid)
+      .then(() => {
+        console.log('Successfully deleted user')
+        return 'Successfully deleted user'
+      })
+      .catch(error => {
+        console.log('Error deleting user:', error)
+        return `Error deleting user: ${error}`
+      })
   }
 
-  update(id: number, updateFirebaseUserInput: UpdateFirebaseUserInput) {
-    return `This action updates a #${id} firebaseUser`;
-  }
+  removeAll(uids: string[]) {
+    getAuth()
+      .deleteUsers(uids)
+      .then(deleteUsersResult => {
+        console.log(
+          `Successfully deleted ${deleteUsersResult.successCount} users`,
+        )
+        console.log(`Failed to delete ${deleteUsersResult.failureCount} users`)
+        deleteUsersResult.errors.forEach(err => {
+          console.log(err.error.toJSON())
+        })
 
-  remove(id: number) {
-    return `This action removes a #${id} firebaseUser`;
+        return `Successfully deleted users`
+      })
+      .catch(error => {
+        console.log('Error deleting users:', error)
+        return `Error deleting users: ${error}`
+      })
   }
 }

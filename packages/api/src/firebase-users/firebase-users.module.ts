@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
-import { FirebaseUsersService } from './firebase-users.service';
-import { FirebaseUsersResolver } from './firebase-users.resolver';
+import { Module } from '@nestjs/common'
+import { FirebaseUsersService } from './firebase-users.service'
 
 @Module({
-  providers: [FirebaseUsersResolver, FirebaseUsersService],
+  providers: [FirebaseUsersService],
+
+  exports: [FirebaseUsersService],
 })
 export class FirebaseUsersModule {}
