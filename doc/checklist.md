@@ -47,13 +47,13 @@
 
 ## Staging / Deployment
 
-- [ ] De applicatie draait volledig in Docker.
+- [x] De applicatie draait volledig in Docker.
 - [ ] De Docker image is beschikbaar op DockerHub / Harbor (optioneel).
 - [ ] Een geschikte Kubernetes deployment methodiek is gekozen (Canary, blue-green, rolling, enz.) (optioneel).
 
 ## Testing
 
-- [ ] Er zijn unittests en integratietests voor de API.
+- [x] Er zijn unittests en integratietests voor de API.
 - [ ] Testing maakt deel uit van GitHub Actions / deployment.
 
 ## Extra Features
@@ -65,10 +65,10 @@
 
 ## Design
 
-- [ ] De frontend heeft een doordacht ontwerp dat een probleem oplost.
-- [ ] De gebruikerservaring en gebruikersinterface zijn van hoge kwaliteit.
-- [ ] Er worden correcte design-patterns toegepast.
-- [ ] Er is aandacht besteed aan toegankelijkheid (a11y).
+- [x] De frontend heeft een doordacht ontwerp dat een probleem oplost.
+- [x] De gebruikerservaring en gebruikersinterface zijn van hoge kwaliteit.
+- [x] Er worden correcte design-patterns toegepast.
+- [x] Er is aandacht besteed aan toegankelijkheid (a11y).
 
 ## Framework
 
@@ -96,24 +96,24 @@
 
 ## Error Logging
 
-- [ ] Fouten worden gelogd, bijvoorbeeld met behulp van services zoals Sentry.io of LogRocket.
+- [x] Fouten worden gelogd, bijvoorbeeld met behulp van services zoals Sentry.io of LogRocket.
 
 ## Development Setup
 
 - [ ] CodeClimate wordt gebruikt voor code testing en reviews.
-- [ ] Npm-packages worden op een correcte manier gebruikt, zonder onnodige packages en met juiste flags.
+- [x] Npm-packages worden op een correcte manier gebruikt, zonder onnodige packages en met juiste flags.
 
 ## Staging / Deployment
 
-- [ ] De frontend draait volledig in Docker.
-- [ ] Gitflow wordt aangeraden voor versiebeheer.
+- [x] De frontend draait volledig in Docker.
+- [x] Gitflow wordt aangeraden voor versiebeheer.
 
 ## Build Optimalisatie
 
-- [ ] Vite wordt gebruikt voor een betere levering van JS-bestanden.
+- [x] Vite wordt gebruikt voor een betere levering van JS-bestanden.
 - [ ] Bestanden worden optimaal geminifieerd voor een snellere levering.
 
 ## Eigen Inbreng
 
-- [ ] Er is iets kleins uitgewerkt dat niet in de cursus is behandeld, en dit toont zelfstudie en extra inzet.
+- [x] Er is iets kleins uitgewerkt dat niet in de cursus is behandeld, en dit toont zelfstudie en extra inzet.
 - [ ] Mogelijke extra's zijn transities tussen schermen, gebruik van Nuxt voor SEO, WebAssembly-implementatie, web worker voor taken buiten de main thread, shared workers voor synchrone werking over meerdere tabs en het gebruik van Bun.
