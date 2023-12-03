@@ -14,6 +14,7 @@ import { MailModule } from './mail/mail.module'
 import { AbsencesModule } from './absences/absences.module'
 import { AppointmentsModule } from './appointments/appointments.module'
 import { SchedulesModule } from './schedules/schedules.module'
+import { FirebaseUsersModule } from './firebase-users/firebase-users.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SchedulesModule } from './schedules/schedules.module'
     MailModule,
     AbsencesModule,
     SchedulesModule,
+    FirebaseUsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
