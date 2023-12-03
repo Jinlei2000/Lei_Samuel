@@ -1,67 +1,52 @@
 import { Injectable } from '@nestjs/common'
 import { getAuth } from 'firebase-admin/auth'
-import { App, applicationDefault, initializeApp } from 'firebase-admin/app'
 import { FirebaseUser } from './models/firebase-user.model'
 
 @Injectable()
 export class FirebaseUsersService {
-  private readonly firebaseApp: App
-  constructor() {
-    this.firebaseApp = initializeApp({
-      credential: applicationDefault(), // Environment variable GOOGLE_APPLICATION_CREDENTIALS
-    })
+  async remove(uid: string) {
+    try {
+      await getAuth().deleteUser(uid)
+      return uid
+    } catch (error) {
+      throw new Error(`Error deleting firebase user: ${error}`)
+    }
   }
 
-  create(user: FirebaseUser) {
-    getAuth()
-      .createUser({
+  // Seeding functions
+  async create(user: FirebaseUser) {
+    try {
+      const userRecord = await getAuth().createUser({
         email: user.email,
         password: user.password,
         uid: user.uid,
       })
-      .then(userRecord => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully created new user:', userRecord.uid)
 
-        return `Successfully created new user: ${userRecord.uid}`
-      })
-      .catch(error => {
-        console.log('Error creating new user:', error)
-
-        return `Error creating new user: ${error}`
-      })
+      return {
+        uid: userRecord.uid,
+        email: userRecord.email,
+      }
+    } catch (error) {
+      throw new Error(`Error creating firebase user: ${error}`)
+    }
   }
 
-  remove(uid: string) {
-    getAuth()
-      .deleteUser(uid)
-      .then(() => {
-        console.log('Successfully deleted user')
-        return 'Successfully deleted user'
-      })
-      .catch(error => {
-        console.log('Error deleting user:', error)
-        return `Error deleting user: ${error}`
-      })
-  }
+  async removeAll(uids: string[]) {
+    try {
+      const deleteUsersResult = await getAuth().deleteUsers(uids)
 
-  removeAll(uids: string[]) {
-    getAuth()
-      .deleteUsers(uids)
-      .then(deleteUsersResult => {
-        console.log(
-          `Successfully deleted ${deleteUsersResult.successCount} users`,
-        )
-        console.log(`Failed to delete ${deleteUsersResult.failureCount} users`)
-        deleteUsersResult.errors.forEach(err => {
-          console.log(err.error.toJSON())
-        })
+      console.log(
+        `Successfully deleted ${deleteUsersResult.successCount} users`,
+      )
+      console.log(`Failed to delete ${deleteUsersResult.failureCount} users`)
 
-        return `Successfully deleted users`
+      deleteUsersResult.errors.forEach(err => {
+        console.log(err.error.toJSON())
       })
-      .catch(error => {
-        console.log('Error deleting users:', error)
-        return `Error deleting users: ${error}`
-      })
+
+      return deleteUsersResult
+    } catch (error) {
+      throw new Error(`Error deleting users: ${error}`)
+    }
   }
 }

@@ -9,6 +9,7 @@ import { UsersModule } from 'src/users/users.module'
 import { AbsencesModule } from 'src/absences/absences.module'
 import { SchedulesModule } from 'src/schedules/schedules.module'
 import { MailModule } from 'src/mail/mail.module'
+import { FirebaseUsersModule } from 'src/firebase-users/firebase-users.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MailModule } from 'src/mail/mail.module'
     SchedulesModule,
     MailModule,
     CommandModule,
+    FirebaseUsersModule,
   ],
   providers: [DatabaseSeedCommand, SeedService],
 })

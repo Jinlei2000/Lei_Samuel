@@ -324,4 +324,10 @@ export class UsersService {
   truncate(): Promise<void> {
     return this.userRepository.clear()
   }
+
+  async getAllUids(): Promise<string[]> {
+    return await this.userRepository.find().then(users => {
+      return users.map(user => user.uid)
+    })
+  }
 }

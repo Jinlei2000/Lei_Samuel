@@ -6,6 +6,7 @@
     "uid": "mFIC6ZoPCRVjhf9AqNBHb9Zzxkk2",
     "locale": "en",
     "role": "ADMIN",
+    "password": "123456",
     "locations": [
       {
         "title": "Home",
@@ -48,6 +49,7 @@
     "uid": "oBO5HvpzMZMT7QCfIAhGS5M8jPV2",
     "locale": "en",
     "role": "ADMIN",
+    "password": "123456",
     "locations": [
       {
         "title": "Home",
@@ -78,6 +80,7 @@
     "uid": "4M9iJ9CMi0TEWGR4ldXac93auVN2",
     "locale": "en",
     "role": "ADMIN",
+    "password": "123456",
     "locations": [
       {
         "title": "Home",
@@ -102,6 +105,7 @@
     "uid": "1Bo190WC69ezEJmgjioUmwindPN2",
     "locale": "en",
     "role": "EMPLOYEE",
+    "password": "123456",
     "locations": [
       {
         "title": "Home",
@@ -158,6 +162,7 @@
     "uid": "bEk4f8zWwSYAQykpfxTgXnmrcRG2",
     "locale": "en",
     "role": "EMPLOYEE",
+    "password": "123456",
     "locations": [
       {
         "title": "Home",
@@ -196,6 +201,7 @@
     "uid": "oXYYctdmiNXyYNVHSwkC56VZNv53",
     "locale": "en",
     "role": "EMPLOYEE",
+    "password": "123456",
     "locations": [
       {
         "title": "Home",
@@ -234,6 +240,7 @@
     "uid": "GLRvH7xu7ufJ4bUrJjwxQje8rez2",
     "locale": "en",
     "role": "CLIENT",
+    "password": "123456",
     "invoiceOption": "post",
     "locations": [
       {
@@ -410,6 +417,7 @@
     "uid": "cMaKJFPuRiTYb33KFxi5RHWFqj93",
     "locale": "en",
     "role": "CLIENT",
+    "password": "123456",
     "invoiceOption": "email",
     "locations": [
       {
@@ -592,6 +600,7 @@
     "uid": "QGca0m8ENZc1pjQsmaHy0JDLDyD3",
     "locale": "en",
     "role": "CLIENT",
+    "password": "123456",
     "invoiceOption": "post",
     "locations": [
       {
@@ -774,6 +783,7 @@
     "uid": "iY5FitxvE2MzmXtlo2qw5kcrHtv2",
     "locale": "en",
     "role": "CLIENT",
+    "password": "123456",
     "invoiceOption": "post",
     "locations": [
       {
@@ -950,6 +960,7 @@
     "uid": "9O4vHjsnxicB9693W2hT4yb9hYs2",
     "locale": "en",
     "role": "CLIENT",
+    "password": "123456",
     "invoiceOption": "email",
     "locations": [
       {
@@ -1132,6 +1143,7 @@
     "uid": "CNihqseWkQN603GCHOLU2G8hrsh2",
     "locale": "en",
     "role": "CLIENT",
+    "password": "123456",
     "invoiceOption": "post"
   }
 ]
