@@ -280,60 +280,6 @@
             </div>
           </div>
         </div>
-
-        <!-- show appointments with price input -->
-        <div>
-          <div v-for="a of selectedAppointments" :key="a.id">
-            <div
-              class="mx-auto mb-3 max-w-md overflow-hidden rounded-md bg-white shadow-md"
-            >
-              <div class="p-4">
-                <label
-                  class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-                  for="price"
-                  >Price</label
-                >
-                <InputNumber
-                  id="price"
-                  v-model="a.price"
-                  name="price"
-                  mode="currency"
-                  currency="EUR"
-                  locale="de-BE"
-                />
-              </div>
-              <div class="p-4">
-                <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-                <p class="mb-1 text-gray-600">{{ a.description }}</p>
-                <p class="mb-1 text-gray-600">{{ a.id }}</p>
-                <p v-if="a.finalDate" class="text-gray-600">
-                  {{ formatDateTime(a.finalDate.toString()) }}
-                </p>
-              </div>
-              <div class="border-t border-gray-200 p-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500"
-                    >{{ formatDateTime(a.startProposedDate!.toString()) }} -
-                    {{ formatDateTime(a.endProposedDate!.toString()) }}</span
-                  >
-                  <span v-if="a.isScheduled" class="text-green-500"
-                    >Scheduled</span
-                  >
-                  <span v-else class="text-gray-500">Not Scheduled</span>
-                </div>
-              </div>
-              <div class="border-t border-gray-200 p-4">
-                <div class="flex items-center justify-between">
-                  <span v-if="a.isDone" class="text-green-500">Done</span>
-                  <span v-else class="text-gray-500">Not Done</span>
-                  <span class="text-sm text-gray-500"
-                    >Priority: {{ a.priority }}</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Employees -->
