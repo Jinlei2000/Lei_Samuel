@@ -284,9 +284,11 @@
 
       <!-- Employees -->
       <div v-if="next === 3">
-        <h1>Employees</h1>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="text-xl">Employees</h2>
+        <div class="flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- validation -->
         <small id="text-error" class="p-error block">{{
@@ -299,71 +301,68 @@
         </div>
 
         <!-- show selected employees -->
-        <h1>Your selected</h1>
-        <div v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0">
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div
-              v-for="user in selectedEmployeesEdit"
-              :key="user.id"
-              class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
-              :class="
-                isItemSelected(user.id, employeesIds.modelValue)
-                  ? 'border border-green-500'
-                  : ''
-              "
-            >
-              <!-- Add checkbox for selection -->
-              <input
-                type="checkbox"
-                class="mr-2"
-                :checked="isItemSelected(user.id, employeesIds.modelValue)"
-                @click="addSelectedEmployee(user)"
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <!-- Previously selected employees -->
+          <button
+            v-for="user in selectedEmployeesEdit"
+            v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0"
+            :key="user.id"
+            class="transform overflow-hidden rounded-2xl bg-gray-200 hover:bg-gray-400"
+            :class="
+              isItemSelected(user.id, employeesIds.modelValue)
+                ? 'outline outline-primary-green'
+                : ''
+            "
+            type="button"
+            @click="addSelectedEmployee(user)"
+          >
+            <div class="flex items-center gap-6 p-1">
+              <img
+                class="h-12 w-12 rounded-xl"
+                src="https://picsum.photos/200"
+                alt="random picture"
               />
-              <div class="p-6">
-                <h2 class="mb-2 text-2xl font-semibold">
-                  {{ user.firstname }} {{ user.lastname }}
-                </h2>
-                <p class="text-gray-600">{{ user.email }}</p>
-                <p class="text-gray-600">{{ user.role }}</p>
-                <p class="text-gray-600">{{ user.uid }}</p>
+              <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
+              <div
+                v-if="isItemSelected(user.id, employeesIds.modelValue)"
+                class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
+              >
+                <Check :size="16" class="text-white" />
               </div>
             </div>
-          </div>
-        </div>
+          </button>
 
-        <!-- show employees -->
-        <h1>Available employees</h1>
-        <div
-          v-if="employees && employees.usersEmployeesAvailableByDate.length > 0"
-        >
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div
-              v-for="user in employees.usersEmployeesAvailableByDate"
-              :key="user.id"
-              class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
-              :class="
-                isItemSelected(user.id, employeesIds.modelValue)
-                  ? 'border border-green-500'
-                  : ''
-              "
-            >
-              <!-- Add checkbox for selection -->
-              <input
-                type="checkbox"
-                class="mr-2"
-                :checked="isItemSelected(user.id, employeesIds.modelValue)"
-                @click="addSelectedEmployee(user)"
+          <!-- Available employees -->
+          <button
+            v-for="user in employees.usersEmployeesAvailableByDate"
+            v-if="
+              employees && employees.usersEmployeesAvailableByDate.length > 0
+            "
+            :key="user.id"
+            class="transform overflow-hidden rounded-2xl bg-gray-200 hover:bg-gray-400"
+            :class="
+              isItemSelected(user.id, employeesIds.modelValue)
+                ? 'outline outline-primary-green'
+                : ''
+            "
+            type="button"
+            @click="addSelectedEmployee(user)"
+          >
+            <div class="relative flex items-center gap-6 p-1">
+              <img
+                class="h-12 w-12 rounded-xl"
+                src="https://picsum.photos/200"
+                alt="random picture"
               />
-              <div class="p-6">
-                <h2 class="mb-2 text-2xl font-semibold">
-                  {{ user.firstname }} {{ user.lastname }}
-                </h2>
-                <p class="text-gray-600">{{ user.email }}</p>
-                <p class="text-gray-600">{{ user.role }}</p>
-                <p class="text-gray-600">{{ user.uid }}</p>
+              <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
+              <div
+                v-if="isItemSelected(user.id, employeesIds.modelValue)"
+                class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
+              >
+                <Check :size="16" class="text-white" />
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -539,7 +538,7 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, ArrowRight, Star } from 'lucide-vue-next'
+import { ArrowLeft, ArrowRight, Check, Star } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
@@ -817,8 +816,11 @@ const addSelectedAppointment = (appointment: Appointment) => {
 }
 
 const addSelectedEmployee = (user: CustomUser) => {
+  console.log('user', user)
   // check if user is already selected
   const index = values.employeesIds.indexOf(user.id)
+
+  console.log(index)
 
   // if user is already selected, remove it
   if (index > -1) {
