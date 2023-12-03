@@ -102,8 +102,7 @@ const formRegister = {
 const handleRegister = async (values: GenericObject) => {
   loading.value = true
   try {
-    // const userData = await register(values.email, values.password)
-    const userData = await register('sdqtjbvglh', values.password)
+    const userData = await register(values.email, values.password)
 
     // Add user to the database
     await addClient({
