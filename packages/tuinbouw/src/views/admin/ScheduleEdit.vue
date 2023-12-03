@@ -224,14 +224,63 @@
 
       <!-- Fill in price of appointments -->
       <div v-if="next === 2">
-        <h2>Fill in price of appointments</h2>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="text-xl">Price Appointments</h2>
+        <div class="flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- validation -->
         <small id="text-error" class="p-error block">{{
           errorMessages.prices || '&nbsp;'
         }}</small>
+
+        <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+          <!-- Selected Appointments -->
+          <div v-for="a of selectedAppointments" :key="a.id">
+            <div
+              :class="[
+                'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
+              ]"
+            >
+              <div class="flex h-16 items-center justify-between sm:h-11">
+                <div class="flex w-1/2 p-3 sm:w-3/4">
+                  <h2
+                    class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+                  >
+                    {{ a.user.fullname }}
+                  </h2>
+                  <p class="hidden truncate text-gray-900 sm:block">
+                    {{ a.description }}
+                  </p>
+                </div>
+                <div
+                  class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
+                >
+                  <InputNumber
+                    id="price"
+                    v-model="a.price"
+                    name="price"
+                    mode="currency"
+                    currency="EUR"
+                    locale="de-BE"
+                    unstyled
+                  />
+                  <div
+                    class="h-2 w-2 rounded-full"
+                    :class="
+                      a.type === 'repair'
+                        ? 'bg-primary-green'
+                        : a.type === 'maintenance'
+                          ? 'bg-primary-blue'
+                          : ''
+                    "
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- show appointments with price input -->
         <div>
