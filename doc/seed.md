@@ -1,5 +1,7 @@
 # Seed commands
 
+Don't seed the database multiple times. This will cause errors.
+
 ```bash
 npx nestjs-command <SEED_COMMAND_NAME>
 ```
