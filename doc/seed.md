@@ -24,6 +24,8 @@ npx nestjs-command seed:reset
 
 ### Seeding firebase authentication
 
+The default password for the newly created user is specified in the [users.json](https://github.com/Jinlei2000/Lei_Samuel/blob/4a38cfbbe78bce8e8d4296fe162309a3addfbaee/packages/api/src/seed/data/users.json) file and is set to 123456. Feel free to modify it there.
+
 ```bash
 npx nestjs-command seed:firebase:auth
 ```
