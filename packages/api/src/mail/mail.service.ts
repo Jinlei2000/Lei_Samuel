@@ -36,7 +36,7 @@ export class MailService {
         : 'http://localhost:5173'
     const url = `${frontEndUrl}/auth/register-employee/${token}`
 
-    const result = await this.mailerService
+    await this.mailerService
       .sendMail({
         to: user.email,
         subject: 'Welcome to the team! Make your account now!',

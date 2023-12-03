@@ -44,6 +44,7 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import router from '@/router'
 import { registerValidationSchema } from '@/validation/schema'
 import { useMutation } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { type GenericObject } from 'vee-validate'
 import { ref, watch } from 'vue'
 
@@ -52,7 +53,7 @@ const { register } = useFirebase()
 const { mutate: addClient, error: addClientError } =
   useMutation<CustomUser>(CREATE_CLIENT)
 const { locale, setLocale } = useLanguage()
-const { customUser } = useCustomUser()
+const { customUser, restoreCustomUser } = useCustomUser()
 
 watch(addClientError, () => {
   if (!addClientError.value) return
@@ -116,10 +117,12 @@ const handleRegister = async (values: GenericObject) => {
     })
 
     console.log('Register success')
-    setLocale(customUser.value!.locale!)
+    await restoreCustomUser()
+    await setLocale(customUser.value!.locale!)
     router.replace('/auth/login')
   } catch (error) {
     console.log(error)
+    LogRocket.captureException(error as Error)
     errorRegister.value = (error as Error).message
   }
   loading.value = false

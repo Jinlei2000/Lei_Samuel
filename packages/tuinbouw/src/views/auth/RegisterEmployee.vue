@@ -45,6 +45,7 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import router from '@/router'
 import { registerValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { type GenericObject } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -147,6 +148,7 @@ const handleRegister = async (values: GenericObject) => {
     }
   } catch (error) {
     console.log(error)
+    LogRocket.captureException(error as Error)
     errorRegister.value = (error as Error).message
   }
   loading.value = false

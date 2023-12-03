@@ -17,9 +17,11 @@ import {
   chooseRandomItems,
   generateNonWeekendDates,
 } from 'src/helpers/seedingFunctions'
+import { FirebaseUser } from '../firebase-users/models/firebase-user.model'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
+import { FirebaseUsersService } from 'src/firebase-users/firebase-users.service'
 
 @Injectable()
 export class SeedService {
@@ -31,6 +33,7 @@ export class SeedService {
     private absencesService: AbsencesService,
     private schedulesService: SchedulesService,
     private mailService: MailService,
+    private firebaseUsersService: FirebaseUsersService,
   ) {}
 
   //#region Materials
@@ -366,6 +369,29 @@ export class SeedService {
   //#region Mail
   async deleteAllMail(): Promise<void> {
     return this.mailService.truncate()
+  }
+  //#endregion
+
+  //#region Firebase users
+  async addFirebaseUsersFromJson(): Promise<FirebaseUser[]> {
+    const theUsers: FirebaseUser[] = []
+    for (let user of users) {
+      const u = new FirebaseUser()
+      u.email = user.email
+      u.uid = user.uid
+      u.password = user.password
+
+      const createdUser: FirebaseUser =
+        await this.firebaseUsersService.create(u)
+      theUsers.push(createdUser)
+    }
+
+    return theUsers
+  }
+
+  async deleteAllFirebaseUsers(): Promise<void> {
+    const uids = await this.usersService.getAllUids()
+    await this.firebaseUsersService.removeAll(uids)
   }
   //#endregion
 }

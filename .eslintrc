@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "plugins": ["prettier"],
+  "extends": [
+    "eslint:recommended",
+    "prettier" // always at the last
+  ],
+  "rules": {
+    "prettier/prettier": "warn"
+  },
+  "ignorePatterns": ["**/node_modules/*", "**/dist/*", ".eslintrc", ".*"]
+}

@@ -140,11 +140,6 @@ const router = createRouter({
     },
 
     {
-      path: '/form',
-      component: () => import('../views/Form.vue'),
-    },
-
-    {
       path: '/no-access',
       component: () => import('../views/NoAccess.vue'),
     },

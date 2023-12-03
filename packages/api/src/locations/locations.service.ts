@@ -106,10 +106,10 @@ export class LocationsService {
   ): Promise<Location> {
     await this.findOne(id.toString())
 
-    // remove id and make a new variable with the rest of the data
-    const { id: _, ...updatedData } = updateLocationInput
+    // remove id
+    delete updateLocationInput.id
 
-    await this.locationRepository.update(id, updatedData)
+    await this.locationRepository.update(id, updateLocationInput)
 
     return this.findOne(id.toString())
   }

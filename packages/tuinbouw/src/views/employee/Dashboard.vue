@@ -102,12 +102,10 @@
           </div>
         </div>
         <Map
-          v-if="scheduleData.todaysLocations"
-          class="rounded-2xl"
+          class="h-72 w-full overflow-hidden rounded-2xl"
           :locations="scheduleData.todaysLocations"
           :controls="true"
-        ></Map>
-        <Map v-else class="rounded-2xl" :controls="true"></Map>
+        />
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
@@ -139,6 +137,7 @@ import useCustomUser from '@/composables/useCustomUser'
 import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import { useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
 import { computed, ref, watch, watchEffect } from 'vue'
 
@@ -275,6 +274,7 @@ watchEffect(() => {
   const errors = [scheduleError.value]
   errors.forEach(error => {
     if (error) {
+      LogRocket.captureException(error)
       showToast('error', 'Error', error.message)
     }
   })

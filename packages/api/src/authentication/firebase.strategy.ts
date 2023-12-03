@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy } from 'passport-http-bearer' 
+import { Strategy } from 'passport-http-bearer'
 import { auth, FirebaseError } from 'firebase-admin'
 import * as firebaseAdmin from 'firebase-admin'
 
