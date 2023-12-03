@@ -264,7 +264,6 @@
                     mode="currency"
                     currency="EUR"
                     locale="de-BE"
-                    unstyled
                   />
                   <div
                     class="h-2 w-2 rounded-full"
