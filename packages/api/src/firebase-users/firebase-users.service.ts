@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFirebaseUserInput } from './dto/create-firebase-user.input';
-import { UpdateFirebaseUserInput } from './dto/update-firebase-user.input';
+import { Injectable } from '@nestjs/common'
+import { getAuth } from 'firebase-admin/auth'
+import { FirebaseUser } from './models/firebase-user.model'
 
 @Injectable()
 export class FirebaseUsersService {
-  create(createFirebaseUserInput: CreateFirebaseUserInput) {
-    return 'This action adds a new firebaseUser';
+  async remove(uid: string) {
+    try {
+      await getAuth().deleteUser(uid)
+      return uid
+    } catch (error) {
+      throw new Error(`Error deleting firebase user: ${error}`)
+    }
   }
 
-  findAll() {
-    return `This action returns all firebaseUsers`;
+  // Seeding functions
+  async create(user: FirebaseUser) {
+    try {
+      const userRecord = await getAuth().createUser({
+        email: user.email,
+        password: user.password,
+        uid: user.uid,
+      })
+
+      return {
+        uid: userRecord.uid,
+        email: userRecord.email,
+      }
+    } catch (error) {
+      throw new Error(`Error creating firebase user: ${error}`)
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} firebaseUser`;
-  }
+  async removeAll(uids: string[]) {
+    try {
+      const deleteUsersResult = await getAuth().deleteUsers(uids)
 
-  update(id: number, updateFirebaseUserInput: UpdateFirebaseUserInput) {
-    return `This action updates a #${id} firebaseUser`;
-  }
+      console.log(
+        `Successfully deleted ${deleteUsersResult.successCount} users`,
+      )
+      console.log(`Failed to delete ${deleteUsersResult.failureCount} users`)
 
-  remove(id: number) {
-    return `This action removes a #${id} firebaseUser`;
+      deleteUsersResult.errors.forEach(err => {
+        console.log(err.error.toJSON())
+      })
+
+      return deleteUsersResult
+    } catch (error) {
+      throw new Error(`Error deleting users: ${error}`)
+    }
   }
 }

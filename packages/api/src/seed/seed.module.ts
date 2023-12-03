@@ -9,6 +9,7 @@ import { UsersModule } from 'src/users/users.module'
 import { AbsencesModule } from 'src/absences/absences.module'
 import { SchedulesModule } from 'src/schedules/schedules.module'
 import { MailModule } from 'src/mail/mail.module'
+import { FirebaseUsersModule } from 'src/firebase-users/firebase-users.module'
 
 @Module({
   imports: [
@@ -20,16 +21,18 @@ import { MailModule } from 'src/mail/mail.module'
     SchedulesModule,
     MailModule,
     CommandModule,
+    FirebaseUsersModule,
   ],
   providers: [DatabaseSeedCommand, SeedService],
 })
 export class SeedModule {
   async seedE2ETestData() {
     console.log('🌱 Seeding E2E test data for frontend (playwright)')
+    // BUG: because of the emulator???
+    await this.seedCommand.seedFirebaseUsers()
     await this.seedCommand.seedMaterials()
     await this.seedCommand.seedUsers()
     await this.seedCommand.seedSchedules()
-    // TODO: seed firebase users in auth emulator
   }
 
   constructor(private readonly seedCommand: DatabaseSeedCommand) {

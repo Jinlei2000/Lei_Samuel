@@ -16,12 +16,14 @@ import { SchedulesService } from 'src/schedules/schedules.service'
 import { AppointmentsService } from 'src/appointments/appointments.service'
 import { MaterialsService } from 'src/materials/materials.service'
 import { resetTime } from 'src/helpers/genericFunctions'
+import { FirebaseUsersService } from 'src/firebase-users/firebase-users.service'
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly firebaseUsersService: FirebaseUsersService,
     // use forwardRef to avoid circular dependency
     @Inject(forwardRef(() => LocationsService))
     private readonly locationsService: LocationsService,
@@ -226,7 +228,8 @@ export class UsersService {
     // delete user
     await this.userRepository.delete(id)
 
-    // TODO: delete user from firebase
+    // delete user from firebase authentication
+    await this.firebaseUsersService.remove(user.uid)
 
     // return id if delete was successful
     return id
@@ -323,5 +326,11 @@ export class UsersService {
 
   truncate(): Promise<void> {
     return this.userRepository.clear()
+  }
+
+  async getAllUids(): Promise<string[]> {
+    return await this.userRepository.find().then(users => {
+      return users.map(user => user.uid)
+    })
   }
 }
