@@ -460,27 +460,28 @@
           <!-- show selected appointments -->
           <div class="flex flex-col">
             <h3 class="mb-1 text-lg">Appointments</h3>
-            <div
-              v-for="a of selectedAppointments"
+            <ul
               v-if="selectedAppointments.length > 0"
-              :key="a.id"
+              class="flex flex-col gap-1"
             >
-              <p>{{ a.user.fullname }}</p>
-              <p class="text-sm text-gray-900">{{ a.description }}</p>
-            </div>
+              <li v-for="a of selectedAppointments" :key="a.id">
+                <p>{{ a.user.fullname }}</p>
+                <p class="text-sm text-gray-900">{{ a.description }}</p>
+              </li>
+            </ul>
           </div>
 
           <!-- show selected employees -->
           <div class="flex flex-col gap-1">
             <h3 class="mb-1 text-lg">Employees</h3>
-            <ul v-if="selectedEmployees.length > 0">
+            <ul v-if="selectedEmployees.length > 0" class="flex flex-col gap-1">
               <li
                 v-for="user of selectedEmployees"
                 :key="user.id"
                 class="flex items-center gap-3"
               >
                 <img
-                  class="w-8 rounded-xl bg-gray-400"
+                  class="w-8 rounded-full bg-gray-400"
                   src="https://picsum.photos/200"
                   alt="random picture"
                 />
