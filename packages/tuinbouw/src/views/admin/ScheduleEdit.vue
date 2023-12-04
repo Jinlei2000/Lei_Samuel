@@ -12,7 +12,7 @@
       Go back
     </button>
 
-    <div class="mt-6 flex w-full items-center justify-between">
+    <div class="mt-0 flex w-full items-center justify-between">
       <h1 class="text-2xl">Schedule Edit</h1>
       <!-- reset all values back -->
       <CustomButton
