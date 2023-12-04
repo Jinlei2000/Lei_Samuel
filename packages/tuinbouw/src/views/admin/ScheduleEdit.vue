@@ -12,7 +12,7 @@
       Go back
     </button>
 
-    <div class="mt-0 flex w-full items-center justify-between">
+    <div class="mt-3 flex w-full items-center justify-between">
       <h1 class="text-2xl">Schedule Edit</h1>
       <!-- reset all values back -->
       <CustomButton
@@ -27,7 +27,7 @@
     <form v-if="schedule" class="w-full" @submit.prevent="handleUpdateSchedule">
       <!-- Final Date -->
       <div v-if="next === 0" class="w-full">
-        <h2 class="text-xl">Final Date</h2>
+        <h2 class="mb-3 text-xl">Final Date</h2>
         <div class="flex w-full justify-end">
           <CustomButton name="Next" type="button" @click="handleNext()" />
         </div>
@@ -62,7 +62,7 @@
 
       <!-- Appointments -->
       <div v-if="next === 1" class="w-full">
-        <h2 class="text-xl">Appointments</h2>
+        <h2 class="mb-3 text-xl">Appointments</h2>
         <div class="flex w-full justify-between">
           <CustomButton name="Back" type="button" @click="handleBack()" />
           <CustomButton name="Next" type="button" @click="handleNext()" />
@@ -224,7 +224,7 @@
 
       <!-- Fill in price of appointments -->
       <div v-if="next === 2">
-        <h2 class="text-xl">Price Appointments</h2>
+        <h2 class="mb-3 text-xl">Price Appointments</h2>
         <div class="flex w-full justify-between">
           <CustomButton name="Back" type="button" @click="handleBack()" />
           <CustomButton name="Next" type="button" @click="handleNext()" />
@@ -284,7 +284,7 @@
 
       <!-- Employees -->
       <div v-if="next === 3">
-        <h2 class="text-xl">Employees</h2>
+        <h2 class="mb-3 text-xl">Employees</h2>
         <div class="flex w-full justify-between">
           <CustomButton name="Back" type="button" @click="handleBack()" />
           <CustomButton name="Next" type="button" @click="handleNext()" />
@@ -366,7 +366,7 @@
 
       <!-- Materials -->
       <div v-if="next === 4">
-        <h2 class="text-xl">Materials</h2>
+        <h2 class="mb-3 text-xl">Materials</h2>
         <div class="mb-6 flex w-full justify-between">
           <CustomButton name="Back" type="button" @click="handleBack()" />
           <CustomButton name="Next" type="button" @click="handleNext()" />
@@ -440,7 +440,7 @@
 
       <!-- See All -->
       <div v-if="next === 5">
-        <h2 class="text-xl">Overview</h2>
+        <h2 class="mb-3 text-xl">Overview</h2>
         <div class="mb-6 flex w-full justify-between">
           <CustomButton name="Back" type="button" @click="handleBack()" />
           <CustomButton
