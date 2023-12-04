@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full items-center justify-between rounded-2xl bg-gray-200 p-1 pl-4"
+    class="flex w-full items-center justify-between rounded-2xl bg-gray-200 p-1 pl-3"
     @click="toggleChecked"
   >
     <p class="text-lg">{{ material?.name }}</p>
