@@ -207,9 +207,11 @@
 
       <!-- Employees -->
       <div v-if="next === 3">
-        <h1>Employees</h1>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">Employees</h2>
+        <div class="flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- validation -->
         <span id="text-error" class="block text-red-500">{{
@@ -223,33 +225,34 @@
 
         <!-- show employees -->
         <div v-else-if="employees && employees.length > 0">
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            <button
               v-for="user in employees"
               :key="user.id"
-              class="transform overflow-hidden rounded-md border border-gray-400 bg-white shadow-md transition-transform hover:scale-105"
+              class="relative overflow-hidden rounded-2xl bg-gray-200 hover:bg-gray-400"
               :class="
                 isItemSelected(user.id, employeesIds.modelValue)
-                  ? 'border border-green-500'
+                  ? 'outline outline-primary-green'
                   : ''
               "
+              type="button"
+              @click="addSelectedEmployee(user)"
             >
-              <!-- Add checkbox for selection -->
-              <input
-                type="checkbox"
-                class="mr-2"
-                :checked="isItemSelected(user.id, employeesIds.modelValue)"
-                @click="addSelectedEmployee(user)"
-              />
-              <div class="p-6">
-                <h2 class="mb-2 text-2xl font-semibold">
-                  {{ user.firstname }} {{ user.lastname }}
-                </h2>
-                <p class="text-gray-600">{{ user.email }}</p>
-                <p class="text-gray-600">{{ user.role }}</p>
-                <p class="text-gray-600">{{ user.uid }}</p>
+              <div class="flex items-center gap-6 p-1">
+                <img
+                  class="h-12 w-12 rounded-xl"
+                  src="https://picsum.photos/200"
+                  alt="random picture"
+                />
+                <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
+                <div
+                  v-if="isItemSelected(user.id, employeesIds.modelValue)"
+                  class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
+                >
+                  <Check :size="16" class="text-white" />
+                </div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
 

@@ -308,7 +308,7 @@
             v-for="user in selectedEmployeesEdit"
             v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0"
             :key="user.id"
-            class="transform overflow-hidden rounded-2xl bg-gray-200 hover:bg-gray-400"
+            class="relative overflow-hidden rounded-2xl bg-gray-200 hover:bg-gray-400"
             :class="
               isItemSelected(user.id, employeesIds.modelValue)
                 ? 'outline outline-primary-green'
