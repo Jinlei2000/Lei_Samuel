@@ -400,6 +400,12 @@
               alt="random picture"
             />
             <h2 class="truncate text-lg">{{ material.name }}</h2>
+            <div
+              v-if="isItemSelected(material.id, materialsIds.modelValue)"
+              class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
+            >
+              <Check :size="16" class="text-white" />
+            </div>
           </button>
 
           <!-- Availabe materials -->
@@ -422,6 +428,12 @@
               alt="random picture"
             />
             <h2 class="truncate text-lg">{{ material.name }}</h2>
+            <div
+              v-if="isItemSelected(material.id, materialsIds.modelValue)"
+              class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
+            >
+              <Check :size="16" class="text-white" />
+            </div>
           </button>
         </div>
       </div>
