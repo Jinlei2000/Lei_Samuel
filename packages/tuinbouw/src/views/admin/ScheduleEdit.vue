@@ -12,6 +12,7 @@
       Go back
     </button>
 
+    <!-- Title -->
     <div class="mt-3 flex w-full items-center justify-between">
       <h1 class="text-2xl">Schedule Edit</h1>
       <!-- reset all values back -->
