@@ -190,7 +190,7 @@
   </Dialog>
 
   <!-- show no schedules -->
-  <div v-if="schedules.length === 0">
+  <div v-if="schedules.length === 0 && !schedulesLoading">
     <p class="text-6xl font-black">No Schedules Found</p>
   </div>
 </template>

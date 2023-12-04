@@ -563,7 +563,7 @@ const handleCreateSchedule = async () => {
       loadingCreate.value = false
       showToast('success', 'Success', 'Schedule created')
       // redirect to schedule detail page
-      replace(`/admin/schedules/${data?.createSchedule.id}`)
+      replace(`/admin/schedules`)
     })
   }
   loadingCreate.value = false
