@@ -147,9 +147,11 @@
 
       <!-- Fill in price of appointments -->
       <div v-if="next === 2">
-        <h1>Fill in price of appointments</h1>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">Price Appointments</h2>
+        <div class="flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- validation -->
         <span id="text-error" class="block text-red-500">{{
@@ -157,53 +159,45 @@
         }}</span>
 
         <!-- show appointments with price input -->
-        <div>
+        <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
           <div v-for="a of selectedAppointments" :key="a.id">
             <div
-              class="mx-auto mb-3 max-w-md overflow-hidden rounded-md bg-white shadow-md"
+              :class="[
+                'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
+              ]"
             >
-              <div class="p-4">
-                <label
-                  class="mb-1 block text-sm font-medium text-gray-900 dark:text-white"
-                  for="price"
-                  >Price</label
-                >
-                <InputNumber
-                  id="price"
-                  v-model="a.price"
-                  name="price"
-                  mode="currency"
-                  currency="EUR"
-                  locale="de-BE"
-                />
-              </div>
-              <div class="p-4">
-                <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-                <p class="mb-1 text-gray-600">{{ a.description }}</p>
-                <p class="mb-1 text-gray-600">{{ a.id }}</p>
-                <p v-if="a.finalDate" class="text-gray-600">
-                  {{ formatDateTime(a.finalDate.toString()) }}
-                </p>
-              </div>
-              <div class="border-t border-gray-200 p-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500"
-                    >{{ formatDateTime(a.startProposedDate!.toString()) }} -
-                    {{ formatDateTime(a.endProposedDate!.toString()) }}</span
+              <div class="flex h-16 items-center justify-between sm:h-11">
+                <div class="flex w-1/2 p-3 sm:w-3/4">
+                  <h2
+                    class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
                   >
-                  <span v-if="a.isScheduled" class="text-green-500"
-                    >Scheduled</span
-                  >
-                  <span v-else class="text-gray-500">Not Scheduled</span>
+                    {{ a.user.fullname }}
+                  </h2>
+                  <p class="hidden truncate text-gray-900 sm:block">
+                    {{ a.description }}
+                  </p>
                 </div>
-              </div>
-              <div class="border-t border-gray-200 p-4">
-                <div class="flex items-center justify-between">
-                  <span v-if="a.isDone" class="text-green-500">Done</span>
-                  <span v-else class="text-gray-500">Not Done</span>
-                  <span class="text-sm text-gray-500"
-                    >Priority: {{ a.priority }}</span
-                  >
+                <div
+                  class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
+                >
+                  <InputNumber
+                    id="price"
+                    v-model="a.price"
+                    name="price"
+                    mode="currency"
+                    currency="EUR"
+                    locale="de-BE"
+                  />
+                  <div
+                    class="h-2 w-2 rounded-full"
+                    :class="
+                      a.type === 'repair'
+                        ? 'bg-primary-green'
+                        : a.type === 'maintenance'
+                          ? 'bg-primary-blue'
+                          : ''
+                    "
+                  ></div>
                 </div>
               </div>
             </div>
