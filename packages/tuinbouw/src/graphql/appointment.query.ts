@@ -10,6 +10,7 @@ export const GET_ALL_APPOINTMENT_BY_USERID = gql`
       id
       user {
         id
+        fullname
       }
       location {
         id
@@ -36,6 +37,7 @@ export const GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE = gql`
       id
       user {
         id
+        fullname
       }
       location {
         id
@@ -62,6 +64,7 @@ export const GET_ALL_APPOINTMENT = gql`
       id
       user {
         id
+        fullname
       }
       location {
         id

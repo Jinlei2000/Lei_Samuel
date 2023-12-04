@@ -6,12 +6,18 @@ export const GET_ALL_SCHEDULES = gql`
       id
       appointments {
         id
+        location {
+          address
+        }
       }
       employees {
         id
+        firstname
+        fullname
       }
       materials {
         id
+        name
       }
       finalDate
       createdBy
@@ -29,6 +35,7 @@ export const GET_SCHEDULE_BY_ID = gql`
         id
         user {
           id
+          fullname
         }
         location {
           id

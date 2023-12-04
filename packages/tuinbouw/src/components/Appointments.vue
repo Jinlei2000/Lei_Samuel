@@ -1,223 +1,113 @@
 <template>
-  <!-- go back button -->
-  <button class="mt-20 flex" v-bind="$attrs" @click="$router.go(-1)">
-    <ArrowLeft class="h-6 w-6" />
-    Go back
-  </button>
-
-  <h1
-    class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
+  <div
+    class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
-    AllAppointment
-  </h1>
-
-  <!-- TODO: make a filter component and use Accordion  -->
-  <div class="relative flex w-full items-center justify-between">
-    <!-- Filter -->
-    <div class="flex items-center gap-3">
-      <button
-        class="border-1 group flex h-12 items-center gap-[6px] rounded-2xl border-black bg-transparent p-3 text-black"
-        @click="filter = !filter"
-      >
-        <Filter class="h-5 w-5" />
-        <p class="m-0 text-lg">Filter</p>
-        <ChevronDown
-          :class="filter ? 'rotate-180 transition-all' : 'transition-all'"
-          class="w-[22px]transition-all h-[22px]"
+    <div class="flex w-full flex-col gap-3">
+      <!-- Filters + Searchbar -->
+      <section :class="['relative flex w-full items-center justify-between']">
+        <!-- Filter -->
+        <Filter
+          v-model="variables.filters"
+          :options="FILTER_OPTIONS_APPOINTMENTS"
         />
-      </button>
-    </div>
-    <!-- Filter dropdown -->
-    <div
-      :class="
-        filter
-          ? 'opacity-100 transition-all duration-200'
-          : 'opacity-0 transition-all duration-200'
-      "
-      class="border-1 absolute top-16 z-50 flex gap-12 rounded-2xl border-black bg-gray-200 px-12 py-6"
-    >
-      <div class="flex flex-col gap-3">
-        <h2 class="text-lg">Type</h2>
-        <div class="flex flex-col gap-3">
-          <div class="flex flex-col gap-3">
-            <div class="flex gap-2">
-              <input
-                id="maintenance"
-                type="checkbox"
-                name="maintenance"
-                className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
-                @change="updateFilters('M')"
-              />
-              <div
-                class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-              >
-                <Check class="h-3 w-3" />
-              </div>
-              <label for="maintenance">Maintenance</label>
-            </div>
-          </div>
-          <div class="flex flex-col gap-3">
-            <div class="flex gap-2">
-              <input
-                id="repair"
-                type="checkbox"
-                name="repair"
-                className="relative peer shrink-0 appearance-none rounded-[4px] w-4 h-4 border-1 border-black bg-transparent mt-1 checked:bg-primary-green checked:border-0"
-                @change="updateFilters('R')"
-              />
-              <div
-                class="pointer-events-none absolute translate-x-0.5 translate-y-1.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-              >
-                <Check class="h-3 w-3" />
-              </div>
-              <label for="repair">Repair</label>
-            </div>
-          </div>
+
+        <!-- Searchbar -->
+        <Search
+          v-model="variables.searchString"
+          placeholder="Search for appointments"
+        />
+      </section>
+
+      <!-- Title + Sort -->
+      <header class="flex w-full items-center justify-between">
+        <!-- Title -->
+        <h1 class="text-2xl">Appointments</h1>
+        <div class="flex gap-3">
+          <!-- Sort -->
+          <Sort
+            v-model="variables.order"
+            :options="SORT_OPTIONS_APPOINTMENTS"
+          />
         </div>
-      </div>
-      <div class="flex flex-col gap-3">
-        <h2 class="text-lg">Status</h2>
-        <div class="flex flex-col gap-3">
-          <div class="flex flex-col gap-3">
-            <div class="relative flex items-center gap-2">
-              <input
-                id="all"
-                class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
-                type="radio"
-                name="status"
-                value="all"
-                checked
-                @change="updateFiltersRadio(['D', 'ND'], true)"
-              />
-              <div
-                class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-              >
-                <Check class="h-3 w-3" />
-              </div>
-              <label for="all">All</label>
-            </div>
-          </div>
-          <div class="flex flex-col gap-3">
-            <div class="relative flex items-center gap-2">
-              <input
-                id="done"
-                class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
-                type="radio"
-                name="status"
-                value="done"
-                @change="updateFiltersRadio(['D'])"
-              />
-              <div
-                class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-              >
-                <Check class="h-3 w-3" />
-              </div>
-              <label for="done">Done</label>
-            </div>
-          </div>
-          <div class="flex flex-col gap-3">
-            <div class="relative flex items-center gap-2">
-              <input
-                id="not-done"
-                class="before:content[''] before:bg-blue-gray-500 checked:bg-primary-green checked:border-primary-green checked:before:bg-primary-green peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-black transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity hover:before:opacity-10"
-                type="radio"
-                name="status"
-                value="not-done"
-                @change="updateFiltersRadio(['ND'])"
-              />
-              <div
-                class="pointer-events-none absolute translate-x-0.5 text-white opacity-0 transition-opacity peer-checked:opacity-100"
-              >
-                <Check class="h-3 w-3" />
-              </div>
-              <label for="not-done">Not Done</label>
-            </div>
-          </div>
-        </div>
-      </div>
+      </header>
     </div>
-    <!-- End filter dropdown -->
   </div>
 
-  <!-- TODO: make a sort component -->
-
-  <div v-if="loading.data">
-    <p class="text-6xl font-black">Loading...</p>
+  <!-- show loading -->
+  <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
   </div>
 
   <!-- show all appointments -->
   <div v-else-if="appointments && appointments.length > 0">
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
       <div v-for="a of appointments" :key="a.id">
-        <div
+        <button
           :class="[
-            'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
+            'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
             {
               ' border border-red-400': isOverToday(a),
             },
           ]"
+          @click="toggleModal(a, 'detail')"
         >
-          <div class="p-4">
-            <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-            <p class="mb-1 text-gray-600">{{ a.description }}</p>
-            <p class="mb-1 text-gray-600">{{ a.location.address }}</p>
-            <p class="mb-1 text-gray-600">{{ a.id }}</p>
-            <p v-if="a.finalDate" class="text-gray-600">
-              {{ formatDateTime(a.finalDate) }}
-            </p>
-          </div>
-          <div class="border-t border-gray-200 p-4">
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-500"
-                >{{ formatDateTime(a.startProposedDate) }} -
-                {{ formatDateTime(a.endProposedDate) }}</span
+          <div class="flex h-16 items-center justify-between sm:h-11">
+            <div class="flex w-1/2 p-3 sm:w-3/4">
+              <h2
+                class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
               >
-              <span v-if="a.isScheduled" class="text-green-500">Scheduled</span>
-              <span v-else class="text-gray-500">Not Scheduled</span>
+                {{ a.user.fullname }}
+              </h2>
+              <p class="hidden truncate text-gray-900 sm:block">
+                {{ a.description }}
+              </p>
             </div>
-          </div>
-          <div class="border-t border-gray-200 p-4">
-            <div class="flex items-center justify-between">
-              <span v-if="a.isDone" class="text-green-500">Done</span>
-              <span v-else class="text-gray-500">Not Done</span>
-              <span class="text-sm text-gray-500"
-                >Priority: {{ a.priority }}</span
-              >
-            </div>
-          </div>
+            <div
+              class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
+            >
+              <div v-if="!a.isDone">
+                <p
+                  v-if="a.isScheduled && !isOverToday(a)"
+                  class="text-gray-600"
+                >
+                  {{ formatDateTime(a.finalDate) }}
+                </p>
+                <div v-else class="flex gap-3">
+                  <div v-if="isOverToday(a)" class="flex items-center gap-2">
+                    <Clock class="stroke-primary-red h-5 w-5" />
+                    <p class="text-primary-red">Reschedule</p>
+                  </div>
 
-          <div
-            class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-          >
-            <!-- View More Button -->
-            <button
-              class="text-green-500 hover:underline"
-              @click="toggleModal(a, 'detail')"
-            >
-              <Eye />
-            </button>
-            <!-- Edit button (only if not done) -->
-            <button
-              v-if="
-                // check if is not done and is over today or not done and not scheduled
-                (!showAllOverview && !a.isDone && isOverToday(a)) ||
-                (!showAllOverview && !a.isDone && !a.isScheduled)
-              "
-              class="text-blue-500 hover:underline"
-              @click.stop="toggleModal(a, 'edit')"
-            >
-              <Pencil />
-            </button>
-            <!-- Delete button (only if not done) -->
-            <button
-              v-if="!a.isDone"
-              class="text-red-500 hover:underline"
-              @click.stop="handleDeleteAppointment(a.id)"
-            >
-              <Trash2 />
-            </button>
+                  <Star
+                    v-if="a.priority && !isOverToday(a)"
+                    class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
+                  />
+                  <div v-if="!isOverToday(a)" class="w-5">
+                    <CalendarX
+                      v-if="!a.isScheduled"
+                      class="stroke-primary-red h-5 w-5"
+                    />
+                  </div>
+                </div>
+              </div>
+              <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
+              <div
+                class="h-2 w-2 rounded-full"
+                :class="
+                  a.type === 'repair'
+                    ? 'bg-primary-green'
+                    : a.type === 'maintenance'
+                      ? 'bg-primary-blue'
+                      : ''
+                "
+              ></div>
+            </div>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   </div>
@@ -244,9 +134,34 @@
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedAppointment.type }}
       </h2>
-      <p class="text-gray-600">
+      <p class="text-gray-900">
         {{ selectedAppointment.description }}
       </p>
+      <div class="mt-6 flex flex-col gap-3">
+        <div v-if="selectedAppointment.priority" class="flex gap-3">
+          <Star class="fill-primary-yellow stroke-primary-yellow" />
+          <p>Priority</p>
+        </div>
+        <div class="flex gap-3">
+          <CalendarIcon
+            :class="
+              isOverToday(selectedAppointment) ? 'stroke-primary-red' : ''
+            "
+          />
+          <p
+            v-if="
+              selectedAppointment.isScheduled &&
+              !isOverToday(selectedAppointment)
+            "
+          >
+            {{ formatDateTime(selectedAppointment.finalDate) }}
+          </p>
+          <p v-if="isOverToday(selectedAppointment)" class="text-primary-red">
+            Reschedule
+          </p>
+          <p v-if="!selectedAppointment.isScheduled">Not scheduled</p>
+        </div>
+      </div>
     </div>
   </Dialog>
 
@@ -282,6 +197,10 @@
 </template>
 <script setup lang="ts">
 import DynamicForm from './generic/DynamicForm.vue'
+// components
+import Filter from '@/components/generic/Filter.vue'
+import Search from '@/components/generic/Search.vue'
+import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -294,24 +213,29 @@ import {
   GET_ALL_APPOINTMENT_BY_USERID,
 } from '@/graphql/appointment.query'
 import { GET_LOCATIONS_BY_USERID } from '@/graphql/location.query'
-import { APPOINTMENT_TYPES, ORDER_DIRECTION } from '@/helpers/constants'
+import {
+  APPOINTMENT_TYPES,
+  FILTER_OPTIONS_APPOINTMENTS,
+  ORDER_DIRECTION,
+  SORT_OPTIONS_APPOINTMENTS,
+  SUPPORTED_LOCALES_TYPES,
+} from '@/helpers/constants'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { appointmentUpdateValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
 import {
-  ArrowLeft,
-  Check,
-  ChevronDown,
-  Eye,
-  Filter,
-  Pencil,
-  Trash2,
+  Calendar as CalendarIcon,
+  CalendarX,
+  CheckCircle2,
+  Clock,
+  Star,
 } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
+import type { DatetimeFormat } from 'vue-i18n'
 
 // props
 const props = defineProps({
@@ -558,7 +482,7 @@ const refetch = async (): Promise<void> => {
 // log the queries
 watchEffect(() => {
   // if (locations.value) console.log('locations: ', locations.value)
-  // if (appointments.value) console.log('appointments: ', appointments.value)
+  if (appointments.value) console.log('appointments: ', appointments.value)
 
   const errors = [
     appointmentsError.value,
