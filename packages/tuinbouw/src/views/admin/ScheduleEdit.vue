@@ -440,57 +440,67 @@
 
       <!-- See All -->
       <div v-if="next === 5">
-        <h1>See All</h1>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton
-          name="Update Schedule"
-          :loading="loadingUpdate"
-          type="submit"
-        />
-
-        <!-- show schedule detail -->
-        <!-- show selected final date -->
-        <div>
-          <h1>Final Date</h1>
-          <div>{{ formatDateTime(values.finalDate) }}</div>
-        </div>
-        <!-- show selected appointments -->
-        <div>
-          <h1>Appointments</h1>
-          <div
-            v-for="a of selectedAppointments"
-            v-if="selectedAppointments.length > 0"
-            :key="a.id"
-          >
-            {{ a.id }}
-          </div>
+        <h2 class="text-xl">Overview</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton
+            name="Update Schedule"
+            :loading="loadingUpdate"
+            type="submit"
+          />
         </div>
 
-        <!-- show selected employees -->
-        <div>
-          <h1>Employees</h1>
-          <div
-            v-for="user of selectedEmployees"
-            v-if="selectedEmployees.length > 0"
-            :key="user.id"
-          >
-            {{ user.id }}
+        <div
+          class="m-auto flex w-1/3 flex-col gap-3 rounded-2xl bg-gray-200 p-6"
+        >
+          <div class="flex gap-3">
+            <CalendarIcon />
+            <div>{{ formatDateTime(values.finalDate) }}</div>
           </div>
-        </div>
-
-        <!-- show selected materials -->
-        <div>
-          <h1>Materials</h1>
-          <div
-            v-for="material of selectedMaterials"
-            v-if="selectedMaterials.length > 0"
-            :key="material.id"
-          >
-            {{ material.id }}
+          <!-- show selected appointments -->
+          <div class="flex flex-col">
+            <h3 class="mb-1 text-lg">Appointments</h3>
+            <div
+              v-for="a of selectedAppointments"
+              v-if="selectedAppointments.length > 0"
+              :key="a.id"
+            >
+              <p>{{ a.user.fullname }}</p>
+              <p class="text-sm text-gray-900">{{ a.description }}</p>
+            </div>
           </div>
 
-          <!-- no selected materials -->
-          <div v-else>No materials selected</div>
+          <!-- show selected employees -->
+          <div class="flex flex-col gap-1">
+            <h3 class="mb-1 text-lg">Employees</h3>
+            <ul v-if="selectedEmployees.length > 0">
+              <li
+                v-for="user of selectedEmployees"
+                :key="user.id"
+                class="flex items-center gap-3"
+              >
+                <img
+                  class="w-8 rounded-xl bg-gray-400"
+                  src="https://picsum.photos/200"
+                  alt="random picture"
+                />
+                <p class="capitalize">{{ user.fullname }}</p>
+              </li>
+            </ul>
+          </div>
+
+          <!-- show selected materials -->
+          <div>
+            <h3 class="mb-1 text-lg">Materials</h3>
+            <ul v-if="selectedMaterials.length > 0">
+              <li v-for="material of selectedMaterials" :key="material.id">
+                {{ material.name }}
+              </li>
+            </ul>
+
+            <!-- no selected materials -->
+            <div v-else>No materials selected</div>
+          </div>
         </div>
       </div>
     </form>
@@ -524,7 +534,13 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, ArrowRight, Check, Star } from 'lucide-vue-next'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar as CalendarIcon,
+  Check,
+  Star,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
