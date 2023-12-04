@@ -492,15 +492,21 @@
 
           <!-- show selected materials -->
           <div>
-            <h3 class="mb-1 text-lg">Materials</h3>
-            <ul v-if="selectedMaterials.length > 0">
+            <div
+              class="mb-1 flex cursor-pointer justify-between"
+              @click="toggleCollapsible()"
+            >
+              <h3 class="text-lg">Materials</h3>
+              <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
+            </div>
+            <ul v-if="selectedMaterials.length > 0 && !collapsed">
               <li v-for="material of selectedMaterials" :key="material.id">
                 {{ material.name }}
               </li>
             </ul>
 
             <!-- no selected materials -->
-            <div v-else>No materials selected</div>
+            <div v-if="selectedMaterials.length < 1">No materials selected</div>
           </div>
         </div>
       </div>
@@ -540,6 +546,7 @@ import {
   ArrowRight,
   Calendar as CalendarIcon,
   Check,
+  ChevronDown,
   Star,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
@@ -564,6 +571,7 @@ const selectedEmployeesEdit = ref<CustomUser[]>([])
 const selectedMaterials = ref<Material[]>([])
 const selectedMaterialsEdit = ref<Material[]>([])
 const loadingUpdate = ref(false)
+const collapsed = ref(true)
 
 // error messages of forms
 const errorMessages = ref<{
@@ -968,6 +976,10 @@ const reset = () => {
 
   // reset next
   next.value = 0
+}
+
+const toggleCollapsible = () => {
+  collapsed.value = !collapsed.value
 }
 
 watchEffect(() => {
