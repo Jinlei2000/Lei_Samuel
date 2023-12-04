@@ -339,7 +339,7 @@
               employees && employees.usersEmployeesAvailableByDate.length > 0
             "
             :key="user.id"
-            class="transform overflow-hidden rounded-2xl bg-gray-200 hover:bg-gray-400"
+            class="relative flex transform items-center gap-6 overflow-hidden rounded-2xl bg-gray-200 p-1 hover:bg-gray-400"
             :class="
               isItemSelected(user.id, employeesIds.modelValue)
                 ? 'outline outline-primary-green'
@@ -348,19 +348,17 @@
             type="button"
             @click="addSelectedEmployee(user)"
           >
-            <div class="relative flex items-center gap-6 p-1">
-              <img
-                class="h-12 w-12 rounded-xl"
-                src="https://picsum.photos/200"
-                alt="random picture"
-              />
-              <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
-              <div
-                v-if="isItemSelected(user.id, employeesIds.modelValue)"
-                class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
-              >
-                <Check :size="16" class="text-white" />
-              </div>
+            <img
+              class="h-12 w-12 rounded-xl"
+              src="https://picsum.photos/200"
+              alt="random picture"
+            />
+            <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
+            <div
+              v-if="isItemSelected(user.id, employeesIds.modelValue)"
+              class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
+            >
+              <Check :size="16" class="text-white" />
             </div>
           </button>
         </div>
@@ -368,87 +366,63 @@
 
       <!-- Materials -->
       <div v-if="next === 4">
-        <h1>Materials</h1>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="text-xl">Materials</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- loading -->
         <div v-if="loadingMaterials">
           <h1 class="flex animate-pulse space-x-4">Loading...</h1>
         </div>
 
-        <!-- show selected materials -->
-        <h1>Your selected</h1>
         <div
-          class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+          class="grid-rows-auto grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
         >
-          <div
+          <!-- Selected materials -->
+          <button
             v-for="material of selectedMaterialsEdit"
             v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
             :key="material.id"
-            class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+            class="relative flex transform items-center gap-3 overflow-hidden rounded-2xl bg-gray-200 p-1 hover:bg-gray-400"
             :class="
               isItemSelected(material.id, materialsIds.modelValue)
-                ? 'border-2 border-green-500'
+                ? 'outline outline-primary-green'
                 : ''
             "
+            type="button"
+            @click="addSelectedMaterial(material)"
           >
-            <!-- Add checkbox for selection -->
-            <input
-              type="checkbox"
-              class="mr-2"
-              :checked="isItemSelected(material.id, materialsIds.modelValue)"
-              @click="addSelectedMaterial(material)"
-            />
             <img
-              class="w-full rounded-2xl rounded-b-3xl"
+              class="w-12 rounded-xl bg-gray-400"
               src="https://picsum.photos/200"
               alt="random picture"
             />
-            <div
-              class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
-            >
-              <h2 class="truncate text-lg">{{ material.name }}</h2>
-              <p class="m-0">Loanable: {{ material.isLoan }}</p>
-            </div>
-          </div>
-        </div>
+            <h2 class="truncate text-lg">{{ material.name }}</h2>
+          </button>
 
-        <!-- show materials -->
-        <h1>Available materials</h1>
-        <div
-          class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
-        >
-          <div
+          <!-- Availabe materials -->
+          <button
             v-for="material of materials.materials"
             v-if="materials && materials.materials.length > 0"
             :key="material.id"
-            class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+            class="relative flex transform items-center gap-3 overflow-hidden rounded-2xl bg-gray-200 p-1 hover:bg-gray-400"
             :class="
               isItemSelected(material.id, materialsIds.modelValue)
-                ? 'border-2 border-green-500'
+                ? 'outline outline-primary-green'
                 : ''
             "
+            type="button"
+            @click="addSelectedMaterial(material)"
           >
-            <!-- Add checkbox for selection -->
-            <input
-              type="checkbox"
-              class="mr-2"
-              :checked="isItemSelected(material.id, materialsIds.modelValue)"
-              @click="addSelectedMaterial(material)"
-            />
             <img
-              class="w-full rounded-2xl rounded-b-3xl"
+              class="w-12 rounded-xl bg-gray-400"
               src="https://picsum.photos/200"
               alt="random picture"
             />
-            <div
-              class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
-            >
-              <h2 class="truncate text-lg">{{ material.name }}</h2>
-              <p class="m-0">Loanable: {{ material.isLoan }}</p>
-            </div>
-          </div>
+            <h2 class="truncate text-lg">{{ material.name }}</h2>
+          </button>
         </div>
       </div>
 
