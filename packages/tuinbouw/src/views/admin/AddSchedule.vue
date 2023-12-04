@@ -70,66 +70,64 @@
         </div>
 
         <!-- show appointments -->
-        <div v-else-if="appointments && appointments.length > 0">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div v-for="a of appointments" :key="a.id">
-              <div
-                :class="[
-                  'mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md',
-                  isItemSelected(a.id, appointmentsIds.modelValue)
-                    ? 'border-2 border-green-500'
-                    : '',
-                ]"
-              >
-                <div class="p-4">
-                  <!-- Add checkbox for selection -->
-                  <input
-                    type="checkbox"
-                    class="mr-2"
-                    :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
-                    @click="addSelectedAppointment(a)"
-                  />
-                  <h2 class="mb-2 text-xl font-semibold">{{ a.type }}</h2>
-                  <p class="mb-1 text-gray-600">{{ a.description }}</p>
-                  <p class="mb-1 text-gray-600">{{ a.id }}</p>
-                  <p v-if="a.finalDate" class="text-gray-600">
-                    {{ formatDateTime(a.finalDate) }}
+        <div
+          v-else-if="appointments && appointments.length > 0"
+          class="m-auto mb-4 flex max-w-7xl flex-col gap-3"
+        >
+          <div v-for="a of appointments" :key="a.id">
+            <button
+              :class="[
+                'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
+                isItemSelected(a.id!, appointmentsIds.modelValue)
+                  ? 'outline-primary-green outline'
+                  : '',
+              ]"
+              type="button"
+              @click="addSelectedAppointment(a)"
+            >
+              <div class="flex h-16 items-center justify-between sm:h-11">
+                <div class="flex w-1/2 p-3 sm:w-3/4">
+                  <h2
+                    class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+                  >
+                    {{ a.user.fullname }}
+                  </h2>
+                  <p class="hidden truncate text-gray-900 sm:block">
+                    {{ a.description }}
                   </p>
                 </div>
-                <div class="border-t border-gray-200 p-4">
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500"
-                      >{{ formatDateTime(a.startProposedDate) }} -
-                      {{ formatDateTime(a.endProposedDate) }}</span
-                    >
-                    <span v-if="a.isScheduled" class="text-green-500"
-                      >Scheduled</span
-                    >
-                    <span v-else class="text-gray-500">Not Scheduled</span>
-                  </div>
-                </div>
-                <div class="border-t border-gray-200 p-4">
-                  <div class="flex items-center justify-between">
-                    <span v-if="a.isDone" class="text-green-500">Done</span>
-                    <span v-else class="text-gray-500">Not Done</span>
-                    <span class="text-sm text-gray-500"
-                      >Priority: {{ a.priority }}</span
-                    >
-                  </div>
-                </div>
-
                 <div
-                  class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
+                  class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
                 >
-                  <!-- View More Button -->
-                  <!-- TODO: make only if design need it? -->
-                  <!-- @click="openModal(a, 'detail')" -->
-                  <button class="text-green-500 hover:underline">
-                    <Eye />
-                  </button>
+                  <div class="flex items-center gap-3">
+                    <p>
+                      {{ formatDateTime(a.startProposedDate) }}
+                    </p>
+                    <ArrowRight class="h-4 w-4" />
+                    <p>
+                      {{ formatDateTime(a.endProposedDate) }}
+                    </p>
+                  </div>
+
+                  <div class="h-5 w-5">
+                    <Star
+                      v-if="a.priority && !isOverToday(a)"
+                      class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
+                    />
+                  </div>
+                  <div
+                    class="h-2 w-2 rounded-full"
+                    :class="
+                      a.type === 'repair'
+                        ? 'bg-primary-green'
+                        : a.type === 'maintenance'
+                          ? 'bg-primary-blue'
+                          : ''
+                    "
+                  ></div>
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -410,7 +408,14 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, Eye } from 'lucide-vue-next'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar as CalendarIcon,
+  Check,
+  ChevronDown,
+  Star,
+} from 'lucide-vue-next'
 import Calendar from 'primevue/calendar'
 import InputNumber from 'primevue/inputnumber'
 import { useForm } from 'vee-validate'
@@ -422,7 +427,7 @@ import { useRouter } from 'vue-router'
 // composables
 const { showToast } = useCustomToast()
 const { replace } = useRouter()
-const { formatDateTime } = useTimeUtilities()
+const { formatDateTime, isOverToday } = useTimeUtilities()
 const { customUser } = useCustomUser()
 
 // variables
