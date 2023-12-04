@@ -83,3 +83,51 @@ export const FILTER_OPTIONS_USERS = [
     ],
   },
 ]
+
+export const SORT_OPTIONS_APPOINTMENTS = [
+  {
+    label: 'Date Created',
+    value: 'createdAt',
+  },
+  {
+    label: 'Name',
+    value: 'fullname',
+  },
+]
+
+export const FILTER_OPTIONS_APPOINTMENTS = [
+  {
+    title: 'Scheduled',
+    name: 'scheduled',
+    type: 'checkbox',
+    options: [
+      { label: 'Scheduled', value: 'S' },
+      { label: 'Not Scheduled', value: 'NS' },
+    ],
+  },
+  {
+    title: 'Type',
+    name: 'type',
+    type: 'checkbox',
+    options: [
+      { label: 'Repair', value: 'R' },
+      { label: 'Maintenance', value: 'M' },
+    ],
+  },
+  {
+    title: 'Status',
+    name: 'status',
+    type: 'checkbox',
+    options: [
+      { label: 'Done', value: 'D' },
+      { label: 'Not Done', value: 'ND' },
+    ],
+  },
+]
+
+export const SORT_OPTIONS_SCHEDULES = [
+  {
+    label: 'Date',
+    value: 'finalDate',
+  },
+]

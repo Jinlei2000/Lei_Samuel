@@ -9,7 +9,7 @@
       :value="modelValue"
       class="h-12 w-full rounded-full bg-gray-200 py-3 pl-11 text-lg"
       type="text"
-      placeholder="Search for materials"
+      :placeholder="placeholder"
       @input="
         $emit('update:modelValue', ($event.target as HTMLInputElement)?.value)
       "
@@ -24,6 +24,10 @@ import { Search } from 'lucide-vue-next'
 const props = defineProps({
   modelValue: {
     type: String,
+  },
+  placeholder: {
+    type: String,
+    default: 'Search for ...',
   },
 })
 

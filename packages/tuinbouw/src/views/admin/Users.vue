@@ -3,7 +3,7 @@
 
   <!-- TODO: search bar -->
 
-  <main
+  <div
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
     <div class="flex w-full flex-col gap-3">
@@ -33,10 +33,10 @@
         </div>
       </header>
     </div>
-  </main>
+  </div>
 
   <!-- show loading -->
-  <div v-if="loading.data" class="flex flex-col gap-3">
+  <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
@@ -46,7 +46,7 @@
 
   <!-- show users -->
   <div v-else-if="users && users.length > 0">
-    <div class="mb-4 flex flex-col gap-3">
+    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
       <button
         v-for="user in users"
         :key="user.id"

@@ -1,7 +1,7 @@
 <template>
   <button
     :type="type"
-    class="mt-4 rounded-md px-4 py-2"
+    class="rounded-md px-4 py-2"
     :class="
       [ownClass, loading ? 'cursor-not-allowed opacity-50' : ''] &&
       variant === 'primary'

@@ -441,4 +441,8 @@ export default {
       ],
     }),
   },
+  inputnumber: {
+    root: 'w-fit',
+    input: 'rounded-md w-20 px-2',
+  },
 }
