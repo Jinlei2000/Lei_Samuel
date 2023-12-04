@@ -26,8 +26,10 @@ const app = initializeApp({
 const auth = getAuth(app)
 
 // When the emulator is running, connect to it
-if (import.meta.env.VITE_EMULATION)
+if (import.meta.env.VITE_EMULATION) {
+  console.info('Firebase authentication emulator is running')
   connectAuthEmulator(auth, 'http://127.0.0.1:9099')
+}
 
 setPersistence(auth, browserLocalPersistence) // Local persistence is default (keep track of logged in user in the browser)
 
