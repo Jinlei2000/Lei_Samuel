@@ -1,44 +1,31 @@
 <template>
-  <div class="min-h-screen flex flex-col">
-    <!-- Header -->
-    <header
-      class="bg-green-600 text-white p-4 flex items-center justify-between"
-    >
-      <div>
-        <span class="font-semibold text-xl tracking-tight"
-          >Your App Name Or Logo</span
-        >
-      </div>
-      <RouterLink to="/auth/login" class="">
-        <button
-          class="bg-white text-green-600 font-semibold px-4 py-2 rounded-full"
-        >
-          Login
-        </button>
-      </RouterLink>
-    </header>
-
+  <div class="m-auto flex max-w-7xl flex-col">
     <!-- Main Content -->
-    <main class="flex-grow p-4">
-      <div class="bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-semibold mb-4">
-          Welcome to your horticultural company🏡🧑‍🌾
-        </h1>
-        <p class="text-gray-600">Please log in to continue:</p>
+    <main class="mt-52 flex items-center gap-24">
+      <div class="w-3/5">
+        <img
+          src="/assets/homepage/hero-image.png"
+          alt="logo"
+          class="rounded-2xl"
+        />
+      </div>
+      <div class="flex w-2/5 flex-col gap-6">
+        <h1 class="mb-4 text-6xl font-light">Welkom bij Tuinbouw</h1>
+        <p class="max-w- text-gray-900">
+          Uw vertrouwde partner in tuinbouw. Ontdek onze hoogwaardige
+          tuinbouwproducten en -diensten, ontworpen om uw groene projecten te
+          laten bloeien. Met onze expertise en focus op duurzaamheid streven we
+          ernaar om uw tuinbouwdoelen te realiseren.
+        </p>
+        <router-link
+          to="/auth/login"
+          class="bg-primary-orange w-fit rounded-lg px-4 py-2 text-white"
+        >
+          Begin nu
+        </router-link>
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-green-600 text-white p-4 text-center">
-      &copy; 2023 Your App Name
-    </footer>
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  setup() {
-    return {}
-  },
-}
-</script>
+<script setup lang="ts"></script>

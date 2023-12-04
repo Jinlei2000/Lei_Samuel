@@ -8,7 +8,7 @@
 <!-- Component to wrap something -> .o-row -->
 <template>
   <div class="px-8">
-    <div class="max-w-screen-2xl mx-auto">
+    <div class="mx-auto max-w-screen-2xl">
       <slot></slot>
     </div>
   </div>

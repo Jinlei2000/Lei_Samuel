@@ -1,5 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
+import { Role } from '@/interfaces/custom.user.interface'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,30 +28,37 @@ const router = createRouter({
           path: 'forgot-password',
           component: () => import('../views/auth/ForgotPassword.vue'),
         },
+        {
+          path: 'register-employee/:token',
+          component: () => import('../views/auth/RegisterEmployee.vue'),
+        },
       ],
     },
 
     {
       path: '/employee',
       component: () => import('../components/wrapper/EmployeeWrapper.vue'),
-      meta: { shouldBeAuthenticated: true },
-      // role: ['employee'],
+      meta: { shouldBeAuthenticated: true, role: Role.EMPLOYEE },
       children: [
         {
           path: 'dashboard',
           component: () => import('../views/employee/Dashboard.vue'),
         },
         {
+          path: 'materials',
+          component: () => import('../views/employee/Materials.vue'),
+        },
+        {
+          path: 'calendar',
+          component: () => import('../views/employee/Calendar.vue'),
+        },
+        {
           path: 'profile',
           component: () => import('../views/employee/Profile.vue'),
         },
         {
-          path: 'appointments',
-          component: () => import('../views/employee/AllAppointments.vue'),
-        },
-        {
-          path: 'appointment/:id',
-          component: () => import('../views/employee/AppointmentDetail.vue'),
+          path: 'absences',
+          component: () => import('../views/employee/Absences.vue'),
         },
       ],
     },
@@ -57,8 +66,7 @@ const router = createRouter({
     {
       path: '/admin',
       component: () => import('../components/wrapper/AdminWrapper.vue'),
-      meta: { shouldBeAuthenticated: true },
-      // role: ['admin'],
+      meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
       children: [
         {
           path: 'dashboard',
@@ -73,45 +81,44 @@ const router = createRouter({
           component: () => import('../views/admin/AllAppointments.vue'),
         },
         {
-          path: 'appointment/:id',
-          component: () => import('../views/admin/AppointmentDetail.vue'),
+          path: 'schedules',
+          component: () => import('../views/admin/Schedules.vue'),
         },
         {
-          path: 'schedule-appointment',
-          component: () => import('../views/admin/ScheduleAppointment.vue'),
+          path: 'schedules/:id',
+          component: () => import('../views/admin/ScheduleDetail.vue'),
         },
         {
-          path: 'employees',
-          component: () => import('../views/admin/Employees.vue'),
+          path: 'schedules/:id/edit',
+          component: () => import('../views/admin/ScheduleEdit.vue'),
         },
         {
-          path: 'employee/:id',
-          component: () => import('../views/admin/Employee.vue'),
+          path: 'add-schedule',
+          component: () => import('../views/admin/AddSchedule.vue'),
         },
         {
-          path: 'clients',
-          component: () => import('../views/admin/Clients.vue'),
-        },
-        {
-          path: 'clients/:id',
-          component: () => import('../views/admin/Client.vue'),
+          path: 'users',
+          component: () => import('../views/admin/Users.vue'),
         },
         {
           path: 'materials',
           component: () => import('../views/admin/Materials.vue'),
         },
-        // {
-        //   path: 'materials/:id',
-        //   component: () => import('../views/admin/Material.vue'),
-        // },
+        {
+          path: 'absences',
+          component: () => import('../views/admin/Absences.vue'),
+        },
+        {
+          path: 'absences-own',
+          component: () => import('../views/admin/AbsencesOwn.vue'),
+        },
       ],
     },
 
     {
       path: '/client',
       component: () => import('../components/wrapper/ClientWrapper.vue'),
-      meta: { shouldBeAuthenticated: true },
-      // role: ['client'],
+      meta: { shouldBeAuthenticated: true, role: Role.CLIENT },
       children: [
         {
           path: 'dashboard',
@@ -122,18 +129,19 @@ const router = createRouter({
           component: () => import('../views/client/Profile.vue'),
         },
         {
-          path: 'make-appointment',
+          path: 'add-appointment',
           component: () => import('../views/client/AddAppointment.vue'),
         },
         {
           path: 'appointments',
           component: () => import('../views/client/AllAppointments.vue'),
         },
-        {
-          path: 'appointment/:id',
-          component: () => import('../views/client/AppointmentDetail.vue'),
-        },
       ],
+    },
+
+    {
+      path: '/no-access',
+      component: () => import('../views/NoAccess.vue'),
     },
 
     {
@@ -146,14 +154,21 @@ const router = createRouter({
 // check if route requires auth
 router.beforeEach(async (to, from, next) => {
   const { firebaseUser } = useFirebase()
+  const { customUser, getDashboardPathForRole } = useCustomUser()
   // Redirect to login page if not logged in and trying to access a restricted page
   if (to.meta.shouldBeAuthenticated && !firebaseUser.value) {
     next({ path: '/auth/login' })
   }
+
+  // Check if user has role to access page
+  if (to.meta.role && customUser.value?.role !== to.meta.role) {
+    next({ path: '/no-access' })
+  }
+
   // Prevent logged in users from accessing login and register pages
   if (to.meta.preventLoggedIn && firebaseUser.value) {
-    // TODO: redirect to dashboard of user role
-    next({ path: '/admin/dashboard' })
+    // redirect to dashboard of user role
+    next({ path: getDashboardPathForRole() })
   } else {
     next()
   }

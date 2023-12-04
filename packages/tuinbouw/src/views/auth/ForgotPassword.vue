@@ -1,122 +1,89 @@
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900">
+  <section class="">
     <div
-      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+      class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0"
     >
-      <a
-        href="#"
-        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-      >
-        <img class="w-8 h-8 mr-2" src="" alt="logo" />
-        Name
-      </a>
-      <div
-        class="w-full p-6 bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md dark:bg-gray-800 dark:border-gray-700 sm:p-8"
-      >
-        <h2
-          class="mb-1 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
-        >
-          Reset Password
-        </h2>
-        <span v-if="errorMessages.general" class="text-red-600">{{
-          errorMessages.general
-        }}</span>
-        <form
-          @submit.prevent="handleForgotPassword"
-          class="mt-4 space-y-4 lg:mt-5 md:space-y-5"
-        >
-          <InputField
-            label="Email"
-            type="email"
-            placeholder="john@example.com"
-            :error="errorMessages.email"
-            v-model="formData.email"
-          />
-          <button
-            type="submit"
-            class="w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+      <div class="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0">
+        <div class="space-y-4 p-6 sm:p-8">
+          <h1
+            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
             Reset Password
-          </button>
-          <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+          </h1>
+          <span v-if="errorForgotPwd" class="text-red-600">{{
+            errorForgotPwd
+          }}</span>
+          <DynamicForm
+            :schema="formForgotPwd"
+            :validation-schema="forgotPasswordValidationSchema"
+            :handle-form="handleForgotPwd"
+            :loading="loading"
+          />
+          <p class="text-sm font-light text-gray-500">
             Know your password?
             <RouterLink
               to="/auth/login"
-              class="font-medium text-primary-600 hover:underline dark:text-primary-500"
-              >Login here
+              class="text-primary-600 font-medium hover:underline"
+            >
+              Login
             </RouterLink>
           </p>
-        </form>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import useCustomToast from '@/composables/useCustomToast'
 import useFirebase from '@/composables/useFirebase'
+import type { CustomUser } from '@/interfaces/custom.user.interface'
+import { forgotPasswordValidationSchema } from '@/validation/schema'
+import LogRocket from 'logrocket'
 import { ref } from 'vue'
-import InputField from '@/components/generic/form/InputField.vue'
-import { object, string } from 'yup'
 
-export default {
-  setup() {
-    // Composables
-    const { forgotPassword } = useFirebase()
+// composables
+const { forgotPassword } = useFirebase()
+const { showToast } = useCustomToast()
 
-    // Data
-    const formData = ref<{ [key: string]: string }>({
-      email: '',
-    })
-    const errorMessages = ref<{ [key: string]: string }>({
-      email: '',
-      general: '',
-    })
+// variables
+const errorForgotPwd = ref<string | null>(null)
+const loading = ref(false)
 
-    // Validation schema
-    const forgotPasswordSchema = object({
-      email: string().required('email is required'),
-    })
+// form
+const formForgotPwd = {
+  fields: [
+    {
+      label: 'Email',
+      name: 'email',
+      placeholder: 'john@gmail.com',
+      as: 'input',
+    },
+  ],
 
-    // Handle validation errors
-    const handleValidationErrors = (err: any) => {
-      // console.log(err)
-      err.inner.forEach((e: { path: string; message: string }) => {
-        errorMessages.value[e.path] = e.message
-      })
-      // console.log(errorMessages.value)
-    }
-
-    const handleForgotPassword = (): void => {
-      // Reset error messages
-      errorMessages.value = {
-        email: '',
-        general: '',
-      }
-      // Validate form with yup
-      forgotPasswordSchema
-        .validate(formData.value, { abortEarly: false })
-        .then(() => {
-          console.log('validation success')
-          forgotPassword(formData.value.email)
-            .then(() => {
-              console.log('Reset password email sent')
-            })
-            .catch(error => {
-              console.log(error)
-              errorMessages.value.general = error.message
-            })
-        })
-        .catch(err => {
-          handleValidationErrors(err)
-        })
-    }
-
-    return {
-      formData,
-      errorMessages,
-      handleForgotPassword,
-    }
+  button: {
+    class: 'w-full flex justify-center',
+    name: 'Reset Password',
   },
-  components: { InputField },
+}
+
+const handleForgotPwd = async (values: CustomUser) => {
+  loading.value = true
+  await forgotPassword(values.email)
+    .then(() => {
+      console.log('Reset password email sent')
+      showToast(
+        'success',
+        'Success',
+        'Check your inbox for the reset password email',
+      )
+    })
+    .catch(error => {
+      console.log(error)
+      LogRocket.captureException(error)
+      errorForgotPwd.value = error.message
+    })
+  loading.value = false
 }
 </script>

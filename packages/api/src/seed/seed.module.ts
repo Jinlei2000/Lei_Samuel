@@ -4,17 +4,39 @@ import { CommandModule } from 'nestjs-command'
 import { SeedService } from './seed.service'
 import { DatabaseSeedCommand } from './seed.command'
 import { MaterialsModule } from 'src/materials/materials.module'
-import { StaffsModule } from 'src/staffs/staffs.module'
-import { DefectsModule } from 'src/defects/defects.module'
+import { LocationsModule } from 'src/locations/locations.module'
+import { UsersModule } from 'src/users/users.module'
+import { AbsencesModule } from 'src/absences/absences.module'
+import { SchedulesModule } from 'src/schedules/schedules.module'
+import { MailModule } from 'src/mail/mail.module'
+import { FirebaseUsersModule } from 'src/firebase-users/firebase-users.module'
 
 @Module({
   imports: [
+    UsersModule,
+    LocationsModule,
     AppointmentsModule,
     MaterialsModule,
-    StaffsModule,
+    AbsencesModule,
+    SchedulesModule,
+    MailModule,
     CommandModule,
-    DefectsModule,
+    FirebaseUsersModule,
   ],
   providers: [DatabaseSeedCommand, SeedService],
 })
-export class SeedModule {}
+export class SeedModule {
+  async seedE2ETestData() {
+    console.log('🌱 Seeding E2E test data for frontend (playwright)')
+    // BUG: because of the emulator???
+    await this.seedCommand.seedFirebaseUsers()
+    await this.seedCommand.seedMaterials()
+    await this.seedCommand.seedUsers()
+    await this.seedCommand.seedSchedules()
+  }
+
+  constructor(private readonly seedCommand: DatabaseSeedCommand) {
+    // A spy is obviously better than an if-statement
+    if (process.env.FIREBASE_AUTH_EMULATOR_HOST) this.seedE2ETestData()
+  }
+}

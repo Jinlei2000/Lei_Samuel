@@ -1,22 +1,79 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql'
-import { Column, Entity, ObjectIdColumn } from 'typeorm'
+import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { User } from 'src/users/entities/user.entity'
+import {
+  ObjectIdColumn,
+  ObjectId,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Entity,
+} from 'typeorm'
+import { Location } from 'src/locations/entities/location.entity'
 
-@Entity() // Database link - Typeorm
-@ObjectType() // GraphQL
+@Entity()
+@ObjectType({ description: 'Appointment' })
 export class Appointment {
-  @ObjectIdColumn() // database link - Typeorm
-  @Field(() => ID) // GraphQL
-  id: string
+  @ObjectIdColumn()
+  @Field(() => ID)
+  id: ObjectId
 
-  @Column() // Database link - Typeorm
-  @Field() // GraphQL
-  name: string
+  // Embedded field
+  @Column()
+  @Field(() => User)
+  user: User
 
-  @Column() // Database link - Typeorm
-  @Field(() => Date) // GraphQL
-  date: Date
+  // Embedded field
+  @Column()
+  @Field(() => Location)
+  location: Location
 
-  @Column() // Database link - Typeorm
-  @Field() // GraphQL
-  location: string
+  @Column()
+  @Field({ nullable: true })
+  price?: number
+
+  @Column()
+  @Field({ description: 'The type of appointment (repair, maintenance, etc)' })
+  type: string
+
+  @Column()
+  @Field()
+  startProposedDate: Date
+
+  @Column()
+  @Field()
+  endProposedDate: Date
+
+  @Column()
+  @Field({ nullable: true, description: 'The date when the appointment is' })
+  finalDate?: Date
+
+  @Column()
+  @Field({
+    defaultValue: false,
+    description: 'If the appointment is scheduled, it will be true',
+  })
+  isScheduled: boolean
+
+  @Column()
+  @Field({
+    defaultValue: false,
+    description: 'If the appointment is done, it will be true',
+  })
+  isDone: boolean
+
+  @Column()
+  @Field({ nullable: true })
+  description?: string
+
+  @Column()
+  @Field()
+  priority: boolean
+
+  @CreateDateColumn({ type: 'timestamp', nullable: true })
+  @Field({ nullable: true })
+  createdAt?: Date
+
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  @Field({ nullable: true })
+  updatedAt?: Date
 }

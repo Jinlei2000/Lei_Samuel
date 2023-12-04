@@ -16,7 +16,11 @@ export class MaterialsService {
     private readonly materialRepository: Repository<Material>,
   ) {}
 
-  findAll(filters?: Array<string>, order?: OrderByInput): Promise<Material[]> {
+  findAll(
+    filters?: Array<string>,
+    order?: OrderByInput,
+    searchString?: string,
+  ): Promise<Material[]> {
     // filter and order materials
     const whereQuery = filterMaterials(filters)
     const orderQuery = orderMaterials(order)
@@ -24,6 +28,8 @@ export class MaterialsService {
     const materials = this.materialRepository.find({
       where: {
         ...whereQuery,
+        // @ts-ignore
+        name: { $regex: new RegExp(searchString, 'i') },
       },
       order: {
         ...orderQuery,
@@ -33,10 +39,11 @@ export class MaterialsService {
     return materials
   }
 
-  async findAllByPersonId(
-    personId: string,
+  async findAllByUserId(
+    userId: string,
     filters?: Array<string>,
     order?: OrderByInput,
+    searchString?: string,
   ): Promise<Material[]> {
     // filter and order materials
     const whereQuery = filterMaterials(filters)
@@ -44,8 +51,10 @@ export class MaterialsService {
 
     const materials = await this.materialRepository.find({
       where: {
-        personId: personId,
+        userId: userId,
         ...whereQuery,
+        // @ts-ignore
+        name: { $regex: new RegExp(searchString, 'i') },
       },
       order: {
         ...orderQuery,
@@ -55,7 +64,16 @@ export class MaterialsService {
     return materials
   }
 
-  async findOne(id: string): Promise<Material | GraphQLError> {
+  async findAllByIds(ids: string[]): Promise<Material[]> {
+    const materials: Material[] = []
+    for (const id of ids) {
+      const material = await this.findOne(id)
+      materials.push(material)
+    }
+    return materials
+  }
+
+  async findOne(id: string): Promise<Material> {
     const material = await this.materialRepository.findOne({
       // @ts-ignore
       _id: new ObjectId(id),
@@ -68,23 +86,11 @@ export class MaterialsService {
     return material
   }
 
-  findMaterialsBySearchString(searchString: string): Promise<Material[]> {
-    searchString = searchString.toLowerCase()
-
-    const materials = this.materialRepository.find({
-      // @ts-ignore
-      name: { $regex: new RegExp(searchString, 'i') },
-    })
-
-    return materials
-  }
-
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()
-    m.isAvailable = createMaterialInput.isAvailable
-    m.personId = createMaterialInput.personId
-    m.isDefect = false
+    m.userId = createMaterialInput.userId
+    m.isLoan = createMaterialInput.isLoan
     m.serialNumber = createMaterialInput.serialNumber
 
     return this.materialRepository.save(m)
@@ -96,12 +102,23 @@ export class MaterialsService {
   ): Promise<Material | GraphQLError> {
     await this.findOne(id.toString())
 
-    // remove id and make a new variable with the rest of the data
-    const { id: _, ...updatedData } = updateMaterialInput
+    // remove id
+    delete updateMaterialInput.id
 
-    await this.materialRepository.update(id, updatedData)
+    await this.materialRepository.update(id, updateMaterialInput)
 
     return this.findOne(id.toString())
+  }
+
+  async updateAllByUserId(userId: string): Promise<Material[]> {
+    const materials = await this.findAllByUserId(userId)
+
+    for (const material of materials) {
+      // @ts-ignore
+      await this.update(material.id, { userId: null })
+    }
+
+    return materials
   }
 
   async remove(id: string): Promise<string> {

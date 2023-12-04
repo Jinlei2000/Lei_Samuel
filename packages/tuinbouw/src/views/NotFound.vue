@@ -1,9 +1,10 @@
 <template>
+  <!-- TODO: redesign page -->
   <section class="bg-white dark:bg-gray-900">
-    <div class="container flex items-center min-h-screen px-6 py-12 mx-auto">
-      <div class="flex flex-col items-center max-w-sm mx-auto text-center">
+    <div class="container mx-auto flex min-h-screen items-center px-6 py-12">
+      <div class="mx-auto flex max-w-sm flex-col items-center text-center">
         <p
-          class="p-3 text-sm font-medium text-blue-500 rounded-full bg-blue-50 dark:bg-gray-800"
+          class="rounded-full bg-blue-50 p-3 text-sm font-medium text-blue-500 dark:bg-gray-800"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -11,7 +12,7 @@
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-6 h-6"
+            class="h-6 w-6"
           >
             <path
               stroke-linecap="round"
@@ -30,10 +31,10 @@
           links:
         </p>
 
-        <div class="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">
+        <div class="mt-6 flex w-full shrink-0 items-center gap-x-3 sm:w-auto">
           <RouterLink
             to="/"
-            class="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600"
+            class="w-1/2 shrink-0 rounded-lg bg-blue-500 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 sm:w-auto"
           >
             Take me home
           </RouterLink>

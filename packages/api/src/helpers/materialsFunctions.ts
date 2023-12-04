@@ -3,7 +3,7 @@ import { OrderByInput } from 'src/interfaces/order.input'
 
 export const filterMaterials = (
   filters: Array<string>,
-): { [key: string]: string | boolean } => {
+): { [key: string]: any } => {
   //   console.log(filters)
 
   if (!filters) {
@@ -13,15 +13,15 @@ export const filterMaterials = (
   filters = filters?.map(filter => filter.toUpperCase())
 
   // where object for query
-  const whereQuery: { [key: string]: string | boolean } = {}
-  const filtersList = ['A', 'NA', 'D', 'ND']
+  const whereQuery: { [key: string]: any } = {}
+  const filtersList = ['A', 'NA', 'L', 'NL']
 
   // check if filters are valid
   if (filters) {
     // check if all filters are valid (A, NA, D, ND)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
-        `Invalid filter in filters = [${filters}]! Supported filters are: A = Available, NA = Not Available, D = Defect, ND = Not Defect`,
+        `Invalid filter in filters = [${filters}]! Supported filters are: A = Available, NA = Not Available, L = Loanable, NL = Not Loanable`,
       )
     }
 
@@ -32,24 +32,20 @@ export const filterMaterials = (
       )
     }
 
-    // defect and not defect cannot be used at the same time
-    if (filters?.includes('D') && filters?.includes('ND')) {
+    // loanable and not loanable cannot be used at the same time
+    if (filters?.includes('L') && filters?.includes('NL')) {
       throw new GraphQLError(
-        'Cannot filter for D and ND at the same time! D = Defect, ND = Not Defect',
+        'Cannot filter for L and NL at the same time! L = Loanable, NL = Not Loanable',
       )
     }
 
-    // set whereQuery depending on filters
-    if (filters?.includes('A')) {
-      whereQuery.isAvailable = true
-    } else if (filters?.includes('NA')) {
-      whereQuery.isAvailable = false
-    }
-    if (filters?.includes('D')) {
-      whereQuery.isDefect = true
-    } else if (filters?.includes('ND')) {
-      whereQuery.isDefect = false
-    }
+    // filter for has userId or not
+    if (filters?.includes('A')) whereQuery.userId = null
+    if (filters?.includes('NA')) whereQuery.userId = { $ne: null }
+
+    // filter for loanable
+    if (filters?.includes('L')) whereQuery.isLoan = true
+    if (filters?.includes('NL')) whereQuery.isLoan = false
   }
 
   return whereQuery

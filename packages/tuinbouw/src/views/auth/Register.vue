@@ -1,219 +1,130 @@
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900">
+  <section class="">
     <div
-      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+      class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0"
     >
-      <a
-        href="#"
-        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-      >
-        <img class="w-8 h-8 mr-2" src="" alt="logo" />
-        Name
-      </a>
-      <div
-        class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
-      >
-        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+      <div class="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0">
+        <div class="space-y-4 p-6 sm:p-8 md:space-y-6">
           <h1
-            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
             Create an account
           </h1>
-          <span v-if="errorMessages.general" class="text-red-600">{{
-            errorMessages.general
+          <span v-if="errorRegister" class="text-red-600">{{
+            errorRegister
           }}</span>
-          <form @submit.prevent="handleRegister" class="space-y-4 md:space-y-6">
-            <InputField
-              label="First name"
-              type="text"
-              placeholder="John"
-              :error="errorMessages.firstName"
-              v-model="registerCredentials.firstName"
-            />
-            <InputField
-              label="Last name"
-              type="text"
-              placeholder="Doe"
-              :error="errorMessages.lastName"
-              v-model="registerCredentials.lastName"
-            />
-
-            <div>
-              <p
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Choose your role
-              </p>
-              <div class="flex">
-                <div class="flex items-center mr-4">
-                  <input
-                    id="radio"
-                    type="radio"
-                    value="employee"
-                    name="radios"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700"
-                    v-model="registerCredentials.role"
-                  />
-                  <label
-                    for="radio"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Employee</label
-                  >
-                </div>
-                <div class="flex items-center mr-4">
-                  <input
-                    id="radio-2"
-                    type="radio"
-                    value="customer"
-                    name="radios"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2 dark:bg-gray-700"
-                    v-model="registerCredentials.role"
-                  />
-                  <label
-                    for="radio-2"
-                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Customer</label
-                  >
-                </div>
-              </div>
-              <span v-if="errorMessages.role" class="text-red-600">{{
-                errorMessages.role
-              }}</span>
-            </div>
-
-            <InputField
-              label="Email"
-              type="email"
-              placeholder="john@example.com"
-              :error="errorMessages.email"
-              v-model="registerCredentials.email"
-            />
-            <InputField
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              :error="errorMessages.password"
-              v-model="registerCredentials.password"
-            />
-
-            <button
-              type="submit"
-              class="w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          <DynamicForm
+            :schema="formRegister"
+            :validation-schema="registerValidationSchema"
+            :handle-form="handleRegister"
+            :loading="loading"
+          />
+          <p class="text-sm font-light text-gray-500">
+            Already have an account?
+            <RouterLink
+              to="/auth/login"
+              class="text-primary-600 font-medium hover:underline"
             >
-              Create an account
-            </button>
-            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-              Already have an account?
-              <RouterLink
-                to="/auth/login"
-                class="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >Login here</RouterLink
-              >
-            </p>
-          </form>
+              Login
+            </RouterLink>
+          </p>
         </div>
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
+import useLanguage from '@/composables/useLanguage'
+import { CREATE_CLIENT } from '@/graphql/user.mutation'
+import type { CustomUser } from '@/interfaces/custom.user.interface'
 import router from '@/router'
-import { ref } from 'vue'
-import InputField from '@/components/generic/form/InputField.vue'
-import { object, string } from 'yup'
+import { registerValidationSchema } from '@/validation/schema'
+import { useMutation } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
+import { type GenericObject } from 'vee-validate'
+import { ref, watch } from 'vue'
 
-export default {
-  setup() {
-    // Composables
-    const { register } = useFirebase()
+// composables
+const { register } = useFirebase()
+const { mutate: addClient, error: addClientError } =
+  useMutation<CustomUser>(CREATE_CLIENT)
+const { locale, setLocale } = useLanguage()
+const { customUser, restoreCustomUser } = useCustomUser()
 
-    // Data
-    const registerCredentials = ref({
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      role: '',
-    })
-    const errorMessages = ref<{ [key: string]: string }>({
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      role: '',
-      general: '',
-    })
+watch(addClientError, () => {
+  if (!addClientError.value) return
+  errorRegister.value = "Couldn't create user."
+})
 
-    // Validation schema
-    const registerSchema = object({
-      email: string().required('email is required'),
-      password: string()
-        .required('password is required')
-        .min(6, "Password can't be shorter than 6 characters"),
-      firstName: string().required('first name is required'),
-      lastName: string().required('last name is required'),
-      role: string<'employee' | 'customer'>().required('role is required'),
-    })
+// variables
+const errorRegister = ref<string | null>(null)
+const loading = ref(false)
+// form
+const formRegister = {
+  fields: [
+    {
+      label: 'First name',
+      name: 'firstName',
+      placeholder: 'John',
+      as: 'input',
+    },
+    {
+      label: 'Last name',
+      name: 'lastName',
+      placeholder: 'Doe',
+      as: 'input',
+    },
+    {
+      label: 'Email',
+      name: 'email',
+      placeholder: 'john@gmail.com',
+      as: 'input',
+    },
+    {
+      label: 'Password',
+      name: 'password',
+      placeholder: '••••••••',
+      as: 'input',
+      type: 'password',
+    },
+  ],
 
-    // Reset error messages to empty strings
-    const resetErrorMessages = () => {
-      errorMessages.value = {
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        role: '',
-        general: '',
-      }
-    }
-
-    // Handle validation errors
-    const handleValidationErrors = (err: any) => {
-      // console.log(err)
-      err.inner.forEach((e: { path: string; message: string }) => {
-        errorMessages.value[e.path] = e.message
-      })
-      // console.log(errorMessages.value)
-    }
-
-    // Validate and register
-    const handleRegister = async () => {
-      resetErrorMessages()
-
-      // Validate login credentials with yup
-      registerSchema
-        .validate(registerCredentials.value, {
-          abortEarly: false,
-        })
-        .then(() => {
-          console.log('validation success')
-          register(
-            registerCredentials.value.email,
-            registerCredentials.value.password,
-          )
-            .then(() => {
-              console.log('register success')
-              router.push('/auth/login')
-            })
-            .catch(error => {
-              console.log(error.message)
-              // TODO: handle error messages better
-              errorMessages.value.general = error.message
-            })
-        })
-        .catch(err => {
-          handleValidationErrors(err)
-        })
-    }
-
-    return {
-      registerCredentials,
-      handleRegister,
-      errorMessages,
-    }
+  button: {
+    class: 'w-full flex justify-center',
+    name: 'Create an account',
   },
-  components: { InputField },
+}
+
+const handleRegister = async (values: GenericObject) => {
+  loading.value = true
+  try {
+    const userData = await register(values.email, values.password)
+
+    // Add user to the database
+    await addClient({
+      createClientInput: {
+        uid: userData.uid,
+        firstname: values.firstName,
+        lastname: values.lastName,
+        email: values.email,
+        // Add the user's locale language to the database
+        locale: locale.value,
+      },
+    })
+
+    console.log('Register success')
+    await restoreCustomUser()
+    await setLocale(customUser.value!.locale!)
+    router.replace('/auth/login')
+  } catch (error) {
+    console.log(error)
+    LogRocket.captureException(error as Error)
+    errorRegister.value = (error as Error).message
+  }
+  loading.value = false
 }
 </script>

@@ -1,149 +1,108 @@
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900">
+  <section>
     <div
-      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+      class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0"
     >
-      <a
-        href="#"
-        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-      >
-        <img class="w-8 h-8 mr-2" src="" alt="logo" />
-        Name
-      </a>
-      <div
-        class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
-      >
-        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+      <div class="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0">
+        <div class="space-y-4 p-6 sm:p-8">
           <h1
-            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
-            Log in to your account
+            Welcome back!
           </h1>
-          <span v-if="errorMessages.general" class="text-red-600">{{
-            errorMessages.general
-          }}</span>
-          <form @submit.prevent="handleLogin" class="space-y-4 md:space-y-6">
-            <InputField
-              label="Email"
-              type="email"
-              placeholder="john@example.com"
-              :error="errorMessages.email"
-              v-model="loginCredentials.email"
-            />
-            <InputField
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              :error="errorMessages.password"
-              v-model="loginCredentials.password"
-            />
+          <span v-if="errorLogin" class="text-red-600">{{ errorLogin }}</span>
+          <DynamicForm
+            :schema="formLogin"
+            :validation-schema="loginValidationSchema"
+            :handle-form="handleLogin"
+            :loading="loading"
+          />
+          <div>
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
-                class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >Forgot password?</RouterLink
+                class="text-primary-600 text-sm font-medium underline hover:underline"
               >
+                Forgot password?
+              </RouterLink>
             </div>
-            <button
-              type="submit"
-              class="w-full text-white bg-green-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              Login
-            </button>
-            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+            <div class="my-3 border-t border-gray-300" />
+            <p class="text-sm font-light text-gray-500">
               Don’t have an account yet?
               <RouterLink
                 to="/auth/register"
-                class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                class="text-primary-600 font-medium hover:underline"
               >
                 Register
               </RouterLink>
             </p>
-          </form>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import { ref } from 'vue'
+<script setup lang="ts">
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
+import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
-import InputField from '@/components/generic/form/InputField.vue'
-import { object, string } from 'yup'
+import { loginValidationSchema } from '@/validation/schema'
+import LogRocket from 'logrocket'
+import { type GenericObject } from 'vee-validate'
+import { ref } from 'vue'
 
-export default {
-  setup() {
-    // Composables
-    const { login } = useFirebase()
-    // Data
-    const loginCredentials = ref({
-      email: '',
-      password: '',
-    })
-    const errorMessages = ref<{ [key: string]: string }>({
-      email: '',
-      password: '',
-      general: '',
-    })
+// composables
+const { login } = useFirebase()
+const { getDashboardPathForRole, restoreCustomUser, customUser } =
+  useCustomUser()
+const { setLocale } = useLanguage()
 
-    // Validation schema
-    const loginSchema = object({
-      email: string().required('email is required'),
-      password: string().required('password is required'),
-    })
+// variables
+const errorLogin = ref<string | null>(null)
+const loading = ref(false)
 
-    // Reset error messages to empty strings
-    const resetErrorMessages = () => {
-      errorMessages.value = {
-        email: '',
-        password: '',
-        general: '',
-      }
-    }
+// form
+const formLogin = {
+  fields: [
+    {
+      label: 'Email',
+      name: 'email',
+      placeholder: 'john@gmail.com',
+      as: 'input',
+    },
+    {
+      label: 'Password',
+      name: 'password',
+      placeholder: '••••••••',
+      as: 'input',
+      type: 'password',
+    },
+  ],
 
-    // Handle validation errors
-    const handleValidationErrors = (err: any) => {
-      // console.log(err)
-      err.inner.forEach((e: any) => {
-        errorMessages.value[e.path] = e.message
-      })
-    }
-
-    // Validate and login
-    const handleLogin = () => {
-      resetErrorMessages()
-
-      // Validate login credentials with yup
-      loginSchema
-        .validate(loginCredentials.value, {
-          abortEarly: false,
-        })
-        .then(() => {
-          console.log('validation success')
-          login(loginCredentials.value.email, loginCredentials.value.password)
-            .then(() => {
-              console.log('login success')
-              // TODO: redirect to role based dashboard
-              router.push('/admin/dashboard')
-            })
-            .catch(error => {
-              console.log(error.message)
-              errorMessages.value.general = error.message
-            })
-        })
-        .catch(err => {
-          handleValidationErrors(err)
-        })
-    }
-
-    return {
-      loginCredentials,
-      errorMessages,
-      handleLogin,
-    }
+  button: {
+    class: 'w-full flex justify-center',
+    name: 'Login',
   },
-  components: { InputField },
+}
+
+const handleLogin = async (values: GenericObject) => {
+  loading.value = true
+  try {
+    await login(values.email, values.password)
+    // Restore custom user
+    await restoreCustomUser()
+    // Redirect to role-based dashboard
+    router.replace(getDashboardPathForRole())
+
+    await setLocale(customUser.value!.locale!)
+  } catch (error) {
+    console.log(error)
+    LogRocket.captureException(error as Error)
+    errorLogin.value = (error as Error).message
+  }
+  loading.value = false
 }
 </script>
