@@ -272,9 +272,11 @@
 
       <!-- Materials -->
       <div v-if="next === 4">
-        <h1>Materials</h1>
-        <CustomButton name="Back" type="button" @click="handleBack()" />
-        <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">Materials</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton name="Back" type="button" @click="handleBack()" />
+          <CustomButton name="Next" type="button" @click="handleNext()" />
+        </div>
 
         <!-- loading -->
         <div v-if="loadingMaterials">
@@ -284,37 +286,33 @@
         <!-- show materials -->
         <div
           v-else-if="materials && materials.length > 0"
-          class="grid-rows-auto grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
+          class="grid-rows-auto grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
         >
-          <div
+          <button
             v-for="material of materials"
             :key="material.id"
-            class="relative col-span-1 rounded-2xl transition-all hover:scale-105 hover:cursor-pointer"
+            class="relative flex transform items-center gap-3 overflow-hidden rounded-2xl bg-gray-200 p-1 hover:bg-gray-400"
             :class="
               isItemSelected(material.id, materialsIds.modelValue)
-                ? 'border-2 border-green-500'
+                ? 'outline outline-primary-green'
                 : ''
             "
+            type="button"
+            @click="addSelectedMaterial(material)"
           >
-            <!-- Add checkbox for selection -->
-            <input
-              type="checkbox"
-              class="mr-2"
-              :checked="isItemSelected(material.id, materialsIds.modelValue)"
-              @click="addSelectedMaterial(material)"
-            />
             <img
-              class="w-full rounded-2xl rounded-b-3xl"
+              class="w-12 rounded-xl bg-gray-400"
               src="https://picsum.photos/200"
               alt="random picture"
             />
+            <h2 class="truncate text-lg">{{ material.name }}</h2>
             <div
-              class="absolute bottom-0 w-full rounded-2xl rounded-t-none bg-gray-200 px-4 py-2"
+              v-if="isItemSelected(material.id, materialsIds.modelValue)"
+              class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
             >
-              <h2 class="truncate text-lg">{{ material.name }}</h2>
-              <p class="m-0">Loanable: {{ material.isLoan }}</p>
+              <Check :size="16" class="text-white" />
             </div>
-          </div>
+          </button>
         </div>
 
         <!-- no materials -->
