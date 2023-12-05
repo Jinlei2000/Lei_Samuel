@@ -117,7 +117,10 @@
           <h3 class="mb-3 text-xl">Rain expected</h3>
           <p>Make sure to add rain-gear to your arsenal</p>
         </div>
-        <div class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white">
+        <div
+          v-if="forecast && forecast[0].main.temp < 10"
+          class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
+        >
           <ThermometerSnowflake class="absolute right-3 top-3 h-7 w-7" />
           <h3 class="mb-3 text-xl">Cold weather</h3>
           <p>
@@ -125,7 +128,10 @@
             cold-related harm.
           </p>
         </div>
-        <div class="bg-primary-red relative mb-3 rounded-2xl p-3 text-white">
+        <div
+          v-if="forecast && forecast[0].main.temp > 28"
+          class="bg-primary-red relative mb-3 rounded-2xl p-3 text-white"
+        >
           <Sun class="absolute right-3 top-3 h-7 w-7" />
           <h3 class="mb-3 text-xl">Hot weather</h3>
           <p>Don't forget sunscreen and drink enough water</p>
