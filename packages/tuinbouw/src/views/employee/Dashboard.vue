@@ -109,6 +109,33 @@
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
+        <div
+          v-if="forecast && forecast[0].rain"
+          class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
+        >
+          <CloudRainWind class="absolute right-3 top-3 h-7 w-7" />
+          <h3 class="mb-3 text-xl">Rain expected</h3>
+          <p>Make sure to add rain-gear to your arsenal</p>
+        </div>
+        <div
+          v-if="forecast && forecast[0].main.temp < 10"
+          class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
+        >
+          <ThermometerSnowflake class="absolute right-3 top-3 h-7 w-7" />
+          <h3 class="mb-3 text-xl">Cold weather</h3>
+          <p>
+            Bundle up, rest in warm areas, protect yourself to prevent
+            cold-related harm.
+          </p>
+        </div>
+        <div
+          v-if="forecast && forecast[0].main.temp > 28"
+          class="bg-primary-red relative mb-3 rounded-2xl p-3 text-white"
+        >
+          <Sun class="absolute right-3 top-3 h-7 w-7" />
+          <h3 class="mb-3 text-xl">Hot weather</h3>
+          <p>Don't forget sunscreen and drink enough water</p>
+        </div>
         <div v-if="scheduleData.materials" class="flex flex-col gap-3">
           <ChecklistItem
             v-for="item in scheduleData.materials"
@@ -138,7 +165,15 @@ import { GET_SCHEDULE_BY_USER_AND_DATE } from '@/graphql/schedule.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import { useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { ArrowLeft, ArrowRight, ChevronRight, Loader2 } from 'lucide-vue-next'
+import {
+  ArrowLeft,
+  ArrowRight,
+  ChevronRight,
+  CloudRainWind,
+  Loader2,
+  Sun,
+  ThermometerSnowflake,
+} from 'lucide-vue-next'
 import { computed, ref, watch, watchEffect } from 'vue'
 
 const { customUser } = useCustomUser()
@@ -152,6 +187,7 @@ const getWeekForecast = async (lon: string, lat: string) => {
   await getForecastForWeek(lon, lat).then(data => {
     forecast.value = data
   })
+  console.log(forecast.value)
 }
 
 const getWeatherIconUrl = (icon: string) => {
