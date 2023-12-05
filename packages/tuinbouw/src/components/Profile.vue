@@ -1063,6 +1063,7 @@ const { mutate: deleteLocation, error: deleteLocationError } =
   useMutation(DELETE_LOCATION)
 
 // logics
+// TODO: add loading
 // handle upload image
 const handleUploadImage = async () => {
   try {
