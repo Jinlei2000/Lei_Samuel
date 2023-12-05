@@ -8,7 +8,6 @@ export const absenceValidationSchema = yup.object({
 })
 
 export const userUpdateValidationSchema = yup.object({
-  email: yup.string().required().email(),
   firstname: yup.string().required(),
   lastname: yup.string().required(),
   telephone: yup

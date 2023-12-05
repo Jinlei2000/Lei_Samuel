@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import {
+  type Auth,
   browserLocalPersistence,
   connectAuthEmulator,
   createUserWithEmailAndPassword,
@@ -11,6 +12,14 @@ import {
   signOut,
   type User,
 } from 'firebase/auth'
+import {
+  deleteObject,
+  getDownloadURL,
+  getStorage,
+  ref as refStorage,
+  uploadBytes,
+  type UploadResult,
+} from 'firebase/storage'
 import { ref } from 'vue'
 
 // Shared state
@@ -23,7 +32,8 @@ const app = initializeApp({
   appId: import.meta.env.VITE_appId,
 })
 
-const auth = getAuth(app)
+//#region Firebase Authentication
+const auth: Auth = getAuth(app)
 
 // When the emulator is running, connect to it
 if (import.meta.env.VITE_EMULATION) {
@@ -99,6 +109,78 @@ const restoreUser = async (): Promise<User | null> => {
     })
   })
 }
+// #endregion
+
+//# region Firebase Storage
+const storage = getStorage(app)
+
+const profileRef = (uid: string) =>
+  refStorage(storage, `images/${uid}/profile.jpg`)
+
+// upload a profile image and return the download url
+const uploadProfile = async (uid: string, file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const storageRef = profileRef(uid)
+    uploadBytes(storageRef, file)
+      .then((snapshot: UploadResult) => {
+        console.log('Uploaded a blob or file!', snapshot)
+        getDownloadURL(snapshot.ref)
+          .then(url => {
+            resolve(url.toString())
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// update the profile image
+const updateProfile = async (
+  uid: string,
+  file: File | null = null,
+): Promise<string | void> => {
+  // if file is null, delete the profile image
+  return new Promise((resolve, reject) => {
+    const storageRef = profileRef(uid)
+    if (file !== null) {
+      uploadBytes(storageRef, file)
+        .then((snapshot: UploadResult) => {
+          console.log('Uploaded new profile image!', snapshot)
+          getDownloadURL(snapshot.ref)
+            .then(url => {
+              resolve(url.toString())
+            })
+            .catch(error => {
+              reject(error)
+            })
+        })
+        .catch(error => {
+          reject(error)
+        })
+    } else {
+      deleteProfile(uid)
+    }
+  })
+}
+
+const deleteProfile = async (uid: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const storageRef = profileRef(uid)
+    deleteObject(storageRef)
+      .then(() => {
+        resolve()
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+//# endregion
 
 export default () => {
   // State for each composable
@@ -109,5 +191,8 @@ export default () => {
     logout,
     register,
     restoreUser,
+    updateProfile,
+    uploadProfile,
+    deleteProfile,
   }
 }
