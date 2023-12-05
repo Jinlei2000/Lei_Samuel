@@ -729,7 +729,6 @@ const formAbsence = {
 // graphql
 const {
   result: absencesByUserIdResult,
-  loading: absencesByUserIdLoading,
   error: absencesByUserIdError,
   refetch: refetchAbsencesByUserId,
   load: loadAbsencesByUserId,
