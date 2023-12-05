@@ -193,5 +193,6 @@ export default () => {
     restoreUser,
     updateProfile,
     uploadProfile,
+    deleteProfile,
   }
 }

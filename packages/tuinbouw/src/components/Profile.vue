@@ -1,10 +1,5 @@
 <template>
   <div class="m-auto my-12 flex max-w-xl flex-col gap-6">
-    <!-- loading -->
-    <div v-if="userLoading && !user">
-      <p class="text-6xl font-black">Loading User...</p>
-    </div>
-
     <!-- Primary user info -->
     <div class="flex w-full flex-col items-center gap-6">
       <div class="relative">
@@ -137,121 +132,8 @@
       </div>
     </div>
 
-    <!-- Absence Detail Modal -->
-    <Dialog
-      v-model:visible="absenceModalVisible.openModal"
-      modal
-      header="Absence Details"
-      :draggable="false"
-      :close-on-escape="true"
-      :pt="{
-        root: {
-          class: 'w-full mx-3 md:m-0 md:max-w-lg',
-        },
-      }"
-    >
-      <div
-        v-if="selectedAbsence && absenceModalVisible.detail"
-        class="flex flex-col gap-6"
-      >
-        <div class="flex flex-col gap-3">
-          <div>
-            <h2 class="text-xl font-semibold">
-              {{ formatAbsenceDate(selectedAbsence.startDate) }}
-            </h2>
-            <p class="text-gray-900">{{ selectedAbsence.totalDays }} days</p>
-          </div>
-          <div>
-            <h3 class="text-sm">Description:</h3>
-            <p>
-              {{ selectedAbsence.description }}
-            </p>
-          </div>
-        </div>
-        <div class="flex justify-between">
-          <button
-            class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
-            @click="handleDelete(selectedAbsence)"
-          >
-            Delete
-          </button>
-          <button
-            class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
-            @click="toggleAbsenceModal(selectedAbsence, 'edit')"
-          >
-            Edit
-          </button>
-        </div>
-      </div>
-      <DynamicForm
-        v-if="absenceModalVisible.edit"
-        :schema="formAbsence"
-        :validation-schema="absenceValidationSchema"
-        :handle-form="handleUpdateAbsence"
-        :cancel="cancelAbsenceEdit"
-        :loading="loading.update"
-        :initial-values="{
-          type: selectedAbsence!.type,
-          startDate: formatDateTime(selectedAbsence!.startDate),
-          endDate: formatDateTime(selectedAbsence!.endDate),
-          description: selectedAbsence!.description,
-        }"
-      />
-    </Dialog>
-
-    <!-- Edit Absence Modal -->
-    <!-- <Dialog
-      v-model:visible="visible.edit"
-      modal
-      header="Edit Absence"
-      :draggable="false"
-      :close-on-escape="true"
-      :pt="{
-        root: {
-          class: 'w-full mx-3 md:m-0 md:max-w-lg',
-        },
-      }"
-    >
-      <DynamicForm
-        :schema="formAbsence"
-        :validationSchema="absenceValidationSchema"
-        :handleForm="handleUpdateAbsence"
-        :loading="loading.update"
-        :initial-values="{
-          type: selectedAbsence!.type,
-          startDate: formatDateTime(selectedAbsence!.startDate),
-          endDate: formatDateTime(selectedAbsence!.endDate),
-          description: selectedAbsence!.description,
-        }"
-      />
-    </Dialog> -->
-
-    <!-- Create Absence Modal -->
-    <Dialog
-      v-model:visible="absenceModalVisible.create"
-      modal
-      header="Create Absence"
-      :draggable="false"
-      :close-on-escape="true"
-      :pt="{
-        root: {
-          class: 'w-full mx-3 md:m-0 md:max-w-lg',
-        },
-      }"
-    >
-      <DynamicForm
-        :schema="formAbsence"
-        :validation-schema="absenceValidationSchema"
-        :handle-form="handleCreateAbsence"
-        :loading="loading.create"
-      />
-    </Dialog>
-
     <!-- Locations -->
-    <div
-      v-if="customUser?.role == 'CLIENT' && user"
-      class="flex w-full flex-col gap-3"
-    >
+    <div v-if="user" class="flex w-full flex-col gap-3">
       <h2 class="text-2xl">Locations</h2>
       <button
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
@@ -271,7 +153,7 @@
           @click="toggleLocationModal(location, 'detail')"
         >
           <div class="flex w-1/2 flex-col gap-2 py-3 pl-6">
-            <!-- location or  nothing -->
+            <!-- location or nothing -->
             <h3 class="text-lg">{{ location.title }}</h3>
             <div>
               <p class="opacity-70">
@@ -283,7 +165,7 @@
           <div
             class="h-28 w-1/2 overflow-auto rounded-3xl rounded-t-none rounded-bl-none"
           >
-            <Map :locations="[location]" />
+            <Map class="h-full w-full" :locations="[location]" />
           </div>
         </button>
       </div>
@@ -303,6 +185,89 @@
       Delete Account
     </button>
   </div>
+
+  <!-- Detail Absence Modal -->
+  <Dialog
+    v-model:visible="absenceModalVisible.openModal"
+    modal
+    header="Absence Details"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'w-full mx-3 md:m-0 md:max-w-lg',
+      },
+    }"
+  >
+    <div
+      v-if="selectedAbsence && absenceModalVisible.detail"
+      class="flex flex-col gap-6"
+    >
+      <div class="flex flex-col gap-3">
+        <div>
+          <h2 class="text-xl font-semibold">
+            {{ formatAbsenceDate(selectedAbsence.startDate) }}
+          </h2>
+          <p class="text-gray-900">{{ selectedAbsence.totalDays }} days</p>
+        </div>
+        <div>
+          <h3 class="text-sm">Description:</h3>
+          <p>
+            {{ selectedAbsence.description }}
+          </p>
+        </div>
+      </div>
+      <div class="flex justify-between">
+        <button
+          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+          @click="handleDelete(selectedAbsence)"
+        >
+          Delete
+        </button>
+        <button
+          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
+          @click="toggleAbsenceModal(selectedAbsence, 'edit')"
+        >
+          Edit
+        </button>
+      </div>
+    </div>
+    <DynamicForm
+      v-if="absenceModalVisible.edit"
+      :schema="formAbsence"
+      :validation-schema="absenceValidationSchema"
+      :handle-form="handleUpdateAbsence"
+      :cancel="cancelAbsenceEdit"
+      :loading="loading.update"
+      :initial-values="{
+        type: selectedAbsence!.type,
+        startDate: formatDateTime(selectedAbsence!.startDate),
+        endDate: formatDateTime(selectedAbsence!.endDate),
+        description: selectedAbsence!.description,
+      }"
+    />
+  </Dialog>
+
+  <!-- Create Absence Modal -->
+  <Dialog
+    v-model:visible="absenceModalVisible.create"
+    modal
+    header="Create Absence"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'w-full mx-3 md:m-0 md:max-w-lg',
+      },
+    }"
+  >
+    <DynamicForm
+      :schema="formAbsence"
+      :validation-schema="absenceValidationSchema"
+      :handle-form="handleCreateAbsence"
+      :loading="loading.create"
+    />
+  </Dialog>
 
   <!-- Detail Location Modal -->
   <Dialog
@@ -334,7 +299,7 @@
       </div>
 
       <div class="h-48 w-full overflow-auto rounded-lg">
-        <Map :locations="[selectedLocation]" />
+        <Map class="h-full w-full" :locations="[selectedLocation]" />
       </div>
 
       <div
@@ -555,11 +520,11 @@
     </form>
   </Dialog>
 
-  <!-- Edit Profile  -->
+  <!-- Edit Profile Picture  -->
   <Dialog
     v-model:visible="userModalVisible.editPicture"
     modal
-    header="Edit Profile Picture"
+    header="Upload Image"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -568,11 +533,8 @@
       },
     }"
   >
-    <div class="p-4">
-      <label for="uploadInput" class="mb-2 block font-bold text-gray-700"
-        >Upload Image</label
-      >
-      <div class="flex w-full items-center justify-center">
+    <form class="p-4" @submit.prevent="handleUploadImage">
+      <div class="flex w-full flex-col">
         <label
           for="dropzone-file"
           class="dark:hover:bg-bray-800 flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
@@ -611,6 +573,10 @@
             "
           />
         </label>
+
+        <span class="block text-sm text-red-500">
+          {{ errorMessageSelectedPicture }}
+        </span>
       </div>
 
       <div class="mt-6 flex justify-between">
@@ -620,12 +586,13 @@
           @click="toggleUserModal()"
         />
         <CustomButton
+          type="submit"
+          :loading="loadingUpload"
           name="Upload"
           variant="primary"
-          @click="handleUploadImage"
         />
       </div>
-    </div>
+    </form>
   </Dialog>
 </template>
 
@@ -666,7 +633,7 @@ import {
 import { useLazyQuery, useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
 import { ArrowLeft, Edit2, PlusCircle } from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
+import { Form, useForm } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -674,7 +641,7 @@ import { useRouter } from 'vue-router'
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
 const { formatDateTime } = useTimeUtilities()
-const { firebaseUser, uploadProfile } = useFirebase()
+const { firebaseUser, uploadProfile, deleteProfile } = useFirebase()
 const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
@@ -960,12 +927,6 @@ const formUpdateUser = {
       as: 'input',
     },
     {
-      label: 'Email',
-      name: 'email',
-      placeholder: 'john@example.com',
-      as: 'input',
-    },
-    {
       label: 'Telephone (optional)',
       name: 'telephone',
       placeholder: '0412345678',
@@ -1047,11 +1008,7 @@ const {
 
 const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
-const {
-  mutate: deleteUser,
-  loading: deleteUserLoading,
-  error: deleteUserError,
-} = useMutation(DELETE_USER)
+const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
 
 const { mutate: createLocation, error: createLocationError } =
   useMutation(CREATE_LOCATION)
@@ -1062,10 +1019,19 @@ const { mutate: updateLocation, error: updateLocationError } =
 const { mutate: deleteLocation, error: deleteLocationError } =
   useMutation(DELETE_LOCATION)
 
+const loadingUpload = ref<boolean>(false)
+const errorMessageSelectedPicture = ref<string>('')
+
 // logics
-// TODO: add loading
 // handle upload image
 const handleUploadImage = async () => {
+  errorMessageSelectedPicture.value = ''
+  loadingUpload.value = true
+  if (!selectedPicture.value) {
+    errorMessageSelectedPicture.value = 'Please select a picture'
+    loadingUpload.value = false
+    return
+  }
   try {
     // save image to firebase & get url
     const url = await uploadProfile(
@@ -1080,6 +1046,7 @@ const handleUploadImage = async () => {
       },
     })
 
+    loadingUpload.value = false
     showToast('success', 'Success', 'Profile picture has been updated')
     toggleUserModal()
   } catch (error) {
@@ -1090,9 +1057,13 @@ const handleUploadImage = async () => {
 
 // handle delete user
 const handleDeleteUser = async () => {
+  // delete profile picture
+  await deleteProfile(customUser.value!.uid)
+
   await deleteUser({
     id: customUser.value?.id,
   })
+
   showToast('success', 'Success', `You have deleted your account`)
   customUser.value = null
   firebaseUser.value = null
@@ -1261,19 +1232,19 @@ const toggleLocationModal = (
 }
 
 const toggleUserModal = (type: string = 'close') => {
-  console.log(type)
   switch (type) {
     case 'editPicture':
       userModalVisible.value = {
         editPicture: true,
       }
-      console.log(userModalVisible.value)
+      selectedPicture.value = null
+      errorMessageSelectedPicture.value = ''
       break
     case 'close':
       userModalVisible.value = {
         editPicture: false,
       }
-      selectedPicture.value = null
+
       break
     default:
       break
