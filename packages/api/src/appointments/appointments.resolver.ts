@@ -79,7 +79,7 @@ export class AppointmentsResolver {
       'A new appointment was created',
       createAppointmentInput.description,
     )
-    pubSub.publish('newAppointmentMessage', { newAppointmentMessage: myMsg }) // <-- publish the message
+    pubSub.publish('newAppointmentAdded', { newAppointmentAdded: myMsg }) // <-- publish the message
     return this.appointmentsService.create(createAppointmentInput)
   }
 
