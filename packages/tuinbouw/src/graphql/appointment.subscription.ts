@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const USER_CREATED = gql`
+export const APPOINTMENT_CREATED = gql`
   subscription newAppointmentMessage {
     newAppointmentAdded {
       content

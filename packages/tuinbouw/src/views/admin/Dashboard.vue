@@ -56,8 +56,10 @@ import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
+import { APPOINTMENT_CREATED } from '@/graphql/appointment.subscription'
 import router from '@/router'
-import { ref } from 'vue'
+import { useSubscription } from '@vue/apollo-composable'
+import { ref, watch } from 'vue'
 
 export default {
   setup() {
@@ -73,6 +75,12 @@ export default {
     const { firebaseUser, logout } = useFirebase()
     const { setLocale, locale } = useLanguage()
     const { customUser } = useCustomUser()
+
+    const { result: appointmentCreated } = useSubscription(APPOINTMENT_CREATED)
+
+    watch(appointmentCreated, (data: any) => {
+      console.log('New message received:', data)
+    })
 
     const handleLogout = async () => {
       await logout()

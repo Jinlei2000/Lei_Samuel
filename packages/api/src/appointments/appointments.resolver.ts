@@ -104,7 +104,7 @@ export class AppointmentsResolver {
   }
 
   @Subscription(() => NewAppointmentMessage)
-  newUserWasCreated() {
+  newAppointmentAdded() {
     return pubSub.asyncIterator('newAppointmentAdded') // <-- subscribe to the message
   }
 }
