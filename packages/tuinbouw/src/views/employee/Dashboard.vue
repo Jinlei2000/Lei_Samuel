@@ -109,15 +109,28 @@
       </div>
       <div class="col-span-1 col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
+        <div
+          v-if="forecast && forecast[0].rain"
+          class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
+        >
+          <CloudRainWind class="absolute right-3 top-3 h-7 w-7" />
+          <h3 class="mb-3 text-xl">Rain expected</h3>
+          <p>Make sure to add rain-gear to your arsenal</p>
+        </div>
+        <div class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white">
+          <ThermometerSnowflake class="absolute right-3 top-3 h-7 w-7" />
+          <h3 class="mb-3 text-xl">Cold weather</h3>
+          <p>
+            Bundle up, rest in warm areas, protect yourself to prevent
+            cold-related harm.
+          </p>
+        </div>
+        <div class="bg-primary-red relative mb-3 rounded-2xl p-3 text-white">
+          <Sun class="absolute right-3 top-3 h-7 w-7" />
+          <h3 class="mb-3 text-xl">Hot weather</h3>
+          <p>Don't forget sunscreen and drink enough water</p>
+        </div>
         <div v-if="scheduleData.materials" class="flex flex-col gap-3">
-          <div
-            v-if="forecast[0].rain"
-            class="bg-primary-blue relative rounded-2xl p-3 text-white"
-          >
-            <CloudRainWind class="absolute right-3 top-3 h-7 w-7" />
-            <h3 class="mb-3 text-xl">Rain expected</h3>
-            <p>Make sure to add rain-gear to your arsenal</p>
-          </div>
           <ChecklistItem
             v-for="item in scheduleData.materials"
             :key="item.id"
@@ -152,6 +165,8 @@ import {
   ChevronRight,
   CloudRainWind,
   Loader2,
+  Sun,
+  ThermometerSnowflake,
 } from 'lucide-vue-next'
 import { computed, ref, watch, watchEffect } from 'vue'
 
