@@ -131,7 +131,7 @@
           class="flex items-center justify-between rounded-2xl bg-gray-200 p-3 pl-6 text-left"
           @click="toggleAbsenceModal(absence, 'detail')"
         >
-          <div class="flex w-2/3">
+          <div class="flex w-2/3 gap-3 sm:gap-0">
             <p class="min-w-1/3">
               {{ formatAbsenceDate(absence.startDate) }}
             </p>
@@ -212,7 +212,6 @@
 
   <!-- Skeleton -->
   <div v-else class="m-auto my-12 flex max-w-xl flex-col gap-6">
-    <!-- Primary user info -->
     <section class="flex w-full flex-col items-center gap-6">
       <div class="h-24 w-24 animate-pulse rounded-full bg-neutral-200"></div>
       <div class="flex flex-col items-center gap-2">
@@ -221,7 +220,6 @@
       </div>
     </section>
 
-    <!-- About me -->
     <section class="w-full">
       <div class="mb-3 flex w-full justify-between">
         <h2 class="text-2xl">About me</h2>
@@ -238,7 +236,6 @@
       </div>
     </section>
 
-    <!-- Absences -->
     <section
       v-if="customUser?.role !== 'CLIENT'"
       class="flex w-full flex-col gap-3"
@@ -247,8 +244,7 @@
       <button
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
       >
-        <PlusCircle class="mr-2" />
-        Add New Absence
+        <PlusCircle class="mr-2" /> Add New Absence
       </button>
       <div class="flex w-full flex-col gap-3">
         <button
@@ -265,23 +261,25 @@
       </div>
     </section>
 
-    <!-- Locations -->
     <section class="flex w-full flex-col gap-3">
       <h2 class="text-2xl">Locations</h2>
       <button
         v-if="customUser?.role === 'CLIENT'"
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
       >
-        <PlusCircle class="mr-2" />
-        Add Location
+        <PlusCircle class="mr-2" /> Add Location
       </button>
       <div class="flex w-full flex-col gap-3">
         <button
           class="flex items-center justify-between overflow-hidden rounded-2xl bg-gray-200 text-left"
         >
           <div class="flex w-1/2 flex-col gap-2 py-3 pl-6">
-            <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
-            <div class="h-5 w-40 animate-pulse rounded-full bg-neutral-200" />
+            <div
+              class="h-5 w-10 animate-pulse rounded-full bg-neutral-200 sm:w-20"
+            />
+            <div
+              class="h-5 w-20 animate-pulse rounded-full bg-neutral-200 sm:w-40"
+            />
           </div>
           <div
             class="h-28 w-1/2 animate-pulse rounded-3xl rounded-t-none rounded-bl-none bg-neutral-200"
@@ -290,7 +288,6 @@
       </div>
     </section>
 
-    <!-- Delete Account -->
     <button class="bg-primary-red rounded-2xl py-3 text-white">
       Delete Account
     </button>
@@ -710,6 +707,8 @@ const { firebaseUser, uploadProfile, deleteProfile } = useFirebase()
 const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
+// TODO: backend seeding delete all firebase storage images
+
 //#region USER
 const userModalVisible = ref<{
   update: boolean
@@ -887,8 +886,8 @@ const toggleUserModal = (type: string = 'close') => {
 
 watchEffect(() => {
   // log the queries
-  if (userResult.value) console.log(userResult.value)
-  if (user.value) console.log(user)
+  // if (userResult.value) console.log(userResult.value)
+  // if (user.value) console.log(user)
 
   // all errors
   if (userError.value) {
