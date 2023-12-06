@@ -136,6 +136,10 @@
     <div v-if="user" class="flex w-full flex-col gap-3">
       <h2 class="text-2xl">Locations</h2>
       <button
+        v-if="
+          (customUser?.role == 'ADMIN' && user.locations.length === 0) ||
+          (customUser?.role == 'EMPLOYEE' && user.locations.length === 0)
+        "
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
         @click="toggleLocationModal(null, 'create')"
       >
