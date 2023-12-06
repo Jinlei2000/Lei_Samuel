@@ -137,7 +137,7 @@
       <h2 class="text-2xl">Locations</h2>
       <button
         v-if="
-          (customUser?.role == 'ADMIN' && user.locations.length === 0) ||
+          customUser?.role == 'CLIENT' ||
           (customUser?.role == 'EMPLOYEE' && user.locations.length === 0)
         "
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
@@ -224,7 +224,7 @@
       <div class="flex justify-between">
         <button
           class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
-          @click="handleDelete(selectedAbsence)"
+          @click="handleDeleteAbsence(selectedAbsence)"
         >
           Delete
         </button>
@@ -641,8 +641,6 @@ import { Form, useForm } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
-// TODO: REFRACTOR THIS FILE
-
 // composables
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
@@ -652,7 +650,6 @@ const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
 // variables
-const selectedAbsence = ref<Absence | null>(null)
 const variables = ref<VariablesProps>({
   filters: [],
   order: {
@@ -660,29 +657,178 @@ const variables = ref<VariablesProps>({
     direction: ORDER_DIRECTION.DESC,
   },
 })
-const absenceModalVisible = ref({
-  openModal: false,
-  detail: false,
-  edit: false,
-  create: false,
-})
 
-const locationModalVisible = ref({
-  openModal: false,
-  detail: false,
-  edit: false,
-  create: false,
-})
-
-// variables
+//#region USER
 const isEditingUser = ref<boolean>(false)
 const selectedPicture = ref<File | null>(null)
 const userModalVisible = ref({
   editPicture: false,
 })
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
-const selectedLocation = ref<Location | null>(null)
-const searchAddressResults = ref<Location[] | null>(null)
+const loadingUpload = ref<boolean>(false)
+const errorMessageSelectedPicture = ref<string>('')
+
+// form schema update user
+const formUpdateUser = {
+  fields: [
+    {
+      label: 'First Name',
+      name: 'firstname',
+      placeholder: 'John',
+      as: 'input',
+    },
+    {
+      label: 'Last Name',
+      name: 'lastname',
+      placeholder: 'Doe',
+      as: 'input',
+    },
+    {
+      label: 'Telephone (optional)',
+      name: 'telephone',
+      placeholder: '0412345678',
+      as: 'input',
+    },
+    // client only
+    ...(customUser.value?.role === Role.CLIENT
+      ? [
+          {
+            label: 'Select Invoice Option',
+            name: 'invoiceOption',
+            as: 'select',
+            type: 'select',
+            options: INVOICE_OPTIONS,
+            placeholder: 'Select a type',
+          },
+          {
+            label: 'Company (optional)',
+            name: 'company',
+            as: 'switch',
+            type: 'switch',
+          },
+          {
+            label: 'BTW Number (optional)',
+            name: 'btwNumber',
+            placeholder: 'BE0123456789',
+            as: 'input',
+            displayIf: 'company',
+          },
+        ]
+      : []),
+  ],
+
+  button: {
+    name: 'Update User',
+  },
+}
+
+// graphql
+const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
+
+const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
+
+// logics
+// handle upload image
+const handleUploadImage = async () => {
+  errorMessageSelectedPicture.value = ''
+  loadingUpload.value = true
+  if (!selectedPicture.value) {
+    errorMessageSelectedPicture.value = 'Please select a picture'
+    loadingUpload.value = false
+    return
+  }
+  try {
+    // save image to firebase & get url
+    const url = await uploadProfile(
+      customUser.value!.uid,
+      selectedPicture.value as File,
+    )
+    // update user in db
+    await updateUser({
+      updateUserInput: {
+        id: customUser.value?.id,
+        url: url,
+      },
+    })
+
+    loadingUpload.value = false
+    showToast('success', 'Success', 'Profile picture has been updated')
+    toggleUserModal()
+  } catch (error) {
+    console.log(error)
+    if (error instanceof Error) showToast('error', 'Error', error.message)
+  }
+}
+
+// handle delete user
+const handleDeleteUser = async () => {
+  // delete profile picture
+  await deleteProfile(customUser.value!.uid)
+
+  await deleteUser({
+    id: customUser.value?.id,
+  })
+
+  showToast('success', 'Success', `You have deleted your account`)
+  customUser.value = null
+  firebaseUser.value = null
+  replace('/')
+}
+
+// handle update user
+const handleUpdateUser = async (values: CustomUser) => {
+  loading.value.updateUser = true
+  await updateUser({
+    updateUserInput: {
+      id: customUser.value?.id,
+      firstname: values.firstname,
+      lastname: values.lastname,
+      email: values.email,
+      telephone: values.telephone,
+      // client only
+      ...(customUser.value?.role === Role.CLIENT && {
+        invoiceOption: values.invoiceOption,
+        company: values.company,
+        btwNumber: values.company ? values.btwNumber : null,
+      }),
+    },
+  })
+  loading.value.updateUser = false
+  showToast('success', 'Success', `You have updated your profile`)
+  isEditingUser.value = false
+  refetchUser()
+}
+
+const toggleUserModal = (type: string = 'close') => {
+  switch (type) {
+    case 'editPicture':
+      userModalVisible.value = {
+        editPicture: true,
+      }
+      selectedPicture.value = null
+      errorMessageSelectedPicture.value = ''
+      break
+    case 'close':
+      userModalVisible.value = {
+        editPicture: false,
+      }
+
+      break
+    default:
+      break
+  }
+}
+//#endregion
+
+//#region ABSENCE
+const selectedAbsence = ref<Absence | null>(null)
+
+const absenceModalVisible = ref({
+  openModal: false,
+  detail: false,
+  edit: false,
+  create: false,
+})
 
 const absences = computed<Absence[]>(
   () => absencesByUserIdResult.value?.absencesByUserId || [],
@@ -805,7 +951,7 @@ const handleUpdateAbsence = async (values: Absence) => {
 }
 
 // handle delete absence
-const handleDelete = async (absence: Absence) => {
+const handleDeleteAbsence = async (absence: Absence) => {
   try {
     await deleteAbsence({
       id: absence.id,
@@ -823,6 +969,7 @@ const handleDelete = async (absence: Absence) => {
   }
 }
 
+// TODO: refactor
 // open or close modal
 const toggleAbsenceModal = (
   absence: Absence | null = null,
@@ -908,67 +1055,17 @@ watchEffect(() => {
   })
 })
 
-// loading states
-const loading = ref<{ [key: string]: boolean }>({
-  updateUser: false,
-  createLocation: false,
-  updateLocation: false,
-  searchAddress: false,
+//#endregion
+
+//#region LOCATION
+const locationModalVisible = ref({
+  openModal: false,
+  detail: false,
+  edit: false,
+  create: false,
 })
-
-// form schema update user
-const formUpdateUser = {
-  fields: [
-    {
-      label: 'First Name',
-      name: 'firstname',
-      placeholder: 'John',
-      as: 'input',
-    },
-    {
-      label: 'Last Name',
-      name: 'lastname',
-      placeholder: 'Doe',
-      as: 'input',
-    },
-    {
-      label: 'Telephone (optional)',
-      name: 'telephone',
-      placeholder: '0412345678',
-      as: 'input',
-    },
-    // client only
-    ...(customUser.value?.role === Role.CLIENT
-      ? [
-          {
-            label: 'Select Invoice Option',
-            name: 'invoiceOption',
-            as: 'select',
-            type: 'select',
-            options: INVOICE_OPTIONS,
-            placeholder: 'Select a type',
-          },
-          {
-            label: 'Company (optional)',
-            name: 'company',
-            as: 'switch',
-            type: 'switch',
-          },
-          {
-            label: 'BTW Number (optional)',
-            name: 'btwNumber',
-            placeholder: 'BE0123456789',
-            as: 'input',
-            displayIf: 'company',
-          },
-        ]
-      : []),
-  ],
-
-  button: {
-    name: 'Update User',
-  },
-}
+const selectedLocation = ref<Location | null>(null)
+const searchAddressResults = ref<Location[] | null>(null)
 
 // error messages of forms
 const errorMessages = ref<{
@@ -1011,10 +1108,6 @@ const {
   },
 )
 
-const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
-
-const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
-
 const { mutate: createLocation, error: createLocationError } =
   useMutation(CREATE_LOCATION)
 
@@ -1023,81 +1116,6 @@ const { mutate: updateLocation, error: updateLocationError } =
 
 const { mutate: deleteLocation, error: deleteLocationError } =
   useMutation(DELETE_LOCATION)
-
-const loadingUpload = ref<boolean>(false)
-const errorMessageSelectedPicture = ref<string>('')
-
-// logics
-// handle upload image
-const handleUploadImage = async () => {
-  errorMessageSelectedPicture.value = ''
-  loadingUpload.value = true
-  if (!selectedPicture.value) {
-    errorMessageSelectedPicture.value = 'Please select a picture'
-    loadingUpload.value = false
-    return
-  }
-  try {
-    // save image to firebase & get url
-    const url = await uploadProfile(
-      customUser.value!.uid,
-      selectedPicture.value as File,
-    )
-    // update user in db
-    await updateUser({
-      updateUserInput: {
-        id: customUser.value?.id,
-        url: url,
-      },
-    })
-
-    loadingUpload.value = false
-    showToast('success', 'Success', 'Profile picture has been updated')
-    toggleUserModal()
-  } catch (error) {
-    console.log(error)
-    if (error instanceof Error) showToast('error', 'Error', error.message)
-  }
-}
-
-// handle delete user
-const handleDeleteUser = async () => {
-  // delete profile picture
-  await deleteProfile(customUser.value!.uid)
-
-  await deleteUser({
-    id: customUser.value?.id,
-  })
-
-  showToast('success', 'Success', `You have deleted your account`)
-  customUser.value = null
-  firebaseUser.value = null
-  replace('/')
-}
-
-// handle update user
-const handleUpdateUser = async (values: CustomUser) => {
-  loading.value.updateUser = true
-  await updateUser({
-    updateUserInput: {
-      id: customUser.value?.id,
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      telephone: values.telephone,
-      // client only
-      ...(customUser.value?.role === Role.CLIENT && {
-        invoiceOption: values.invoiceOption,
-        company: values.company,
-        btwNumber: values.company ? values.btwNumber : null,
-      }),
-    },
-  })
-  loading.value.updateUser = false
-  showToast('success', 'Success', `You have updated your profile`)
-  isEditingUser.value = false
-  refetchUser()
-}
 
 // search address
 const handleSearchAddress = async () => {
@@ -1169,18 +1187,6 @@ const handleUpdateLocation = async () => {
   loading.value.updateLocation = false
 }
 
-// reset input fields
-const resetInputfields = () => {
-  setValuesLocation({
-    locationTitle: '',
-    searchAdressInput: '',
-    selectedAddress: null,
-  })
-  selectedLocation.value = null
-  searchAddressResults.value = null
-  errorMessages.value = {}
-}
-
 // delete location
 const handleDeleteLocation = async (id: string) => {
   await deleteLocation({
@@ -1235,25 +1241,26 @@ const toggleLocationModal = (
       break
   }
 }
+//#endregion
 
-const toggleUserModal = (type: string = 'close') => {
-  switch (type) {
-    case 'editPicture':
-      userModalVisible.value = {
-        editPicture: true,
-      }
-      selectedPicture.value = null
-      errorMessageSelectedPicture.value = ''
-      break
-    case 'close':
-      userModalVisible.value = {
-        editPicture: false,
-      }
+// loading states
+const loading = ref<{ [key: string]: boolean }>({
+  updateUser: false,
+  createLocation: false,
+  updateLocation: false,
+  searchAddress: false,
+})
 
-      break
-    default:
-      break
-  }
+// reset input fields
+const resetInputfields = () => {
+  setValuesLocation({
+    locationTitle: '',
+    searchAdressInput: '',
+    selectedAddress: null,
+  })
+  selectedLocation.value = null
+  searchAddressResults.value = null
+  errorMessages.value = {}
 }
 
 watchEffect(() => {
