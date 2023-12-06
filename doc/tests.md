@@ -12,6 +12,7 @@ cd packages/api
 
 ```bash
 npx jest absences/absences.service.spec
+npx jest materials/materials.service.spec
 ```
 
 ## Backend e2e tests
