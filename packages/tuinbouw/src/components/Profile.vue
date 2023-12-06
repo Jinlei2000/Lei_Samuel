@@ -75,7 +75,7 @@
         :schema="formUpdateUser"
         :validation-schema="userUpdateValidationSchema"
         :handle-form="handleUpdateUser"
-        :loading="loading.updateUser"
+        :loading="loadingUser.update"
         :initial-values="{
           firstname: user!.firstname,
           lastname: user!.lastname,
@@ -242,7 +242,7 @@
       :validation-schema="absenceValidationSchema"
       :handle-form="handleUpdateAbsence"
       :cancel="cancelAbsenceEdit"
-      :loading="loading.update"
+      :loading="loadingAbsence.update"
       :initial-values="{
         type: selectedAbsence!.type,
         startDate: formatDateTime(selectedAbsence!.startDate),
@@ -269,7 +269,7 @@
       :schema="formAbsence"
       :validation-schema="absenceValidationSchema"
       :handle-form="handleCreateAbsence"
-      :loading="loading.create"
+      :loading="loadingLocation.create"
     />
   </Dialog>
 
@@ -353,7 +353,7 @@
           />
           <CustomButton
             name="Search"
-            :loading="loading.searchAddress"
+            :loading="loadingLocation.searchAddress"
             @click="handleSearchAddress()"
           />
         </div>
@@ -415,7 +415,7 @@
           type="submit"
           variant="primary"
           name="Update Location"
-          :loading="loading.updateLocation"
+          :loading="loadingLocation.update"
         />
       </div>
     </form>
@@ -453,7 +453,7 @@
           />
           <CustomButton
             name="Search"
-            :loading="loading.searchAddress"
+            :loading="loadingLocation.searchAddress"
             @click="handleSearchAddress()"
           />
         </div>
@@ -518,7 +518,7 @@
         <CustomButton
           type="submit"
           name="Create Location"
-          :loading="loading.createLocation"
+          :loading="loadingLocation.create"
         />
       </div>
     </form>
@@ -667,6 +667,11 @@ const userModalVisible = ref({
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
 const loadingUpload = ref<boolean>(false)
 const errorMessageSelectedPicture = ref<string>('')
+const loadingUser = ref<{
+  update: boolean
+}>({
+  update: false,
+})
 
 // form schema update user
 const formUpdateUser = {
@@ -723,6 +728,21 @@ const formUpdateUser = {
 }
 
 // graphql
+const {
+  result: userResult,
+  loading: userLoading,
+  error: userError,
+  refetch: refetchUser,
+} = useQuery(
+  GET_USER_BY_ID,
+  () => ({
+    id: customUser.value?.id,
+  }),
+  {
+    fetchPolicy: 'cache-and-network',
+  },
+)
+
 const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
 
 const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
@@ -777,7 +797,7 @@ const handleDeleteUser = async () => {
 
 // handle update user
 const handleUpdateUser = async (values: CustomUser) => {
-  loading.value.updateUser = true
+  loadingUser.value.update = true
   await updateUser({
     updateUserInput: {
       id: customUser.value?.id,
@@ -793,7 +813,7 @@ const handleUpdateUser = async (values: CustomUser) => {
       }),
     },
   })
-  loading.value.updateUser = false
+  loadingUser.value.update = false
   showToast('success', 'Success', `You have updated your profile`)
   isEditingUser.value = false
   refetchUser()
@@ -818,6 +838,23 @@ const toggleUserModal = (type: string = 'close') => {
       break
   }
 }
+
+watchEffect(() => {
+  // log the queries
+  // if (userResult.value) console.log(userResult.value)
+
+  // all errors
+  const errors = [userError.value, updateUserError.value, deleteUserError.value]
+  errors.forEach(error => {
+    if (error) {
+      loadingUser.value = {
+        update: false,
+      }
+
+      showToast('error', 'Error', error.message)
+    }
+  })
+})
 //#endregion
 
 //#region ABSENCE
@@ -833,6 +870,14 @@ const absenceModalVisible = ref({
 const absences = computed<Absence[]>(
   () => absencesByUserIdResult.value?.absencesByUserId || [],
 )
+
+const loadingAbsence = ref<{
+  create: boolean
+  update: boolean
+}>({
+  create: false,
+  update: false,
+})
 
 // form schema absence
 const formAbsence = {
@@ -903,10 +948,11 @@ onMounted(() => {
   }
 })
 
+// logics
 // handle create absence
 const handleCreateAbsence = async (values: Absence) => {
   try {
-    loading.value.create = true
+    loadingAbsence.value.create = true
     await createAbsence({
       createAbsenceInput: {
         userId: customUser.value?.id,
@@ -916,7 +962,7 @@ const handleCreateAbsence = async (values: Absence) => {
         description: values.description,
       },
     })
-    loading.value.create = false
+    loadingAbsence.value.create = false
     showToast('success', 'Success', 'Absence has been created')
     await refetch()
     toggleAbsenceModal()
@@ -930,7 +976,7 @@ const handleCreateAbsence = async (values: Absence) => {
 const handleUpdateAbsence = async (values: Absence) => {
   try {
     // console.log(values)
-    loading.value.update = true
+    loadingAbsence.value.update = true
     await updateAbsence({
       updateAbsenceInput: {
         id: selectedAbsence.value?.id,
@@ -940,7 +986,7 @@ const handleUpdateAbsence = async (values: Absence) => {
         description: values.description,
       },
     })
-    loading.value.update = false
+    loadingAbsence.value.update = false
     showToast('success', 'Success', 'Absence has been updated')
     await refetch()
     toggleAbsenceModal()
@@ -1028,6 +1074,16 @@ const refetch = async (): Promise<void> => {
   await refetchAbsencesByUserId()
 }
 
+// Change date to mm/dd/yyyy
+const formatAbsenceDate = (date: string) => {
+  const dateObj = new Date(date)
+  return new Intl.DateTimeFormat('en', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(dateObj)
+}
+
 watchEffect(() => {
   // log the queries
   // if (absences.value) console.log(absences.value)
@@ -1043,8 +1099,7 @@ watchEffect(() => {
   ]
   errors.forEach(error => {
     if (error) {
-      loading.value = {
-        ...loading.value,
+      loadingAbsence.value = {
         update: false,
         create: false,
       }
@@ -1066,6 +1121,15 @@ const locationModalVisible = ref({
 })
 const selectedLocation = ref<Location | null>(null)
 const searchAddressResults = ref<Location[] | null>(null)
+const loadingLocation = ref<{
+  create: boolean
+  update: boolean
+  searchAddress: boolean
+}>({
+  create: false,
+  update: false,
+  searchAddress: false,
+})
 
 // error messages of forms
 const errorMessages = ref<{
@@ -1093,21 +1157,6 @@ const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
 const selectedAddress = defineInputBindsLocation('selectedAddress')
 
 // graphql
-const {
-  result: userResult,
-  loading: userLoading,
-  error: userError,
-  refetch: refetchUser,
-} = useQuery(
-  GET_USER_BY_ID,
-  () => ({
-    id: customUser.value?.id,
-  }),
-  {
-    fetchPolicy: 'cache-and-network',
-  },
-)
-
 const { mutate: createLocation, error: createLocationError } =
   useMutation(CREATE_LOCATION)
 
@@ -1119,7 +1168,7 @@ const { mutate: deleteLocation, error: deleteLocationError } =
 
 // search address
 const handleSearchAddress = async () => {
-  loading.value.searchAddress = true
+  loadingLocation.value.searchAddress = true
   searchAddressResults.value = null
   errorMessages.value = {}
 
@@ -1128,7 +1177,7 @@ const handleSearchAddress = async () => {
   if (!errorsLocation.value.searchAdressInput) {
     try {
       const results = await searchAddress(valuesLocation.searchAdressInput)
-      loading.value.searchAddress = false
+      loadingLocation.value.searchAddress = false
       if (results) {
         searchAddressResults.value = results
       }
@@ -1136,12 +1185,12 @@ const handleSearchAddress = async () => {
       if (err instanceof Error) showToast('error', 'Error', err.message)
     }
   }
-  loading.value.searchAddress = false
+  loadingLocation.value.searchAddress = false
 }
 
 // add new location
 const handleCreateLocation = async () => {
-  loading.value.createLocation = true
+  loadingLocation.value.create = true
   await validateLocation()
   errorMessages.value = errorsLocation.value
   if (Object.keys(errorsLocation.value).length === 0) {
@@ -1155,16 +1204,16 @@ const handleCreateLocation = async () => {
         userId: customUser.value?.id,
       },
     })
-    loading.value.createLocation = false
+    loadingLocation.value.create = false
     showToast('success', 'Success', `You have created a new location`)
     refetchUser()
   }
-  loading.value.createLocation = false
+  loadingLocation.value.create = false
 }
 
 // update location
 const handleUpdateLocation = async () => {
-  loading.value.updateLocation = true
+  loadingLocation.value.update = true
   await validateLocation()
   errorMessages.value = errorsLocation.value
   if (Object.keys(errorsLocation.value).length === 0) {
@@ -1178,13 +1227,13 @@ const handleUpdateLocation = async () => {
         lng: valuesLocation.selectedAddress.lng,
       },
     })
-    loading.value.updateLocation = false
+    loadingLocation.value.update = false
     showToast('success', 'Success', `You have updated a location`)
     resetInputfields()
     refetchUser()
     toggleLocationModal()
   }
-  loading.value.updateLocation = false
+  loadingLocation.value.update = false
 }
 
 // delete location
@@ -1241,15 +1290,6 @@ const toggleLocationModal = (
       break
   }
 }
-//#endregion
-
-// loading states
-const loading = ref<{ [key: string]: boolean }>({
-  updateUser: false,
-  createLocation: false,
-  updateLocation: false,
-  searchAddress: false,
-})
 
 // reset input fields
 const resetInputfields = () => {
@@ -1265,23 +1305,18 @@ const resetInputfields = () => {
 
 watchEffect(() => {
   // log the queries
-  // if (userResult.value) console.log(userResult.value)
 
   // all errors
   const errors = [
-    userError.value,
-    updateUserError.value,
-    deleteUserError.value,
     createLocationError.value,
     updateLocationError.value,
     deleteLocationError.value,
   ]
   errors.forEach(error => {
     if (error) {
-      loading.value = {
-        updateUser: false,
-        createLocation: false,
-        updateLocation: false,
+      loadingLocation.value = {
+        create: false,
+        update: false,
         searchAddress: false,
       }
 
@@ -1289,14 +1324,5 @@ watchEffect(() => {
     }
   })
 })
-
-// Change date to mm/dd/yyyy
-const formatAbsenceDate = (date: string) => {
-  const dateObj = new Date(date)
-  return new Intl.DateTimeFormat('en', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(dateObj)
-}
+//#endregion
 </script>
