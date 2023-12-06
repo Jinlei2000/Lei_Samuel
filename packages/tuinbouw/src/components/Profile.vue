@@ -1,7 +1,7 @@
 <template>
   <main v-if="user" class="m-auto my-12 flex max-w-xl flex-col gap-6">
     <!-- Primary user info -->
-    <div class="flex w-full flex-col items-center gap-6">
+    <section class="flex w-full flex-col items-center gap-6">
       <div class="relative">
         <!-- Profile picture -->
         <div>
@@ -70,10 +70,10 @@
         </h1>
         <p class="opacity-80">{{ user?.email }}</p>
       </div>
-    </div>
+    </section>
 
     <!-- About me -->
-    <div class="w-full">
+    <section class="w-full">
       <div class="mb-3 flex w-full justify-between">
         <h2 class="text-2xl">About me</h2>
         <button
@@ -97,10 +97,10 @@
           </p>
         </li>
       </ul>
-    </div>
+    </section>
 
     <!-- Absences -->
-    <div
+    <section
       v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
       class="flex w-full flex-col gap-3"
     >
@@ -141,10 +141,10 @@
       >
         <p class="text-lg">No absences</p>
       </div>
-    </div>
+    </section>
 
     <!-- Locations -->
-    <div class="flex w-full flex-col gap-3">
+    <section class="flex w-full flex-col gap-3">
       <h2 class="text-2xl">Locations</h2>
       <button
         v-if="
@@ -190,7 +190,7 @@
       >
         <p class="text-lg">No locations</p>
       </div>
-    </div>
+    </section>
 
     <!-- Delete Account -->
     <button
@@ -204,16 +204,16 @@
   <!-- Skeleton -->
   <div v-else class="m-auto my-12 flex max-w-xl flex-col gap-6">
     <!-- Primary user info -->
-    <div class="flex w-full flex-col items-center gap-6">
+    <section class="flex w-full flex-col items-center gap-6">
       <div class="h-24 w-24 animate-pulse rounded-full bg-neutral-200"></div>
       <div class="flex flex-col items-center gap-2">
         <div class="w-30 h-5 animate-pulse rounded-full bg-neutral-200"></div>
         <div class="h-4 w-40 animate-pulse rounded-full bg-neutral-200"></div>
       </div>
-    </div>
+    </section>
 
     <!-- About me -->
-    <div class="w-full">
+    <section class="w-full">
       <div class="mb-3 flex w-full justify-between">
         <h2 class="text-2xl">About me</h2>
         <button class="text-primary-orange flex items-center gap-2 text-lg">
@@ -227,10 +227,10 @@
           class="h-15 animate-pulse gap-3 rounded-2xl bg-gray-200"
         />
       </div>
-    </div>
+    </section>
 
     <!-- Absences -->
-    <div
+    <section
       v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
       class="flex w-full flex-col gap-3"
     >
@@ -254,10 +254,10 @@
           <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
         </button>
       </div>
-    </div>
+    </section>
 
     <!-- Locations -->
-    <div class="flex w-full flex-col gap-3">
+    <section class="flex w-full flex-col gap-3">
       <h2 class="text-2xl">Locations</h2>
       <button
         v-if="customUser?.role == 'CLIENT'"
@@ -281,7 +281,7 @@
           />
         </button>
       </div>
-    </div>
+    </section>
 
     <!-- Delete Account -->
     <button class="bg-primary-red rounded-2xl py-3 text-white">
@@ -692,7 +692,6 @@ import { useLazyQuery, useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
 import { Edit2, PlusCircle } from 'lucide-vue-next'
 import { Form, useForm } from 'vee-validate'
-import type { ComputedRef } from 'vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -776,7 +775,6 @@ const formUpdateUser = {
 // graphql
 const {
   result: userResult,
-  loading: userLoading,
   error: userError,
   refetch: refetchUser,
 } = useQuery(
@@ -789,9 +787,9 @@ const {
   },
 )
 
-const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
+const { mutate: updateUser } = useMutation(UPDATE_USER)
 
-const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
+const { mutate: deleteUser } = useMutation(DELETE_USER)
 
 // logics
 // handle upload image
@@ -812,99 +810,81 @@ const handleUploadImage = async (event: Event) => {
       },
     })
 
-    loadingUser.value.uploadPicture = false
     showToast('success', 'Success', 'Profile picture has been updated')
     toggleUserModal()
   } catch (error) {
-    console.log(error)
-    if (error instanceof Error) showToast('error', 'Error', error.message)
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't upload image")
+  } finally {
+    loadingUser.value.uploadPicture = false
   }
 }
 
 // handle delete user
 const handleDeleteUser = async () => {
-  // delete profile picture
-  await deleteProfile(customUser.value!.uid)
-
-  await deleteUser({
-    id: customUser.value?.id,
-  })
-
-  showToast('success', 'Success', `You have deleted your account`)
-  customUser.value = null
-  firebaseUser.value = null
-  replace('/')
+  try {
+    // delete profile picture
+    await deleteProfile(customUser.value!.uid)
+    // delete user in db
+    await deleteUser({
+      id: customUser.value?.id,
+    })
+    showToast('success', 'Success', `You have deleted your account`)
+    firebaseUser.value = null
+    customUser.value = null
+    replace('/')
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error) showToast('error', 'Error', "Can't delete user")
+  }
 }
 
 // handle update user
 const handleUpdateUser = async (values: CustomUser) => {
-  loadingUser.value.update = true
-  await updateUser({
-    updateUserInput: {
-      id: customUser.value?.id,
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      telephone: values.telephone,
-      // client only
-      ...(customUser.value?.role === Role.CLIENT && {
-        invoiceOption: values.invoiceOption,
-        company: values.company,
-        btwNumber: values.company ? values.btwNumber : null,
-      }),
-    },
-  })
-  loadingUser.value.update = false
-  showToast('success', 'Success', `You have updated your profile`)
-  refetchUser()
+  try {
+    loadingUser.value.update = true
+    await updateUser({
+      updateUserInput: {
+        id: customUser.value?.id,
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+        // client only
+        ...(customUser.value?.role === Role.CLIENT && {
+          invoiceOption: values.invoiceOption,
+          company: values.company,
+          btwNumber: values.company ? values.btwNumber : null,
+        }),
+      },
+    })
+    showToast('success', 'Success', `You have updated your profile`)
+    refetchUser()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error) showToast('error', 'Error', "Can't update user")
+  } finally {
+    loadingUser.value.update = false
+  }
 }
 
 const toggleUserModal = (type: string = 'close') => {
-  //   const toggleModal = (
-  //   absence: Absence | null = null,
-  //   type: string = 'close',
-  // ) => {
-  //   selectedAbsence.value = absence ? { ...absence } : null
-  //   visible.value = {
-  //     detail: type === 'detail',
-  //     edit: type === 'edit',
-  //     create: type === 'create',
-  //   }
-  // }
-
-  switch (type) {
-    case 'update':
-      userModalVisible.value = {
-        update: true,
-      }
-      break
-    case 'close':
-      userModalVisible.value = {
-        update: false,
-      }
-      break
-    default:
-      break
+  userModalVisible.value = {
+    update: type === 'update',
   }
 }
 
 watchEffect(() => {
-  // log the queries
-  // if (userResult.value) console.log(userResult.value)
-
   // all errors
-  const errors = [userError.value, updateUserError.value, deleteUserError.value]
-  errors.forEach(error => {
-    if (error) {
-      loadingUser.value = {
-        ...loadingUser.value,
-        update: false,
-        uploadPicture: false,
-      }
-
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (userError.value) {
+    // console.log(userError.value)
+    LogRocket.captureException(userError.value)
+    showToast('error', 'Error', "Can't your data")
+  }
 })
 //#endregion
 
