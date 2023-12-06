@@ -32,6 +32,7 @@
             />
             <input
               id="upload-image"
+              :disabled="loadingUser.uploadPicture"
               type="file"
               class="hidden"
               accept="image/*"
@@ -201,6 +202,7 @@
   </div>
 
   <!-- TODO: show skeleton -->
+  <div>Loading...</div>
 
   <!-- Update User Modal -->
   <Dialog
@@ -605,6 +607,7 @@ import { useLazyQuery, useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
 import { Edit2, PlusCircle } from 'lucide-vue-next'
 import { Form, useForm } from 'vee-validate'
+import type { ComputedRef } from 'vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -617,7 +620,9 @@ const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
 //#region USER
-const userModalVisible = ref({
+const userModalVisible = ref<{
+  update: boolean
+}>({
   update: false,
 })
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
@@ -766,7 +771,6 @@ const handleUpdateUser = async (values: CustomUser) => {
   })
   loadingUser.value.update = false
   showToast('success', 'Success', `You have updated your profile`)
-  isEditingUser.value = false
   refetchUser()
 }
 
@@ -808,6 +812,7 @@ watchEffect(() => {
   errors.forEach(error => {
     if (error) {
       loadingUser.value = {
+        ...loadingUser.value,
         update: false,
         uploadPicture: false,
       }
