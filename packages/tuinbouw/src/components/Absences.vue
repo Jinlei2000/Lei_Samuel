@@ -162,6 +162,7 @@
 </template>
 
 <script setup lang="ts">
+import DynamicForm from './generic/DynamicForm.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -179,9 +180,9 @@ import type { Absence } from '@/interfaces/absence.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { absenceValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
-import { Eye, ArrowLeft, Trash2, Pencil } from 'lucide-vue-next'
+import LogRocket from 'logrocket'
+import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { computed, onMounted, ref, watchEffect } from 'vue'
-import DynamicForm from './generic/DynamicForm.vue'
 
 // props
 const props = defineProps({
@@ -306,51 +307,66 @@ onMounted(() => {
 
 // handle create absence
 const handleCreateAbsence = async (values: Absence) => {
-  loading.value.create = true
-  await createAbsence({
-    createAbsenceInput: {
-      userId: customUser.value?.id,
-      type: values.type,
-      startDate: formatDateTime(values.startDate),
-      endDate: formatDateTime(values.endDate),
-      description: values.description,
-    },
-  })
-  loading.value.create = false
-  showToast('success', 'Success', 'Absence has been created')
-  await refetch()
-  toggleModal()
+  try {
+    loading.value.create = true
+    await createAbsence({
+      createAbsenceInput: {
+        userId: customUser.value?.id,
+        type: values.type,
+        startDate: formatDateTime(values.startDate),
+        endDate: formatDateTime(values.endDate),
+        description: values.description,
+      },
+    })
+    loading.value.create = false
+    showToast('success', 'Success', 'Absence has been created')
+    await refetch()
+    toggleModal()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 // handle update absence
 const handleUpdateAbsence = async (values: Absence) => {
-  loading.value.update = true
-  await updateAbsence({
-    updateAbsenceInput: {
-      id: values.id,
-      type: values.type,
-      startDate: formatDateTime(values.startDate),
-      endDate: formatDateTime(values.endDate),
-      description: values.description,
-    },
-  })
-  loading.value.update = false
-  showToast('success', 'Success', 'Absence has been updated')
-  await refetch()
-  toggleModal()
+  try {
+    loading.value.update = true
+    await updateAbsence({
+      updateAbsenceInput: {
+        id: values.id,
+        type: values.type,
+        startDate: formatDateTime(values.startDate),
+        endDate: formatDateTime(values.endDate),
+        description: values.description,
+      },
+    })
+    loading.value.update = false
+    showToast('success', 'Success', 'Absence has been updated')
+    await refetch()
+    toggleModal()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 // handle delete absence
 const handleDelete = async (absence: Absence) => {
-  await deleteAbsence({
-    id: absence.id,
-  })
-  showToast(
-    'success',
-    'Success',
-    `Absence of ${absence.user.firstname} has been deleted`,
-  )
-  await refetch()
+  try {
+    await deleteAbsence({
+      id: absence.id,
+    })
+    showToast(
+      'success',
+      'Success',
+      `Absence of ${absence.user.firstname} has been deleted`,
+    )
+    await refetch()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 // open or close modal
@@ -393,6 +409,7 @@ watchEffect(() => {
         create: false,
       }
 
+      LogRocket.captureException(error)
       showToast('error', 'Error', error.message)
     }
   })

@@ -4,6 +4,7 @@ export const CREATE_LOCATION = gql`
   mutation createLocation($createLocationInput: CreateLocationInput!) {
     createLocation(createLocationInput: $createLocationInput) {
       id
+      title
       userId
       address
       lat
@@ -18,6 +19,7 @@ export const UPDATE_LOCATION = gql`
   mutation updateLocation($updateLocationInput: UpdateLocationInput!) {
     updateLocation(updateLocationInput: $updateLocationInput) {
       id
+      title
       userId
       address
       lat

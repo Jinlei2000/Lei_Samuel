@@ -8,7 +8,6 @@ export const absenceValidationSchema = yup.object({
 })
 
 export const userUpdateValidationSchema = yup.object({
-  email: yup.string().required().email(),
   firstname: yup.string().required(),
   lastname: yup.string().required(),
   telephone: yup
@@ -33,6 +32,7 @@ export const userUpdateValidationSchema = yup.object({
 })
 
 export const locationValidationSchema = yup.object({
+  locationTitle: yup.string().required(),
   searchAdressInput: yup.string().required().trim(),
   selectedAddress: yup.object().required(),
 })

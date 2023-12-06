@@ -37,21 +37,29 @@
       </li>
     </ul>
 
-    <CustomButton
-      class="ml-auto flex"
-      :class="schema.button.class"
-      :loading="loading"
-      type="submit"
-      :name="schema.button.name"
-    />
+    <div class="flex-end flex justify-between">
+      <CustomButton
+        v-if="cancel"
+        name="cancel"
+        variant="secondary"
+        @click="cancel()"
+      />
+      <CustomButton
+        class="ml-auto flex"
+        :class="schema.button.class"
+        :loading="loading"
+        type="submit"
+        :name="schema.button.name"
+      />
+    </div>
   </Form>
 </template>
 
 <script setup lang="ts">
-import CustomButton from '@/components/generic/CustomButton.vue'
-import { ErrorMessage, Form, configure } from 'vee-validate'
-import { onBeforeMount, ref } from 'vue'
 import DynamicField from './DynamicField.vue'
+import CustomButton from '@/components/generic/CustomButton.vue'
+import { configure, ErrorMessage, Form } from 'vee-validate'
+import { onBeforeMount, ref } from 'vue'
 
 const props = defineProps({
   schema: {
@@ -68,6 +76,10 @@ const props = defineProps({
   handleForm: {
     type: Function,
     required: true,
+  },
+  cancel: {
+    type: Function,
+    required: false,
   },
   loading: {
     type: Boolean,

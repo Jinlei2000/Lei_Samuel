@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Subscription,
+  ObjectType,
+  Field,
+} from '@nestjs/graphql'
 import { AppointmentsService } from './appointments.service'
 import { Appointment } from './entities/appointment.entity'
 import { CreateAppointmentInput } from './dto/create-appointment.input'
@@ -10,6 +18,9 @@ import { UseGuards } from '@nestjs/common'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { AllowedRoles } from 'src/users/decorators/role.decorator'
 import { RolesGuard } from 'src/users/guards/roles.guard'
+import { PubSub } from 'graphql-subscriptions'
+
+const pubSub = new PubSub()
 
 @Resolver(() => Appointment)
 export class AppointmentsResolver {
@@ -64,6 +75,11 @@ export class AppointmentsResolver {
     @Args('createAppointmentInput')
     createAppointmentInput: CreateAppointmentInput,
   ) {
+    const myMsg = new NewAppointmentMessage(
+      'A new appointment was created',
+      createAppointmentInput.description,
+    )
+    pubSub.publish('newAppointmentAdded', { newAppointmentAdded: myMsg }) // <-- publish the message
     return this.appointmentsService.create(createAppointmentInput)
   }
 
@@ -86,4 +102,22 @@ export class AppointmentsResolver {
   removeAppointment(@Args('id', { type: () => String }) id: string) {
     return this.appointmentsService.remove(id)
   }
+
+  @Subscription(() => NewAppointmentMessage)
+  newAppointmentAdded() {
+    return pubSub.asyncIterator('newAppointmentAdded') // <-- subscribe to the message
+  }
+}
+
+@ObjectType() // <-- create a graphql ObjectType for the subscription
+class NewAppointmentMessage {
+  constructor(content: string, who: string) {
+    this.content = content
+    this.who = who
+  }
+
+  @Field()
+  content: string
+  @Field()
+  who: string
 }

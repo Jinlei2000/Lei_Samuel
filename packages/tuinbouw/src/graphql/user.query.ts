@@ -14,6 +14,7 @@ export const GET_USER_BY_UID = gql`
       locations {
         id
         userId
+        title
         address
         lng
         lat
@@ -50,6 +51,7 @@ export const GET_USERS = gql`
       locations {
         id
         userId
+        title
         address
         lng
         lat
@@ -82,6 +84,7 @@ export const GET_EMPLOYEES_AVAILABLE_BY_DATE = gql`
       locations {
         id
         userId
+        title
         address
         lng
         lat
@@ -111,6 +114,7 @@ export const GET_USER_BY_ID = gql`
       locations {
         id
         userId
+        title
         address
         lng
         lat

@@ -32,11 +32,20 @@
                 >Users</RouterLink
               >
             </li>
-            <li v-if="role == 'admin'">
+            <li v-if="role == 'admin'" class="relative">
+              <div
+                v-if="newAppointments > 0"
+                class="bg-primary-green absolute -right-4 -top-3 flex h-5 w-5 items-center justify-center rounded-full"
+              >
+                <p class="text-sm font-normal text-white">
+                  {{ newAppointments }}
+                </p>
+              </div>
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/appointments`"
+                @click="newAppointments = 0"
                 >Appointments</RouterLink
               >
             </li>
@@ -108,17 +117,6 @@
                   <User /> Profile
                 </button>
               </Router-link>
-              <Router-link
-                v-if="role === 'employee' || role === 'admin'"
-                :to="goToAbsences()"
-              >
-                <button
-                  class="hover:text-primary-green flex gap-3"
-                  @click="showProfileDropdown()"
-                >
-                  <Hourglass /> Absences
-                </button>
-              </Router-link>
               <button
                 class="hover:text-primary-green flex gap-3"
                 @click="handleLogout()"
@@ -140,15 +138,17 @@
 </template>
 
 <script setup lang="ts">
+import Logo from '../Logo.vue'
+import Container from '../wrapper/Container.vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
+import { APPOINTMENT_CREATED } from '@/graphql/appointment.subscription'
 import router from '@/router'
-import { Hourglass, LogIn, LogOut, User } from 'lucide-vue-next'
-import { ref, watchEffect } from 'vue'
-import Logo from '../Logo.vue'
-import Container from '../wrapper/Container.vue'
+import { useSubscription } from '@vue/apollo-composable'
+import { LogIn, LogOut, User } from 'lucide-vue-next'
+import { ref, watch, watchEffect } from 'vue'
 
 const { logout } = useFirebase()
 
@@ -161,6 +161,8 @@ const { currentRoute } = router
 const role = ref('')
 
 const profileDropdown = ref(false)
+
+const newAppointments = ref(0)
 
 const showProfileDropdown = () => {
   profileDropdown.value = !profileDropdown.value
@@ -191,16 +193,19 @@ const checkPath = () => {
     return true
   }
 
+  if (routePath === '/admin/dashboard') {
+    newAppointments.value = 0
+  }
+
   return false
 }
 
-const goToAbsences = () => {
-  let path = ''
-  if (role.value === 'employee') path = '/employee/absences'
-  else if (role.value === 'admin') path = '/admin/absences-own'
+const { result: appointmentCreated } = useSubscription(APPOINTMENT_CREATED)
 
-  return path
-}
+watch(appointmentCreated, (data: any) => {
+  console.log('New message received:', data)
+  newAppointments.value++
+})
 
 watchEffect(() => {
   if (customUser.value) {

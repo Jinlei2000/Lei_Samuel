@@ -35,12 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import useFirebase from '@/composables/useFirebase'
-import { forgotPasswordValidationSchema } from '@/validation/schema'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
 import useCustomToast from '@/composables/useCustomToast'
+import useFirebase from '@/composables/useFirebase'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
+import { forgotPasswordValidationSchema } from '@/validation/schema'
+import LogRocket from 'logrocket'
+import { ref } from 'vue'
 
 // composables
 const { forgotPassword } = useFirebase()
@@ -80,6 +81,7 @@ const handleForgotPwd = async (values: CustomUser) => {
     })
     .catch(error => {
       console.log(error)
+      LogRocket.captureException(error)
       errorForgotPwd.value = error.message
     })
   loading.value = false

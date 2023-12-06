@@ -120,7 +120,29 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
-  //#region Seed all
+  //#region Firebase users
+  @Command({
+    command: 'seed:firebase:auth',
+    describe: 'Seed firebase authentication with users',
+  })
+  async seedFirebaseUsers() {
+    console.info('👌 Start seeding of firebase authentication users')
+    const users = await this.seedService.addFirebaseUsersFromJson()
+    console.info(`😎 ${users.length} Firebase authentication users are added`)
+  }
+
+  @Command({
+    command: 'seed:reset:firebase:auth',
+    describe: 'Delete all data from the firebase authentication users',
+  })
+  async deleteFirebaseUsers() {
+    console.info('💀 Start deleting firebase authentication users')
+    await this.seedService.deleteAllFirebaseUsers()
+    console.info('🥲 Removed firebase authentication users')
+  }
+  //#endregion
+
+  //#region Seed all database
   // Seed the database with appointments, materials, users...
   @Command({
     command: 'seed:database',
@@ -135,14 +157,14 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
-  //#region Reset all
+  //#region Reset all database
   // Delete all data from appointments, materials, users, locations... tables
   @Command({
-    command: 'seed:reset',
+    command: 'seed:reset:database',
     describe:
       'Delete all data from appointments, materials, users, locations... tables',
   })
-  async deleteAll() {
+  async deleteDatabase() {
     console.info('💀 Start deleting all data')
     await this.deleteAppointments()
     await this.deleteMaterials()
@@ -154,4 +176,31 @@ export class DatabaseSeedCommand {
     console.info('🥲 Removed all data')
   }
   //#endregion
+
+  //#region Seed all
+  // Seed database and firebase authentication
+  @Command({
+    command: 'seed',
+    describe: 'Seed the database and firebase authentication',
+  })
+  async seed() {
+    console.info('👌 Start seeding of database and firebase authentication')
+    await this.seedFirebaseUsers()
+    await this.seedDatabase()
+    console.info('😎 Seeding of database and firebase authentication is done')
+  }
+  //#endregion
+
+  //#region Reset all
+  // Delete all data from database and firebase authentication
+  @Command({
+    command: 'seed:reset',
+    describe: 'Delete all data from database and firebase authentication',
+  })
+  async reset() {
+    console.info('💀 Start deleting all data from database and firebase')
+    await this.deleteFirebaseUsers()
+    await this.deleteDatabase()
+    console.info('🥲 Removed all data from database and firebase')
+  }
 }

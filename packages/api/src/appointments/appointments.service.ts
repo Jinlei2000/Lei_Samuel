@@ -125,7 +125,7 @@ export class AppointmentsService {
     id: ObjectId,
     updateAppointmentInput: UpdateAppointmentInput,
   ): Promise<Appointment> {
-    const currentAppointment = await this.findOne(id.toString())
+    await this.findOne(id.toString())
 
     // TODO: add logic no update if done or (not dont & overdate)
 

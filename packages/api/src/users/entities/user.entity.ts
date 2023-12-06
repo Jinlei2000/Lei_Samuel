@@ -10,8 +10,11 @@ import {
 import { Location } from 'src/locations/entities/location.entity'
 
 export enum Role {
+  // eslint-disable-next-line no-unused-vars
   ADMIN = 'ADMIN',
+  // eslint-disable-next-line no-unused-vars
   EMPLOYEE = 'EMPLOYEE',
+  // eslint-disable-next-line no-unused-vars
   CLIENT = 'CLIENT',
 }
 

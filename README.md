@@ -29,6 +29,7 @@ For our Advanced Fullstack Development class project, we're crafting a comprehen
 - [Prettier](https://prettier.io/) for consistent code formatting.
 - [ESLint](https://eslint.org/) for maintaining code integrity.
 - [Lerna](https://lerna.js.org/) for simplified development.
+- [LogRocket](https://logrocket.com/) for detailed frontend error logging.
 
 
 <br/>
@@ -107,4 +108,37 @@ For our Advanced Fullstack Development class project, we're crafting a comprehen
 ### Environment variables
 
 documentatie over de environment variables
+
+#### Logrocket
+
+#### Firebase
+
+#### TomTom
+
+#### Nodemailer
+
+
+### Running the application 
+
+### Docker Desktop
+
+### Seed firebase authentication data (users)
+
+### Seed data in the database
+
+
+
+## Testing
+
+### Backend
+
+#### Unit tests (Jest)
+
+#### E2E tests (Supertest)
+
+### Frontend
+
+#### E2E tests (Playwright)
+
+
 

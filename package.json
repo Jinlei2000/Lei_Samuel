@@ -5,7 +5,9 @@
     "dev": "npx lerna run --scope=tuinbouw dev",
     "dev:api": "npx lerna run --scope=api dev",
     "translate": "npm run generate:translations -w tuinbouw",
-    "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev"
+    "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev --stream",
+    "lint": "npx lerna run --scope={tuinbouw,api} lint --stream",
+    "dev:emulate": "npx lerna run --scope={tuinbouw,api} dev:emulate --stream"
   },
   "repository": {
     "type": "git",
@@ -15,16 +17,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "prettier": {
-    "arrowParens": "avoid",
-    "endOfLine": "lf",
-    "printWidth": 80,
-    "semi": false,
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "all",
-    "useTabs": false
-  },
   "devDependencies": {
     "lerna": "^7.4.2"
   }

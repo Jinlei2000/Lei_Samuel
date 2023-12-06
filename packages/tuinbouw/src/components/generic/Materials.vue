@@ -172,6 +172,10 @@
 </template>
 
 <script setup lang="ts">
+import DynamicForm from './DynamicForm.vue'
+import Filter from './Filter.vue'
+import Search from './Search.vue'
+import Sort from './Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import {
@@ -193,13 +197,10 @@ import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { ArrowLeft, Pencil, PlusCircle, Trash2, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-import DynamicForm from './DynamicForm.vue'
-import Search from './Search.vue'
-import Sort from './Sort.vue'
-import Filter from './Filter.vue'
 
 // props
 const props = defineProps({
@@ -387,46 +388,60 @@ onMounted(() => {
 
 // handle create material
 const handleCreateMaterial = async (values: GenericObject) => {
-  loading.value.create = true
-  await createMaterial({
-    createMaterialInput: {
-      name: values.name,
-      serialNumber: parseInt(values.serialNumber),
-      isLoan: values.isLoan,
-      userId: values.userId,
-    },
-  })
-  loading.value.create = false
-  showToast('success', 'Success', 'Material has been created')
-  await refetch()
-  toggleModal()
+  try {
+    loading.value.create = true
+    await createMaterial({
+      createMaterialInput: {
+        name: values.name,
+        serialNumber: parseInt(values.serialNumber),
+        isLoan: values.isLoan,
+        userId: values.userId,
+      },
+    })
+    loading.value.create = false
+    showToast('success', 'Success', 'Material has been created')
+    await refetch()
+    toggleModal()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 // handle update material
 const handleUpdatematerial = async (values: GenericObject) => {
-  console.log(values)
-  loading.value.update = true
-  await updateMaterial({
-    updateMaterialInput: {
-      id: selectedMaterial.value?.id,
-      ...values,
-    },
-  })
-  loading.value.update = false
-  showToast('success', 'Success', 'Material has been updated')
-  await refetch()
-  toggleModal()
-  loading.value.update = false
+  try {
+    // console.log(values)
+    loading.value.update = true
+    await updateMaterial({
+      updateMaterialInput: {
+        id: selectedMaterial.value?.id,
+        ...values,
+      },
+    })
+    loading.value.update = false
+    showToast('success', 'Success', 'Material has been updated')
+    await refetch()
+    toggleModal()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 // handle delete material
 const handleDeleteMaterial = async (material: Material) => {
-  console.log(material.id)
-  await deleteMaterial({
-    id: material.id,
-  })
-  showToast('success', 'Success', 'Material has been deleted')
-  await refetch()
+  try {
+    // console.log(material.id)
+    await deleteMaterial({
+      id: material.id,
+    })
+    showToast('success', 'Success', 'Material has been deleted')
+    await refetch()
+  } catch (error) {
+    LogRocket.captureException(error as Error)
+    console.log(error)
+  }
 }
 
 const toggleModal = (
@@ -440,17 +455,6 @@ const toggleModal = (
     create: type === 'create',
   }
 }
-
-// watch availability
-watch(availability, () => {
-  if (availability.value === 'all') {
-    variables.value.filters = []
-  } else if (availability.value === 'available') {
-    variables.value.filters = ['A']
-  } else if (availability.value === 'not available') {
-    variables.value.filters = ['NA']
-  }
-})
 
 watchEffect(() => {
   // log the queries
@@ -471,6 +475,13 @@ watchEffect(() => {
   ]
   errors.forEach(error => {
     if (error) {
+      loading.value = {
+        ...loading.value,
+        update: false,
+        create: false,
+      }
+
+      LogRocket.captureException(error)
       showToast('error', 'Error', error.message)
     }
   })

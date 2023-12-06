@@ -35,24 +35,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
-import router from '@/router'
-import { type GenericObject } from 'vee-validate'
+import useLanguage from '@/composables/useLanguage'
 import { CREATE_CLIENT } from '@/graphql/user.mutation'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
-import { useMutation } from '@vue/apollo-composable'
-import useLanguage from '@/composables/useLanguage'
-import useCustomUser from '@/composables/useCustomUser'
-import DynamicForm from '@/components/generic/DynamicForm.vue'
+import router from '@/router'
 import { registerValidationSchema } from '@/validation/schema'
+import { useMutation } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
+import { type GenericObject } from 'vee-validate'
+import { ref, watch } from 'vue'
 
 // composables
 const { register } = useFirebase()
 const { mutate: addClient, error: addClientError } =
   useMutation<CustomUser>(CREATE_CLIENT)
 const { locale, setLocale } = useLanguage()
-const { customUser } = useCustomUser()
+const { customUser, restoreCustomUser } = useCustomUser()
 
 watch(addClientError, () => {
   if (!addClientError.value) return
@@ -116,10 +117,12 @@ const handleRegister = async (values: GenericObject) => {
     })
 
     console.log('Register success')
-    setLocale(customUser.value!.locale!)
+    await restoreCustomUser()
+    await setLocale(customUser.value!.locale!)
     router.replace('/auth/login')
   } catch (error) {
     console.log(error)
+    LogRocket.captureException(error as Error)
     errorRegister.value = (error as Error).message
   }
   loading.value = false

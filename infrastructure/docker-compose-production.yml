@@ -38,8 +38,8 @@ services:
 
 
 volumes:
-  dbvolumetuinbouwproduction: # TODO: change later name
+  dbvolumetuinbouwproduction:
 
 secrets:
   my-google-secret:
-    file: C:/Users/jinle/Downloads/credentials.json
+    file: ../credentials.json # change location

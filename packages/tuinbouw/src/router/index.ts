@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import useFirebase from '@/composables/useFirebase'
 import useCustomUser from '@/composables/useCustomUser'
+import useFirebase from '@/composables/useFirebase'
 import { Role } from '@/interfaces/custom.user.interface'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -137,11 +137,6 @@ const router = createRouter({
           component: () => import('../views/client/AllAppointments.vue'),
         },
       ],
-    },
-
-    {
-      path: '/form',
-      component: () => import('../views/Form.vue'),
     },
 
     {

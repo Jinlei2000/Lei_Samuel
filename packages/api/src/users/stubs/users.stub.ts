@@ -40,12 +40,28 @@ export const userClientStub = (): User => {
   return u
 }
 
-export const userStaffStub = (): User => {
+export const userEmployeeStub = (): User => {
   const u = new User()
   u.id = new ObjectId('5f9d4a3f9d6c6a1d9c9bce1a')
   u.uid = '652e5989204b1d8ef65ed992'
   u.locale = 'en'
   u.role = Role.EMPLOYEE
+  u.firstname = 'John'
+  u.lastname = 'Doe'
+  u.fullname = 'John Doe'
+  u.email = 'john@gmail.com'
+  u.telephone = '123456789'
+  u.invoiceOption = 'post'
+  u.absentCount = 0
+  return u
+}
+
+export const userAdminStub = (): User => {
+  const u = new User()
+  u.id = new ObjectId('5f9d4a3f9d6c6a1d9c9bce1a')
+  u.uid = '652e5989204b1d8ef65ed992'
+  u.locale = 'en'
+  u.role = Role.ADMIN
   u.firstname = 'John'
   u.lastname = 'Doe'
   u.fullname = 'John Doe'

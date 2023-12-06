@@ -14,15 +14,15 @@
 </template>
 
 <script setup lang="ts">
-import { provide } from 'vue'
-import { DefaultApolloClient } from '@vue/apollo-composable'
-import useGraphql from './composables/useGraphql'
-import { useI18n } from 'vue-i18n'
-import useLanguage from './composables/useLanguage'
 // import type AppHeaderVue from '../components/generic/AppHeader.vue'
 import AppHeader from './components/generic/AppHeader.vue'
 import useCustomUser from './composables/useCustomUser'
-import { XCircle, Info, AlertTriangle, Check, X } from 'lucide-vue-next'
+import useGraphql from './composables/useGraphql'
+import useLanguage from './composables/useLanguage'
+import { DefaultApolloClient } from '@vue/apollo-composable'
+import { AlertTriangle, Check, Info, X, XCircle } from 'lucide-vue-next'
+import { provide } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { apolloClient } = useGraphql()
 const { setLocale } = useLanguage()

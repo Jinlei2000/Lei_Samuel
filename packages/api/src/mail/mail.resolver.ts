@@ -28,7 +28,7 @@ export class MailResolver {
   ): Promise<Mail> {
     return this.mailService.findOneByToken(token)
   }
-  
+
   // Delete all mail tokens by userId
   @Mutation(() => [String], { name: 'removeAllMailTokensByUserId' })
   removeAllByUserId(

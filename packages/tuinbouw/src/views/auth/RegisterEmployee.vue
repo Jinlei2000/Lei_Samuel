@@ -35,20 +35,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import DynamicForm from '@/components/generic/DynamicForm.vue'
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
-import router from '@/router'
-import { type GenericObject } from 'vee-validate'
+import { DELETE_ALL_MAILTOKENS_BY_USERID } from '@/graphql/mail.token.mutation'
+import { GET_MAILTOKEN_BY_TOKEN } from '@/graphql/mail.token.query'
 import { UPDATE_EMPLOYEE_REGISTER } from '@/graphql/user.mutation'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
-import { useMutation, useQuery } from '@vue/apollo-composable'
-import { useI18n } from 'vue-i18n'
-import { GET_MAILTOKEN_BY_TOKEN } from '@/graphql/mail.token.query'
-import useCustomUser from '@/composables/useCustomUser'
-import { DELETE_ALL_MAILTOKENS_BY_USERID } from '@/graphql/mail.token.mutation'
-import { useRouter } from 'vue-router'
-import DynamicForm from '@/components/generic/DynamicForm.vue'
+import router from '@/router'
 import { registerValidationSchema } from '@/validation/schema'
+import { useMutation, useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
+import { type GenericObject } from 'vee-validate'
+import { ref, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 // composables
 const { register } = useFirebase()
@@ -147,6 +148,7 @@ const handleRegister = async (values: GenericObject) => {
     }
   } catch (error) {
     console.log(error)
+    LogRocket.captureException(error as Error)
     errorRegister.value = (error as Error).message
   }
   loading.value = false

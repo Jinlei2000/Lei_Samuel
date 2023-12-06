@@ -19,7 +19,7 @@
   <section
     v-show="isDropdownOpen"
     :class="[
-      'border-1 absolute top-16 z-50 flex flex-col gap-3 rounded-2xl border-black bg-gray-200 px-12 py-6',
+      'border-1 top-15 z-100 absolute flex flex-col gap-3 rounded-2xl border-black bg-gray-200 px-12 py-6',
       'transition-all duration-200',
       isDropdownOpen ? 'opacity-100' : 'pointer-events-none opacity-0 ',
     ]"
@@ -86,9 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import { Filter as FilterIcon, Check } from 'lucide-vue-next'
+import { Check, Filter as FilterIcon } from 'lucide-vue-next'
 import { ChevronDown } from 'lucide-vue-next'
-import { ref, type PropType, onBeforeMount } from 'vue'
+import { onBeforeMount, type PropType, ref } from 'vue'
 
 interface FilterOption {
   title: string
