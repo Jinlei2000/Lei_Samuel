@@ -6,9 +6,9 @@
         <!-- Profile picture -->
         <div>
           <img
-            v-if="user?.url"
+            v-if="user.url"
             class="h-24 w-24 rounded-full"
-            :src="user?.url"
+            :src="user.url"
             alt="Profile picture"
           />
           <div
@@ -66,9 +66,9 @@
       <!-- Name & Email -->
       <div class="flex flex-col items-center gap-1">
         <h1 class="text-2xl capitalize">
-          {{ user?.fullname }}
+          {{ user.fullname }}
         </h1>
-        <p class="opacity-80">{{ user?.email }}</p>
+        <p class="opacity-80">{{ user.email }}</p>
       </div>
     </section>
 
@@ -325,7 +325,7 @@
 
   <!-- Detail Absence Modal -->
   <Dialog
-    v-model:visible="absenceModalVisible.openModal"
+    v-model:visible="absenceModalVisible.detail"
     modal
     header="Absence Details"
     :draggable="false"
@@ -337,7 +337,7 @@
     }"
   >
     <div
-      v-if="selectedAbsence && absenceModalVisible.detail"
+      v-if="selectedAbsence && !isEditingAbsence"
       class="flex flex-col gap-6"
     >
       <div class="flex flex-col gap-3">
@@ -363,14 +363,14 @@
         </button>
         <button
           class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
-          @click="toggleAbsenceModal(selectedAbsence, 'edit')"
+          @click="isEditingAbsence = true"
         >
           Edit
         </button>
       </div>
     </div>
     <DynamicForm
-      v-if="absenceModalVisible.edit"
+      v-if="isEditingAbsence"
       :schema="formAbsence"
       :validation-schema="absenceValidationSchema"
       :handle-form="handleUpdateAbsence"
@@ -799,7 +799,7 @@ const { mutate: deleteUser } = useMutation(DELETE_USER)
 
 // logics
 // handle upload image
-const handleUploadImage = async (event: Event) => {
+const handleUploadImage = async (event: Event): Promise<void> => {
   loadingUser.value.uploadPicture = true
   const selectedPicture = (event.target as HTMLInputElement).files?.[0]
   try {
@@ -829,7 +829,7 @@ const handleUploadImage = async (event: Event) => {
 }
 
 // handle delete user
-const handleDeleteUser = async () => {
+const handleDeleteUser = async (): Promise<void> => {
   try {
     // delete profile picture
     await deleteProfile(customUser.value!.uid)
@@ -849,7 +849,7 @@ const handleDeleteUser = async () => {
 }
 
 // handle update user
-const handleUpdateUser = async (values: CustomUser) => {
+const handleUpdateUser = async (values: CustomUser): Promise<void> => {
   try {
     loadingUser.value.update = true
     await updateUser({
@@ -878,7 +878,7 @@ const handleUpdateUser = async (values: CustomUser) => {
   }
 }
 
-const toggleUserModal = (type: string = 'close') => {
+const toggleUserModal = (type: string = 'close'): void => {
   userModalVisible.value = {
     update: type === 'update',
   }
@@ -893,7 +893,7 @@ watchEffect(() => {
   if (userError.value) {
     console.log(userError.value)
     LogRocket.captureException(userError.value)
-    showToast('error', 'Error', "Can't your data")
+    showToast('error', 'Error', "Can't get your data")
   }
 })
 //#endregion
@@ -901,8 +901,11 @@ watchEffect(() => {
 //#region ABSENCE
 const selectedAbsence = ref<Absence | null>(null)
 
-const absenceModalVisible = ref({
-  openModal: false,
+const absenceModalVisible = ref<{
+  detail: boolean
+  edit: boolean
+  create: boolean
+}>({
   detail: false,
   edit: false,
   create: false,
@@ -927,6 +930,8 @@ const loadingAbsence = ref<{
   create: false,
   update: false,
 })
+
+const isEditingAbsence = ref<boolean>(false)
 
 // form schema absence
 const formAbsence = {
@@ -980,15 +985,13 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const { mutate: deleteAbsence, error: deleteAbsenceError } =
-  useMutation(DELETE_ABSENCE)
+const { mutate: deleteAbsence } = useMutation(DELETE_ABSENCE)
 
-const { mutate: updateAbsence, error: updateAbsenceError } =
-  useMutation(UPDATE_ABSENCE)
+const { mutate: updateAbsence } = useMutation(UPDATE_ABSENCE)
 
-const { mutate: createAbsence, error: createAbsenceError } =
-  useMutation(CREATE_ABSENCE)
+const { mutate: createAbsence } = useMutation(CREATE_ABSENCE)
 
+// logics
 // on mounted
 onMounted(() => {
   variables.value.userId = customUser.value?.id
@@ -997,9 +1000,8 @@ onMounted(() => {
   }
 })
 
-// logics
 // handle create absence
-const handleCreateAbsence = async (values: Absence) => {
+const handleCreateAbsence = async (values: Absence): Promise<void> => {
   try {
     loadingAbsence.value.create = true
     await createAbsence({
@@ -1011,18 +1013,21 @@ const handleCreateAbsence = async (values: Absence) => {
         description: values.description,
       },
     })
-    loadingAbsence.value.create = false
     showToast('success', 'Success', 'Absence has been created')
     await refetch()
     toggleAbsenceModal()
-  } catch (err) {
-    LogRocket.captureException(err as Error)
-    console.log(err)
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't create a absence")
+  } finally {
+    loadingAbsence.value.create = false
   }
 }
 
 // handle update absence
-const handleUpdateAbsence = async (values: Absence) => {
+const handleUpdateAbsence = async (values: Absence): Promise<void> => {
   try {
     // console.log(values)
     loadingAbsence.value.update = true
@@ -1035,18 +1040,21 @@ const handleUpdateAbsence = async (values: Absence) => {
         description: values.description,
       },
     })
-    loadingAbsence.value.update = false
     showToast('success', 'Success', 'Absence has been updated')
     await refetch()
     toggleAbsenceModal()
-  } catch (err) {
-    LogRocket.captureException(err as Error)
-    console.log(err)
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't update a absence")
+  } finally {
+    loadingAbsence.value.update = false
   }
 }
 
 // handle delete absence
-const handleDeleteAbsence = async (absence: Absence) => {
+const handleDeleteAbsence = async (absence: Absence): Promise<void> => {
   try {
     await deleteAbsence({
       id: absence.id,
@@ -1058,65 +1066,30 @@ const handleDeleteAbsence = async (absence: Absence) => {
     )
     await refetch()
     toggleAbsenceModal()
-  } catch (err) {
-    LogRocket.captureException(err as Error)
-    console.log(err)
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't delete a absence")
   }
 }
 
-// TODO: refactor
 // open or close modal
 const toggleAbsenceModal = (
   absence: Absence | null = null,
   type: string = 'close',
-) => {
+): void => {
   selectedAbsence.value = absence ? { ...absence } : null
-
-  // switch case for type
-  switch (type) {
-    case 'edit':
-      absenceModalVisible.value = {
-        openModal: true,
-        detail: false,
-        edit: true,
-        create: false,
-      }
-      break
-    case 'detail':
-      absenceModalVisible.value = {
-        openModal: true,
-        detail: true,
-        edit: false,
-        create: false,
-      }
-      break
-    case 'create':
-      absenceModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: true,
-      }
-      break
-    case 'close':
-      absenceModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: false,
-      }
-      break
-    default:
-      break
+  isEditingAbsence.value = false
+  absenceModalVisible.value = {
+    detail: type === 'detail',
+    edit: type === 'edit',
+    create: type === 'create',
   }
 }
 
-const cancelAbsenceEdit = () => {
+const cancelAbsenceEdit = (): void => {
   toggleAbsenceModal(selectedAbsence.value, 'detail')
-}
-
-const cancelLocationEdit = () => {
-  toggleLocationModal(selectedLocation.value, 'detail')
 }
 
 const refetch = async (): Promise<void> => {
@@ -1124,7 +1097,7 @@ const refetch = async (): Promise<void> => {
 }
 
 // Change date to mm/dd/yyyy
-const formatAbsenceDate = (date: string) => {
+const formatAbsenceDate = (date: string): string => {
   const dateObj = new Date(date)
   return new Intl.DateTimeFormat('en', {
     day: '2-digit',
@@ -1140,25 +1113,12 @@ watchEffect(() => {
   // if (absencesResult.value) console.log(absencesResult.value)
 
   // all errors
-  const errors = [
-    deleteAbsenceError.value,
-    updateAbsenceError.value,
-    createAbsenceError.value,
-    absencesByUserIdError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loadingAbsence.value = {
-        update: false,
-        create: false,
-      }
-
-      LogRocket.captureException(error)
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (absencesByUserIdError.value) {
+    // console.log(absencesByUserIdError.value)
+    LogRocket.captureException(absencesByUserIdError.value)
+    showToast('error', 'Error', "Can't get your absences data")
+  }
 })
-
 //#endregion
 
 //#region LOCATION
@@ -1338,6 +1298,10 @@ const toggleLocationModal = (
     default:
       break
   }
+}
+
+const cancelLocationEdit = () => {
+  toggleLocationModal(selectedLocation.value, 'detail')
 }
 
 // reset input fields
