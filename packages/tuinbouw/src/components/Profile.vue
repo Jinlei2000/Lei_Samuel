@@ -408,7 +408,7 @@
 
   <!-- Detail Location Modal -->
   <Dialog
-    v-model:visible="locationModalVisible.openModal"
+    v-model:visible="locationModalVisible.detail"
     modal
     header="Location Details"
     :draggable="false"
@@ -420,7 +420,7 @@
     }"
   >
     <div
-      v-if="selectedLocation && locationModalVisible.detail"
+      v-if="selectedLocation && !isEditingLocation"
       class="flex flex-col gap-6"
     >
       <div class="flex flex-col gap-1">
@@ -456,7 +456,7 @@
         </button>
         <button
           class="border-primary-blue text-primary-blue justify-self-end rounded-[4px] border px-3 py-1"
-          @click="toggleLocationModal(selectedLocation, 'edit')"
+          @click="isEditingLocation = true"
         >
           Edit
         </button>
@@ -464,25 +464,23 @@
     </div>
 
     <!-- Edit Location -->
-    <form
-      v-if="locationModalVisible.edit"
-      @submit.prevent="handleUpdateLocation"
-    >
+    <form v-if="isEditingLocation" @submit.prevent="handleUpdateLocation">
+      <!-- BUG: Avoid app logic that relies on enumerating keys on a component instance. The keys will be empty in production mode to avoid performance overhead.  -->
       <div class="flex flex-col gap-3">
         <InputField
+          v-bind="locationTitle"
           name="Title"
           type="text"
           :placeholder="selectedLocation?.title"
           :error-message="errorMessages.title"
-          v-bind="locationTitle"
         />
         <div class="flex w-full items-end justify-between gap-3">
           <InputField
+            v-bind="searchAdressInput"
             name="Address"
             type="text"
             placeholder="Search Address"
             :error-message="errorMessages.searchAdressInput"
-            v-bind="searchAdressInput"
           />
           <CustomButton
             name="Search"
@@ -492,52 +490,41 @@
         </div>
       </div>
 
+      <small v-if="errorMessages.selectedAddress" class="p-error">{{
+        errorMessages.selectedAddress || '&nbsp;'
+      }}</small>
+
       <!-- show search results -->
-      <div v-if="searchAddressResults">
+      <div v-else-if="searchAddressResults && searchAddressResults.length > 0">
         <div
-          v-for="coordinate in searchAddressResults"
-          :key="coordinate.address"
-          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
+          v-for="(coordinate, index) in searchAddressResults"
+          :key="index"
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
         >
           <div class="flex items-center">
-            <!-- Add a radio button input -->
             <input
+              :id="`${index}`"
               type="radio"
               name="selectedAddress"
               v-bind="selectedAddress"
               class="mr-3"
               :value="coordinate"
             />
-            <h2 class="text-lg">{{ coordinate.address }}</h2>
+            <label :for="`${index}`" class="text-lg">{{
+              coordinate.address
+            }}</label>
           </div>
         </div>
       </div>
-      <small class="p-error">{{
-        errorMessages.selectedAddress || '&nbsp;'
-      }}</small>
 
       <!-- show no results -->
-      <div v-if="searchAddressResults?.length === 0 || !searchAddressResults">
-        <div class="my-4">
-          <p class="text-gray-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              class="mx-auto h-8 w-8 text-gray-400"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </p>
-          <p class="text-center text-gray-600">No results</p>
-        </div>
+      <div
+        v-else
+        class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
+      >
+        <p class="text-lg">No locations</p>
       </div>
+
       <div class="flex justify-between">
         <CustomButton
           name="Cancel"
@@ -903,11 +890,9 @@ const selectedAbsence = ref<Absence | null>(null)
 
 const absenceModalVisible = ref<{
   detail: boolean
-  edit: boolean
   create: boolean
 }>({
   detail: false,
-  edit: false,
   create: false,
 })
 
@@ -1083,7 +1068,6 @@ const toggleAbsenceModal = (
   isEditingAbsence.value = false
   absenceModalVisible.value = {
     detail: type === 'detail',
-    edit: type === 'edit',
     create: type === 'create',
   }
 }
@@ -1122,10 +1106,11 @@ watchEffect(() => {
 //#endregion
 
 //#region LOCATION
-const locationModalVisible = ref({
-  openModal: false,
+const locationModalVisible = ref<{
+  detail: boolean
+  create: boolean
+}>({
   detail: false,
-  edit: false,
   create: false,
 })
 const selectedLocation = ref<Location | null>(null)
@@ -1139,6 +1124,7 @@ const loadingLocation = ref<{
   update: false,
   searchAddress: false,
 })
+const isEditingLocation = ref<boolean>(false)
 
 // error messages of forms
 const errorMessages = ref<{
@@ -1161,151 +1147,143 @@ const {
   validationSchema: locationValidationSchema,
 })
 
+// TODO: add error locationTitle
+
 const locationTitle = defineComponentBindsLocation('locationTitle')
 const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
 const selectedAddress = defineInputBindsLocation('selectedAddress')
 
 // graphql
-const { mutate: createLocation, error: createLocationError } =
-  useMutation(CREATE_LOCATION)
+const { mutate: createLocation } = useMutation(CREATE_LOCATION)
 
-const { mutate: updateLocation, error: updateLocationError } =
-  useMutation(UPDATE_LOCATION)
+const { mutate: updateLocation } = useMutation(UPDATE_LOCATION)
 
-const { mutate: deleteLocation, error: deleteLocationError } =
-  useMutation(DELETE_LOCATION)
+const { mutate: deleteLocation } = useMutation(DELETE_LOCATION)
 
 // search address
-const handleSearchAddress = async () => {
-  loadingLocation.value.searchAddress = true
-  searchAddressResults.value = null
-  errorMessages.value = {}
+const handleSearchAddress = async (): Promise<void> => {
+  try {
+    loadingLocation.value.searchAddress = true
+    searchAddressResults.value = null
+    errorMessages.value = {}
 
-  await validateLocation()
-  errorMessages.value.searchAdressInput = errorsLocation.value.searchAdressInput
-  if (!errorsLocation.value.searchAdressInput) {
-    try {
+    await validateLocation()
+    errorMessages.value.searchAdressInput =
+      errorsLocation.value.searchAdressInput
+    if (!errorsLocation.value.searchAdressInput) {
       const results = await searchAddress(valuesLocation.searchAdressInput)
-      loadingLocation.value.searchAddress = false
       if (results) {
         searchAddressResults.value = results
       }
-    } catch (err) {
-      if (err instanceof Error) showToast('error', 'Error', err.message)
     }
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't search for address")
+  } finally {
+    loadingLocation.value.searchAddress = false
   }
-  loadingLocation.value.searchAddress = false
 }
 
 // add new location
-const handleCreateLocation = async () => {
-  loadingLocation.value.create = true
-  await validateLocation()
-  errorMessages.value = errorsLocation.value
-  if (Object.keys(errorsLocation.value).length === 0) {
-    console.log('no errors', valuesLocation)
-    await createLocation({
-      createLocationInput: {
-        title: valuesLocation.locationTitle,
-        address: valuesLocation.selectedAddress.address,
-        lat: valuesLocation.selectedAddress.lat,
-        lng: valuesLocation.selectedAddress.lng,
-        userId: customUser.value?.id,
-      },
-    })
+const handleCreateLocation = async (): Promise<void> => {
+  try {
+    loadingLocation.value.create = true
+    await validateLocation()
+    errorMessages.value = errorsLocation.value
+    if (Object.keys(errorsLocation.value).length === 0) {
+      console.log('no errors', valuesLocation)
+      await createLocation({
+        createLocationInput: {
+          title: valuesLocation.locationTitle,
+          address: valuesLocation.selectedAddress.address,
+          lat: valuesLocation.selectedAddress.lat,
+          lng: valuesLocation.selectedAddress.lng,
+          userId: customUser.value?.id,
+        },
+      })
+      showToast('success', 'Success', `You have created a new location`)
+      refetchUser()
+    }
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't create a location")
+  } finally {
     loadingLocation.value.create = false
-    showToast('success', 'Success', `You have created a new location`)
-    refetchUser()
   }
-  loadingLocation.value.create = false
 }
 
 // update location
-const handleUpdateLocation = async () => {
-  loadingLocation.value.update = true
-  await validateLocation()
-  errorMessages.value = errorsLocation.value
-  if (Object.keys(errorsLocation.value).length === 0) {
-    console.log('no errors', valuesLocation)
-    await updateLocation({
-      updateLocationInput: {
-        id: selectedLocation.value?.id,
-        title: valuesLocation.locationTitle,
-        address: valuesLocation.selectedAddress.address,
-        lat: valuesLocation.selectedAddress.lat,
-        lng: valuesLocation.selectedAddress.lng,
-      },
-    })
+const handleUpdateLocation = async (): Promise<void> => {
+  try {
+    loadingLocation.value.update = true
+    await validateLocation()
+    errorMessages.value = errorsLocation.value
+    if (Object.keys(errorsLocation.value).length === 0) {
+      console.log('no errors', valuesLocation)
+      await updateLocation({
+        updateLocationInput: {
+          id: selectedLocation.value?.id,
+          title: valuesLocation.locationTitle,
+          address: valuesLocation.selectedAddress.address,
+          lat: valuesLocation.selectedAddress.lat,
+          lng: valuesLocation.selectedAddress.lng,
+        },
+      })
+      showToast('success', 'Success', `You have updated a location`)
+      refetchUser()
+      toggleLocationModal()
+    }
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't update a location")
+  } finally {
     loadingLocation.value.update = false
-    showToast('success', 'Success', `You have updated a location`)
-    resetInputfields()
-    refetchUser()
-    toggleLocationModal()
   }
-  loadingLocation.value.update = false
 }
 
 // delete location
-const handleDeleteLocation = async (id: string) => {
-  await deleteLocation({
-    id: id,
-  })
-  toggleLocationModal() // close modal
-  showToast('success', 'Success', `You have deleted a location`)
-  refetchUser()
+const handleDeleteLocation = async (id: string): Promise<void> => {
+  try {
+    await deleteLocation({
+      id: id,
+    })
+    toggleLocationModal() // close modal
+    showToast('success', 'Success', `You have deleted a location`)
+    refetchUser()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't delete a location")
+  }
 }
 
 const toggleLocationModal = (
   location: Location | null = null,
   type: string = 'close',
-) => {
+): void => {
+  resetInputfields()
   selectedLocation.value = location ? { ...location } : null
+  isEditingLocation.value = false
 
-  // switch case for type
-  switch (type) {
-    case 'edit':
-      locationModalVisible.value = {
-        openModal: true,
-        detail: false,
-        edit: true,
-        create: false,
-      }
-      break
-    case 'detail':
-      locationModalVisible.value = {
-        openModal: true,
-        detail: true,
-        edit: false,
-        create: false,
-      }
-      break
-    case 'create':
-      locationModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: true,
-      }
-      break
-    case 'close':
-      locationModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: false,
-      }
-      break
-    default:
-      break
+  locationModalVisible.value = {
+    detail: type === 'detail',
+    create: type === 'create',
   }
 }
 
-const cancelLocationEdit = () => {
+const cancelLocationEdit = (): void => {
   toggleLocationModal(selectedLocation.value, 'detail')
 }
 
 // reset input fields
-const resetInputfields = () => {
+const resetInputfields = (): void => {
   setValuesLocation({
     locationTitle: '',
     searchAdressInput: '',
@@ -1315,27 +1293,5 @@ const resetInputfields = () => {
   searchAddressResults.value = null
   errorMessages.value = {}
 }
-
-watchEffect(() => {
-  // log the queries
-
-  // all errors
-  const errors = [
-    createLocationError.value,
-    updateLocationError.value,
-    deleteLocationError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loadingLocation.value = {
-        create: false,
-        update: false,
-        searchAddress: false,
-      }
-
-      showToast('error', 'Error', error.message)
-    }
-  })
-})
 //#endregion
 </script>
