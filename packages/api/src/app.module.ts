@@ -15,7 +15,7 @@ import { AbsencesModule } from './absences/absences.module'
 import { AppointmentsModule } from './appointments/appointments.module'
 import { SchedulesModule } from './schedules/schedules.module'
 import { MongoMemoryServer } from 'mongodb-memory-server'
-import { FirebaseUsersModule } from './firebase-users/firebase-users.module';
+import { FirebaseUsersModule } from './firebase-users/firebase-users.module'
 
 @Module({
   imports: [
@@ -25,6 +25,10 @@ import { FirebaseUsersModule } from './firebase-users/firebase-users.module';
       driver: ApolloDriver,
       autoSchemaFile: true,
       playground: process.env.NODE_ENV == 'production' ? false : true,
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
     }),
 
     TypeOrmModule.forRootAsync({
