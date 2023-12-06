@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Material } from './entities/material.entity'
 import { CreateMaterialInput } from './dto/create-material.input'
+import { materialStub, createMaterialInputStub } from './stubs/materials.stub'
 
 describe('MaterialsService', () => {
   let service: MaterialsService
@@ -16,9 +17,9 @@ describe('MaterialsService', () => {
         {
           provide: getRepositoryToken(Material),
           useValue: {
-            save: jest.fn().mockResolvedValue(new Material()),
-            find: jest.fn().mockResolvedValue([new Material()]),
-            findOne: jest.fn().mockResolvedValue(new Material()),
+            save: jest.fn().mockResolvedValue(materialStub()),
+            find: jest.fn().mockResolvedValue([materialStub()]),
+            findOne: jest.fn().mockResolvedValue(materialStub()),
           },
         },
       ],
@@ -41,8 +42,15 @@ describe('MaterialsService', () => {
     beforeEach(async () => {
       jest.spyOn(mockMaterialsRepository, 'find').mockResolvedValueOnce([])
 
-      materialTestInput = new CreateMaterialInputStub()
+      materialTestInput = createMaterialInputStub()
       materialResult = await service.create(materialTestInput)
+    })
+
+    describe('when create material', () => {
+      it('should call materialRepository.save one time', async () => {
+        const saveSpy = jest.spyOn(mockMaterialsRepository, 'save')
+        expect(saveSpy).toHaveBeenCalledTimes(1)
+      })
     })
   })
 })
