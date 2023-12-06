@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user" class="m-auto my-12 flex max-w-xl flex-col gap-6">
+  <main v-if="user" class="m-auto my-12 flex max-w-xl flex-col gap-6">
     <!-- Primary user info -->
     <div class="flex w-full flex-col items-center gap-6">
       <div class="relative">
@@ -199,10 +199,95 @@
     >
       Delete Account
     </button>
-  </div>
+  </main>
 
-  <!-- TODO: show skeleton -->
-  <div>Loading...</div>
+  <!-- Skeleton -->
+  <div v-else class="m-auto my-12 flex max-w-xl flex-col gap-6">
+    <!-- Primary user info -->
+    <div class="flex w-full flex-col items-center gap-6">
+      <div class="h-24 w-24 animate-pulse rounded-full bg-neutral-200"></div>
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-30 h-5 animate-pulse rounded-full bg-neutral-200"></div>
+        <div class="h-4 w-40 animate-pulse rounded-full bg-neutral-200"></div>
+      </div>
+    </div>
+
+    <!-- About me -->
+    <div class="w-full">
+      <div class="mb-3 flex w-full justify-between">
+        <h2 class="text-2xl">About me</h2>
+        <button class="text-primary-orange flex items-center gap-2 text-lg">
+          <Edit2 class="h-5 w-5" /> Edit
+        </button>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div
+          v-for="i in [1, 2]"
+          :key="i"
+          class="h-15 animate-pulse gap-3 rounded-2xl bg-gray-200"
+        />
+      </div>
+    </div>
+
+    <!-- Absences -->
+    <div
+      v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
+      class="flex w-full flex-col gap-3"
+    >
+      <h2 class="text-2xl">Absences</h2>
+      <button
+        class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
+      >
+        <PlusCircle class="mr-2" />
+        Add New Absence
+      </button>
+      <div class="flex w-full flex-col gap-3">
+        <button
+          v-for="absence in [1, 2]"
+          :key="absence"
+          class="flex items-center justify-between rounded-2xl bg-gray-200 p-3 pl-6 text-left"
+        >
+          <div class="flex w-2/3 gap-3">
+            <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
+            <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
+          </div>
+          <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Locations -->
+    <div class="flex w-full flex-col gap-3">
+      <h2 class="text-2xl">Locations</h2>
+      <button
+        v-if="customUser?.role == 'CLIENT'"
+        class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
+      >
+        <PlusCircle class="mr-2" />
+        Add Location
+      </button>
+      <div class="flex w-full flex-col gap-3">
+        <button
+          v-for="location in [1, 2]"
+          :key="location"
+          class="flex items-center justify-between overflow-hidden rounded-2xl bg-gray-200 text-left"
+        >
+          <div class="flex w-1/2 flex-col gap-2 py-3 pl-6">
+            <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
+            <div class="h-5 w-40 animate-pulse rounded-full bg-neutral-200" />
+          </div>
+          <div
+            class="h-28 w-1/2 animate-pulse rounded-3xl rounded-t-none rounded-bl-none bg-neutral-200"
+          />
+        </button>
+      </div>
+    </div>
+
+    <!-- Delete Account -->
+    <button class="bg-primary-red rounded-2xl py-3 text-white">
+      Delete Account
+    </button>
+  </div>
 
   <!-- Update User Modal -->
   <Dialog
