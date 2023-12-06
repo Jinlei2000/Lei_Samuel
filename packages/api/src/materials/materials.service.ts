@@ -87,6 +87,11 @@ export class MaterialsService {
   }
 
   create(createMaterialInput: CreateMaterialInput): Promise<Material> {
+    if (createMaterialInput.name.length < 3)
+      throw new GraphQLError(
+        'Material name should be at least 3 characters long!',
+      )
+
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()
     m.userId = createMaterialInput.userId

@@ -51,6 +51,45 @@ describe('MaterialsService', () => {
         const saveSpy = jest.spyOn(mockMaterialsRepository, 'save')
         expect(saveSpy).toHaveBeenCalledTimes(1)
       })
+
+      it('should call materialRepository.save with correct params', async () => {
+        const saveSpy = jest.spyOn(mockMaterialsRepository, 'save')
+        const myInput: Partial<Material> = createMaterialInputStub()
+        expect(saveSpy).toHaveBeenCalledWith(myInput)
+      })
+
+      it('should return material', async () => {
+        expect(materialResult).toEqual(materialStub())
+      })
+
+      // ERRORS
+      it('should throw an error if material name is too short', async () => {
+        materialTestInput.name = ''
+        const result = service.create(materialTestInput)
+        console.log(result)
+        await expect(result).rejects.toThrow(
+          'Material name should be at least 3 characters long!',
+        )
+      })
+    })
+  })
+
+  describe('findAll', () => {
+    let materialsResult: Material[]
+
+    beforeEach(async () => {
+      materialsResult = await service.findAll()
+    })
+
+    describe('when findAll is called', () => {
+      it('should call materialRepository.find one time', async () => {
+        const findSpy = jest.spyOn(mockMaterialsRepository, 'find')
+        expect(findSpy).toHaveBeenCalledTimes(1)
+      })
+
+      it('should return an array of materials', async () => {
+        expect(materialsResult).toEqual([materialStub()])
+      })
     })
   })
 })
