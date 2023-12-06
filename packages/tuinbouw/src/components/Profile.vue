@@ -88,13 +88,22 @@
           class="flex items-center justify-between border-b-[1px] border-white pb-6"
         >
           <p class="text-lg">Telephone</p>
-          <p>{{ user.telephone || 'unknown' }}</p>
+          <p v-if="user && user.telephone">{{ user.telephone }}</p>
+          <p v-else>unknown</p>
         </li>
         <li class="flex items-center justify-between pt-6">
           <p class="text-lg">Address</p>
-          <p>
-            {{ user.locations[0].address || 'unknown' }}
+          <p
+            v-if="
+              user &&
+              user.locations &&
+              user.locations[0] &&
+              user.locations[0].address
+            "
+          >
+            {{ user.locations[0].address }}
           </p>
+          <p v-else>unknown</p>
         </li>
       </ul>
     </section>
@@ -231,7 +240,7 @@
 
     <!-- Absences -->
     <section
-      v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
+      v-if="customUser?.role !== 'CLIENT'"
       class="flex w-full flex-col gap-3"
     >
       <h2 class="text-2xl">Absences</h2>
@@ -260,7 +269,7 @@
     <section class="flex w-full flex-col gap-3">
       <h2 class="text-2xl">Locations</h2>
       <button
-        v-if="customUser?.role == 'CLIENT'"
+        v-if="customUser?.role === 'CLIENT'"
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
       >
         <PlusCircle class="mr-2" />
@@ -268,8 +277,6 @@
       </button>
       <div class="flex w-full flex-col gap-3">
         <button
-          v-for="location in [1, 2]"
-          :key="location"
           class="flex items-center justify-between overflow-hidden rounded-2xl bg-gray-200 text-left"
         >
           <div class="flex w-1/2 flex-col gap-2 py-3 pl-6">
@@ -709,7 +716,6 @@ const userModalVisible = ref<{
 }>({
   update: false,
 })
-const user = computed<CustomUser | null>(() => userResult.value?.user || null)
 const loadingUser = ref<{
   update: boolean
   uploadPicture: boolean
@@ -717,6 +723,7 @@ const loadingUser = ref<{
   update: false,
   uploadPicture: false,
 })
+const user = computed<CustomUser | null>(() => userResult.value?.user || null)
 
 // form schema update user
 const formUpdateUser = {
@@ -879,9 +886,13 @@ const toggleUserModal = (type: string = 'close') => {
 }
 
 watchEffect(() => {
+  // log the queries
+  if (userResult.value) console.log(userResult.value)
+  if (user.value) console.log(user)
+
   // all errors
   if (userError.value) {
-    // console.log(userError.value)
+    console.log(userError.value)
     LogRocket.captureException(userError.value)
     showToast('error', 'Error', "Can't your data")
   }
