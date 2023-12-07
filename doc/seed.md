@@ -36,6 +36,14 @@ npx nestjs-command seed:firebase:auth
 npx nestjs-command seed:reset:firebase:auth
 ```
 
+## Firebase storage
+
+### Deleting firebase storage data
+
+```bash
+npx nestjs-command seed:reset:firebase:storage
+```
+
 ## Database (MongoDB)
 
 ### Seed all data of the database

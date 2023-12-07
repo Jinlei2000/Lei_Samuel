@@ -392,4 +392,10 @@ export class SeedService {
     await this.firebaseService.removeUsers()
   }
   //#endregion
+
+  //#region Storage images
+  async deleteAllStorageImages(): Promise<void> {
+    await this.firebaseService.removeStorageImages()
+  }
+  //#endregion
 }

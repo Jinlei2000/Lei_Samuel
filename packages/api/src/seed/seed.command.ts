@@ -142,6 +142,18 @@ export class DatabaseSeedCommand {
   }
   //#endregion
 
+  //#region Firebase storage
+  @Command({
+    command: 'seed:reset:firebase:storage',
+    describe: 'Delete all data from the firebase storage',
+  })
+  async deleteFirebaseStorage() {
+    console.info('💀 Start deleting firebase storage images')
+    await this.seedService.deleteAllStorageImages()
+    console.info('🥲 Removed firebase storage images')
+  }
+  //#endregion
+
   //#region Seed all database
   // Seed the database with appointments, materials, users...
   @Command({
@@ -192,13 +204,14 @@ export class DatabaseSeedCommand {
   //#endregion
 
   //#region Reset all
-  // Delete all data from database and firebase authentication
+  // Delete all data from database, firebase authentication and firebase storage
   @Command({
     command: 'seed:reset',
     describe: 'Delete all data from database and firebase authentication',
   })
   async reset() {
     console.info('💀 Start deleting all data from database and firebase')
+    await this.deleteFirebaseStorage()
     await this.deleteFirebaseUsers()
     await this.deleteDatabase()
     console.info('🥲 Removed all data from database and firebase')

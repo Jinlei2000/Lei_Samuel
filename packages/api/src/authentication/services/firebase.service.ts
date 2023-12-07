@@ -3,6 +3,7 @@ import { App, applicationDefault, initializeApp } from 'firebase-admin/app'
 import { Auth } from 'firebase-admin/lib/auth/auth'
 import { getAuth } from 'firebase-admin/auth'
 import { FirebaseUser } from '../models/firebase-user.model'
+import { Storage } from '@google-cloud/storage'
 
 @Injectable()
 export class FirebaseService {
@@ -11,6 +12,7 @@ export class FirebaseService {
   constructor() {
     this.firebaseApp = initializeApp({
       credential: applicationDefault(), // Environment variable GOOGLE_APPLICATION_CREDENTIALS
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     })
   }
 
@@ -63,6 +65,20 @@ export class FirebaseService {
       return deleteUsersResult
     } catch (error) {
       throw new Error(`Error deleting users: ${error}`)
+    }
+  }
+
+  async removeStorageImages() {
+    try {
+      const bucketName = process.env.FIREBASE_STORAGE_BUCKET
+
+      const storage = new Storage()
+
+      await storage.bucket(bucketName).deleteFiles({
+        force: true,
+      })
+    } catch (error) {
+      throw new Error(`Error deleting storage images: ${error}`)
     }
   }
 }
