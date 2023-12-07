@@ -19,6 +19,7 @@
       :placeholder="placeholder"
       :value="modelValue"
       :type="type"
+      v-bind="$attrs"
       @input="
         $emit('update:modelValue', ($event.target as HTMLInputElement)?.value)
       "

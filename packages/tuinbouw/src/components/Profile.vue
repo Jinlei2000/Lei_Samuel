@@ -465,18 +465,19 @@
 
     <!-- Edit Location -->
     <form v-if="isEditingLocation" @submit.prevent="handleUpdateLocation">
-      <!-- BUG: Avoid app logic that relies on enumerating keys on a component instance. The keys will be empty in production mode to avoid performance overhead.  -->
       <div class="flex flex-col gap-3">
         <InputField
-          v-bind="locationTitle"
+          v-model="locationTitle"
+          v-bind="locationTitleAttrs"
           name="Title"
           type="text"
-          :placeholder="selectedLocation?.title"
+          placeholder="Home"
           :error-message="errorMessages.title"
         />
         <div class="flex w-full items-end justify-between gap-3">
           <InputField
-            v-bind="searchAdressInput"
+            v-model="searchAdressInput"
+            v-bind="searchAdressInputAttrs"
             name="Address"
             type="text"
             placeholder="Search Address"
@@ -494,7 +495,7 @@
         errorMessages.selectedAddress || '&nbsp;'
       }}</small>
 
-      <!-- show search results -->
+      <!-- Show Search Results -->
       <div v-else-if="searchAddressResults && searchAddressResults.length > 0">
         <div
           v-for="(coordinate, index) in searchAddressResults"
@@ -517,7 +518,7 @@
         </div>
       </div>
 
-      <!-- show no results -->
+      <!-- Show No esults -->
       <div
         v-else
         class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
@@ -557,19 +558,21 @@
     <form @submit.prevent="handleCreateLocation">
       <div class="flex flex-col gap-3">
         <InputField
+          v-model="locationTitle"
+          v-bind="locationTitleAttrs"
           name="Title"
           type="text"
           placeholder="Office"
           :error-message="errorMessages.title"
-          v-bind="locationTitle"
         />
         <div class="flex w-full items-end justify-between gap-3">
           <InputField
+            v-model="searchAdressInput"
+            v-bind="searchAdressInputAttrs"
             name="Address"
             type="text"
             placeholder="Search Address"
             :error-message="errorMessages.searchAdressInput"
-            v-bind="searchAdressInput"
           />
           <CustomButton
             name="Search"
@@ -579,61 +582,41 @@
         </div>
       </div>
 
-      <!-- show search results -->
-      <div v-if="searchAddressResults">
+      <small v-if="errorMessages.selectedAddress" class="p-error">{{
+        errorMessages.selectedAddress || '&nbsp;'
+      }}</small>
+
+      <!-- Show Search Results -->
+      <div v-else-if="searchAddressResults && searchAddressResults.length > 0">
         <div
-          v-for="coordinate in searchAddressResults"
-          :key="coordinate.address"
-          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
+          v-for="(coordinate, index) in searchAddressResults"
+          :key="index"
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
         >
-          <div class="flex flex-col">
-            <!-- Add a radio button input -->
+          <div class="flex items-center">
             <input
+              :id="`${index}`"
               type="radio"
               name="selectedAddress"
               v-bind="selectedAddress"
-              class="mr-2"
+              class="mr-3"
               :value="coordinate"
             />
-            <h2 class="mb-2 text-xl font-semibold">{{ coordinate.address }}</h2>
-
-            <div class="flex justify-between">
-              <p class="text-gray-600">
-                Latitude: <span>{{ coordinate.lat }}</span>
-              </p>
-              <p class="text-gray-600">
-                Longitude: <span>{{ coordinate.lng }}</span>
-              </p>
-            </div>
+            <label :for="`${index}`" class="text-lg">{{
+              coordinate.address
+            }}</label>
           </div>
         </div>
       </div>
 
-      <!-- show no results -->
-      <div v-if="searchAddressResults?.length === 0 || !searchAddressResults">
-        <div class="mt-4">
-          <p class="text-gray-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              class="mx-auto h-8 w-8 text-gray-400"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </p>
-          <p class="text-center text-gray-600">No results</p>
-        </div>
+      <!-- Show No esults -->
+      <div
+        v-else
+        class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
+      >
+        <p class="text-lg">No locations</p>
       </div>
-      <small class="text-primary-red">{{
-        errorMessages.selectedAddress || '&nbsp;'
-      }}</small>
+
       <div class="flex w-full justify-end">
         <CustomButton
           type="submit"
@@ -1137,8 +1120,7 @@ const errorMessages = ref<{
 
 // create location form
 const {
-  defineComponentBinds: defineComponentBindsLocation,
-  defineInputBinds: defineInputBindsLocation,
+  defineField: defineFieldLocation,
   errors: errorsLocation,
   values: valuesLocation,
   validate: validateLocation,
@@ -1148,10 +1130,11 @@ const {
 })
 
 // TODO: add error locationTitle
-
-const locationTitle = defineComponentBindsLocation('locationTitle')
-const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
-const selectedAddress = defineInputBindsLocation('selectedAddress')
+const [locationTitle, locationTitleAttrs] = defineFieldLocation('locationTitle')
+const [searchAdressInput, searchAdressInputAttrs] =
+  defineFieldLocation('searchAdressInput')
+const [selectedAddress, selectedAddressAttrs] =
+  defineFieldLocation('selectedAddress')
 
 // graphql
 const { mutate: createLocation } = useMutation(CREATE_LOCATION)
