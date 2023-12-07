@@ -2,6 +2,7 @@
   <main
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
+    <!-- Filters + Searchbar -->
     <div class="flex w-full flex-col gap-10">
       <!-- Filters + Searchbar -->
       <section
@@ -193,6 +194,7 @@ import {
   ORDER_DIRECTION,
   SORT_OPTIONS_MATERIALS,
 } from '@/helpers/constants'
+import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'
@@ -200,7 +202,8 @@ import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
 import { ArrowLeft, Pencil, PlusCircle, Trash2, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import type { ComputedRef } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 
 // props
 const props = defineProps({
@@ -214,17 +217,21 @@ const props = defineProps({
 const { showToast } = useCustomToast()
 const { customUser } = useCustomUser()
 
-// variables
-const availability = ref('all')
-
 // skeletons
 const skeletons = ref<number[]>(new Array(24))
 const selectedMaterial = ref<Material | null>(null)
-const visible = ref({
+const visible = ref<{
+  detail: boolean
+  create: boolean
+}>({
   detail: false,
   create: false,
 })
-const loading = ref({
+const loading = ref<{
+  update: boolean
+  create: boolean
+  data: ComputedRef<boolean>
+}>({
   update: false,
   create: false,
   data: computed(
@@ -247,8 +254,8 @@ const materials = computed<Material[]>(() =>
     ? materialsResult.value?.materials || []
     : materialsByUserIdResult.value?.materialsByUserId || [],
 )
-const users = computed(() => usersResult.value?.users || [])
-const isEditing = ref(false)
+const users = computed<CustomUser[]>(() => usersResult.value?.users || [])
+const isEditing = ref<boolean>(false)
 
 // form update material
 const formUpdateMaterial = ref({
@@ -350,14 +357,11 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const { mutate: createMaterial, error: createMaterialError } =
-  useMutation(CREATE_MATERIAL)
+const { mutate: createMaterial } = useMutation(CREATE_MATERIAL)
 
-const { mutate: updateMaterial, error: updateMaterialError } =
-  useMutation(UPDATE_MATERIAL)
+const { mutate: updateMaterial } = useMutation(UPDATE_MATERIAL)
 
-const { mutate: deleteMaterial, error: deleteMaterialError } =
-  useMutation(DELETE_MATERIAL)
+const { mutate: deleteMaterial } = useMutation(DELETE_MATERIAL)
 
 const {
   result: usersResult,
@@ -387,7 +391,7 @@ onMounted(() => {
 })
 
 // handle create material
-const handleCreateMaterial = async (values: GenericObject) => {
+const handleCreateMaterial = async (values: GenericObject): Promise<void> => {
   try {
     loading.value.create = true
     await createMaterial({
@@ -398,18 +402,20 @@ const handleCreateMaterial = async (values: GenericObject) => {
         userId: values.userId,
       },
     })
-    loading.value.create = false
     showToast('success', 'Success', 'Material has been created')
     await refetch()
     toggleModal()
   } catch (error) {
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    console.log(error)
+    showToast('error', 'Error', "Couldn't create material")
+  } finally {
+    loading.value.create = false
   }
 }
 
 // handle update material
-const handleUpdatematerial = async (values: GenericObject) => {
+const handleUpdatematerial = async (values: GenericObject): Promise<void> => {
   try {
     // console.log(values)
     loading.value.update = true
@@ -419,18 +425,20 @@ const handleUpdatematerial = async (values: GenericObject) => {
         ...values,
       },
     })
-    loading.value.update = false
     showToast('success', 'Success', 'Material has been updated')
     await refetch()
     toggleModal()
   } catch (error) {
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    console.log(error)
+    showToast('error', 'Error', "Couldn't update material")
+  } finally {
+    loading.value.update = false
   }
 }
 
 // handle delete material
-const handleDeleteMaterial = async (material: Material) => {
+const handleDeleteMaterial = async (material: Material): Promise<void> => {
   try {
     // console.log(material.id)
     await deleteMaterial({
@@ -439,15 +447,16 @@ const handleDeleteMaterial = async (material: Material) => {
     showToast('success', 'Success', 'Material has been deleted')
     await refetch()
   } catch (error) {
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    console.log(error)
+    showToast('error', 'Error', "Couldn't delete material")
   }
 }
 
 const toggleModal = (
   material: Material | null = null,
   type: string = 'close',
-) => {
+): void => {
   selectedMaterial.value = material ? { ...material } : null
   isEditing.value = false
   visible.value = {
@@ -465,25 +474,20 @@ watchEffect(() => {
   // if (users.value) console.log(users.value)
 
   // all errors
-  const errors = [
-    createMaterialError.value,
-    deleteMaterialError.value,
-    materialsByUserIdError.value,
-    materialsError.value,
-    updateMaterialError.value,
-    usersError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loading.value = {
-        ...loading.value,
-        update: false,
-        create: false,
-      }
-
-      LogRocket.captureException(error)
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (usersError.value) {
+    // console.log(usersError.value)
+    LogRocket.captureException(usersError.value)
+    showToast('error', 'Error', "Couldn't load users")
+  }
+  if (materialsError.value) {
+    // console.log(materialsError.value)
+    LogRocket.captureException(materialsError.value)
+    showToast('error', 'Error', "Couldn't load materials")
+  }
+  if (materialsByUserIdError.value) {
+    // console.log(materialsByUserIdError.value)
+    LogRocket.captureException(materialsByUserIdError.value)
+    showToast('error', 'Error', "Couldn't load materials")
+  }
 })
 </script>
