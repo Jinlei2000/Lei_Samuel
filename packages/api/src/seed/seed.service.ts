@@ -13,15 +13,15 @@ import { SchedulesService } from 'src/schedules/schedules.service'
 import { MailService } from 'src/mail/mail.service'
 import { Schedule } from 'src/schedules/entities/schedule.entity'
 import { resetTime } from 'src/helpers/genericFunctions'
+import { FirebaseService } from 'src/authentication/services/firebase.service'
+import { FirebaseUser } from 'src/authentication/models/firebase-user.model'
 import {
   chooseRandomItems,
   generateNonWeekendDates,
 } from 'src/helpers/seedingFunctions'
-import { FirebaseUser } from '../firebase-users/models/firebase-user.model'
 
 import * as materials from './data/materials.json'
 import * as users from './data/users.json'
-import { FirebaseUsersService } from 'src/firebase-users/firebase-users.service'
 
 @Injectable()
 export class SeedService {
@@ -33,7 +33,7 @@ export class SeedService {
     private absencesService: AbsencesService,
     private schedulesService: SchedulesService,
     private mailService: MailService,
-    private firebaseUsersService: FirebaseUsersService,
+    private firebaseService: FirebaseService,
   ) {}
 
   //#region Materials
@@ -381,8 +381,7 @@ export class SeedService {
       u.uid = user.uid
       u.password = user.password
 
-      const createdUser: FirebaseUser =
-        await this.firebaseUsersService.create(u)
+      const createdUser: FirebaseUser = await this.firebaseService.createUser(u)
       theUsers.push(createdUser)
     }
 
@@ -390,8 +389,7 @@ export class SeedService {
   }
 
   async deleteAllFirebaseUsers(): Promise<void> {
-    const uids = await this.usersService.getAllUids()
-    await this.firebaseUsersService.removeAll(uids)
+    await this.firebaseService.removeUsers()
   }
   //#endregion
 }
