@@ -466,22 +466,26 @@
     <!-- Edit Location -->
     <form v-if="isEditingLocation" @submit.prevent="handleUpdateLocation">
       <div class="flex flex-col gap-3">
+        <!-- Field Location -->
         <InputField
+          id="title"
           v-model="locationTitle"
-          v-bind="locationTitleAttrs"
-          name="Title"
-          type="text"
+          label="Title"
+          name="title"
           placeholder="Home"
-          :error-message="errorMessages.title"
+          :error="errorMessages.locationTitle"
+          :field-attrs="locationTitleAttrs"
         />
         <div class="flex w-full items-end justify-between gap-3">
+          <!-- Field searchAdressInput -->
           <InputField
+            id="address"
             v-model="searchAdressInput"
-            v-bind="searchAdressInputAttrs"
-            name="Address"
-            type="text"
+            label="Address"
+            name="address"
             placeholder="Search Address"
-            :error-message="errorMessages.searchAdressInput"
+            :error="errorMessages.searchAdressInput"
+            :field-attrs="searchAdressInputAttrs"
           />
           <CustomButton
             name="Search"
@@ -491,12 +495,21 @@
         </div>
       </div>
 
-      <small v-if="errorMessages.selectedAddress" class="p-error">{{
-        errorMessages.selectedAddress || '&nbsp;'
-      }}</small>
+      <!-- Show Selected Location -->
+      <div
+        v-if="selectedLocation && selectedLocation.address"
+        class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
+      >
+        <div>
+          <p class="text-sm font-medium opacity-50">Your current location is</p>
+          <p :for="`${selectedLocation.id}`" class="text-lg">
+            {{ selectedLocation.address }}
+          </p>
+        </div>
+      </div>
 
       <!-- Show Search Results -->
-      <div v-else-if="searchAddressResults && searchAddressResults.length > 0">
+      <div v-if="searchAddressResults && searchAddressResults.length > 0">
         <div
           v-for="(coordinate, index) in searchAddressResults"
           :key="index"
@@ -505,9 +518,10 @@
           <div class="flex items-center">
             <input
               :id="`${index}`"
+              v-model="selectedAddress"
               type="radio"
               name="selectedAddress"
-              v-bind="selectedAddress"
+              v-bind="selectedAddressAttrs"
               class="mr-3"
               :value="coordinate"
             />
@@ -525,6 +539,12 @@
       >
         <p class="text-lg">No locations</p>
       </div>
+
+      <small
+        v-if="errorMessages.selectedAddress"
+        class="p-error text-sm text-red-500"
+        >{{ errorMessages.selectedAddress || '&nbsp;' }}</small
+      >
 
       <div class="flex justify-between">
         <CustomButton
@@ -557,22 +577,26 @@
   >
     <form @submit.prevent="handleCreateLocation">
       <div class="flex flex-col gap-3">
+        <!-- Field Location -->
         <InputField
+          id="title"
           v-model="locationTitle"
-          v-bind="locationTitleAttrs"
-          name="Title"
-          type="text"
-          placeholder="Office"
-          :error-message="errorMessages.title"
+          label="Title"
+          name="title"
+          placeholder="Home"
+          :error="errorMessages.locationTitle"
+          :field-attrs="locationTitleAttrs"
         />
         <div class="flex w-full items-end justify-between gap-3">
+          <!-- Field searchAdressInput -->
           <InputField
+            id="address"
             v-model="searchAdressInput"
-            v-bind="searchAdressInputAttrs"
-            name="Address"
-            type="text"
+            label="Address"
+            name="address"
             placeholder="Search Address"
-            :error-message="errorMessages.searchAdressInput"
+            :error="errorMessages.searchAdressInput"
+            :field-attrs="searchAdressInputAttrs"
           />
           <CustomButton
             name="Search"
@@ -582,12 +606,8 @@
         </div>
       </div>
 
-      <small v-if="errorMessages.selectedAddress" class="p-error">{{
-        errorMessages.selectedAddress || '&nbsp;'
-      }}</small>
-
       <!-- Show Search Results -->
-      <div v-else-if="searchAddressResults && searchAddressResults.length > 0">
+      <div v-if="searchAddressResults && searchAddressResults.length > 0">
         <div
           v-for="(coordinate, index) in searchAddressResults"
           :key="index"
@@ -596,9 +616,10 @@
           <div class="flex items-center">
             <input
               :id="`${index}`"
+              v-model="selectedAddress"
+              v-bind="selectedAddressAttrs"
               type="radio"
               name="selectedAddress"
-              v-bind="selectedAddress"
               class="mr-3"
               :value="coordinate"
             />
@@ -616,6 +637,12 @@
       >
         <p class="text-lg">No locations</p>
       </div>
+
+      <small
+        v-if="errorMessages.selectedAddress"
+        class="p-error text-sm text-red-500"
+        >{{ errorMessages.selectedAddress || '&nbsp;' }}</small
+      >
 
       <div class="flex w-full justify-end">
         <CustomButton
@@ -1111,7 +1138,9 @@ const isEditingLocation = ref<boolean>(false)
 
 // error messages of forms
 const errorMessages = ref<{
-  [key: string]: string | undefined
+  locationTitle?: string
+  searchAdressInput?: string
+  selectedAddress?: string
 }>({
   locationTitle: '',
   searchAdressInput: '',
@@ -1188,6 +1217,7 @@ const handleCreateLocation = async (): Promise<void> => {
       })
       showToast('success', 'Success', `You have created a new location`)
       refetchUser()
+      toggleLocationModal()
     }
   } catch (error) {
     // console.log(error)
@@ -1258,6 +1288,14 @@ const toggleLocationModal = (
   locationModalVisible.value = {
     detail: type === 'detail',
     create: type === 'create',
+  }
+
+  if (type === 'detail') {
+    setValuesLocation({
+      locationTitle: selectedLocation.value!.title,
+      searchAdressInput: selectedLocation.value!.address,
+      selectedAddress: null,
+    })
   }
 }
 
