@@ -1,8 +1,4 @@
 <template>
-  <!-- TODO: filters & orders -->
-
-  <!-- TODO: search bar -->
-
   <div
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
@@ -19,7 +15,7 @@
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
-        <h1 class="text-2xl">Materials</h1>
+        <h1 class="text-2xl">Users</h1>
         <div class="flex gap-3">
           <!-- Sort -->
           <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
@@ -194,34 +190,6 @@
     />
   </Dialog>
 
-  <!-- Edit Modal -->
-  <!-- <Dialog
-    v-model:visible="visible.edit"
-    modal
-    header="Edit User"
-    :draggable="false"
-    :close-on-escape="true"
-    :pt="{
-      root: {
-        class: 'max-w-lg',
-      },
-    }"
-  >
-    <DynamicForm
-      :schema="formUpdateEmployee"
-      :validation-schema="userUpdateAdminValidationSchema"
-      :handle-form="handleUpdateEmployee"
-      :loading="loading.updateEmployee"
-      :cancel="cancelUserEdit"
-      :initial-values="{
-        firstname: selectedUser?.firstname,
-        lastname: selectedUser?.lastname,
-        email: selectedUser?.email,
-        telephone: selectedUser?.telephone,
-      }"
-    />
-  </Dialog> -->
-
   <!-- Create Employee Modal -->
   <Dialog
     v-model:visible="visible.create"
@@ -273,7 +241,6 @@ import {
   userUpdateAdminValidationSchema,
 } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, Eye, Pencil, Trash2 } from 'lucide-vue-next'
 import { computed, ref, watchEffect } from 'vue'
 
 // composables
@@ -438,6 +405,7 @@ const handleDelete = async (user: CustomUser) => {
   })
   showToast('success', 'Success', `User ${email} has been deleted`)
   refetchUsers()
+  toggleModal()
 }
 
 // handle create employee

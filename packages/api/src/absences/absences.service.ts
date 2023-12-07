@@ -34,6 +34,8 @@ export class AbsencesService {
     const whereQuery = filterAbsences(filters)
     const orderQuery = orderAbsences(order)
 
+    console.log(whereQuery)
+
     return this.absenceRepository.find({
       where: whereQuery,
       order: orderQuery,

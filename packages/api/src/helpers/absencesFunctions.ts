@@ -25,9 +25,9 @@ export const filterAbsences = (
 
     // type filter
     let selectTypes = []
-    if (filters?.includes('S')) selectTypes.push('SICK')
-    if (filters?.includes('V')) selectTypes.push('VACATION')
-    if (filters?.includes('O')) selectTypes.push('OTHER')
+    if (filters?.includes('S')) selectTypes.push('sick')
+    if (filters?.includes('V')) selectTypes.push('vacation')
+    if (filters?.includes('O')) selectTypes.push('other')
     if (selectTypes.length > 0) whereQuery.type = { $in: selectTypes }
   }
 

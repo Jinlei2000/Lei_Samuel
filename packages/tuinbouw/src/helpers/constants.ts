@@ -95,6 +95,7 @@ export const SORT_OPTIONS_APPOINTMENTS = [
   },
 ]
 
+// FIXME: use radio instead of checkbox
 export const FILTER_OPTIONS_APPOINTMENTS = [
   {
     title: 'Scheduled',
@@ -129,5 +130,41 @@ export const SORT_OPTIONS_SCHEDULES = [
   {
     label: 'Date',
     value: 'finalDate',
+  },
+]
+
+export const FILTER_OPTIONS_ABSENCES = [
+  {
+    title: 'Type',
+    name: 'type',
+    type: 'checkbox',
+    options: [
+      { label: 'Sick', value: 'S' },
+      { label: 'Vacation', value: 'V' },
+      { label: 'Other', value: 'O' },
+    ],
+  },
+]
+
+export const SORT_OPTIONS_ABSENCES = [
+  {
+    label: 'Date Created',
+    value: 'createdAt',
+  },
+  {
+    label: 'Start Date',
+    value: 'startDate',
+  },
+  {
+    label: 'End Date',
+    value: 'endDate',
+  },
+  {
+    label: 'Total Days',
+    value: 'totalDays',
+  },
+  {
+    label: 'Type',
+    value: 'type',
   },
 ]

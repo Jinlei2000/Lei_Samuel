@@ -11,7 +11,8 @@ For our Advanced Fullstack Development class project, we're crafting a comprehen
 - [Vue.js](https://vuejs.org/) with [TypeScript](https://www.typescriptlang.org/) for a dynamic and type-safe user interface.
 - [UnoCSS](https://tailwindcss.com/) for clean and responsive styling.
 - [PrimeVue](https://primefaces.org/primevue/showcase/#/) for feature-rich UI components.
-- [Firebase](https://firebase.google.com/) for secure authentication.
+- [Firebase Authentication](https://firebase.google.com/) for secure authentication.
+- [Firebase Storage](https://firebase.google.com/docs/storage) for secure file storage.
 - [yup](https://github.com/jquense/yup) and [vee-validate](https://vee-validate.logaretm.com/v4/) for robust frontend validation.
 - [TomTom](https://www.tomtom.com/en_gb/) for enhanced location services.
 
