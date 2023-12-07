@@ -366,7 +366,6 @@ watchEffect(() => {
   // log the queries
   // if (absences.value) console.log(absences.value)
   // if (absencesResult.value) console.log(absencesResult.value)
-  console.log('filters: ', variables.value.filters)
 
   // all errors
   if (absencesError.value) {
