@@ -6,6 +6,7 @@
       <!-- Filters + Searchbar -->
       <section :class="['relative flex w-full items-center justify-between']">
         <!-- Filter -->
+        <!-- FIXME: error on scheduled -->
         <Filter
           v-model="variables.filters"
           :options="FILTER_OPTIONS_APPOINTMENTS"

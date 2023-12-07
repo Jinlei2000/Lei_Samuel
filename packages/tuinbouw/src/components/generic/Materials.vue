@@ -139,7 +139,7 @@
       },
     }"
   >
-    <!-- Show detail or edit form -->
+    <!-- Show Detail -->
     <div v-if="!isEditing">
       <!-- edit -->
       <Pencil v-if="props.showAllOverview" @click="isEditing = true" />
@@ -152,8 +152,8 @@
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
     </div>
+    <!-- Edit form -->
     <div v-if="isEditing">
-      <!-- Edit form -->
       <ArrowLeft @click="isEditing = false" />
       <DynamicForm
         :schema="formUpdateMaterial"
@@ -446,6 +446,7 @@ const handleDeleteMaterial = async (material: Material): Promise<void> => {
     })
     showToast('success', 'Success', 'Material has been deleted')
     await refetch()
+    toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)

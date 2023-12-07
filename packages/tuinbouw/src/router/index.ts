@@ -56,10 +56,6 @@ const router = createRouter({
           path: 'profile',
           component: () => import('../views/employee/Profile.vue'),
         },
-        {
-          path: 'absences',
-          component: () => import('../views/employee/Absences.vue'),
-        },
       ],
     },
 
@@ -107,10 +103,6 @@ const router = createRouter({
         {
           path: 'absences',
           component: () => import('../views/admin/Absences.vue'),
-        },
-        {
-          path: 'absences-own',
-          component: () => import('../views/admin/AbsencesOwn.vue'),
         },
       ],
     },
