@@ -177,9 +177,9 @@ const setLanguage = (e: Event) => {
 
 const handleLogout = async () => {
   await logout()
-  customUser.value = null
   // go to login page
   router.replace('/auth/login')
+  customUser.value = null
   console.log('logout')
 
   showProfileDropdown()
