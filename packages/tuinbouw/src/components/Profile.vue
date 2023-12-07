@@ -704,8 +704,6 @@ const { firebaseUser, uploadProfile, deleteProfile } = useFirebase()
 const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
-// TODO: backend seeding delete all firebase storage images
-
 //#region USER
 const userModalVisible = ref<{
   update: boolean
@@ -925,7 +923,6 @@ const loadingAbsence = ref<{
   create: false,
   update: false,
 })
-
 const isEditingAbsence = ref<boolean>(false)
 
 // form schema absence
@@ -1158,7 +1155,6 @@ const {
   validationSchema: locationValidationSchema,
 })
 
-// TODO: add error locationTitle
 const [locationTitle, locationTitleAttrs] = defineFieldLocation('locationTitle')
 const [searchAdressInput, searchAdressInputAttrs] =
   defineFieldLocation('searchAdressInput')
