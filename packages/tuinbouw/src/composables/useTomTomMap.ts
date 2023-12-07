@@ -38,7 +38,6 @@ const createMap = (mapContainer: string): tt.Map => {
   const map = tt.map({
     key: TOMTOM_API_KEY,
     container: mapContainer,
-    // style: `https://api.tomtom.com/style/2/custom/style/dG9tdG9tQEBAbTQ4V1BvM3BHR0Jmb3dsZztjODYxMWY3YS1mNGNjLTQxM2UtOGUxNC0yZmMwMTQzMDI0ZmQ=.json?key=${TOMTOM_API_KEY}`,
     center: [3.689423, 50.872478],
     zoom: 7,
   })

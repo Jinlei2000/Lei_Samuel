@@ -1,5 +1,10 @@
 <template>
-  <div v-bind="$attrs">
+  <div
+    :class="{
+      'pointer-events-none': !props.controls,
+    }"
+    v-bind="$attrs"
+  >
     <div id="map" ref="mapRef" class="h-full w-full"></div>
   </div>
 </template>
@@ -43,8 +48,8 @@ const setMap = () => {
       // map.addControl(new tt.ScaleControl())
     }
   } catch (error) {
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    console.log(error)
   }
 }
 
@@ -60,24 +65,26 @@ const setMarkers = () => {
 
       // Get center of bounds
       const centerBounds = bounds.getCenter()
-      // Center map
-      map.setCenter({
-        lat: centerBounds.lat,
-        lng: centerBounds.lng,
-      })
 
-      // Zoom to fit all markers
-      map.fitBounds(bounds, {
-        padding: 50,
-        maxZoom: 13,
-      })
+      if (centerBounds) {
+        // Center map
+        map.setCenter({
+          lat: centerBounds.lat,
+          lng: centerBounds.lng,
+        })
+        // Zoom to fit all markers
+        map.fitBounds(bounds, {
+          padding: 50,
+          maxZoom: 13,
+        })
+      }
     } else {
       // No locations, center map on Belgium
       setMap()
     }
   } catch (error) {
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    console.log(error)
   }
 }
 
