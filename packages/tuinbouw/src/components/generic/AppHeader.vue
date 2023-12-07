@@ -16,7 +16,7 @@
             v-if="checkPath()"
             class="flex items-center justify-center gap-12"
           >
-            <li v-if="role == 'admin' || role == 'employee'">
+            <li>
               <RouterLink
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class="border-b-[1px] border-black"
