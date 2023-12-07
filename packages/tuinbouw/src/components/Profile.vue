@@ -1,13 +1,14 @@
 <template>
-  <div class="m-auto my-12 flex max-w-xl flex-col gap-6">
+  <main v-if="user" class="m-auto my-12 flex max-w-xl flex-col gap-6">
     <!-- Primary user info -->
-    <div class="flex w-full flex-col items-center gap-6">
+    <section class="flex w-full flex-col items-center gap-6">
       <div class="relative">
+        <!-- Profile picture -->
         <div>
           <img
-            v-if="user?.url"
+            v-if="user.url"
             class="h-24 w-24 rounded-full"
-            :src="user?.url"
+            :src="user.url"
             alt="Profile picture"
           />
           <div
@@ -19,30 +20,65 @@
             </p>
           </div>
         </div>
-        <button
+        <!-- Edit profile picture -->
+        <label
           class="bg-primary-orange absolute right-0 top-0 h-6 w-6 rounded-full"
-          @click="toggleUserModal('editPicture')"
+          for="upload-image"
+          tabindex="0"
         >
-          <Edit2
-            class="absolute left-1/2 top-1/2 flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center stroke-white"
-          />
-        </button>
+          <div v-if="!loadingUser.uploadPicture">
+            <Edit2
+              class="absolute left-1/2 top-1/2 flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center stroke-white"
+            />
+            <input
+              id="upload-image"
+              :disabled="loadingUser.uploadPicture"
+              type="file"
+              class="hidden"
+              accept="image/*"
+              @change="$event => handleUploadImage($event)"
+            />
+          </div>
+          <div
+            v-else
+            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform stroke-white"
+          >
+            <svg
+              aria-hidden="true"
+              role="status"
+              class="h-3 w-3 animate-spin text-white"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="#E5E7EB"
+              />
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+        </label>
       </div>
+      <!-- Name & Email -->
       <div class="flex flex-col items-center gap-1">
         <h1 class="text-2xl capitalize">
-          {{ user?.fullname }}
+          {{ user.fullname }}
         </h1>
-        <p class="opacity-80">{{ user?.email }}</p>
+        <p class="opacity-80">{{ user.email }}</p>
       </div>
-    </div>
+    </section>
 
     <!-- About me -->
-    <div v-if="user && !isEditingUser" class="w-full">
+    <section class="w-full">
       <div class="mb-3 flex w-full justify-between">
         <h2 class="text-2xl">About me</h2>
         <button
           class="text-primary-orange flex items-center gap-2 text-lg"
-          @click="isEditingUser = true"
+          @click="toggleUserModal('update')"
         >
           <Edit2 class="h-5 w-5" /> Edit
         </button>
@@ -52,44 +88,28 @@
           class="flex items-center justify-between border-b-[1px] border-white pb-6"
         >
           <p class="text-lg">Telephone</p>
-          <p>{{ user.telephone || 'unknown' }}</p>
+          <p v-if="user && user.telephone">{{ user.telephone }}</p>
+          <p v-else>unknown</p>
         </li>
         <li class="flex items-center justify-between pt-6">
           <p class="text-lg">Address</p>
-          <p>
-            {{ user.locations[0].address || 'unknown' }}
+          <p
+            v-if="
+              user &&
+              user.locations &&
+              user.locations[0] &&
+              user.locations[0].address
+            "
+          >
+            {{ user.locations[0].address }}
           </p>
+          <p v-else>unknown</p>
         </li>
       </ul>
-    </div>
-
-    <!-- Edit About me -->
-    <div v-if="isEditingUser">
-      <!-- go back button -->
-      <button class="flex" @click="isEditingUser = false">
-        <ArrowLeft class="h-6 w-6" />
-        Go back
-      </button>
-
-      <DynamicForm
-        :schema="formUpdateUser"
-        :validation-schema="userUpdateValidationSchema"
-        :handle-form="handleUpdateUser"
-        :loading="loading.updateUser"
-        :initial-values="{
-          firstname: user!.firstname,
-          lastname: user!.lastname,
-          email: user!.email,
-          telephone: user!.telephone,
-          invoiceOption: user!.invoiceOption,
-          company: user!.company,
-          btwNumber: user!.btwNumber,
-        }"
-      />
-    </div>
+    </section>
 
     <!-- Absences -->
-    <div
+    <section
       v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
       class="flex w-full flex-col gap-3"
     >
@@ -111,7 +131,7 @@
           class="flex items-center justify-between rounded-2xl bg-gray-200 p-3 pl-6 text-left"
           @click="toggleAbsenceModal(absence, 'detail')"
         >
-          <div class="flex w-2/3">
+          <div class="flex w-2/3 gap-3 sm:gap-0">
             <p class="min-w-1/3">
               {{ formatAbsenceDate(absence.startDate) }}
             </p>
@@ -130,12 +150,16 @@
       >
         <p class="text-lg">No absences</p>
       </div>
-    </div>
+    </section>
 
     <!-- Locations -->
-    <div v-if="user" class="flex w-full flex-col gap-3">
+    <section class="flex w-full flex-col gap-3">
       <h2 class="text-2xl">Locations</h2>
       <button
+        v-if="
+          customUser?.role == 'CLIENT' ||
+          (customUser?.role == 'EMPLOYEE' && user.locations.length === 0)
+        "
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
         @click="toggleLocationModal(null, 'create')"
       >
@@ -175,20 +199,133 @@
       >
         <p class="text-lg">No locations</p>
       </div>
-    </div>
+    </section>
 
-    <!-- delete account -->
+    <!-- Delete Account -->
     <button
       class="bg-primary-red rounded-2xl py-3 text-white"
       @click="handleDeleteUser()"
     >
       Delete Account
     </button>
+  </main>
+
+  <!-- Skeleton -->
+  <div v-else class="m-auto my-12 flex max-w-xl flex-col gap-6">
+    <section class="flex w-full flex-col items-center gap-6">
+      <div class="h-24 w-24 animate-pulse rounded-full bg-neutral-200"></div>
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-30 h-5 animate-pulse rounded-full bg-neutral-200"></div>
+        <div class="h-4 w-40 animate-pulse rounded-full bg-neutral-200"></div>
+      </div>
+    </section>
+
+    <section class="w-full">
+      <div class="mb-3 flex w-full justify-between">
+        <h2 class="text-2xl">About me</h2>
+        <button class="text-primary-orange flex items-center gap-2 text-lg">
+          <Edit2 class="h-5 w-5" /> Edit
+        </button>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div
+          v-for="i in [1, 2]"
+          :key="i"
+          class="h-15 animate-pulse gap-3 rounded-2xl bg-gray-200"
+        />
+      </div>
+    </section>
+
+    <section
+      v-if="customUser?.role !== 'CLIENT'"
+      class="flex w-full flex-col gap-3"
+    >
+      <h2 class="text-2xl">Absences</h2>
+      <button
+        class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
+      >
+        <PlusCircle class="mr-2" /> Add New Absence
+      </button>
+      <div class="flex w-full flex-col gap-3">
+        <button
+          v-for="absence in [1, 2]"
+          :key="absence"
+          class="flex items-center justify-between rounded-2xl bg-gray-200 p-3 pl-6 text-left"
+        >
+          <div class="flex w-2/3 gap-3">
+            <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
+            <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
+          </div>
+          <div class="h-5 w-20 animate-pulse rounded-full bg-neutral-200" />
+        </button>
+      </div>
+    </section>
+
+    <section class="flex w-full flex-col gap-3">
+      <h2 class="text-2xl">Locations</h2>
+      <button
+        v-if="customUser?.role === 'CLIENT'"
+        class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
+      >
+        <PlusCircle class="mr-2" /> Add Location
+      </button>
+      <div class="flex w-full flex-col gap-3">
+        <button
+          class="flex items-center justify-between overflow-hidden rounded-2xl bg-gray-200 text-left"
+        >
+          <div class="flex w-1/2 flex-col gap-2 py-3 pl-6">
+            <div
+              class="h-5 w-10 animate-pulse rounded-full bg-neutral-200 sm:w-20"
+            />
+            <div
+              class="h-5 w-20 animate-pulse rounded-full bg-neutral-200 sm:w-40"
+            />
+          </div>
+          <div
+            class="h-28 w-1/2 animate-pulse rounded-3xl rounded-t-none rounded-bl-none bg-neutral-200"
+          />
+        </button>
+      </div>
+    </section>
+
+    <button class="bg-primary-red rounded-2xl py-3 text-white">
+      Delete Account
+    </button>
   </div>
+
+  <!-- Update User Modal -->
+  <Dialog
+    v-model:visible="userModalVisible.update"
+    modal
+    header="Update User"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'w-full mx-3 md:m-0 md:max-w-lg',
+      },
+    }"
+  >
+    <DynamicForm
+      :schema="formUpdateUser"
+      :validation-schema="userUpdateValidationSchema"
+      :handle-form="handleUpdateUser"
+      :loading="loadingUser.update"
+      :initial-values="{
+        firstname: user!.firstname,
+        lastname: user!.lastname,
+        email: user!.email,
+        telephone: user!.telephone,
+        invoiceOption: user!.invoiceOption,
+        company: user!.company,
+        btwNumber: user!.btwNumber,
+      }"
+    />
+  </Dialog>
 
   <!-- Detail Absence Modal -->
   <Dialog
-    v-model:visible="absenceModalVisible.openModal"
+    v-model:visible="absenceModalVisible.detail"
     modal
     header="Absence Details"
     :draggable="false"
@@ -200,7 +337,7 @@
     }"
   >
     <div
-      v-if="selectedAbsence && absenceModalVisible.detail"
+      v-if="selectedAbsence && !isEditingAbsence"
       class="flex flex-col gap-6"
     >
       <div class="flex flex-col gap-3">
@@ -220,25 +357,25 @@
       <div class="flex justify-between">
         <button
           class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
-          @click="handleDelete(selectedAbsence)"
+          @click="handleDeleteAbsence(selectedAbsence)"
         >
           Delete
         </button>
         <button
           class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
-          @click="toggleAbsenceModal(selectedAbsence, 'edit')"
+          @click="isEditingAbsence = true"
         >
           Edit
         </button>
       </div>
     </div>
     <DynamicForm
-      v-if="absenceModalVisible.edit"
+      v-if="isEditingAbsence"
       :schema="formAbsence"
       :validation-schema="absenceValidationSchema"
       :handle-form="handleUpdateAbsence"
       :cancel="cancelAbsenceEdit"
-      :loading="loading.update"
+      :loading="loadingAbsence.update"
       :initial-values="{
         type: selectedAbsence!.type,
         startDate: formatDateTime(selectedAbsence!.startDate),
@@ -265,13 +402,13 @@
       :schema="formAbsence"
       :validation-schema="absenceValidationSchema"
       :handle-form="handleCreateAbsence"
-      :loading="loading.create"
+      :loading="loadingLocation.create"
     />
   </Dialog>
 
   <!-- Detail Location Modal -->
   <Dialog
-    v-model:visible="locationModalVisible.openModal"
+    v-model:visible="locationModalVisible.detail"
     modal
     header="Location Details"
     :draggable="false"
@@ -283,7 +420,7 @@
     }"
   >
     <div
-      v-if="selectedLocation && locationModalVisible.detail"
+      v-if="selectedLocation && !isEditingLocation"
       class="flex flex-col gap-6"
     >
       <div class="flex flex-col gap-1">
@@ -319,7 +456,7 @@
         </button>
         <button
           class="border-primary-blue text-primary-blue justify-self-end rounded-[4px] border px-3 py-1"
-          @click="toggleLocationModal(selectedLocation, 'edit')"
+          @click="isEditingLocation = true"
         >
           Edit
         </button>
@@ -327,80 +464,88 @@
     </div>
 
     <!-- Edit Location -->
-    <form
-      v-if="locationModalVisible.edit"
-      @submit.prevent="handleUpdateLocation"
-    >
+    <form v-if="isEditingLocation" @submit.prevent="handleUpdateLocation">
       <div class="flex flex-col gap-3">
+        <!-- Field Location -->
         <InputField
-          name="Title"
-          type="text"
-          :placeholder="selectedLocation?.title"
-          :error-message="errorMessages.title"
-          v-bind="locationTitle"
+          id="title"
+          v-model="locationTitle"
+          label="Title"
+          name="title"
+          placeholder="Home"
+          :error="errorMessages.locationTitle"
+          :field-attrs="locationTitleAttrs"
         />
         <div class="flex w-full items-end justify-between gap-3">
+          <!-- Field searchAdressInput -->
           <InputField
-            name="Address"
-            type="text"
+            id="address"
+            v-model="searchAdressInput"
+            label="Address"
+            name="address"
             placeholder="Search Address"
-            :error-message="errorMessages.searchAdressInput"
-            v-bind="searchAdressInput"
+            :error="errorMessages.searchAdressInput"
+            :field-attrs="searchAdressInputAttrs"
           />
           <CustomButton
             name="Search"
-            :loading="loading.searchAddress"
+            :loading="loadingLocation.searchAddress"
             @click="handleSearchAddress()"
           />
         </div>
       </div>
 
-      <!-- show search results -->
-      <div v-if="searchAddressResults">
+      <!-- Show Selected Location -->
+      <div
+        v-if="selectedLocation && selectedLocation.address"
+        class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
+      >
+        <div>
+          <p class="text-sm font-medium opacity-50">Your current location is</p>
+          <p :for="`${selectedLocation.id}`" class="text-lg">
+            {{ selectedLocation.address }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Show Search Results -->
+      <div v-if="searchAddressResults && searchAddressResults.length > 0">
         <div
-          v-for="coordinate in searchAddressResults"
-          :key="coordinate.address"
-          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
+          v-for="(coordinate, index) in searchAddressResults"
+          :key="index"
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
         >
           <div class="flex items-center">
-            <!-- Add a radio button input -->
             <input
+              :id="`${index}`"
+              v-model="selectedAddress"
               type="radio"
               name="selectedAddress"
-              v-bind="selectedAddress"
+              v-bind="selectedAddressAttrs"
               class="mr-3"
               :value="coordinate"
             />
-            <h2 class="text-lg">{{ coordinate.address }}</h2>
+            <label :for="`${index}`" class="text-lg">{{
+              coordinate.address
+            }}</label>
           </div>
         </div>
       </div>
-      <small class="p-error">{{
-        errorMessages.selectedAddress || '&nbsp;'
-      }}</small>
 
-      <!-- show no results -->
-      <div v-if="searchAddressResults?.length === 0 || !searchAddressResults">
-        <div class="my-4">
-          <p class="text-gray-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              class="mx-auto h-8 w-8 text-gray-400"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </p>
-          <p class="text-center text-gray-600">No results</p>
-        </div>
+      <!-- Show No esults -->
+      <div
+        v-else
+        class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
+      >
+        <p class="text-lg">No locations</p>
       </div>
+
+      <small
+        v-if="errorMessages.selectedAddress"
+        class="p-error text-sm text-red-500"
+        >{{ errorMessages.selectedAddress || '&nbsp;' }}</small
+      >
+
       <div class="flex justify-between">
         <CustomButton
           name="Cancel"
@@ -411,7 +556,7 @@
           type="submit"
           variant="primary"
           name="Update Location"
-          :loading="loading.updateLocation"
+          :loading="loadingLocation.update"
         />
       </div>
     </form>
@@ -432,164 +577,78 @@
   >
     <form @submit.prevent="handleCreateLocation">
       <div class="flex flex-col gap-3">
+        <!-- Field Location -->
         <InputField
-          name="Title"
-          type="text"
-          placeholder="Office"
-          :error-message="errorMessages.title"
-          v-bind="locationTitle"
+          id="title"
+          v-model="locationTitle"
+          label="Title"
+          name="title"
+          placeholder="Home"
+          :error="errorMessages.locationTitle"
+          :field-attrs="locationTitleAttrs"
         />
         <div class="flex w-full items-end justify-between gap-3">
+          <!-- Field searchAdressInput -->
           <InputField
-            name="Address"
-            type="text"
+            id="address"
+            v-model="searchAdressInput"
+            label="Address"
+            name="address"
             placeholder="Search Address"
-            :error-message="errorMessages.searchAdressInput"
-            v-bind="searchAdressInput"
+            :error="errorMessages.searchAdressInput"
+            :field-attrs="searchAdressInputAttrs"
           />
           <CustomButton
             name="Search"
-            :loading="loading.searchAddress"
+            :loading="loadingLocation.searchAddress"
             @click="handleSearchAddress()"
           />
         </div>
       </div>
 
-      <!-- show search results -->
-      <div v-if="searchAddressResults">
+      <!-- Show Search Results -->
+      <div v-if="searchAddressResults && searchAddressResults.length > 0">
         <div
-          v-for="coordinate in searchAddressResults"
-          :key="coordinate.address"
-          class="address-card-container mt-4 overflow-hidden rounded-lg bg-white p-4 shadow"
+          v-for="(coordinate, index) in searchAddressResults"
+          :key="index"
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
         >
-          <div class="flex flex-col">
-            <!-- Add a radio button input -->
+          <div class="flex items-center">
             <input
+              :id="`${index}`"
+              v-model="selectedAddress"
+              v-bind="selectedAddressAttrs"
               type="radio"
               name="selectedAddress"
-              v-bind="selectedAddress"
-              class="mr-2"
+              class="mr-3"
               :value="coordinate"
             />
-            <h2 class="mb-2 text-xl font-semibold">{{ coordinate.address }}</h2>
-
-            <div class="flex justify-between">
-              <p class="text-gray-600">
-                Latitude: <span>{{ coordinate.lat }}</span>
-              </p>
-              <p class="text-gray-600">
-                Longitude: <span>{{ coordinate.lng }}</span>
-              </p>
-            </div>
+            <label :for="`${index}`" class="text-lg">{{
+              coordinate.address
+            }}</label>
           </div>
         </div>
       </div>
 
-      <!-- show no results -->
-      <div v-if="searchAddressResults?.length === 0 || !searchAddressResults">
-        <div class="mt-4">
-          <p class="text-gray-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              class="mx-auto h-8 w-8 text-gray-400"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </p>
-          <p class="text-center text-gray-600">No results</p>
-        </div>
+      <!-- Show No esults -->
+      <div
+        v-else
+        class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
+      >
+        <p class="text-lg">No locations</p>
       </div>
-      <small class="text-primary-red">{{
-        errorMessages.selectedAddress || '&nbsp;'
-      }}</small>
+
+      <small
+        v-if="errorMessages.selectedAddress"
+        class="p-error text-sm text-red-500"
+        >{{ errorMessages.selectedAddress || '&nbsp;' }}</small
+      >
+
       <div class="flex w-full justify-end">
         <CustomButton
           type="submit"
           name="Create Location"
-          :loading="loading.createLocation"
-        />
-      </div>
-    </form>
-  </Dialog>
-
-  <!-- Edit Profile Picture  -->
-  <Dialog
-    v-model:visible="userModalVisible.editPicture"
-    modal
-    header="Upload Image"
-    :draggable="false"
-    :close-on-escape="true"
-    :pt="{
-      root: {
-        class: 'w-full mx-3 md:m-0 md:max-w-lg',
-      },
-    }"
-  >
-    <form class="p-4" @submit.prevent="handleUploadImage">
-      <div class="flex w-full flex-col">
-        <label
-          for="dropzone-file"
-          class="dark:hover:bg-bray-800 flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-        >
-          <div class="flex flex-col items-center justify-center pb-6 pt-5">
-            <svg
-              class="mb-4 h-8 w-8 text-gray-500 dark:text-gray-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 16"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-              />
-            </svg>
-            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-              <span class="font-semibold">Click to upload</span> or drag and
-              drop
-            </p>
-          </div>
-          <input
-            id="dropzone-file"
-            type="file"
-            class="hidden"
-            accept="image/*"
-            @change="
-              $event => {
-                const target = $event.target as HTMLInputElement
-                selectedPicture = (target.files as FileList)[0]
-              }
-            "
-          />
-        </label>
-
-        <span class="block text-sm text-red-500">
-          {{ errorMessageSelectedPicture }}
-        </span>
-      </div>
-
-      <div class="mt-6 flex justify-between">
-        <CustomButton
-          name="Cancel"
-          variant="secondary"
-          @click="toggleUserModal()"
-        />
-        <CustomButton
-          type="submit"
-          :loading="loadingUpload"
-          name="Upload"
-          variant="primary"
+          :loading="loadingLocation.create"
         />
       </div>
     </form>
@@ -632,12 +691,10 @@ import {
 } from '@/validation/schema'
 import { useLazyQuery, useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { ArrowLeft, Edit2, PlusCircle } from 'lucide-vue-next'
+import { Edit2, PlusCircle } from 'lucide-vue-next'
 import { Form, useForm } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-
-// TODO: REFRACTOR THIS FILE
 
 // composables
 const { customUser } = useCustomUser()
@@ -647,270 +704,20 @@ const { firebaseUser, uploadProfile, deleteProfile } = useFirebase()
 const { replace } = useRouter()
 const { searchAddress } = useTomTomMap()
 
-// variables
-const selectedAbsence = ref<Absence | null>(null)
-const variables = ref<VariablesProps>({
-  filters: [],
-  order: {
-    field: 'createdAt',
-    direction: ORDER_DIRECTION.DESC,
-  },
+//#region USER
+const userModalVisible = ref<{
+  update: boolean
+}>({
+  update: false,
 })
-const absenceModalVisible = ref({
-  openModal: false,
-  detail: false,
-  edit: false,
-  create: false,
-})
-
-const locationModalVisible = ref({
-  openModal: false,
-  detail: false,
-  edit: false,
-  create: false,
-})
-
-// variables
-const isEditingUser = ref<boolean>(false)
-const selectedPicture = ref<File | null>(null)
-const userModalVisible = ref({
-  editPicture: false,
+const loadingUser = ref<{
+  update: boolean
+  uploadPicture: boolean
+}>({
+  update: false,
+  uploadPicture: false,
 })
 const user = computed<CustomUser | null>(() => userResult.value?.user || null)
-const selectedLocation = ref<Location | null>(null)
-const searchAddressResults = ref<Location[] | null>(null)
-
-const absences = computed<Absence[]>(
-  () => absencesByUserIdResult.value?.absencesByUserId || [],
-)
-
-// form schema absence
-const formAbsence = {
-  fields: [
-    {
-      label: 'Type',
-      name: 'type',
-      as: 'select',
-      type: 'select',
-      options: ABSENCE_TYPES,
-      placeholder: 'Select a type',
-    },
-    {
-      label: 'Start Date',
-      name: 'startDate',
-      as: 'input',
-      type: 'date',
-      placeholder: 'Select a start date',
-      minDate: new Date(),
-    },
-    {
-      label: 'End Date',
-      name: 'endDate',
-      as: 'input',
-      type: 'date',
-      placeholder: 'Select a end date',
-      setMinEndDate: true,
-    },
-    {
-      label: 'Description',
-      name: 'description',
-      as: 'textarea',
-      type: 'textarea',
-      placeholder: 'Reason for absence',
-      rows: 5,
-    },
-  ],
-
-  button: {
-    name: 'Update Absence',
-  },
-}
-
-// graphql
-const {
-  result: absencesByUserIdResult,
-  error: absencesByUserIdError,
-  refetch: refetchAbsencesByUserId,
-  load: loadAbsencesByUserId,
-} = useLazyQuery(GET_ALL_ABSENCES_BY_USERID, variables, {
-  fetchPolicy: 'cache-and-network',
-})
-
-const { mutate: deleteAbsence, error: deleteAbsenceError } =
-  useMutation(DELETE_ABSENCE)
-
-const { mutate: updateAbsence, error: updateAbsenceError } =
-  useMutation(UPDATE_ABSENCE)
-
-const { mutate: createAbsence, error: createAbsenceError } =
-  useMutation(CREATE_ABSENCE)
-
-// on mounted
-onMounted(() => {
-  variables.value.userId = customUser.value?.id
-  if (customUser.value?.role !== Role.CLIENT) {
-    loadAbsencesByUserId()
-  }
-})
-
-// handle create absence
-const handleCreateAbsence = async (values: Absence) => {
-  try {
-    loading.value.create = true
-    await createAbsence({
-      createAbsenceInput: {
-        userId: customUser.value?.id,
-        type: values.type,
-        startDate: formatDateTime(values.startDate),
-        endDate: formatDateTime(values.endDate),
-        description: values.description,
-      },
-    })
-    loading.value.create = false
-    showToast('success', 'Success', 'Absence has been created')
-    await refetch()
-    toggleAbsenceModal()
-  } catch (err) {
-    LogRocket.captureException(err as Error)
-    console.log(err)
-  }
-}
-
-// handle update absence
-const handleUpdateAbsence = async (values: Absence) => {
-  try {
-    // console.log(values)
-    loading.value.update = true
-    await updateAbsence({
-      updateAbsenceInput: {
-        id: selectedAbsence.value?.id,
-        type: values.type,
-        startDate: formatDateTime(values.startDate),
-        endDate: formatDateTime(values.endDate),
-        description: values.description,
-      },
-    })
-    loading.value.update = false
-    showToast('success', 'Success', 'Absence has been updated')
-    await refetch()
-    toggleAbsenceModal()
-  } catch (err) {
-    LogRocket.captureException(err as Error)
-    console.log(err)
-  }
-}
-
-// handle delete absence
-const handleDelete = async (absence: Absence) => {
-  try {
-    await deleteAbsence({
-      id: absence.id,
-    })
-    showToast(
-      'success',
-      'Success',
-      `Absence of ${absence.user.firstname} has been deleted`,
-    )
-    await refetch()
-    toggleAbsenceModal()
-  } catch (err) {
-    LogRocket.captureException(err as Error)
-    console.log(err)
-  }
-}
-
-// open or close modal
-const toggleAbsenceModal = (
-  absence: Absence | null = null,
-  type: string = 'close',
-) => {
-  selectedAbsence.value = absence ? { ...absence } : null
-
-  // switch case for type
-  switch (type) {
-    case 'edit':
-      absenceModalVisible.value = {
-        openModal: true,
-        detail: false,
-        edit: true,
-        create: false,
-      }
-      break
-    case 'detail':
-      absenceModalVisible.value = {
-        openModal: true,
-        detail: true,
-        edit: false,
-        create: false,
-      }
-      break
-    case 'create':
-      absenceModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: true,
-      }
-      break
-    case 'close':
-      absenceModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: false,
-      }
-      break
-    default:
-      break
-  }
-}
-
-const cancelAbsenceEdit = () => {
-  toggleAbsenceModal(selectedAbsence.value, 'detail')
-}
-
-const cancelLocationEdit = () => {
-  toggleLocationModal(selectedLocation.value, 'detail')
-}
-
-const refetch = async (): Promise<void> => {
-  await refetchAbsencesByUserId()
-}
-
-watchEffect(() => {
-  // log the queries
-  // if (absences.value) console.log(absences.value)
-  // if (absencesByUserIdResult.value) console.log(absencesByUserIdResult.value)
-  // if (absencesResult.value) console.log(absencesResult.value)
-
-  // all errors
-  const errors = [
-    deleteAbsenceError.value,
-    updateAbsenceError.value,
-    createAbsenceError.value,
-    absencesByUserIdError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loading.value = {
-        ...loading.value,
-        update: false,
-        create: false,
-      }
-
-      LogRocket.captureException(error)
-      showToast('error', 'Error', error.message)
-    }
-  })
-})
-
-// loading states
-const loading = ref<{ [key: string]: boolean }>({
-  updateUser: false,
-  createLocation: false,
-  updateLocation: false,
-  searchAddress: false,
-})
 
 // form schema update user
 const formUpdateUser = {
@@ -966,35 +773,9 @@ const formUpdateUser = {
   },
 }
 
-// error messages of forms
-const errorMessages = ref<{
-  [key: string]: string | undefined
-}>({
-  locationTitle: '',
-  searchAdressInput: '',
-  selectedAddress: '',
-})
-
-// create location form
-const {
-  defineComponentBinds: defineComponentBindsLocation,
-  defineInputBinds: defineInputBindsLocation,
-  errors: errorsLocation,
-  values: valuesLocation,
-  validate: validateLocation,
-  setValues: setValuesLocation,
-} = useForm({
-  validationSchema: locationValidationSchema,
-})
-
-const locationTitle = defineComponentBindsLocation('locationTitle')
-const searchAdressInput = defineComponentBindsLocation('searchAdressInput')
-const selectedAddress = defineInputBindsLocation('selectedAddress')
-
 // graphql
 const {
   result: userResult,
-  loading: userLoading,
   error: userError,
   refetch: refetchUser,
 } = useQuery(
@@ -1007,37 +788,20 @@ const {
   },
 )
 
-const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
+const { mutate: updateUser } = useMutation(UPDATE_USER)
 
-const { mutate: deleteUser, error: deleteUserError } = useMutation(DELETE_USER)
-
-const { mutate: createLocation, error: createLocationError } =
-  useMutation(CREATE_LOCATION)
-
-const { mutate: updateLocation, error: updateLocationError } =
-  useMutation(UPDATE_LOCATION)
-
-const { mutate: deleteLocation, error: deleteLocationError } =
-  useMutation(DELETE_LOCATION)
-
-const loadingUpload = ref<boolean>(false)
-const errorMessageSelectedPicture = ref<string>('')
+const { mutate: deleteUser } = useMutation(DELETE_USER)
 
 // logics
 // handle upload image
-const handleUploadImage = async () => {
-  errorMessageSelectedPicture.value = ''
-  loadingUpload.value = true
-  if (!selectedPicture.value) {
-    errorMessageSelectedPicture.value = 'Please select a picture'
-    loadingUpload.value = false
-    return
-  }
+const handleUploadImage = async (event: Event): Promise<void> => {
+  loadingUser.value.uploadPicture = true
+  const selectedPicture = (event.target as HTMLInputElement).files?.[0]
   try {
     // save image to firebase & get url
     const url = await uploadProfile(
       customUser.value!.uid,
-      selectedPicture.value as File,
+      selectedPicture as File,
     )
     // update user in db
     await updateUser({
@@ -1047,126 +811,496 @@ const handleUploadImage = async () => {
       },
     })
 
-    loadingUpload.value = false
     showToast('success', 'Success', 'Profile picture has been updated')
     toggleUserModal()
   } catch (error) {
-    console.log(error)
-    if (error instanceof Error) showToast('error', 'Error', error.message)
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't upload image")
+  } finally {
+    loadingUser.value.uploadPicture = false
   }
 }
 
 // handle delete user
-const handleDeleteUser = async () => {
-  // delete profile picture
-  await deleteProfile(customUser.value!.uid)
-
-  await deleteUser({
-    id: customUser.value?.id,
-  })
-
-  showToast('success', 'Success', `You have deleted your account`)
-  customUser.value = null
-  firebaseUser.value = null
-  replace('/')
+const handleDeleteUser = async (): Promise<void> => {
+  try {
+    // delete profile picture
+    await deleteProfile(customUser.value!.uid)
+    // delete user in db
+    await deleteUser({
+      id: customUser.value?.id,
+    })
+    showToast('success', 'Success', `You have deleted your account`)
+    firebaseUser.value = null
+    customUser.value = null
+    replace('/')
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error) showToast('error', 'Error', "Can't delete user")
+  }
 }
 
 // handle update user
-const handleUpdateUser = async (values: CustomUser) => {
-  loading.value.updateUser = true
-  await updateUser({
-    updateUserInput: {
-      id: customUser.value?.id,
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      telephone: values.telephone,
-      // client only
-      ...(customUser.value?.role === Role.CLIENT && {
-        invoiceOption: values.invoiceOption,
-        company: values.company,
-        btwNumber: values.company ? values.btwNumber : null,
-      }),
-    },
-  })
-  loading.value.updateUser = false
-  showToast('success', 'Success', `You have updated your profile`)
-  isEditingUser.value = false
-  refetchUser()
+const handleUpdateUser = async (values: CustomUser): Promise<void> => {
+  try {
+    loadingUser.value.update = true
+    await updateUser({
+      updateUserInput: {
+        id: customUser.value?.id,
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+        // client only
+        ...(customUser.value?.role === Role.CLIENT && {
+          invoiceOption: values.invoiceOption,
+          company: values.company,
+          btwNumber: values.company ? values.btwNumber : null,
+        }),
+      },
+    })
+    showToast('success', 'Success', `You have updated your profile`)
+    refetchUser()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error) showToast('error', 'Error', "Can't update user")
+  } finally {
+    loadingUser.value.update = false
+  }
 }
 
-// search address
-const handleSearchAddress = async () => {
-  loading.value.searchAddress = true
-  searchAddressResults.value = null
-  errorMessages.value = {}
+const toggleUserModal = (type: string = 'close'): void => {
+  userModalVisible.value = {
+    update: type === 'update',
+  }
+}
 
-  await validateLocation()
-  errorMessages.value.searchAdressInput = errorsLocation.value.searchAdressInput
-  if (!errorsLocation.value.searchAdressInput) {
-    try {
+watchEffect(() => {
+  // log the queries
+  // if (userResult.value) console.log(userResult.value)
+  // if (user.value) console.log(user)
+
+  // all errors
+  if (userError.value) {
+    console.log(userError.value)
+    LogRocket.captureException(userError.value)
+    showToast('error', 'Error', "Can't get your data")
+  }
+})
+//#endregion
+
+//#region ABSENCE
+const selectedAbsence = ref<Absence | null>(null)
+
+const absenceModalVisible = ref<{
+  detail: boolean
+  create: boolean
+}>({
+  detail: false,
+  create: false,
+})
+
+const absences = computed<Absence[]>(
+  () => absencesByUserIdResult.value?.absencesByUserId || [],
+)
+
+const variables = ref<VariablesProps>({
+  filters: [],
+  order: {
+    field: 'createdAt',
+    direction: ORDER_DIRECTION.DESC,
+  },
+})
+
+const loadingAbsence = ref<{
+  create: boolean
+  update: boolean
+}>({
+  create: false,
+  update: false,
+})
+const isEditingAbsence = ref<boolean>(false)
+
+// form schema absence
+const formAbsence = {
+  fields: [
+    {
+      label: 'Type',
+      name: 'type',
+      as: 'select',
+      type: 'select',
+      options: ABSENCE_TYPES,
+      placeholder: 'Select a type',
+    },
+    {
+      label: 'Start Date',
+      name: 'startDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a start date',
+      minDate: new Date(),
+    },
+    {
+      label: 'End Date',
+      name: 'endDate',
+      as: 'input',
+      type: 'date',
+      placeholder: 'Select a end date',
+      setMinEndDate: true,
+    },
+    {
+      label: 'Description',
+      name: 'description',
+      as: 'textarea',
+      type: 'textarea',
+      placeholder: 'Reason for absence',
+      rows: 5,
+    },
+  ],
+
+  button: {
+    name: 'Update Absence',
+  },
+}
+
+// graphql
+const {
+  result: absencesByUserIdResult,
+  error: absencesByUserIdError,
+  refetch: refetchAbsencesByUserId,
+  load: loadAbsencesByUserId,
+} = useLazyQuery(GET_ALL_ABSENCES_BY_USERID, variables, {
+  fetchPolicy: 'cache-and-network',
+})
+
+const { mutate: deleteAbsence } = useMutation(DELETE_ABSENCE)
+
+const { mutate: updateAbsence } = useMutation(UPDATE_ABSENCE)
+
+const { mutate: createAbsence } = useMutation(CREATE_ABSENCE)
+
+// logics
+// on mounted
+onMounted(() => {
+  variables.value.userId = customUser.value?.id
+  if (customUser.value?.role !== Role.CLIENT) {
+    loadAbsencesByUserId()
+  }
+})
+
+// handle create absence
+const handleCreateAbsence = async (values: Absence): Promise<void> => {
+  try {
+    loadingAbsence.value.create = true
+    await createAbsence({
+      createAbsenceInput: {
+        userId: customUser.value?.id,
+        type: values.type,
+        startDate: formatDateTime(values.startDate),
+        endDate: formatDateTime(values.endDate),
+        description: values.description,
+      },
+    })
+    showToast('success', 'Success', 'Absence has been created')
+    await refetch()
+    toggleAbsenceModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't create a absence")
+  } finally {
+    loadingAbsence.value.create = false
+  }
+}
+
+// handle update absence
+const handleUpdateAbsence = async (values: Absence): Promise<void> => {
+  try {
+    // console.log(values)
+    loadingAbsence.value.update = true
+    await updateAbsence({
+      updateAbsenceInput: {
+        id: selectedAbsence.value?.id,
+        type: values.type,
+        startDate: formatDateTime(values.startDate),
+        endDate: formatDateTime(values.endDate),
+        description: values.description,
+      },
+    })
+    showToast('success', 'Success', 'Absence has been updated')
+    await refetch()
+    toggleAbsenceModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't update a absence")
+  } finally {
+    loadingAbsence.value.update = false
+  }
+}
+
+// handle delete absence
+const handleDeleteAbsence = async (absence: Absence): Promise<void> => {
+  try {
+    await deleteAbsence({
+      id: absence.id,
+    })
+    showToast(
+      'success',
+      'Success',
+      `Absence of ${absence.user.firstname} has been deleted`,
+    )
+    await refetch()
+    toggleAbsenceModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't delete a absence")
+  }
+}
+
+// open or close modal
+const toggleAbsenceModal = (
+  absence: Absence | null = null,
+  type: string = 'close',
+): void => {
+  selectedAbsence.value = absence ? { ...absence } : null
+  isEditingAbsence.value = false
+  absenceModalVisible.value = {
+    detail: type === 'detail',
+    create: type === 'create',
+  }
+}
+
+const cancelAbsenceEdit = (): void => {
+  toggleAbsenceModal(selectedAbsence.value, 'detail')
+}
+
+const refetch = async (): Promise<void> => {
+  await refetchAbsencesByUserId()
+}
+
+// Change date to mm/dd/yyyy
+const formatAbsenceDate = (date: string): string => {
+  const dateObj = new Date(date)
+  return new Intl.DateTimeFormat('en', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(dateObj)
+}
+
+watchEffect(() => {
+  // log the queries
+  // if (absences.value) console.log(absences.value)
+  // if (absencesByUserIdResult.value) console.log(absencesByUserIdResult.value)
+  // if (absencesResult.value) console.log(absencesResult.value)
+
+  // all errors
+  if (absencesByUserIdError.value) {
+    // console.log(absencesByUserIdError.value)
+    LogRocket.captureException(absencesByUserIdError.value)
+    showToast('error', 'Error', "Can't get your absences data")
+  }
+})
+//#endregion
+
+//#region LOCATION
+const locationModalVisible = ref<{
+  detail: boolean
+  create: boolean
+}>({
+  detail: false,
+  create: false,
+})
+const selectedLocation = ref<Location | null>(null)
+const searchAddressResults = ref<Location[] | null>(null)
+const loadingLocation = ref<{
+  create: boolean
+  update: boolean
+  searchAddress: boolean
+}>({
+  create: false,
+  update: false,
+  searchAddress: false,
+})
+const isEditingLocation = ref<boolean>(false)
+
+// error messages of forms
+const errorMessages = ref<{
+  locationTitle?: string
+  searchAdressInput?: string
+  selectedAddress?: string
+}>({
+  locationTitle: '',
+  searchAdressInput: '',
+  selectedAddress: '',
+})
+
+// create location form
+const {
+  defineField: defineFieldLocation,
+  errors: errorsLocation,
+  values: valuesLocation,
+  validate: validateLocation,
+  setValues: setValuesLocation,
+} = useForm({
+  validationSchema: locationValidationSchema,
+})
+
+const [locationTitle, locationTitleAttrs] = defineFieldLocation('locationTitle')
+const [searchAdressInput, searchAdressInputAttrs] =
+  defineFieldLocation('searchAdressInput')
+const [selectedAddress, selectedAddressAttrs] =
+  defineFieldLocation('selectedAddress')
+
+// graphql
+const { mutate: createLocation } = useMutation(CREATE_LOCATION)
+
+const { mutate: updateLocation } = useMutation(UPDATE_LOCATION)
+
+const { mutate: deleteLocation } = useMutation(DELETE_LOCATION)
+
+// search address
+const handleSearchAddress = async (): Promise<void> => {
+  try {
+    loadingLocation.value.searchAddress = true
+    searchAddressResults.value = null
+    errorMessages.value = {}
+
+    await validateLocation()
+    errorMessages.value.searchAdressInput =
+      errorsLocation.value.searchAdressInput
+    if (!errorsLocation.value.searchAdressInput) {
       const results = await searchAddress(valuesLocation.searchAdressInput)
-      loading.value.searchAddress = false
       if (results) {
         searchAddressResults.value = results
       }
-    } catch (err) {
-      if (err instanceof Error) showToast('error', 'Error', err.message)
     }
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't search for address")
+  } finally {
+    loadingLocation.value.searchAddress = false
   }
-  loading.value.searchAddress = false
 }
 
 // add new location
-const handleCreateLocation = async () => {
-  loading.value.createLocation = true
-  await validateLocation()
-  errorMessages.value = errorsLocation.value
-  if (Object.keys(errorsLocation.value).length === 0) {
-    console.log('no errors', valuesLocation)
-    await createLocation({
-      createLocationInput: {
-        title: valuesLocation.locationTitle,
-        address: valuesLocation.selectedAddress.address,
-        lat: valuesLocation.selectedAddress.lat,
-        lng: valuesLocation.selectedAddress.lng,
-        userId: customUser.value?.id,
-      },
-    })
-    loading.value.createLocation = false
-    showToast('success', 'Success', `You have created a new location`)
-    refetchUser()
+const handleCreateLocation = async (): Promise<void> => {
+  try {
+    loadingLocation.value.create = true
+    await validateLocation()
+    errorMessages.value = errorsLocation.value
+    if (Object.keys(errorsLocation.value).length === 0) {
+      console.log('no errors', valuesLocation)
+      await createLocation({
+        createLocationInput: {
+          title: valuesLocation.locationTitle,
+          address: valuesLocation.selectedAddress.address,
+          lat: valuesLocation.selectedAddress.lat,
+          lng: valuesLocation.selectedAddress.lng,
+          userId: customUser.value?.id,
+        },
+      })
+      showToast('success', 'Success', `You have created a new location`)
+      refetchUser()
+      toggleLocationModal()
+    }
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't create a location")
+  } finally {
+    loadingLocation.value.create = false
   }
-  loading.value.createLocation = false
 }
 
 // update location
-const handleUpdateLocation = async () => {
-  loading.value.updateLocation = true
-  await validateLocation()
-  errorMessages.value = errorsLocation.value
-  if (Object.keys(errorsLocation.value).length === 0) {
-    console.log('no errors', valuesLocation)
-    await updateLocation({
-      updateLocationInput: {
-        id: selectedLocation.value?.id,
-        title: valuesLocation.locationTitle,
-        address: valuesLocation.selectedAddress.address,
-        lat: valuesLocation.selectedAddress.lat,
-        lng: valuesLocation.selectedAddress.lng,
-      },
-    })
-    loading.value.updateLocation = false
-    showToast('success', 'Success', `You have updated a location`)
-    resetInputfields()
-    refetchUser()
-    toggleLocationModal()
+const handleUpdateLocation = async (): Promise<void> => {
+  try {
+    loadingLocation.value.update = true
+    await validateLocation()
+    errorMessages.value = errorsLocation.value
+    if (Object.keys(errorsLocation.value).length === 0) {
+      console.log('no errors', valuesLocation)
+      await updateLocation({
+        updateLocationInput: {
+          id: selectedLocation.value?.id,
+          title: valuesLocation.locationTitle,
+          address: valuesLocation.selectedAddress.address,
+          lat: valuesLocation.selectedAddress.lat,
+          lng: valuesLocation.selectedAddress.lng,
+        },
+      })
+      showToast('success', 'Success', `You have updated a location`)
+      refetchUser()
+      toggleLocationModal()
+    }
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't update a location")
+  } finally {
+    loadingLocation.value.update = false
   }
-  loading.value.updateLocation = false
+}
+
+// delete location
+const handleDeleteLocation = async (id: string): Promise<void> => {
+  try {
+    await deleteLocation({
+      id: id,
+    })
+    toggleLocationModal() // close modal
+    showToast('success', 'Success', `You have deleted a location`)
+    refetchUser()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    if (error instanceof Error)
+      showToast('error', 'Error', "Can't delete a location")
+  }
+}
+
+const toggleLocationModal = (
+  location: Location | null = null,
+  type: string = 'close',
+): void => {
+  resetInputfields()
+  selectedLocation.value = location ? { ...location } : null
+  isEditingLocation.value = false
+
+  locationModalVisible.value = {
+    detail: type === 'detail',
+    create: type === 'create',
+  }
+
+  if (type === 'detail') {
+    setValuesLocation({
+      locationTitle: selectedLocation.value!.title,
+      searchAdressInput: selectedLocation.value!.address,
+      selectedAddress: null,
+    })
+  }
+}
+
+const cancelLocationEdit = (): void => {
+  toggleLocationModal(selectedLocation.value, 'detail')
 }
 
 // reset input fields
-const resetInputfields = () => {
+const resetInputfields = (): void => {
   setValuesLocation({
     locationTitle: '',
     searchAdressInput: '',
@@ -1176,116 +1310,5 @@ const resetInputfields = () => {
   searchAddressResults.value = null
   errorMessages.value = {}
 }
-
-// delete location
-const handleDeleteLocation = async (id: string) => {
-  await deleteLocation({
-    id: id,
-  })
-  toggleLocationModal() // close modal
-  showToast('success', 'Success', `You have deleted a location`)
-  refetchUser()
-}
-
-const toggleLocationModal = (
-  location: Location | null = null,
-  type: string = 'close',
-) => {
-  selectedLocation.value = location ? { ...location } : null
-
-  // switch case for type
-  switch (type) {
-    case 'edit':
-      locationModalVisible.value = {
-        openModal: true,
-        detail: false,
-        edit: true,
-        create: false,
-      }
-      break
-    case 'detail':
-      locationModalVisible.value = {
-        openModal: true,
-        detail: true,
-        edit: false,
-        create: false,
-      }
-      break
-    case 'create':
-      locationModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: true,
-      }
-      break
-    case 'close':
-      locationModalVisible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: false,
-      }
-      break
-    default:
-      break
-  }
-}
-
-const toggleUserModal = (type: string = 'close') => {
-  switch (type) {
-    case 'editPicture':
-      userModalVisible.value = {
-        editPicture: true,
-      }
-      selectedPicture.value = null
-      errorMessageSelectedPicture.value = ''
-      break
-    case 'close':
-      userModalVisible.value = {
-        editPicture: false,
-      }
-
-      break
-    default:
-      break
-  }
-}
-
-watchEffect(() => {
-  // log the queries
-  // if (userResult.value) console.log(userResult.value)
-
-  // all errors
-  const errors = [
-    userError.value,
-    updateUserError.value,
-    deleteUserError.value,
-    createLocationError.value,
-    updateLocationError.value,
-    deleteLocationError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loading.value = {
-        updateUser: false,
-        createLocation: false,
-        updateLocation: false,
-        searchAddress: false,
-      }
-
-      showToast('error', 'Error', error.message)
-    }
-  })
-})
-
-// Change date to mm/dd/yyyy
-const formatAbsenceDate = (date: string) => {
-  const dateObj = new Date(date)
-  return new Intl.DateTimeFormat('en', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(dateObj)
-}
+//#endregion
 </script>

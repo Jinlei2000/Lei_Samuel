@@ -11,7 +11,7 @@
 
 ## Realtime
 
-- [ ] De backend communiceert in realtime met de frontend en vice versa via de juiste protocollen.
+- [x] De backend communiceert in realtime met de frontend en vice versa via de juiste protocollen.
 
 ## Autorisatie en Authenticatie
 
@@ -23,13 +23,13 @@
 ## Kwetsbaarheid
 
 - [x] CORS is ingeschakeld.
-- [ ] Er zijn extra beveiligingsmaatregelen tegen Cross Site Forgery (CSRF) en Cross Site Scripting (XSS).
+- [x] Er zijn extra beveiligingsmaatregelen tegen Cross Site Forgery (CSRF) en Cross Site Scripting (XSS).
 
 ## API Docs
 
 - [x] GraphQL wordt voornamelijk gebruikt, met beperkt gebruik van REST API.
 - [x] De API documenteert zichzelf met behulp van een self-documenting library zoals Swagger of GraphiQL / Apollo Playground.
-- [ ] Ook statuscodes bij foutcondities worden gedocumenteerd.
+- [x] Ook statuscodes bij foutcondities worden gedocumenteerd.
 
 ## Framework
 
@@ -76,13 +76,13 @@
 
 ## Testing
 
-- [ ] Er is minstens één goede unit test en één integratietest.
+- [x] Er is minstens één goede unit test en één integratietest.
 - [ ] Testing maakt deel uit van de deployment pipeline, inclusief snelheidstests en functionele tests.
 
 ## Styling
 
 - [x] Tailwind CSS of UnoCSS wordt gebruikt voor styling.
-- [ ] Er zijn ghosts, skeletons of loading states voor een betere gebruikerservaring.
+- [x] Er zijn ghosts, skeletons of loading states voor een betere gebruikerservaring.
 - [x] Input-validatie en foutmeldingen zijn geïmplementeerd.
 
 ## PWA (Progressive Web App)
@@ -92,7 +92,7 @@
 
 ## Multi-language
 
-- [ ] De applicatie is meertalig gemaakt, wat een meerwaarde biedt voor gebruikers.
+- [x] De applicatie is meertalig gemaakt, wat een meerwaarde biedt voor gebruikers.
 
 ## Error Logging
 
@@ -111,7 +111,7 @@
 ## Build Optimalisatie
 
 - [x] Vite wordt gebruikt voor een betere levering van JS-bestanden.
-- [ ] Bestanden worden optimaal geminifieerd voor een snellere levering.
+- [x] Bestanden worden optimaal geminifieerd voor een snellere levering.
 
 ## Eigen Inbreng
 
