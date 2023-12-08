@@ -757,92 +757,197 @@ describe('AppController (e2e)', () => {
               expect(res.body.errors[0].message).toEqual('Unauthorized')
             })
         })
+
+        it('all materials should give Unauthorized when invalid bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query: '{ materials { id } }',
+            })
+            .set('Authorization', `Bearer ${dummyInvalidJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
+
+        it('should return all materials with role ADMIN', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userAdminStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query: '{ materials { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.data.materials).toEqual([
+                {
+                  id: '5f9d4a3f9d6c6a1d9c9bce1a',
+                  isLoan: true,
+                },
+              ])
+            })
+        })
+
+        it('should return all materials with role  EMPLOYEE', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userEmployeeStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query: '{ materials { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.data.materials).toEqual([
+                {
+                  id: '5f9d4a3f9d6c6a1d9c9bce1a',
+                  isLoan: true,
+                },
+              ])
+            })
+        })
+
+        it('should return all materials, but role CLIENT not allowed', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userClientStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query: '{ materials { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Forbidden resource')
+            })
+        })
       })
 
-      it('all materials should give Unauthorized when invalid bearer token', () => {
-        return request(app.getHttpServer())
-          .post(GQL_ENDPOINT)
-          .send({
-            query: '{ materials { id } }',
-          })
-          .set('Authorization', `Bearer ${dummyInvalidJwtToken}`)
-          .expect(200)
-          .expect(res => {
-            expect(res.body.errors[0].message).toEqual('Unauthorized')
-          })
-      })
+      describe('materialsByUserId', () => {
+        it('all materialsByUserId should give Unauthorized when no bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                '{ materialsByUserId(userId: "5f9d4a3f9d6c6a1d9c9bce1a") { id } }',
+            })
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
 
-      it('should return all materials with role ADMIN', () => {
-        const usersService = app.get(UsersService)
-        jest
-          .spyOn(usersService, 'findOneByUid')
-          .mockImplementation((uid: string): Promise<User> => {
-            const user = userAdminStub()
-            user.uid = uid
-            return Promise.resolve(user)
-          })
-        return request(app.getHttpServer())
-          .post(GQL_ENDPOINT)
-          .send({
-            query: '{ materials { id, isLoan } }',
-          })
-          .set('Authorization', `Bearer ${dummyJwtToken}`)
-          .expect(200)
-          .expect(res => {
-            expect(res.body.data.materials).toEqual([
-              {
-                id: '5f9d4a3f9d6c6a1d9c9bce1a',
-                isLoan: true,
-              },
-            ])
-          })
-      })
+        it('all materialsByUserId should give Unauthorized when invalid bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                '{ materialsByUserId(userId: "5f9d4a3f9d6c6a1d9c9bce1a") { id } }',
+            })
+            .set('Authorization', `Bearer ${dummyInvalidJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
 
-      it('should return all materials with role  EMPLOYEE', () => {
-        const usersService = app.get(UsersService)
-        jest
-          .spyOn(usersService, 'findOneByUid')
-          .mockImplementation((uid: string): Promise<User> => {
-            const user = userEmployeeStub()
-            user.uid = uid
-            return Promise.resolve(user)
-          })
-        return request(app.getHttpServer())
-          .post(GQL_ENDPOINT)
-          .send({
-            query: '{ materials { id, isLoan } }',
-          })
-          .set('Authorization', `Bearer ${dummyJwtToken}`)
-          .expect(200)
-          .expect(res => {
-            expect(res.body.data.materials).toEqual([
-              {
-                id: '5f9d4a3f9d6c6a1d9c9bce1a',
-                isLoan: true,
-              },
-            ])
-          })
-      })
+        it('should return all materialsByUserId with role ADMIN', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userAdminStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                '{ materialsByUserId(userId: "5f9d4a3f9d6c6a1d9c9bce1a") { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.data.materialsByUserId).toEqual([
+                {
+                  id: '5f9d4a3f9d6c6a1d9c9bce1a',
+                  isLoan: true,
+                },
+              ])
+            })
+        })
 
-      it('should return all materials, but role CLIENT not allowed', () => {
-        const usersService = app.get(UsersService)
-        jest
-          .spyOn(usersService, 'findOneByUid')
-          .mockImplementation((uid: string): Promise<User> => {
-            const user = userClientStub()
-            user.uid = uid
-            return Promise.resolve(user)
-          })
-        return request(app.getHttpServer())
-          .post(GQL_ENDPOINT)
-          .send({
-            query: '{ materials { id, isLoan } }',
-          })
-          .set('Authorization', `Bearer ${dummyJwtToken}`)
-          .expect(200)
-          .expect(res => {
-            expect(res.body.errors[0].message).toEqual('Forbidden resource')
-          })
+        it('should return all materialsByUserId with role EMPLOYEE', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userEmployeeStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                '{ materialsByUserId(userId: "5f9d4a3f9d6c6a1d9c9bce1a") { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.data.materialsByUserId).toEqual([
+                {
+                  id: '5f9d4a3f9d6c6a1d9c9bce1a',
+                  isLoan: true,
+                },
+              ])
+            })
+        })
+
+        it('should return all materialsByUserId, but role CLIENT not allowed', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockImplementation((uid: string): Promise<User> => {
+              const user = userClientStub()
+              user.uid = uid
+              return Promise.resolve(user)
+            })
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                '{ materialsByUserId(userId: "5f9d4a3f9d6c6a1d9c9bce1a") { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Forbidden resource')
+            })
+        })
       })
     })
   })
