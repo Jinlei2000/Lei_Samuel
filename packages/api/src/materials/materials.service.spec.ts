@@ -108,4 +108,32 @@ describe('MaterialsService', () => {
       })
     })
   })
+
+  describe('findOne', () => {
+    let materialResult: Material
+
+    beforeEach(async () => {
+      materialResult = await service.findOne('5f9d4a3f9d6c6a1d9c9bce1a')
+    })
+
+    describe('when findOne is called', () => {
+      it('should call materialRepository.findOne one time', async () => {
+        const findOneSpy = jest.spyOn(mockMaterialsRepository, 'findOne')
+        expect(findOneSpy).toHaveBeenCalledTimes(1)
+      })
+
+      it('should return a material', async () => {
+        expect(materialResult).toEqual(materialStub())
+      })
+
+      it('should throw an error if absence is not found', async () => {
+        try {
+          // invalid id
+          await service.findOne('111111111111111111111111')
+        } catch (e) {
+          expect(e.message).toEqual('Absence not found!')
+        }
+      })
+    })
+  })
 })
