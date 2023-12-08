@@ -90,13 +90,13 @@ describe('MaterialsService', () => {
         expect(materialsResult).toEqual([materialStub()])
       })
 
-      it('should return an array of materials filtered by absence type', async () => {
+      it('should return an array of materials filtered by material type', async () => {
         const filters = ['l', 'a']
         const result = await service.findAll(filters)
         expect(result).toEqual([materialStub()])
       })
 
-      it('should throw an error if materia type is not valid', async () => {
+      it('should throw an error if material type is not valid', async () => {
         const filters = ['invalid']
         const result = service.findAll(filters)
 
@@ -126,13 +126,32 @@ describe('MaterialsService', () => {
         expect(materialResult).toEqual(materialStub())
       })
 
-      it('should throw an error if absence is not found', async () => {
+      it('should throw an error if material is not found', async () => {
         try {
           // invalid id
           await service.findOne('111111111111111111111111')
         } catch (e) {
-          expect(e.message).toEqual('Absence not found!')
+          expect(e.message).toEqual('Material not found!')
         }
+      })
+    })
+  })
+
+  describe('findAllByUserId', () => {
+    let materialResult: Material[]
+
+    beforeEach(async () => {
+      materialResult = await service.findAllByUserId('5f9d4a3f9d6c6a1d9c9bce1a')
+    })
+
+    describe('when findAllByUserId is called', () => {
+      it('should call materialRepository.find one time', async () => {
+        const findSpy = jest.spyOn(mockMaterialsRepository, 'find')
+        expect(findSpy).toHaveBeenCalledTimes(1)
+      })
+
+      it('should return an array of materials', async () => {
+        expect(materialResult).toEqual([materialStub()])
       })
     })
   })
