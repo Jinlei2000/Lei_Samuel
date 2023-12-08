@@ -166,6 +166,7 @@ describe('AbsencesService', () => {
       it('should throw an error if absence type is not valid', async () => {
         const filters = ['invalid']
         const result = service.findAll(filters)
+        console.log(result)
         // ALL UPPER CASE FILTERS
         await expect(result).rejects.toThrow(
           `Invalid filter in filters = [${filters.map(f =>

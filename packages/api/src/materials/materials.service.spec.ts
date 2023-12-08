@@ -65,11 +65,10 @@ describe('MaterialsService', () => {
       // ERRORS
       it('should throw an error if material name is too short', async () => {
         materialTestInput.name = ''
+        console.log('test', materialTestInput)
         const result = service.create(materialTestInput)
         console.log(result)
-        await expect(result).rejects.toThrow(
-          'Material name should be at least 3 characters long!',
-        )
+        await expect(result).rejects.toThrow('Material name cannot be empty!')
       })
     })
   })
@@ -89,6 +88,17 @@ describe('MaterialsService', () => {
 
       it('should return an array of materials', async () => {
         expect(materialsResult).toEqual([materialStub()])
+      })
+
+      it('should return an array of materials filtered by material loanability', async () => {
+        const filters = ['invalid']
+        const result = service.findAll(filters)
+
+        await expect(result).rejects.toThrow(
+          `Invalid filter in filters = [${filters.map(f =>
+            f.toUpperCase(),
+          )}]! Supported filters are: A = Available, NA = Not Available, L = Loanable, NL = Not Loanable`,
+        )
       })
     })
   })
