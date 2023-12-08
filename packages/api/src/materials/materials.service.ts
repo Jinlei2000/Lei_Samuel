@@ -16,7 +16,7 @@ export class MaterialsService {
     private readonly materialRepository: Repository<Material>,
   ) {}
 
-  findAll(
+  async findAll(
     filters?: Array<string>,
     order?: OrderByInput,
     searchString?: string,
@@ -86,7 +86,11 @@ export class MaterialsService {
     return material
   }
 
-  create(createMaterialInput: CreateMaterialInput): Promise<Material> {
+  async create(createMaterialInput: CreateMaterialInput) {
+    if (createMaterialInput.name.length === 0) {
+      throw new GraphQLError('Material name cannot be empty!')
+    }
+
     const m = new Material()
     m.name = createMaterialInput.name.toLowerCase()
     m.userId = createMaterialInput.userId
