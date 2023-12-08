@@ -1144,8 +1144,98 @@ describe('AppController (e2e)', () => {
               expect(res.body.errors[0].message).toEqual('Forbidden resource')
             })
         })
+      })
 
-        
+      describe('updateMaterial', () => {
+        it('updateMaterial should give Unauthorized when no bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { updateMaterial(updateMaterialInput: { id: "5f9d4a3f9d6c6a1d9c9bce1a", name: "test" ,isLoan: true, userId: "5f9d4a3f9d6c6a1d9c9bce1a", serialNumber: 123123 }) { id } }',
+            })
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
+
+        it('updateMaterial should give Unauthorized when invalid bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { updateMaterial(updateMaterialInput: { id: "5f9d4a3f9d6c6a1d9c9bce1a", name: "test" ,isLoan: true, userId: "5f9d4a3f9d6c6a1d9c9bce1a", serialNumber: 123123 }) { id } }',
+            })
+            .set('Authorization', `Bearer ${dummyInvalidJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
+
+        it('should updateMaterial with role ADMIN', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockResolvedValue(userAdminStub())
+
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { updateMaterial(updateMaterialInput: { id: "5f9d4a3f9d6c6a1d9c9bce1a", name: "test" ,isLoan: true, userId: "5f9d4a3f9d6c6a1d9c9bce1a", serialNumber: 123123 }) { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              console.log(res.body)
+              expect(res.body.data.updateMaterial).toEqual({
+                id: '5f9d4a3f9d6c6a1d9c9bce1a',
+                isLoan: true,
+              })
+            })
+        })
+
+        it('should not updateMaterial with role EMPLOYEE', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockResolvedValue(userEmployeeStub())
+
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { updateMaterial(updateMaterialInput: { id: "5f9d4a3f9d6c6a1d9c9bce1a", name: "test" ,isLoan: true, userId: "5f9d4a3f9d6c6a1d9c9bce1a", serialNumber: 123123 }) { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              console.log(res.body)
+              expect(res.body.errors[0].message).toEqual('Forbidden resource')
+            })
+        })
+
+        it('should not updateMaterial with role CLIENT', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockResolvedValue(userClientStub())
+
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { updateMaterial(updateMaterialInput: { id: "5f9d4a3f9d6c6a1d9c9bce1a", name: "test" ,isLoan: true, userId: "5f9d4a3f9d6c6a1d9c9bce1a", serialNumber: 123123 }) { id, isLoan } }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              console.log(res.body)
+              expect(res.body.errors[0].message).toEqual('Forbidden resource')
+            })
+        })
       })
     })
   })
