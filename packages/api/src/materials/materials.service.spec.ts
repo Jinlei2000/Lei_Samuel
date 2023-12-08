@@ -90,7 +90,13 @@ describe('MaterialsService', () => {
         expect(materialsResult).toEqual([materialStub()])
       })
 
-      it('should return an array of materials filtered by material loanability', async () => {
+      it('should return an array of materials filtered by absence type', async () => {
+        const filters = ['l', 'a']
+        const result = await service.findAll(filters)
+        expect(result).toEqual([materialStub()])
+      })
+
+      it('should throw an error if materia type is not valid', async () => {
         const filters = ['invalid']
         const result = service.findAll(filters)
 
