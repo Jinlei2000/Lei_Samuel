@@ -1237,6 +1237,97 @@ describe('AppController (e2e)', () => {
             })
         })
       })
+
+      describe('removeMaterial', () => {
+        it('removeMaterial should give Unauthorized when no bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { removeMaterial(id: "5f9d4a3f9d6c6a1d9c9bce1a") }',
+            })
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
+
+        it('removeMaterial should give Unauthorized when invalid bearer token', () => {
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { removeMaterial(id: "5f9d4a3f9d6c6a1d9c9bce1a") }',
+            })
+            .set('Authorization', `Bearer ${dummyInvalidJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              expect(res.body.errors[0].message).toEqual('Unauthorized')
+            })
+        })
+
+        it('should removeMaterial with role ADMIN', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockResolvedValue(userAdminStub())
+
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { removeMaterial(id: "5f9d4a3f9d6c6a1d9c9bce1a") }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              console.log(res.body)
+              expect(res.body.data.removeMaterial).toEqual(
+                '5f9d4a3f9d6c6a1d9c9bce1a',
+              )
+            })
+        })
+
+        it('should not removeMaterial with role EMPLOYEE', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockResolvedValue(userEmployeeStub())
+
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { removeMaterial(id: "5f9d4a3f9d6c6a1d9c9bce1a") }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              console.log(res.body)
+              expect(res.body.errors[0].message).toEqual('Forbidden resource')
+            })
+        })
+
+        it('should not removeMaterial with role CLIENT', () => {
+          const usersService = app.get(UsersService)
+          jest
+            .spyOn(usersService, 'findOneByUid')
+            .mockResolvedValue(userClientStub())
+
+          return request(app.getHttpServer())
+            .post(GQL_ENDPOINT)
+            .send({
+              query:
+                'mutation { removeMaterial(id: "5f9d4a3f9d6c6a1d9c9bce1a") }',
+            })
+            .set('Authorization', `Bearer ${dummyJwtToken}`)
+            .expect(200)
+            .expect(res => {
+              console.log(res.body)
+              expect(res.body.errors[0].message).toEqual('Forbidden resource')
+            })
+        })
+      })
     })
   })
 
