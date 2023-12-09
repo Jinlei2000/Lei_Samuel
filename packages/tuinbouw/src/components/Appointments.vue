@@ -197,7 +197,6 @@
 <script setup lang="ts">
 import DynamicForm from './generic/DynamicForm.vue'
 import NoResult from './generic/NoResult.vue'
-// components
 import Filter from '@/components/generic/Filter.vue'
 import Search from '@/components/generic/Search.vue'
 import Sort from '@/components/generic/Sort.vue'
@@ -233,7 +232,7 @@ import {
 } from 'lucide-vue-next'
 import Dialog from 'primevue/dialog'
 import { type GenericObject } from 'vee-validate'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, type ComputedRef, onMounted, ref, watchEffect } from 'vue'
 
 // props
 const props = defineProps({
@@ -250,7 +249,10 @@ const { formatDateTime, isOverToday } = useTimeUtilities()
 
 // variables
 const selectedAppointment = ref<Appointment | null>(null)
-const visible = ref({
+const visible = ref<{
+  detail: boolean
+  edit: boolean
+}>({
   detail: false,
   edit: false,
 })
@@ -261,7 +263,10 @@ const variables = ref<VariablesProps>({
     direction: ORDER_DIRECTION.DESC,
   },
 })
-const loading = ref({
+const loading = ref<{
+  update: boolean
+  data: ComputedRef<boolean>
+}>({
   update: false,
   data: computed(
     () =>

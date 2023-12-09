@@ -133,7 +133,9 @@ onBeforeMount(() => {
   isAccordionsOpen.value = props.options!.map(() => false)
 })
 
-const updateFiltersRadio = (options: { label: string; value: string }[]) => {
+const updateFiltersRadio = (
+  options: { label: string; value: string }[],
+): void => {
   // clear all filters
   options.map(option => {
     const index = props.modelValue!.indexOf(option)
@@ -155,11 +157,12 @@ const updateFiltersRadio = (options: { label: string; value: string }[]) => {
 const updateFiltersCheckbox = (
   name: string,
   options: { label: string; value: string }[],
-) => {
+): void => {
   // clear all filters
   options.map(option => {
-    const index = props.modelValue!.indexOf(option)
-    props.modelValue!.splice(index, 1)
+    const index = props.modelValue!.indexOf(option.value)
+    // only remove if index is found
+    if (index > -1) props.modelValue!.splice(index, 1)
   })
 
   // add filters

@@ -90,8 +90,24 @@ export const SORT_OPTIONS_APPOINTMENTS = [
     value: 'createdAt',
   },
   {
-    label: 'Name',
-    value: 'fullname',
+    label: 'Price',
+    value: 'price',
+  },
+  {
+    label: 'Type',
+    value: 'type',
+  },
+  {
+    label: 'Start Date',
+    value: 'startProposedDate',
+  },
+  {
+    label: 'End Date',
+    value: 'endProposedDate',
+  },
+  {
+    label: 'Final Date',
+    value: 'finalDate',
   },
 ]
 
@@ -113,6 +129,7 @@ export const FILTER_OPTIONS_APPOINTMENTS = [
     options: [
       { label: 'Repair', value: 'R' },
       { label: 'Maintenance', value: 'M' },
+      { label: 'Other', value: 'O' },
     ],
   },
   {

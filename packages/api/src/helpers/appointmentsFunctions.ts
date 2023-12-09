@@ -13,14 +13,14 @@ export const filterAppointments = (
 
   // where object for query
   let whereQuery: any = {}
-  const filtersList = ['M', 'R', 'D', 'ND', 'S', 'NS', 'P', 'NP']
+  const filtersList = ['M', 'R', 'O', 'D', 'ND', 'S', 'NS', 'P', 'NP']
 
   // check if filters are valid
   if (filters) {
     // check if all filters are valid (M, R, D, ND, S, NS)
     if (!filters?.every(filter => filtersList.includes(filter))) {
       throw new GraphQLError(
-        `Invalid filter in filters = [${filters}]! Supported filters are: M = Maintenance, R = Repair, D = Done, ND = Not Done, S = Scheduled, NS = Not Scheduled, P = Priority, NP = Not Priority`,
+        `Invalid filter in filters = [${filters}]! Supported filters are: M = Maintenance, R = Repair, O = Other, D = Done, ND = Not Done, S = Scheduled, NS = Not Scheduled, P = Priority, NP = Not Priority`,
       )
     }
 
@@ -49,6 +49,7 @@ export const filterAppointments = (
     let selectTypes: Array<string> = []
     if (filters?.includes('M')) selectTypes.push('maintenance')
     if (filters?.includes('R')) selectTypes.push('repair')
+    if (filters?.includes('O')) selectTypes.push('other')
     if (selectTypes.length > 0) whereQuery.type = { $in: selectTypes }
 
     // done filter
