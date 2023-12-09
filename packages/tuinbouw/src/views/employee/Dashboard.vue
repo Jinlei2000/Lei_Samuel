@@ -23,29 +23,35 @@
           <h2 class="text-2xl">Schedule</h2>
           <RouterLink
             :to="`/employee/calendar`"
-            class="text-primary-orange group flex text-base"
+            class="text-primary-orange group flex items-center text-lg sm:text-base"
           >
             Calendar
             <ChevronRight
-              class="transition-all group-hover:translate-x-1"
+              class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
               stroke-width="1"
             />
           </RouterLink>
         </div>
 
         <div
-          class="mb-3 flex items-center justify-between rounded-2xl bg-gray-500 p-1"
+          class="mb-3 flex items-center justify-between rounded-2xl bg-gray-500 p-1 text-xl sm:text-base"
         >
           <button
             class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowLeft class="text-white" @click="prevDay" />
+            <ArrowLeft
+              class="h-7 w-7 text-white sm:h-auto sm:w-auto"
+              @click="prevDay"
+            />
           </button>
-          <p class="">{{ dateDisplay }}</p>
+          <p>{{ dateDisplay }}</p>
           <button
             class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowRight class="text-white" @click="nextDay" />
+            <ArrowRight
+              class="h-7 w-7 text-white sm:h-auto sm:w-auto"
+              @click="nextDay"
+            />
           </button>
         </div>
         <div class="flex flex-col gap-3">
