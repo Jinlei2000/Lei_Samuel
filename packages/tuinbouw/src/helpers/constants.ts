@@ -135,8 +135,9 @@ export const FILTER_OPTIONS_APPOINTMENTS = [
   {
     title: 'Status',
     name: 'status',
-    type: 'checkbox',
+    type: 'radio',
     options: [
+      { label: 'All', value: '' },
       { label: 'Done', value: 'D' },
       { label: 'Not Done', value: 'ND' },
     ],
