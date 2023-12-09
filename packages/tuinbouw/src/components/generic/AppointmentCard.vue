@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="appointment"
-    class="relative max-h-32 w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
+    class="relative h-fit w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
     :class="appointment.isDone ? 'opacity-50' : ''"
     @click="openModal()"
   >
@@ -18,7 +18,7 @@
       "
     ></div>
     <h2 class="mb-1 text-xl">{{ appointment.user?.fullname }}</h2>
-    <div class="flex items-end justify-between gap-3">
+    <div class="flex flex-col items-end justify-between gap-3 lg:flex-row">
       <p class="overflow-hidden text-base">
         {{ appointment.description }}
       </p>
