@@ -3,7 +3,7 @@
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
     <!-- Filters + Searchbar -->
-    <div class="flex w-full flex-col gap-10">
+    <section class="flex w-full flex-col gap-10">
       <!-- Filters + Searchbar -->
       <section
         :class="[
@@ -29,10 +29,10 @@
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_MATERIALS" />
       </header>
-    </div>
+    </section>
 
     <!-- Skeleton -->
-    <template v-if="loading.data">
+    <section v-if="loading.data">
       <div
         class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
@@ -44,10 +44,10 @@
           <div class="h-48 w-full rounded-2xl bg-neutral-200"></div>
         </div>
       </div>
-    </template>
+    </section>
 
     <!-- Materials -->
-    <template v-else-if="materials && materials.length > 0">
+    <section v-else-if="materials && materials.length > 0">
       <div
         class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
@@ -85,7 +85,7 @@
           </div>
         </button>
       </div>
-    </template>
+    </section>
 
     <!-- No results found -->
     <NoResult v-else-if="materials.length === 0" />
@@ -131,18 +131,28 @@
   >
     <!-- Show Detail -->
     <div v-if="!isEditing">
-      <!-- edit -->
-      <Pencil v-if="props.showAllOverview" @click="isEditing = true" />
-      <!-- delete -->
-      <Trash2
-        v-if="props.showAllOverview"
-        class="stroke-primary-red transition-all hover:cursor-pointer"
-        @click="handleDeleteMaterial(selectedMaterial!)"
-      />
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
+
+      <div class="flex justify-between">
+        <!-- Delete -->
+        <button
+          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+          @click="handleDeleteMaterial(selectedMaterial!)"
+        >
+          Delete
+        </button>
+        <!-- Edit -->
+        <button
+          v-if="props.showAllOverview"
+          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
+          @click="isEditing = true"
+        >
+          Edit
+        </button>
+      </div>
     </div>
-    <!-- Edit form -->
+    <!-- Edit Form -->
     <div v-if="isEditing">
       <ArrowLeft @click="isEditing = false" />
       <DynamicForm
@@ -163,6 +173,7 @@
 </template>
 
 <script setup lang="ts">
+import CustomButton from './CustomButton.vue'
 import DynamicForm from './DynamicForm.vue'
 import Filter from './Filter.vue'
 import NoResult from './NoResult.vue'

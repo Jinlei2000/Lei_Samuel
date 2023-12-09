@@ -355,12 +355,14 @@
         </div>
       </div>
       <div class="flex justify-between">
+        <!-- Delete Absence -->
         <button
           class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
           @click="handleDeleteAbsence(selectedAbsence)"
         >
           Delete
         </button>
+        <!-- Edit Absence -->
         <button
           class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
           @click="isEditingAbsence = true"

@@ -55,7 +55,7 @@
                 type="radio"
                 :value="inputOption.value"
                 :name="option.name"
-                @change="updateFiltersRadio(option.options)"
+                @change="updateFilters()"
               />
             </template>
             <!-- Checkbox -->
@@ -67,7 +67,7 @@
                 type="checkbox"
                 :value="inputOption.value"
                 :name="option.name"
-                @change="updateFiltersCheckbox(option.name, option.options)"
+                @change="updateFilters()"
               />
             </template>
             <span
@@ -86,6 +86,8 @@
 </template>
 
 <script setup lang="ts">
+import useCustomToast from '@/composables/useCustomToast'
+import LogRocket from 'logrocket'
 import { Check, Filter as FilterIcon } from 'lucide-vue-next'
 import { ChevronDown } from 'lucide-vue-next'
 import { onBeforeMount, type PropType, ref } from 'vue'
@@ -106,6 +108,8 @@ const props = defineProps({
     type: Array as PropType<FilterOption[]>,
   },
 })
+
+const { showToast } = useCustomToast()
 
 // variables
 const isDropdownOpen = ref(false)
@@ -133,50 +137,32 @@ onBeforeMount(() => {
   isAccordionsOpen.value = props.options!.map(() => false)
 })
 
-// update modelValue with radio options
-const updateFiltersRadio = (
-  options: { label: string; value: string }[],
-): void => {
-  // clear all filters
-  options.map(option => {
-    const index = props.modelValue!.indexOf(option.value)
-    // only remove if index is found
-    if (index > -1) props.modelValue!.splice(index, 1)
-  })
+// update modelValue with filters
+const updateFilters = (): void => {
+  try {
+    // clear all filters
+    props.modelValue!.splice(0, props.modelValue.length)
 
-  // get all filters from filters object
-  let selectedFilters = Object.values(filters.value)
+    // get all filters from filters object
+    let selectedFilters = Object.values(filters.value)
 
-  // remove empty strings & empty arrays
-  selectedFilters = selectedFilters.filter(
-    (filter: any) => filter !== '' && filter.length > 0,
-  )
+    // remove empty strings & empty arrays
+    selectedFilters = selectedFilters.filter(
+      (filter: any) => filter !== '' && filter.length > 0,
+    )
 
-  // flatten array
-  selectedFilters = selectedFilters.flat()
+    // flatten array
+    selectedFilters = selectedFilters.flat()
 
-  // add filters
-  selectedFilters.forEach(filter => {
-    props.modelValue!.push(filter)
-  })
-}
-
-// update modelValue with checkbox options
-const updateFiltersCheckbox = (
-  name: string,
-  options: { label: string; value: string }[],
-): void => {
-  // clear all filters
-  options.map(option => {
-    const index = props.modelValue!.indexOf(option.value)
-    // only remove if index is found
-    if (index > -1) props.modelValue!.splice(index, 1)
-  })
-
-  // add filters
-  filters.value[name].forEach((filter: string) => {
-    props.modelValue!.push(filter)
-  })
+    // add filters
+    selectedFilters.forEach(filter => {
+      props.modelValue!.push(filter)
+    })
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', 'Something went wrong with the filters')
+  }
 }
 
 // show/hide accordion

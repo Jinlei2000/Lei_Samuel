@@ -1,120 +1,118 @@
 <template>
-  <div
-    class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
-  >
-    <div class="flex w-full flex-col gap-3">
-      <!-- Filters + Searchbar -->
-      <section :class="['relative flex w-full items-center justify-between']">
-        <!-- Filter -->
-        <!-- FIXME: error on scheduled -->
-        <Filter
-          v-model="variables.filters"
-          :options="FILTER_OPTIONS_APPOINTMENTS"
-        />
-
-        <!-- Searchbar -->
-        <Search
-          v-model="variables.searchString"
-          placeholder="Search for appointments"
-        />
-      </section>
-
-      <!-- Title + Sort -->
-      <header class="flex w-full items-center justify-between">
-        <!-- Title -->
-        <h1 class="text-2xl">Appointments</h1>
-        <div class="flex gap-3">
-          <!-- Sort -->
-          <Sort
-            v-model="variables.order"
-            :options="SORT_OPTIONS_APPOINTMENTS"
+  <main>
+    <section
+      class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+    >
+      <div class="flex w-full flex-col gap-3">
+        <!-- Filters + Searchbar -->
+        <section :class="['relative flex w-full items-center justify-between']">
+          <!-- Filter -->
+          <Filter
+            v-model="variables.filters"
+            :options="FILTER_OPTIONS_APPOINTMENTS"
           />
-        </div>
-      </header>
-    </div>
-  </div>
+          <!-- Searchbar -->
+          <Search
+            v-model="variables.searchString"
+            placeholder="Search for appointments"
+          />
+        </section>
+        <!-- Title + Sort -->
+        <header class="flex w-full items-center justify-between">
+          <!-- Title -->
+          <h1 class="text-2xl">Appointments</h1>
+          <div class="flex gap-3">
+            <!-- Sort -->
+            <Sort
+              v-model="variables.order"
+              :options="SORT_OPTIONS_APPOINTMENTS"
+            />
+          </div>
+        </header>
+      </div>
+    </section>
 
-  <!-- Skeleton -->
-  <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
-    <div
-      v-for="i in 10"
-      :key="i"
-      class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"
-    />
-  </div>
+    <!-- Skeleton -->
+    <section v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
+      <div
+        v-for="i in 10"
+        :key="i"
+        class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"
+      />
+    </section>
 
-  <!-- Appointments -->
-  <div v-else-if="appointments && appointments.length > 0">
-    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
-      <div v-for="a of appointments" :key="a.id">
-        <button
-          :class="[
-            'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
-            {
-              ' border border-red-400': isOverToday(a),
-            },
-          ]"
-          @click="toggleModal(a, 'detail')"
-        >
-          <div class="flex h-16 items-center justify-between sm:h-11">
-            <div class="flex w-1/2 p-3 sm:w-3/4">
-              <h2
-                class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
-              >
-                {{ a.user.fullname }}
-              </h2>
-              <p class="hidden truncate text-gray-900 sm:block">
-                {{ a.description }}
-              </p>
-            </div>
-            <div
-              class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
-            >
-              <div v-if="!a.isDone">
-                <p
-                  v-if="a.isScheduled && !isOverToday(a)"
-                  class="text-gray-600"
+    <!-- Appointments -->
+    <section v-else-if="appointments && appointments.length > 0">
+      <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+        <div v-for="a of appointments" :key="a.id">
+          <button
+            :class="[
+              'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
+              {
+                ' border border-red-400': isOverToday(a),
+              },
+            ]"
+            @click="toggleModal(a, 'detail')"
+          >
+            <div class="flex h-16 items-center justify-between sm:h-11">
+              <div class="flex w-1/2 p-3 sm:w-3/4">
+                <h2
+                  class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
                 >
-                  {{ formatDateTime(a.finalDate) }}
+                  {{ a.user.fullname }}
+                </h2>
+                <p class="hidden truncate text-gray-900 sm:block">
+                  {{ a.description }}
                 </p>
-                <div v-else class="flex gap-3">
-                  <div v-if="isOverToday(a)" class="flex items-center gap-2">
-                    <Clock class="stroke-primary-red h-5 w-5" />
-                    <p class="text-primary-red">Reschedule</p>
-                  </div>
-
-                  <Star
-                    v-if="a.priority && !isOverToday(a)"
-                    class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
-                  />
-                  <div v-if="!isOverToday(a)" class="w-5">
-                    <CalendarX
-                      v-if="!a.isScheduled"
-                      class="stroke-primary-red h-5 w-5"
+              </div>
+              <div
+                class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
+              >
+                <div v-if="!a.isDone">
+                  <p
+                    v-if="a.isScheduled && !isOverToday(a)"
+                    class="text-gray-600"
+                  >
+                    {{ formatDateTime(a.finalDate) }}
+                  </p>
+                  <div v-else class="flex gap-3">
+                    <div v-if="isOverToday(a)" class="flex items-center gap-2">
+                      <Clock class="stroke-primary-red h-5 w-5" />
+                      <p class="text-primary-red">Reschedule</p>
+                    </div>
+                    <Star
+                      v-if="a.priority && !isOverToday(a)"
+                      class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
                     />
+                    <div v-if="!isOverToday(a)" class="w-5">
+                      <CalendarX
+                        v-if="!a.isScheduled"
+                        class="stroke-primary-red h-5 w-5"
+                      />
+                    </div>
                   </div>
                 </div>
+                <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
+                <div
+                  class="h-2 w-2 rounded-full"
+                  :class="
+                    a.type === 'repair'
+                      ? 'bg-primary-green'
+                      : a.type === 'maintenance'
+                        ? 'bg-primary-blue'
+                        : ''
+                  "
+                ></div>
               </div>
-              <CheckCircle2 v-else class="stroke-primary-green h-5 w-5" />
-              <div
-                class="h-2 w-2 rounded-full"
-                :class="
-                  a.type === 'repair'
-                    ? 'bg-primary-green'
-                    : a.type === 'maintenance'
-                      ? 'bg-primary-blue'
-                      : ''
-                "
-              ></div>
             </div>
-          </div>
-        </button>
+          </button>
+        </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- No Appointments -->
-  <NoResult v-else-if="appointments.length === 0" />
+    <!-- No Appointments -->
+    <NoResult v-else-if="appointments.length === 0" />
+  </main>
 
   <!-- Detail Modal -->
   <Dialog
@@ -129,7 +127,8 @@
       },
     }"
   >
-    <div v-if="selectedAppointment">
+    <!-- Show Detail -->
+    <div v-if="selectedAppointment && !isEditing">
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedAppointment.type }}
       </h2>
@@ -161,37 +160,48 @@
           <p v-if="!selectedAppointment.isScheduled">Not scheduled</p>
         </div>
       </div>
+      <!-- Buttons -->
+      <div class="flex justify-between">
+        <!-- Delete -->
+        <button
+          v-if="isOverToday(selectedAppointment) && !selectedAppointment.isDone"
+          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+          @click="handleDeleteAppointment(selectedAppointment.id)"
+        >
+          Delete
+        </button>
+        <!-- Edit -->
+        <button
+          v-if="
+            !showAllOverview &&
+            isOverToday(selectedAppointment) &&
+            !selectedAppointment.isDone
+          "
+          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
+          @click="isEditing = true"
+        >
+          Edit
+        </button>
+      </div>
     </div>
-  </Dialog>
-
-  <!-- Edit Modal -->
-  <Dialog
-    v-model:visible="visible.edit"
-    modal
-    header="Edit Appointment"
-    :draggable="false"
-    :close-on-escape="true"
-    :pt="{
-      root: {
-        class: 'max-w-lg',
-      },
-    }"
-  >
-    <DynamicForm
-      :schema="formAppointment"
-      :validation-schema="appointmentUpdateValidationSchema"
-      :handle-form="handleUpdateAppointment"
-      :loading="loading.update"
-      :initial-values="{
-        locationId: selectedAppointment!.location!.id,
-        type: selectedAppointment!.type,
-        startProposedDate: formatDateTime(
-          selectedAppointment!.startProposedDate,
-        ),
-        endProposedDate: formatDateTime(selectedAppointment!.endProposedDate),
-        description: selectedAppointment!.description,
-      }"
-    />
+    <!-- Edit Form -->
+    <div v-if="isEditing">
+      <DynamicForm
+        :schema="formAppointment"
+        :validation-schema="appointmentUpdateValidationSchema"
+        :handle-form="handleUpdateAppointment"
+        :loading="loading.update"
+        :initial-values="{
+          locationId: selectedAppointment!.location!.id,
+          type: selectedAppointment!.type,
+          startProposedDate: formatDateTime(
+            selectedAppointment!.startProposedDate,
+          ),
+          endProposedDate: formatDateTime(selectedAppointment!.endProposedDate),
+          description: selectedAppointment!.description,
+        }"
+      />
+    </div>
   </Dialog>
 </template>
 <script setup lang="ts">
@@ -281,7 +291,7 @@ const appointments = computed<Appointment[]>(() =>
     : appointmentsByUserIdResult.value?.appointmentsByUserId || [],
 )
 const locations = computed(() => locationsResult.value?.locationsByUserId || [])
-
+const isEditing = ref<boolean>(false)
 // form schema update appointment client
 const formAppointment = ref({
   fields: [
@@ -436,6 +446,7 @@ const toggleModal = (
   type: string = 'close',
 ): void => {
   selectedAppointment.value = appointment ? { ...appointment } : null
+  isEditing.value = false
   visible.value = {
     detail: type === 'detail',
     edit: type === 'edit',
