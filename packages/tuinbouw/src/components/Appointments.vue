@@ -136,6 +136,8 @@
       <p class="text-gray-900">
         {{ selectedAppointment.description }}
       </p>
+      <!-- TODO: show more inside detail only for admin -->
+      <!-- user info (location (maybe with map), photo, name, phone) -->
       <div class="mt-6 flex flex-col gap-3">
         <div v-if="selectedAppointment.priority" class="flex gap-3">
           <Star class="fill-primary-yellow stroke-primary-yellow" />
