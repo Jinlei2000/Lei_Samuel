@@ -2,8 +2,10 @@
   <div
     class="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-center"
   >
-    <div class="grid w-full grid-cols-4 gap-3">
-      <div class="col-span-1 col-start-1">
+    <div
+      class="w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4"
+    >
+      <div class="col-span-1 col-start-1 mb-6 sm:mb-0">
         <h2 class="mb-3 text-2xl">Next Appointment</h2>
         <div class="flex flex-col">
           <AppointmentCard
@@ -21,29 +23,35 @@
           <h2 class="text-2xl">Schedule</h2>
           <RouterLink
             :to="`/employee/calendar`"
-            class="text-primary-orange group flex text-base"
+            class="text-primary-orange group flex items-center text-lg sm:text-base"
           >
             Calendar
             <ChevronRight
-              class="transition-all group-hover:translate-x-1"
+              class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
               stroke-width="1"
             />
           </RouterLink>
         </div>
 
         <div
-          class="mb-3 flex items-center justify-between rounded-2xl bg-gray-500 p-1"
+          class="mb-3 flex items-center justify-between rounded-2xl bg-gray-500 p-1 text-xl sm:text-base"
         >
           <button
             class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowLeft class="text-white" @click="prevDay" />
+            <ArrowLeft
+              class="h-7 w-7 text-white sm:h-auto sm:w-auto"
+              @click="prevDay"
+            />
           </button>
-          <p class="">{{ dateDisplay }}</p>
+          <p>{{ dateDisplay }}</p>
           <button
             class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
-            <ArrowRight class="text-white" @click="nextDay" />
+            <ArrowRight
+              class="h-7 w-7 text-white sm:h-auto sm:w-auto"
+              @click="nextDay"
+            />
           </button>
         </div>
         <div class="flex flex-col gap-3">
@@ -75,11 +83,11 @@
           </div>
         </div>
       </div>
-      <div class="col-span-2">
+      <div class="col-span-1 hidden md:block lg:col-span-2">
         <div class="mb-3">
           <h2 class="mb-3 text-2xl">Weather</h2>
           <div
-            class="min-h-24 flex items-center justify-center rounded-2xl bg-gray-200 px-5 py-3"
+            class="min-h-24 hidden items-center justify-center rounded-2xl bg-gray-200 px-5 py-3 lg:flex"
           >
             <Loader2 v-if="!forecast" class="text-primary-green animate-spin" />
             <div v-if="forecast" class="flex h-full w-full justify-between">
@@ -107,47 +115,59 @@
           :controls="true"
         />
       </div>
-      <div class="col-span-1 col-start-4">
-        <h2 class="mb-3 text-2xl">Tools for the day</h2>
-        <div
-          v-if="forecast && forecast[0].rain"
-          class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
+      <div class="col-span-1 mb-3 lg:col-start-4">
+        <button
+          class="mb-3 flex w-full items-center justify-between"
+          @click="handleMaterialsCollapsible()"
         >
-          <CloudRainWind class="absolute right-3 top-3 h-7 w-7" />
-          <h3 class="mb-3 text-xl">Rain expected</h3>
-          <p>Make sure to add rain-gear to your arsenal</p>
-        </div>
-        <div
-          v-if="forecast && forecast[0].main.temp < 10"
-          class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
-        >
-          <ThermometerSnowflake class="absolute right-3 top-3 h-7 w-7" />
-          <h3 class="mb-3 text-xl">Cold weather</h3>
-          <p>
-            Bundle up, rest in warm areas, protect yourself to prevent
-            cold-related harm.
-          </p>
-        </div>
-        <div
-          v-if="forecast && forecast[0].main.temp > 28"
-          class="bg-primary-red relative mb-3 rounded-2xl p-3 text-white"
-        >
-          <Sun class="absolute right-3 top-3 h-7 w-7" />
-          <h3 class="mb-3 text-xl">Hot weather</h3>
-          <p>Don't forget sunscreen and drink enough water</p>
-        </div>
-        <div v-if="scheduleData.materials" class="flex flex-col gap-3">
-          <ChecklistItem
-            v-for="item in scheduleData.materials"
-            :key="item.id"
-            :material="item"
+          <h2 class="text-2xl">Tools for the day</h2>
+          <ChevronDown
+            v-if="isMobile()"
+            class="h-8 w-8 transform transition-all"
+            :class="materialsCollapsed ? 'rotate-0' : 'rotate-180'"
           />
-        </div>
-        <div
-          v-else
-          class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
-        >
-          <p class="text-gray-500">No materials for today</p>
+        </button>
+        <div v-show="!isMobile() || !materialsCollapsed">
+          <div
+            v-if="forecast && forecast[0].rain"
+            class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
+          >
+            <CloudRainWind class="absolute right-3 top-3 h-7 w-7" />
+            <h3 class="mb-3 text-xl">Rain expected</h3>
+            <p>Make sure to add rain-gear to your arsenal</p>
+          </div>
+          <div
+            v-if="forecast && forecast[0].main.temp < 10"
+            class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
+          >
+            <ThermometerSnowflake class="absolute right-3 top-3 h-7 w-7" />
+            <h3 class="mb-3 text-xl">Cold weather</h3>
+            <p>
+              Bundle up, rest in warm areas, protect yourself to prevent
+              cold-related harm.
+            </p>
+          </div>
+          <div
+            v-if="forecast && forecast[0].main.temp > 28"
+            class="bg-primary-red relative mb-3 rounded-2xl p-3 text-white"
+          >
+            <Sun class="absolute right-3 top-3 h-7 w-7" />
+            <h3 class="mb-3 text-xl">Hot weather</h3>
+            <p>Don't forget sunscreen and drink enough water</p>
+          </div>
+          <div v-if="scheduleData.materials" class="flex flex-col gap-3">
+            <ChecklistItem
+              v-for="item in scheduleData.materials"
+              :key="item.id"
+              :material="item"
+            />
+          </div>
+          <div
+            v-else
+            class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
+          >
+            <p class="text-gray-500">No materials for today</p>
+          </div>
         </div>
       </div>
     </div>
@@ -168,6 +188,7 @@ import LogRocket from 'logrocket'
 import {
   ArrowLeft,
   ArrowRight,
+  ChevronDown,
   ChevronRight,
   CloudRainWind,
   Loader2,
@@ -182,6 +203,8 @@ const { showToast } = useCustomToast()
 const myDate = ref(new Date())
 const dateDisplay = ref('Today')
 const forecast = ref<any>()
+
+const materialsCollapsed = ref(true)
 
 const getWeekForecast = async (lon: string, lat: string) => {
   await getForecastForWeek(lon, lat).then(data => {
@@ -302,6 +325,18 @@ watch(myDate, () => {
       break
   }
 })
+
+// Check if website is being viewed on mobile (responsiveness)
+const isMobile = () => {
+  if (window.innerWidth <= 640) {
+    return true
+  }
+  return false
+}
+
+const handleMaterialsCollapsible = () => {
+  materialsCollapsed.value = !materialsCollapsed.value
+}
 
 watchEffect(() => {
   // log the queries

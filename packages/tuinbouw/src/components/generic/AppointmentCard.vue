@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="appointment"
-    class="relative max-h-32 w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
+    class="relative h-fit w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
     :class="appointment.isDone ? 'opacity-50' : ''"
     @click="openModal()"
   >
@@ -18,19 +18,22 @@
       "
     ></div>
     <h2 class="mb-1 text-xl">{{ appointment.user?.fullname }}</h2>
-    <div class="flex items-end justify-between gap-3">
+    <div
+      class="grid grid-flow-col gap-3 md:grid-flow-row md:grid-cols-2 md:items-start"
+    >
       <p class="overflow-hidden text-base">
         {{ appointment.description }}
       </p>
       <button
         v-if="nav"
-        class="bg-primary-orange flex h-fit items-center gap-2 rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        class="bg-primary-orange flex items-center gap-2 self-end rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
         @click="navigateToLocation(appointment.location!)"
         @click.stop
       >
         Navigate <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
       </button>
     </div>
+
     <button
       class="absolute right-3 top-3 transition-all hover:scale-105"
       @click="openModal()"
