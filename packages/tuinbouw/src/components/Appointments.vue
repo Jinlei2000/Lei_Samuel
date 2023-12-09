@@ -203,6 +203,7 @@
     </div>
   </Dialog>
 </template>
+
 <script setup lang="ts">
 import DynamicForm from './generic/DynamicForm.vue'
 import NoResult from './generic/NoResult.vue'
@@ -404,6 +405,7 @@ const handleDeleteAppointment = async (id: string): Promise<void> => {
     })
     showToast('success', 'Success', 'Appointment deleted')
     refetch()
+    toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
