@@ -13,6 +13,7 @@
           />
           <!-- Searchbar -->
           <Search
+            v-if="props.showAllOverview"
             v-model="variables.searchString"
             placeholder="Search for appointments"
           />
@@ -161,10 +162,12 @@
         </div>
       </div>
       <!-- Buttons -->
-      <div class="flex justify-between">
+      <div
+        v-if="!isOverToday(selectedAppointment) && !selectedAppointment.isDone"
+        class="flex justify-between"
+      >
         <!-- Delete -->
         <button
-          v-if="isOverToday(selectedAppointment) && !selectedAppointment.isDone"
           class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
           @click="handleDeleteAppointment(selectedAppointment.id)"
         >
@@ -172,11 +175,7 @@
         </button>
         <!-- Edit -->
         <button
-          v-if="
-            !showAllOverview &&
-            isOverToday(selectedAppointment) &&
-            !selectedAppointment.isDone
-          "
+          v-if="!showAllOverview"
           class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
           @click="isEditing = true"
         >

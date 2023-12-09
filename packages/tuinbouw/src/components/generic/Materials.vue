@@ -1,7 +1,5 @@
 <template>
-  <main
-    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
-  >
+  <main class="m-auto mt-12 flex max-w-7xl flex-col justify-center gap-5">
     <!-- Filters + Searchbar -->
     <section class="flex w-full flex-col gap-10">
       <!-- Filters + Searchbar -->
