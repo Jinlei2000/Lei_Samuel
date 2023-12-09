@@ -97,11 +97,15 @@
           </li>
         </ul>
         <div v-if="checkPath()" class="relative flex w-1/6 justify-end">
-          <Avatar
-            class="hover:cursor-pointer"
-            :user="customUser!"
+          <button
+            class="overflow-hidden rounded-full hover:cursor-pointer"
             @click="showProfileDropdown()"
-          />
+          >
+            <Avatar
+              :user="customUser!"
+              class="h-12 w-12 overflow-hidden rounded-full"
+            />
+          </button>
           <div v-if="profileDropdown" class="absolute -z-10">
             <div class="relative -z-50 h-12 w-12 rounded-full"></div>
             <div

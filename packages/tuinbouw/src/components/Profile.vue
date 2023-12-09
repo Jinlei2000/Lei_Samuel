@@ -4,7 +4,10 @@
     <section class="flex w-full flex-col items-center gap-6">
       <div class="relative">
         <!-- Profile picture -->
-        <Avatar :img-size="24" class="hover:cursor-pointer" :user="user" />
+        <Avatar
+          class="h-24 w-24 overflow-hidden rounded-full text-4xl"
+          :user="user"
+        />
         <!-- Edit profile picture -->
         <label
           class="bg-primary-orange absolute right-0 top-0 h-6 w-6 rounded-full"

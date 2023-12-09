@@ -3,19 +3,14 @@
     <img
       v-if="user.url"
       :src="user.url"
-      :class="`w-${imgSize} h-${imgSize} rounded-full`"
-      alt="Profile picture"
+      class="object-cover"
+      alt="user avatar"
     />
     <div
       v-else
-      :class="`w-${imgSize} h-${imgSize} bg-primary-green flex items-center justify-center rounded-full`"
+      class="bg-primary-green flex h-full w-full items-center justify-center"
     >
-      <p
-        :class="[
-          'font-medium text-white',
-          imgSize > 12 ? 'text-4xl' : 'text-lg',
-        ]"
-      >
+      <p class="font-medium text-white">
         {{ user.firstname[0].toUpperCase() }}
       </p>
     </div>
@@ -31,10 +26,6 @@ const props = defineProps({
   user: {
     type: Object as PropType<CustomUser>,
     required: true,
-  },
-  imgSize: {
-    type: Number,
-    default: 12,
   },
 })
 </script>

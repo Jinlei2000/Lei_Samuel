@@ -31,7 +31,7 @@
     </div>
   </div>
 
-  <!-- show loading -->
+  <!-- Skeleton -->
   <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
@@ -40,41 +40,29 @@
     <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
   </div>
 
-  <!-- show users -->
+  <!-- Users -->
   <div v-else-if="users && users.length > 0">
     <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
       <button
         v-for="user in users"
         :key="user.id"
-        class="hover:scale-101 overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer"
+        class="hover:scale-101 rounded-2xl bg-gray-200 p-1 transition-all duration-100 hover:cursor-pointer"
         :class="user.uid === null ?? 'border-red-500'"
         @click="toggleModal(user, 'detail')"
       >
-        <div class="flex h-16 items-center justify-between sm:h-11">
-          <img
-            class="block h-full rounded-2xl p-1"
-            src="https://i.pravatar.cc/300"
-            alt="Profile picture"
-          />
-          <div class="flex w-full p-3">
-            <h2
-              class="w-1/3 min-w-fit text-left text-xl sm:text-lg md:w-1/4 lg:w-1/5"
-            >
+        <div class="flex h-16 items-center sm:h-11">
+          <div class="flex min-w-fit items-center gap-3">
+            <Avatar
+              :user="user"
+              class="h-16 w-16 overflow-hidden rounded-2xl sm:h-11 sm:w-11"
+            />
+            <h2 class="text-xl sm:text-lg">
               {{ user.firstname }} {{ user.lastname }}
             </h2>
-            <p class="hidden text-gray-600 sm:block">{{ user.email }}</p>
-            <!-- send email button -->
-            <CustomButton
-              v-if="user.uid === null"
-              name="Send email to create account"
-              :loading="
-                sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
-              "
-              class="block w-full"
-              @click="handleSendMailToEmployee(user)"
-            />
           </div>
-          <div class="flex w-1/4 min-w-fit justify-end gap-6 p-3 md:w-1/6">
+
+          <div class="flex w-full min-w-fit items-center justify-between p-3">
+            <p class="hidden text-gray-600 sm:block ">{{ user.email }}</p>
             <p
               class="rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
               :class="
@@ -122,7 +110,7 @@
     </div>
   </div>
 
-  <!-- show no users -->
+  <!-- No Users -->
   <div v-else-if="users.length === 0">
     <p class="text-6xl font-black">Loading Users...</p>
   </div>
@@ -213,9 +201,9 @@
 </template>
 
 <script setup lang="ts">
+import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
-// components
 import Filter from '@/components/generic/Filter.vue'
 import Search from '@/components/generic/Search.vue'
 import Sort from '@/components/generic/Sort.vue'
