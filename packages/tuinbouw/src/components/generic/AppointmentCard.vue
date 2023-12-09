@@ -18,7 +18,7 @@
       "
     ></div>
     <h2 class="mb-1 text-xl">{{ appointment.user?.fullname }}</h2>
-    <div class="flex flex-col items-end justify-between gap-3 lg:flex-row">
+    <div class="flex flex-col items-end justify-between gap-3 md:flex-row">
       <p class="overflow-hidden text-base">
         {{ appointment.description }}
       </p>

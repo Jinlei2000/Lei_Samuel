@@ -2,7 +2,9 @@
   <div
     class="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-center"
   >
-    <div class="grid w-full grid-cols-4 gap-3">
+    <div
+      class="w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4"
+    >
       <div class="col-span-1 col-start-1">
         <h2 class="mb-3 text-2xl">Next Appointment</h2>
         <div class="flex flex-col">
@@ -75,11 +77,11 @@
           </div>
         </div>
       </div>
-      <div class="col-span-2">
+      <div class="col-span-1 hidden md:block lg:col-span-2">
         <div class="mb-3">
           <h2 class="mb-3 text-2xl">Weather</h2>
           <div
-            class="min-h-24 flex items-center justify-center rounded-2xl bg-gray-200 px-5 py-3"
+            class="min-h-24 hidden items-center justify-center rounded-2xl bg-gray-200 px-5 py-3 lg:flex"
           >
             <Loader2 v-if="!forecast" class="text-primary-green animate-spin" />
             <div v-if="forecast" class="flex h-full w-full justify-between">
@@ -107,7 +109,7 @@
           :controls="true"
         />
       </div>
-      <div class="col-span-1 col-start-4">
+      <div class="col-span-1 lg:col-start-4">
         <h2 class="mb-3 text-2xl">Tools for the day</h2>
         <div
           v-if="forecast && forecast[0].rain"
