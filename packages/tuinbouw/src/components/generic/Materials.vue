@@ -131,8 +131,8 @@
     <div v-if="!isEditing">
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
-
-      <div class="flex justify-between">
+      <!-- Buttons -->
+      <div v-if="props.showAllOverview" class="flex justify-between">
         <!-- Delete -->
         <button
           class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
@@ -142,7 +142,6 @@
         </button>
         <!-- Edit -->
         <button
-          v-if="props.showAllOverview"
           class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
           @click="isEditing = true"
         >
@@ -171,7 +170,6 @@
 </template>
 
 <script setup lang="ts">
-import CustomButton from './CustomButton.vue'
 import DynamicForm from './DynamicForm.vue'
 import Filter from './Filter.vue'
 import NoResult from './NoResult.vue'
