@@ -4,22 +4,7 @@
     <section class="flex w-full flex-col items-center gap-6">
       <div class="relative">
         <!-- Profile picture -->
-        <div>
-          <img
-            v-if="user.url"
-            class="h-24 w-24 rounded-full"
-            :src="user.url"
-            alt="Profile picture"
-          />
-          <div
-            v-else
-            class="bg-primary-green flex h-24 w-24 items-center justify-center rounded-full"
-          >
-            <p class="text-4xl text-white">
-              {{ user?.firstname[0].toUpperCase() }}
-            </p>
-          </div>
-        </div>
+        <Avatar :img-size="24" class="hover:cursor-pointer" :user="user" />
         <!-- Edit profile picture -->
         <label
           class="bg-primary-orange absolute right-0 top-0 h-6 w-6 rounded-full"
@@ -658,6 +643,7 @@
 </template>
 
 <script setup lang="ts">
+import Avatar from './generic/Avatar.vue'
 import DynamicForm from './generic/DynamicForm.vue'
 import InputField from './generic/InputField.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
@@ -806,13 +792,16 @@ const handleUploadImage = async (event: Event): Promise<void> => {
       selectedPicture as File,
     )
     // update user in db
-    await updateUser({
+    const result = await updateUser({
       updateUserInput: {
         id: customUser.value?.id,
         url: url,
       },
     })
-
+    customUser.value! = {
+      ...customUser.value!,
+      url: result?.data?.updateUser?.url,
+    }
     showToast('success', 'Success', 'Profile picture has been updated')
     toggleUserModal()
   } catch (error) {
@@ -864,8 +853,8 @@ const handleUpdateUser = async (values: CustomUser): Promise<void> => {
         }),
       },
     })
-    showToast('success', 'Success', `You have updated your profile`)
     refetchUser()
+    showToast('success', 'Success', `You have updated your profile`)
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
@@ -888,7 +877,7 @@ watchEffect(() => {
 
   // all errors
   if (userError.value) {
-    console.log(userError.value)
+    // console.log(userError.value)
     LogRocket.captureException(userError.value)
     showToast('error', 'Error', "Can't get your data")
   }

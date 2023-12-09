@@ -97,13 +97,11 @@
           </li>
         </ul>
         <div v-if="checkPath()" class="relative flex w-1/6 justify-end">
-          <div class="hover:cursor-pointer" @click="showProfileDropdown()">
-            <img
-              class="h-12 w-12 rounded-full"
-              src="https://i.pravatar.cc/300"
-              alt="Profile picture"
-            />
-          </div>
+          <Avatar
+            class="hover:cursor-pointer"
+            :user="customUser!"
+            @click="showProfileDropdown()"
+          />
           <div v-if="profileDropdown" class="absolute -z-10">
             <div class="relative -z-50 h-12 w-12 rounded-full"></div>
             <div
@@ -140,6 +138,7 @@
 <script setup lang="ts">
 import Logo from '../Logo.vue'
 import Container from '../wrapper/Container.vue'
+import Avatar from './Avatar.vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
@@ -151,17 +150,11 @@ import { LogIn, LogOut, User } from 'lucide-vue-next'
 import { ref, watch, watchEffect } from 'vue'
 
 const { logout } = useFirebase()
-
 const { setLocale, locale } = useLanguage()
-
 const { customUser } = useCustomUser()
-
 const { currentRoute } = router
-
 const role = ref('')
-
 const profileDropdown = ref(false)
-
 const newAppointments = ref(0)
 
 const showProfileDropdown = () => {
@@ -203,7 +196,7 @@ const checkPath = () => {
 const { result: appointmentCreated } = useSubscription(APPOINTMENT_CREATED)
 
 watch(appointmentCreated, (data: any) => {
-  console.log('New message received:', data)
+  // console.log('New message received:', data)
   newAppointments.value++
 })
 
