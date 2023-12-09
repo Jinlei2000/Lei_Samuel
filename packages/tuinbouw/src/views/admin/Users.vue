@@ -1,5 +1,5 @@
 <template>
-  <div
+  <section
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
     <div class="flex w-full flex-col gap-3">
@@ -29,19 +29,19 @@
         </div>
       </header>
     </div>
-  </div>
+  </section>
 
   <!-- Skeleton -->
-  <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-  </div>
+  <section v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
+    <div
+      v-for="i in 10"
+      :key="i"
+      class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"
+    />
+  </section>
 
   <!-- Users -->
-  <div v-else-if="users && users.length > 0">
+  <section v-else-if="users && users.length > 0">
     <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
       <button
         v-for="user in users"
@@ -89,12 +89,10 @@
         </div>
       </button>
     </div>
-  </div>
+  </section>
 
   <!-- No Users -->
-  <div v-else-if="users.length === 0">
-    <p class="text-6xl font-black">Loading Users...</p>
-  </div>
+  <NoResult v-else-if="users.length === 0" />
 
   <!-- Detail Modal -->
   <Dialog
@@ -186,6 +184,7 @@ import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
 import Filter from '@/components/generic/Filter.vue'
+import NoResult from '@/components/generic/NoResult.vue'
 import Search from '@/components/generic/Search.vue'
 import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'

@@ -85,7 +85,7 @@
       </div>
     </section>
 
-    <!-- No results found -->
+    <!-- No Materials -->
     <NoResult v-else-if="materials.length === 0" />
   </main>
 
