@@ -67,7 +67,7 @@ export const filterAppointments = (
       whereQuery = {
         ...whereQuery,
         isDone: false,
-        OR: [{ priority: true }, { finalDate: { $lt: date } }],
+        $or: [{ priority: true }, { finalDate: { $lt: date } }],
       }
     }
     if (filters?.includes('NP')) {

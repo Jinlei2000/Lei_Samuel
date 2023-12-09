@@ -142,6 +142,16 @@ export const FILTER_OPTIONS_APPOINTMENTS = [
       { label: 'Not Done', value: 'ND' },
     ],
   },
+  {
+    title: 'Priority',
+    name: 'priority',
+    type: 'radio',
+    options: [
+      { label: 'All', value: '' },
+      { label: 'Priority', value: 'P' },
+      { label: 'Not Priority', value: 'NP' },
+    ],
+  },
 ]
 
 export const SORT_OPTIONS_SCHEDULES = [
