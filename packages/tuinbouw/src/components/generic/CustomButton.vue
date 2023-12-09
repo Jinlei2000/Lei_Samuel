@@ -3,8 +3,7 @@
     :type="type"
     class="rounded-md px-4 py-2"
     :class="
-      [ownClass, loading ? 'cursor-not-allowed opacity-50' : ''] &&
-      variant === 'primary'
+      [loading ? 'cursor-not-allowed opacity-50' : ''] && variant === 'primary'
         ? 'bg-primary-green text-white'
         : variant === 'secondary'
           ? 'bg-transparent border border-primary-green text-primary-green'
@@ -16,7 +15,7 @@
     v-bind="$attrs"
   >
     <span v-if="!loading">{{ name }}</span>
-    <span v-else class="flex py-1">
+    <span v-else class="flex justify-center py-1">
       <svg
         aria-hidden="true"
         role="status"
@@ -51,10 +50,6 @@ const props = defineProps({
   variant: {
     type: String as PropType<'primary' | 'secondary' | 'warning'>,
     default: 'primary',
-  },
-  ownClass: {
-    type: String,
-    default: '',
   },
 })
 </script>

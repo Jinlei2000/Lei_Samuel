@@ -96,7 +96,8 @@
 
   <!-- Detail Modal -->
   <Dialog
-    v-model:visible="visible.openModal"
+    v-if="selectedUser"
+    v-model:visible="visible.detail"
     modal
     header="User Details"
     :draggable="false"
@@ -107,54 +108,73 @@
       },
     }"
   >
-    <div v-if="selectedUser && visible.detail">
-      <h2 class="mb-2 text-xl font-semibold">
-        {{ selectedUser.fullname }}
-      </h2>
-      <p class="text-gray-600">
-        {{ selectedUser.email }}
-      </p>
-      <p class="text-gray-600">
-        {{ selectedUser.telephone }}
-      </p>
-      <div class="flex justify-between">
+    <!-- Show Detail -->
+    <!-- TODO: show more info -->
+    <div v-if="!isEditing">
+      <header class="mb-2">
+        <h2 class="mb-2 text-xl font-semibold">
+          {{ selectedUser.fullname }}
+        </h2>
+        <p class="text-gray-600">
+          {{ selectedUser.email }}
+        </p>
+        <p class="text-gray-600">
+          {{ selectedUser.telephone }}
+        </p>
+      </header>
+
+      <div class="mb-2 flex flex-col gap-2">
+        <!-- Upgrade to Admin -->
+        <CustomButton
+          v-if="selectedUser.role === 'EMPLOYEE'"
+          class="block w-full"
+          name="Upgrade to Admin"
+          :loading="loading.upgradeToAdmin"
+          @click="handleUpgradeToAdmin(selectedUser)"
+        />
+        <!-- Send Email to Employee (Create Account) -->
+        <CustomButton
+          v-if="selectedUser.uid === null"
+          name="Create Account"
+          :loading="loading.sendMailToEmployee"
+          class="block w-full"
+          @click="handleSendMailToEmployee(selectedUser)"
+        />
+      </div>
+
+      <!-- Delete & Edit -->
+      <div v-if="selectedUser.role === 'EMPLOYEE'" class="flex justify-between">
+        <!-- Delete -->
         <CustomButton
           name="Delete"
-          :loading="deleteUserLoading"
-          variant="warning"
+          :loading="loading.deleteEmployee"
           @click="handleDelete(selectedUser)"
         />
-        <div class="flex gap-3">
-          <!-- upgrade to admin button -->
-          <CustomButton
-            v-if="selectedUser.role === 'EMPLOYEE'"
-            name="Upgrade to Admin"
-            :loading="upgradeToAdminLoading"
-            @click="handleUpgradeToAdmin(selectedUser)"
-          />
-          <!-- edit button -->
-          <CustomButton
-            name="Edit"
-            :loading="upgradeToAdminLoading"
-            @click="toggleModal(selectedUser, 'edit')"
-          />
-        </div>
+        <!-- Edit -->
+        <button
+          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
+          @click="isEditing = true"
+        >
+          Edit
+        </button>
       </div>
     </div>
-    <DynamicForm
-      v-if="selectedUser && visible.edit"
-      :schema="formUpdateEmployee"
-      :validation-schema="userUpdateAdminValidationSchema"
-      :handle-form="handleUpdateEmployee"
-      :loading="loading.updateEmployee"
-      :cancel="cancelUserEdit"
-      :initial-values="{
-        firstname: selectedUser?.firstname,
-        lastname: selectedUser?.lastname,
-        email: selectedUser?.email,
-        telephone: selectedUser?.telephone,
-      }"
-    />
+    <!-- Edit Form -->
+    <div v-if="isEditing">
+      <DynamicForm
+        :schema="formUpdateEmployee"
+        :validation-schema="userUpdateAdminValidationSchema"
+        :handle-form="handleUpdateEmployee"
+        :loading="loading.updateEmployee"
+        :cancel="cancelUserEdit"
+        :initial-values="{
+          firstname: selectedUser.firstname,
+          lastname: selectedUser.lastname,
+          email: selectedUser.email,
+          telephone: selectedUser.telephone,
+        }"
+      />
+    </div>
   </Dialog>
 
   <!-- Create Employee Modal -->
@@ -209,6 +229,8 @@ import {
   userUpdateAdminValidationSchema,
 } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
+import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 
 // composables
@@ -223,20 +245,31 @@ const variables = ref<VariablesProps>({
   },
   searchString: '',
 })
-const visible = ref({
-  openModal: false,
+const visible = ref<{
+  detail: boolean
+  create: boolean
+}>({
   detail: false,
-  edit: false,
   create: false,
 })
 const selectedUser = ref<CustomUser | null>(null)
-const sendMailCurrentUserId = ref<string | null>(null)
 const users = computed(() => usersResult.value?.users || [])
-const loading = ref({
+const loading = ref<{
+  createEmployee: boolean
+  updateEmployee: boolean
+  deleteEmployee: boolean
+  upgradeToAdmin: boolean
+  sendMailToEmployee: boolean
+  data: ComputedRef<boolean>
+}>({
   createEmployee: false,
   updateEmployee: false,
+  deleteEmployee: false,
+  upgradeToAdmin: false,
+  sendMailToEmployee: false,
   data: computed(() => usersLoading.value),
 })
+const isEditing = ref<boolean>(false)
 // form update employee
 const formUpdateEmployee = {
   fields: [
@@ -323,103 +356,132 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const {
-  mutate: sendMailToEmployee,
-  loading: sendMailToEmployeeLoading,
-  error: sendMailToEmployeeError,
-} = useMutation(SEND_MAIL_TO_EMPLOYEE)
+const { mutate: sendMailToEmployee } = useMutation(SEND_MAIL_TO_EMPLOYEE)
 
-const { mutate: createEmployee, error: createEmployeeError } =
-  useMutation(CREATE_EMPLOYEE)
+const { mutate: createEmployee } = useMutation(CREATE_EMPLOYEE)
 
-const {
-  mutate: deleteUser,
-  loading: deleteUserLoading,
-  error: deleteUserError,
-} = useMutation(DELETE_USER)
+const { mutate: deleteUser } = useMutation(DELETE_USER)
 
-const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
+const { mutate: updateUser } = useMutation(UPDATE_USER)
 
-const {
-  mutate: upgradeToAdmin,
-  loading: upgradeToAdminLoading,
-  error: upgradeToAdminError,
-} = useMutation(UPDATE_USER_TO_ADMIN)
+const { mutate: upgradeToAdmin } = useMutation(UPDATE_USER_TO_ADMIN)
 
 // logics
 // handle edit employee
 const handleUpdateEmployee = async (values: CustomUser) => {
-  loading.value.updateEmployee = true
-  await updateUser({
-    updateUserInput: {
-      id: selectedUser.value?.id!,
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      telephone: values.telephone,
-    },
-  })
-  loading.value.updateEmployee = false
-  showToast('success', 'Success', 'User has been updated')
-  await refetchUsers()
-  toggleModal()
+  try {
+    loading.value.updateEmployee = true
+    await updateUser({
+      updateUserInput: {
+        id: selectedUser.value?.id!,
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+      },
+    })
+    loading.value.updateEmployee = false
+    showToast('success', 'Success', 'User has been updated')
+    await refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't update user")
+  } finally {
+    loading.value.updateEmployee = false
+  }
 }
 
 // handle delete user
 const handleDelete = async (user: CustomUser) => {
-  const email = user.email
-  await deleteUser({
-    id: user.id,
-  })
-  showToast('success', 'Success', `User ${email} has been deleted`)
-  refetchUsers()
-  toggleModal()
+  try {
+    loading.value.deleteEmployee = true
+    const email = user.email
+    await deleteUser({
+      id: user.id,
+    })
+    showToast('success', 'Success', `User ${email} has been deleted`)
+    refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't delete user")
+  } finally {
+    loading.value.deleteEmployee = false
+  }
 }
 
 // handle create employee
 const handleCreateEmployee = async (values: CustomUser) => {
-  console.log(values)
-  loading.value.createEmployee = true
-  await createEmployee({
-    createStaffInput: {
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      telephone: values.telephone,
-      locale: values.locale,
-    },
-  })
-  loading.value.createEmployee = false
-  showToast('success', 'Success', 'Employee has been created')
-  await refetchUsers()
-  toggleModal()
+  try {
+    // console.log(values)
+    loading.value.createEmployee = true
+    await createEmployee({
+      createStaffInput: {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+        locale: values.locale,
+      },
+    })
+    loading.value.createEmployee = false
+    showToast('success', 'Success', 'Employee has been created')
+    await refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't create employee")
+  } finally {
+    loading.value.createEmployee = false
+  }
 }
 
 // handle send email to employee
 const handleSendMailToEmployee = async (user: CustomUser) => {
-  sendMailCurrentUserId.value = user.id
-  await sendMailToEmployee({
-    userId: user.id,
-  })
-  showToast(
-    'success',
-    'Success',
-    `Email has been sent to ${user.email} to create an account`,
-  )
+  try {
+    loading.value.sendMailToEmployee = true
+    await sendMailToEmployee({
+      userId: user.id,
+    })
+    showToast(
+      'success',
+      'Success',
+      `Email has been sent to ${user.email} to create an account`,
+    )
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't send email to employee")
+  } finally {
+    loading.value.sendMailToEmployee = false
+  }
 }
 
 // handle upgrade to admin
 const handleUpgradeToAdmin = async (user: CustomUser) => {
-  await upgradeToAdmin({
-    id: user.id,
-  })
-  showToast(
-    'success',
-    'Success',
-    `User ${user.email} has been upgraded to admin`,
-  )
-  await refetchUsers()
-  toggleModal()
+  try {
+    loading.value.upgradeToAdmin = true
+    await upgradeToAdmin({
+      id: user.id,
+    })
+    showToast(
+      'success',
+      'Success',
+      `User ${user.email} has been upgraded to admin`,
+    )
+    await refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't upgrade user to admin")
+  } finally {
+    loading.value.upgradeToAdmin = false
+  }
 }
 
 // open or close modal
@@ -428,43 +490,11 @@ const toggleModal = (
   type: string = 'close',
 ) => {
   selectedUser.value = user ? { ...user } : null
+  isEditing.value = false
 
-  // switch case for type
-  switch (type) {
-    case 'edit':
-      visible.value = {
-        openModal: true,
-        detail: false,
-        edit: true,
-        create: false,
-      }
-      break
-    case 'detail':
-      visible.value = {
-        openModal: true,
-        detail: true,
-        edit: false,
-        create: false,
-      }
-      break
-    case 'create':
-      visible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: true,
-      }
-      break
-    case 'close':
-      visible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: false,
-      }
-      break
-    default:
-      break
+  visible.value = {
+    detail: type === 'detail',
+    create: type === 'create',
   }
 }
 
@@ -477,24 +507,10 @@ watchEffect(() => {
   // if (users.value) console.log(users.value)
 
   // all errors
-  const errors = [
-    usersError.value,
-    deleteUserError.value,
-    createEmployeeError.value,
-    sendMailToEmployeeError.value,
-    updateUserError.value,
-    upgradeToAdminError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loading.value = {
-        ...loading.value,
-        createEmployee: false,
-        updateEmployee: false,
-      }
-
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (usersError.value) {
+    // console.log(usersError.value)
+    LogRocket.captureException(usersError.value as Error)
+    showToast('error', 'Error', "Couldn't load users")
+  }
 })
 </script>

@@ -150,22 +150,21 @@
       </div>
     </div>
     <!-- Edit Form -->
-    <div v-if="isEditing">
-      <ArrowLeft @click="isEditing = false" />
-      <DynamicForm
-        :schema="formUpdateMaterial"
-        :validation-schema="materialValidationSchema"
-        :handle-form="handleUpdatematerial"
-        :loading="loading.update"
-        :initial-values="{
-          name: selectedMaterial?.name,
-          serialNumber: selectedMaterial?.serialNumber,
-          isLoan: selectedMaterial?.isLoan,
-          userId: selectedMaterial?.user?.id,
-        }"
-        :reverse-switch="true"
-      />
-    </div>
+    <DynamicForm
+      v-if="isEditing"
+      :schema="formUpdateMaterial"
+      :validation-schema="materialValidationSchema"
+      :handle-form="handleUpdatematerial"
+      :loading="loading.update"
+      :cancel="() => (isEditing = false)"
+      :initial-values="{
+        name: selectedMaterial?.name,
+        serialNumber: selectedMaterial?.serialNumber,
+        isLoan: selectedMaterial?.isLoan,
+        userId: selectedMaterial?.user?.id,
+      }"
+      :reverse-switch="true"
+    />
   </Dialog>
 </template>
 
