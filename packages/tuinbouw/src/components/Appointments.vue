@@ -34,16 +34,16 @@
     </div>
   </div>
 
-  <!-- show loading -->
+  <!-- Skeleton -->
   <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
+    <div
+      v-for="i in 10"
+      :key="i"
+      class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"
+    />
   </div>
 
-  <!-- show all appointments -->
+  <!-- Appointments -->
   <div v-else-if="appointments && appointments.length > 0">
     <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
       <div v-for="a of appointments" :key="a.id">
@@ -113,10 +113,8 @@
     </div>
   </div>
 
-  <!-- no appointments -->
-  <div v-else-if="appointments.length === 0">
-    <p class="text-6xl font-black">No appointments</p>
-  </div>
+  <!-- No Appointments -->
+  <NoResult v-else-if="appointments.length === 0" />
 
   <!-- Detail Modal -->
   <Dialog
@@ -198,6 +196,7 @@
 </template>
 <script setup lang="ts">
 import DynamicForm from './generic/DynamicForm.vue'
+import NoResult from './generic/NoResult.vue'
 // components
 import Filter from '@/components/generic/Filter.vue'
 import Search from '@/components/generic/Search.vue'
@@ -219,7 +218,6 @@ import {
   FILTER_OPTIONS_APPOINTMENTS,
   ORDER_DIRECTION,
   SORT_OPTIONS_APPOINTMENTS,
-  SUPPORTED_LOCALES_TYPES,
 } from '@/helpers/constants'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
@@ -236,7 +234,6 @@ import {
 import Dialog from 'primevue/dialog'
 import { type GenericObject } from 'vee-validate'
 import { computed, onMounted, ref, watchEffect } from 'vue'
-import type { DatetimeFormat } from 'vue-i18n'
 
 // props
 const props = defineProps({
@@ -246,10 +243,12 @@ const props = defineProps({
   },
 })
 
+// composable
 const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
 const { formatDateTime, isOverToday } = useTimeUtilities()
 
+// variables
 const selectedAppointment = ref<Appointment | null>(null)
 const visible = ref({
   detail: false,
@@ -262,7 +261,6 @@ const variables = ref<VariablesProps>({
     direction: ORDER_DIRECTION.DESC,
   },
 })
-const filter = ref(false)
 const loading = ref({
   update: false,
   data: computed(
@@ -332,10 +330,7 @@ const formAppointment = ref({
   },
 })
 
-// TODO: use fetchMore to load more appointments (add some kind of pagination in backend (limit, offset)))
-// use a load more button
-// https://apollo.vuejs.org/guide-composable/pagination.html
-
+// graphql
 const {
   result: appointmentsByUserIdResult,
   error: appointmentsByUserIdError,
@@ -356,12 +351,9 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-// TODO: loading on something (button, etc)
-const { mutate: deleteAppointment, error: deleteAppointmentError } =
-  useMutation(DELETE_APPOINTMENT)
+const { mutate: deleteAppointment } = useMutation(DELETE_APPOINTMENT)
 
-const { mutate: updateAppointment, error: updateAppointmentError } =
-  useMutation(UPDATE_APPOINTMENT)
+const { mutate: updateAppointment } = useMutation(UPDATE_APPOINTMENT)
 
 const {
   result: locationsResult,
@@ -390,43 +382,8 @@ onMounted(() => {
   }
 })
 
-// TODO: make a filter component and use Accordion  (https://primefaces.org/primevue/showcase/#/accordion)
-// also add a reset button
-const updateFilters = (filter: string) => {
-  const index = variables.value.filters.indexOf(filter)
-  if (index !== -1) {
-    // Remove the filter if it exists
-    variables.value.filters.splice(index, 1)
-  } else {
-    // Add the filter if it doesn't exist
-    variables.value.filters.push(filter)
-  }
-}
-
-const updateFiltersRadio = (filters: string[], reset: boolean = false) => {
-  if (reset) {
-    // delete all filters
-    for (let f of filters) {
-      const index = variables.value.filters.indexOf(f)
-      if (index !== -1) {
-        // Remove the filter if it exists
-        variables.value.filters.splice(index, 1)
-      }
-    }
-  } else {
-    // add all filters
-    for (let f of filters) {
-      const index = variables.value.filters.indexOf(f)
-      if (index === -1) {
-        // Add the filter if it doesn't exist
-        variables.value.filters.push(f)
-      }
-    }
-  }
-}
-
 // delete appointment
-const handleDeleteAppointment = async (id: string) => {
+const handleDeleteAppointment = async (id: string): Promise<void> => {
   try {
     await deleteAppointment({
       id,
@@ -434,13 +391,16 @@ const handleDeleteAppointment = async (id: string) => {
     showToast('success', 'Success', 'Appointment deleted')
     refetch()
   } catch (error) {
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    console.log(error)
+    showToast('error', 'Error', "Couldn't delete appointment")
   }
 }
 
 // update appointment
-const handleUpdateAppointment = async (values: GenericObject) => {
+const handleUpdateAppointment = async (
+  values: GenericObject,
+): Promise<void> => {
   try {
     // console.log('values: ', values)
     loading.value.update = true
@@ -454,20 +414,22 @@ const handleUpdateAppointment = async (values: GenericObject) => {
         description: values.description,
       },
     })
-    loading.value.update = false
     showToast('success', 'Success', 'Appointment updated')
     await refetch()
     toggleModal()
   } catch (error) {
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    console.log(error)
+    showToast('error', 'Error', "Couldn't update appointment")
+  } finally {
+    loading.value.update = false
   }
 }
 
 const toggleModal = (
   appointment: Appointment | null = null,
   type: string = 'close',
-) => {
+): void => {
   selectedAppointment.value = appointment ? { ...appointment } : null
   visible.value = {
     detail: type === 'detail',
@@ -482,26 +444,22 @@ const refetch = async (): Promise<void> => {
 
 // log the queries
 watchEffect(() => {
-  // if (locations.value) console.log('locations: ', locations.value)
-  if (appointments.value) console.log('appointments: ', appointments.value)
+  // if (locations.value) console.log(locations.value)
+  // if (appointments.value) console.log(appointments.value)
 
-  const errors = [
-    appointmentsError.value,
-    appointmentsByUserIdError.value,
-    deleteAppointmentError.value,
-    updateAppointmentError.value,
-    locationsError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loading.value = {
-        ...loading.value,
-        update: false,
-      }
-
-      LogRocket.captureException(error)
-      showToast('error', 'Error', error.message)
-    }
-  })
+  // errors
+  if (appointmentsError.value) {
+    // console.log(appointmentsError.value)
+    LogRocket.captureException(appointmentsError.value as Error)
+    showToast('error', 'Error', "Couldn't load appointments")
+  } else if (appointmentsByUserIdError.value) {
+    // console.log(appointmentsByUserIdError.value)
+    LogRocket.captureException(appointmentsByUserIdError.value as Error)
+    showToast('error', 'Error', "Couldn't load appointments")
+  } else if (locationsError.value) {
+    // console.log(locationsError.value)
+    LogRocket.captureException(locationsError.value as Error)
+    showToast('error', 'Error', "Couldn't load locations")
+  }
 })
 </script>

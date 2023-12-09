@@ -31,7 +31,7 @@
       </header>
     </div>
 
-    <!-- Loading -->
+    <!-- Skeleton -->
     <template v-if="loading.data">
       <div
         class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
@@ -87,18 +87,8 @@
       </div>
     </template>
 
-    <!-- TODO: design better -->
     <!-- No results found -->
-    <template v-else-if="materials.length === 0">
-      <section class="flex flex-col items-center justify-center gap-5">
-        <img
-          class="h-80 w-80"
-          src="/assets/empty.svg"
-          alt="Empty results illustration"
-        />
-        <h2 class="text-2xl">Oops! No results found.</h2>
-      </section>
-    </template>
+    <NoResult v-else-if="materials.length === 0" />
   </main>
 
   <!-- Create Modal -->
@@ -175,6 +165,7 @@
 <script setup lang="ts">
 import DynamicForm from './DynamicForm.vue'
 import Filter from './Filter.vue'
+import NoResult from './NoResult.vue'
 import Search from './Search.vue'
 import Sort from './Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
