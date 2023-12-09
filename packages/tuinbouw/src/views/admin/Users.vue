@@ -50,19 +50,27 @@
         :class="user.uid === null ?? 'border-red-500'"
         @click="toggleModal(user, 'detail')"
       >
-        <div class="flex h-16 items-center sm:h-11">
-          <div class="flex min-w-fit items-center gap-3">
+        <div class="flex h-16 items-center gap-3 sm:h-11">
+          <!-- Profile Picture -->
+          <div>
             <Avatar
               :user="user"
               class="h-16 w-16 overflow-hidden rounded-2xl sm:h-11 sm:w-11"
             />
-            <h2 class="text-xl sm:text-lg">
-              {{ user.firstname }} {{ user.lastname }}
-            </h2>
           </div>
 
-          <div class="flex w-full min-w-fit items-center justify-between p-3">
-            <p class="hidden text-gray-600 sm:block ">{{ user.email }}</p>
+          <!-- Name + Email -->
+          <div class="flex w-full items-center">
+            <h2 class="w-1/3 text-left text-xl sm:text-lg md:w-1/4 lg:w-1/5">
+              {{ user.firstname }} {{ user.lastname }}
+            </h2>
+            <p class="hidden text-gray-600 sm:block">
+              {{ user.email }}
+            </p>
+          </div>
+
+          <!-- Role -->
+          <div class="flex w-1/4 justify-end p-3 md:w-1/6">
             <p
               class="rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
               :class="
@@ -79,33 +87,6 @@
             </p>
           </div>
         </div>
-        <!-- <div
-          class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-        > -->
-        <!-- View More Button -->
-        <!-- <button
-            class="text-green-500 hover:underline"
-            @click="toggleModal(user, 'detail')"
-          >
-            <Eye />
-          </button> -->
-        <!-- Edit Button -->
-        <!-- <button
-            v-if="user.role === 'EMPLOYEE'"
-            class="text-blue-500 hover:underline"
-            @click="toggleModal(user, 'edit')"
-          >
-            <Pencil />
-          </button> -->
-        <!-- Delete Button -->
-        <!-- <button
-            v-if="user.role === 'EMPLOYEE'"
-            class="text-red-500 hover:underline"
-            @click="handleDelete(user)"
-          >
-            <Trash2 />
-          </button>
-        </div> -->
       </button>
     </div>
   </div>
