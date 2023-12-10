@@ -5,16 +5,18 @@
   >
     <header class="m-auto flex max-w-7xl items-center justify-between">
       <RouterLink
-        class="flex w-1/6 items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
+        class="mr-6 flex w-fit items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
         to="/"
       >
         <Logo />
       </RouterLink>
-      <nav class="flex gap-24">
-        <ul class="flex items-center justify-center gap-12">
+      <nav class="flex w-full gap-12 xl:gap-24">
+        <ul
+          class="flex w-full items-center justify-between lg:justify-end lg:gap-12"
+        >
           <div
             v-if="checkPath()"
-            class="flex items-center justify-center gap-12"
+            class="flex w-full items-center justify-between lg:w-auto lg:justify-center lg:gap-12"
           >
             <li>
               <RouterLink
@@ -74,10 +76,7 @@
               >
             </li>
           </div>
-          <li
-            :class="checkPath() ? 'border-l-[1px]' : ''"
-            class="border-black py-2 pl-12"
-          >
+          <li class="hidden border-l-[1px] border-black py-2 pl-12 lg:block">
             <select
               id="language"
               v-model="locale"
@@ -96,10 +95,10 @@
             </select>
           </li>
         </ul>
-        <div v-if="checkPath()" class="relative flex w-1/6 justify-end">
+        <div v-if="checkPath()" class="relative flex min-w-fit justify-end">
           <div class="hover:cursor-pointer" @click="showProfileDropdown()">
             <img
-              class="h-12 w-12 rounded-full"
+              class="h-10 w-10 rounded-full lg:h-12 lg:w-12"
               src="https://i.pravatar.cc/300"
               alt="Profile picture"
             />
