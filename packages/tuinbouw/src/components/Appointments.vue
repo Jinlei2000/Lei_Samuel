@@ -164,10 +164,7 @@
         </div>
       </div>
       <!-- Buttons -->
-      <div
-        v-if="!isOverToday(selectedAppointment) && !selectedAppointment.isDone"
-        class="flex justify-between"
-      >
+      <div v-if="!selectedAppointment.isDone" class="flex justify-between">
         <!-- Delete -->
         <button
           class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
@@ -177,7 +174,10 @@
         </button>
         <!-- Edit -->
         <button
-          v-if="!showAllOverview"
+          v-if="
+            (!showAllOverview && isOverToday(selectedAppointment)) ||
+            (!showAllOverview && !selectedAppointment.isScheduled)
+          "
           class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
           @click="isEditing = true"
         >
