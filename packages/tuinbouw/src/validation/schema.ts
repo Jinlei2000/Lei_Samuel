@@ -112,3 +112,10 @@ export const materialValidationSchema = yup.object({
       return schema.optional()
     }),
 })
+
+export const appointmentCreateValidationSchema = yup.object({
+  startProposedDate: yup.date().required(),
+  endProposedDate: yup.date().required(),
+  description: yup.string(),
+  type: yup.string().required(),
+})

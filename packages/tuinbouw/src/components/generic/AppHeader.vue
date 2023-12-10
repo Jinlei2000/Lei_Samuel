@@ -215,4 +215,8 @@ watch(appointmentCreated, (data: any) => {
   // console.log('New message received:', data)
   newAppointments.value++
 })
+
+watch(customUser, () => {
+  role.value = customUser.value?.role.toLowerCase()
+})
 </script>

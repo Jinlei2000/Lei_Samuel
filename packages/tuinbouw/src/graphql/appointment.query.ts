@@ -84,3 +84,35 @@ export const GET_ALL_APPOINTMENT = gql`
     }
   }
 `
+
+export const GET_RECENT_APPOINTMENTS_BY_USERID = gql`
+  query appointmentsRecentByUserId($userId: String!, $amount: Int!) {
+    appointmentsRecentByUserId(
+      userId: $userId
+      amount: $amount
+      filters: []
+      order: { field: "createdAt", direction: "DESC" }
+    ) {
+      id
+      user {
+        id
+        fullname
+      }
+      location {
+        id
+        address
+      }
+      price
+      type
+      startProposedDate
+      endProposedDate
+      isScheduled
+      finalDate
+      isDone
+      description
+      priority
+      createdAt
+      updatedAt
+    }
+  }
+`
