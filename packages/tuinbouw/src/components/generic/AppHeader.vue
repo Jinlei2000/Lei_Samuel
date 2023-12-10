@@ -144,45 +144,57 @@ import Logo from '../Logo.vue'
 import Container from '../wrapper/Container.vue'
 import Avatar from './Avatar.vue'
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
+import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
 import { APPOINTMENT_CREATED } from '@/graphql/appointment.subscription'
 import router from '@/router'
 import { useSubscription } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { LogIn, LogOut, User } from 'lucide-vue-next'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 
+// composable
 const { logout } = useFirebase()
 const { setLocale, locale } = useLanguage()
 const { customUser } = useCustomUser()
 const { currentRoute } = router
-const role = ref('')
+const { showToast } = useCustomToast()
+
+// variables
+const role = ref(customUser.value?.role.toLowerCase())
 const profileDropdown = ref(false)
 const newAppointments = ref(0)
 
-const showProfileDropdown = () => {
+// logics
+const showProfileDropdown = (): void => {
   profileDropdown.value = !profileDropdown.value
   // console.log(profileDropdown.value)
 }
 
-const setLanguage = (e: Event) => {
+const setLanguage = (e: Event): void => {
   const target = e.target as HTMLSelectElement
   setLocale(target.value)
-  console.log(target.value)
+  // console.log(target.value)
 }
 
-const handleLogout = async () => {
-  await logout()
-  // go to login page
-  router.replace('/auth/login')
-  customUser.value = null
-  console.log('logout')
-
-  showProfileDropdown()
+const handleLogout = async (): Promise<void> => {
+  try {
+    await logout()
+    // go to login page
+    router.replace('/auth/login')
+    customUser.value = null
+    // console.log('logout')
+    showProfileDropdown()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Can't logout")
+  }
 }
 
-const checkPath = () => {
+const checkPath = (): boolean => {
   const paths = ['/auth/login', '/auth/register', '/auth/forgot-password', '/']
   const routePath = currentRoute.value.path
 
@@ -202,11 +214,5 @@ const { result: appointmentCreated } = useSubscription(APPOINTMENT_CREATED)
 watch(appointmentCreated, (data: any) => {
   // console.log('New message received:', data)
   newAppointments.value++
-})
-
-watchEffect(() => {
-  if (customUser.value) {
-    role.value = customUser.value.role.toLowerCase()
-  }
 })
 </script>
