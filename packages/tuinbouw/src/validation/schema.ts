@@ -119,3 +119,7 @@ export const appointmentCreateValidationSchema = yup.object({
   description: yup.string(),
   type: yup.string().required(),
 })
+
+export const appointmentEditAdminValidationSchema = yup.object({
+  priority: yup.boolean().required(),
+})

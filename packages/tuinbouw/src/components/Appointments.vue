@@ -129,7 +129,7 @@
     }"
   >
     <!-- Show Detail -->
-    <div v-if="selectedAppointment && !isEditing">
+    <div v-if="selectedAppointment && !isEditing && !isEditingAdmin">
       <h2 class="mb-2 text-xl font-semibold">
         {{ selectedAppointment.type }}
       </h2>
@@ -172,7 +172,7 @@
         >
           Delete
         </button>
-        <!-- Edit -->
+        <!-- Edit For Client -->
         <button
           v-if="
             (!showAllOverview && isOverToday(selectedAppointment)) ||
@@ -183,9 +183,17 @@
         >
           Edit
         </button>
+        <!-- Edit For Admin -->
+        <button
+          v-if="showAllOverview"
+          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
+          @click="isEditingAdmin = true"
+        >
+          Edit
+        </button>
       </div>
     </div>
-    <!-- Edit Form -->
+    <!-- Edit Form For Client -->
     <div v-if="isEditing">
       <DynamicForm
         :schema="formAppointment"
@@ -200,6 +208,20 @@
           ),
           endProposedDate: formatDateTime(selectedAppointment!.endProposedDate),
           description: selectedAppointment!.description,
+        }"
+      />
+    </div>
+
+    <!-- Edit Form For Admin -->
+    <div v-if="isEditingAdmin">
+      <DynamicForm
+        :schema="formEditAdminAppointment"
+        :validation-schema="appointmentEditAdminValidationSchema"
+        :handle-form="handleUpdateAppointmentForAdmin"
+        :cancel="() => (isEditingAdmin = false)"
+        :loading="loading.update"
+        :initial-values="{
+          priority: selectedAppointment!.priority,
         }"
       />
     </div>
@@ -232,7 +254,10 @@ import {
 } from '@/helpers/constants'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
-import { appointmentUpdateValidationSchema } from '@/validation/schema'
+import {
+  appointmentEditAdminValidationSchema,
+  appointmentUpdateValidationSchema,
+} from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
 import {
@@ -294,6 +319,7 @@ const appointments = computed<Appointment[]>(() =>
 )
 const locations = computed(() => locationsResult.value?.locationsByUserId || [])
 const isEditing = ref<boolean>(false)
+const isEditingAdmin = ref<boolean>(false)
 // form schema update appointment client
 const formAppointment = ref({
   fields: [
@@ -339,6 +365,21 @@ const formAppointment = ref({
       type: 'textarea',
       placeholder: 'Type your description here...',
       rows: 5,
+    },
+  ],
+
+  button: {
+    name: 'Update Appointment',
+  },
+})
+
+const formEditAdminAppointment = ref({
+  fields: [
+    {
+      label: 'Priority',
+      name: 'priority',
+      as: 'switch',
+      type: 'switch',
     },
   ],
 
@@ -444,12 +485,37 @@ const handleUpdateAppointment = async (
   }
 }
 
+const handleUpdateAppointmentForAdmin = async (
+  values: GenericObject,
+): Promise<void> => {
+  try {
+    // console.log('values: ', values)
+    loading.value.update = true
+    updateAppointment({
+      updateAppointmentInput: {
+        id: selectedAppointment.value?.id,
+        priority: values.priority,
+      },
+    })
+    showToast('success', 'Success', 'Appointment updated')
+    await refetch()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't update appointment")
+  } finally {
+    loading.value.update = false
+  }
+}
+
 const toggleModal = (
   appointment: Appointment | null = null,
   type: string = 'close',
 ): void => {
   selectedAppointment.value = appointment ? { ...appointment } : null
   isEditing.value = false
+  isEditingAdmin.value = false
   visible.value = {
     detail: type === 'detail',
     edit: type === 'edit',
