@@ -238,9 +238,9 @@ import useLanguage from '@/composables/useLanguage'
 import { APPOINTMENT_CREATED } from '@/graphql/appointment.subscription'
 import router from '@/router'
 import { useSubscription } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { LogIn, LogOut, Menu, User, X } from 'lucide-vue-next'
 import { ref, watch, watchEffect } from 'vue'
-import LogRocket from 'logrocket'
 
 // composable
 const { logout } = useFirebase()
