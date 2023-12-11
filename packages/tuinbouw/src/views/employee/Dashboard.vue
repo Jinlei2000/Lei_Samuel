@@ -392,12 +392,10 @@ watchEffect(() => {
   // log the queries
 
   // all errors
-  const errors = [scheduleError.value]
-  errors.forEach(error => {
-    if (error) {
-      LogRocket.captureException(error)
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (scheduleError.value) {
+    // console.log(scheduleError.value)
+    LogRocket.captureException(scheduleError.value)
+    showToast('error', 'Error', "Couldn't load schedule")
+  }
 })
 </script>
