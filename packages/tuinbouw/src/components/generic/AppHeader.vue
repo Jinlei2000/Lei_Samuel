@@ -147,79 +147,65 @@
           v-if="showMenu"
           class="absolute left-0 top-0 z-40 h-screen w-screen bg-white"
         >
-          <div class="flex h-full flex-col items-center justify-center gap-12">
-            <div class="flex flex-col items-center justify-center gap-12">
+          <div
+            class="relative flex h-full flex-col items-end justify-center gap-12 px-6"
+          >
+            <div class="flex flex-col items-end justify-center gap-6 text-2xl">
               <RouterLink
-                class="hover:text-primary-orange py-1 text-black transition-all"
+                class="hover:text-primary-orange py-1 transition-all"
                 active-class="border-b-[1px] border-black"
                 :to="`/${role}/dashboard`"
                 >Dashboard</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin'"
-                class="hover:text-primary-orange py-1 text-black transition-all"
+                class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/users`"
                 >Users</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin'"
-                class="hover:text-primary-orange py-1 text-black transition-all"
+                class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/appointments`"
                 >Appointments</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin'"
-                class="hover:text-primary-orange py-1 text-black transition-all"
+                class="hover:text-primary-orange py-1transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/schedules`"
                 >Schedules</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin' || role == 'employee'"
-                class="hover:text-primary-orange py-1 text-black transition-all"
+                class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/materials`"
                 >Materials</RouterLink
               >
               <RouterLink
                 v-if="role == 'employee'"
-                class="hover:text-primary-orange py-1 text-black transition-all"
+                class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/calendar`"
                 >Calendar</RouterLink
               >
-            </div>
-            <div class="flex flex-col items-center justify-center gap-12">
-              <select
-                id="language"
-                v-model="locale"
-                class="block bg-transparent hover:cursor-pointer"
-                name="language"
-                @change="setLanguage"
-              >
-                <option
-                  v-for="(value, key) in SUPPORTED_LOCALES"
-                  :key="key"
-                  :value="key"
-                  @change="setLanguage"
-                >
-                  {{ value }}
-                </option>
-              </select>
-            </div>
-            <div class="flex flex-col items-center justify-center gap-12">
               <Router-link :to="`/${role}/profile`">
                 <button
-                  class="hover:text-primary-green flex gap-3"
+                  class="hover:text-primary-green flex items-center gap-3"
                   @click="showProfileDropdown()"
                 >
-                  <User /> Profile
+                  <User class="h-7 w-7" /> Profile
                 </button>
               </Router-link>
+            </div>
+            <div
+              class="absolute bottom-3 left-0 flex w-full flex-col items-center justify-center px-3"
+            >
               <button
-                class="hover:text-primary-green flex gap-3"
+                class="bg-primary-red flex w-full justify-center gap-3 rounded-xl py-3 text-white"
                 @click="handleLogout()"
               >
                 <LogOut /> Logout
