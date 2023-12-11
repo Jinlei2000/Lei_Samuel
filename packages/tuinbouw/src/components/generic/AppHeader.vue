@@ -3,18 +3,22 @@
   <Container
     class="fixed left-0 top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
   >
-    <header class="m-auto flex max-w-7xl items-center justify-between">
+    <header
+      class="w-[calc(100% - 24px)] m-auto mx-3 flex max-w-7xl items-center justify-between md:w-auto"
+    >
       <RouterLink
-        class="flex w-1/6 items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
+        class="relative z-50 mr-6 flex w-fit items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
         to="/"
       >
         <Logo />
       </RouterLink>
-      <nav class="flex gap-24">
-        <ul class="flex items-center justify-center gap-12">
+      <nav class="hidden w-full gap-12 md:flex xl:gap-24">
+        <ul
+          class="flex w-full items-center justify-between lg:justify-end lg:gap-12"
+        >
           <div
             v-if="checkPath()"
-            class="flex items-center justify-center gap-12"
+            class="flex w-full items-center justify-between lg:w-auto lg:justify-center lg:gap-12"
           >
             <li>
               <RouterLink
@@ -74,10 +78,7 @@
               >
             </li>
           </div>
-          <li
-            :class="checkPath() ? 'border-l-[1px]' : ''"
-            class="border-black py-2 pl-12"
-          >
+          <li class="hidden border-l-[1px] border-black py-2 pl-12 lg:block">
             <select
               id="language"
               v-model="locale"
@@ -96,14 +97,14 @@
             </select>
           </li>
         </ul>
-        <div v-if="checkPath()" class="relative flex w-1/6 justify-end">
+        <div v-if="checkPath()" class="relative flex min-w-fit justify-end">
           <button
             class="overflow-hidden rounded-full hover:cursor-pointer"
             @click="showProfileDropdown()"
           >
             <Avatar
               :user="customUser!"
-              class="h-12 w-12 overflow-hidden rounded-full"
+              class="h-10 w-10 overflow-hidden rounded-full lg:h-12 lg:w-12"
             />
           </button>
           <div v-if="profileDropdown" class="absolute -z-10">
@@ -135,8 +136,94 @@
           class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >Login<LogIn
         /></RouterLink>
-      </nav></header
-  ></Container>
+      </nav>
+      <nav class="block md:hidden">
+        <button
+          class="relative z-50 flex items-center justify-center rounded-md text-black"
+          @click="showMenu = !showMenu"
+        >
+          <Menu v-if="!showMenu" class="h-12 w-12" />
+          <X v-else class="h-12 w-12" />
+        </button>
+        <div
+          v-if="showMenu"
+          class="absolute left-0 top-0 z-40 h-screen w-screen bg-white"
+        >
+          <div
+            class="relative flex h-full flex-col items-end justify-center gap-12 px-6"
+          >
+            <div class="flex flex-col items-end justify-center gap-6 text-2xl">
+              <RouterLink
+                class="hover:text-primary-orange py-1 transition-all"
+                active-class="border-b-[1px] border-black"
+                :to="`/${role}/dashboard`"
+                @click="showMenu = false"
+                >Dashboard</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin'"
+                class="hover:text-primary-orange py-1 transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/users`"
+                @click="showMenu = false"
+                >Users</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin'"
+                class="hover:text-primary-orange py-1 transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/appointments`"
+                @click="showMenu = false"
+                >Appointments</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin'"
+                class="hover:text-primary-orange py-1transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/schedules`"
+                @click="showMenu = false"
+                >Schedules</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin' || role == 'employee'"
+                class="hover:text-primary-orange py-1 transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/materials`"
+                @click="showMenu = false"
+                >Materials</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'employee'"
+                class="hover:text-primary-orange py-1 transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/calendar`"
+                @click="showMenu = false"
+                >Calendar</RouterLink
+              >
+              <Router-link :to="`/${role}/profile`">
+                <button
+                  class="hover:text-primary-green flex items-center gap-3"
+                  @click="showMenu = false"
+                >
+                  <User class="h-7 w-7" /> Profile
+                </button>
+              </Router-link>
+            </div>
+            <div
+              class="absolute bottom-3 left-0 flex w-full flex-col items-center justify-center px-3"
+            >
+              <button
+                class="bg-primary-red flex w-full justify-center gap-3 rounded-xl py-3 text-white"
+                @click="handleLogout()"
+              >
+                <LogOut /> Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header></Container
+  >
 </template>
 
 <script setup lang="ts">
@@ -151,9 +238,9 @@ import useLanguage from '@/composables/useLanguage'
 import { APPOINTMENT_CREATED } from '@/graphql/appointment.subscription'
 import router from '@/router'
 import { useSubscription } from '@vue/apollo-composable'
+import { LogIn, LogOut, Menu, User, X } from 'lucide-vue-next'
+import { ref, watch, watchEffect } from 'vue'
 import LogRocket from 'logrocket'
-import { LogIn, LogOut, User } from 'lucide-vue-next'
-import { ref, watch } from 'vue'
 
 // composable
 const { logout } = useFirebase()
@@ -166,6 +253,9 @@ const { showToast } = useCustomToast()
 const role = ref(customUser.value?.role.toLowerCase())
 const profileDropdown = ref(false)
 const newAppointments = ref(0)
+
+// Mobile menu
+const showMenu = ref(false)
 
 // logics
 const showProfileDropdown = (): void => {
@@ -187,6 +277,7 @@ const handleLogout = async (): Promise<void> => {
     customUser.value = null
     // console.log('logout')
     showProfileDropdown()
+    showMenu.value = false
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
