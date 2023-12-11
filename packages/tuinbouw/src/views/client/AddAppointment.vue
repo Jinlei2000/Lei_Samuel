@@ -84,9 +84,9 @@
           <!-- No Appointments -->
           <div
             v-if="recentAppointments.length === 0"
-            class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200 p-3"
+            class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
           >
-            <p class="text-md">No recent appointments</p>
+            <p class="text-gray-500">No recent appointments</p>
           </div>
         </div>
       </div>

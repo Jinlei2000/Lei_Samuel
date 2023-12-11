@@ -12,10 +12,9 @@ export default () => {
       severity: type,
       summary: message,
       detail: title,
-      life: 10000,
+      life: 5000,
     })
   }
-  // TODO:  make a error for all backend errors same detail and summary
   return {
     showToast,
   }

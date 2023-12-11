@@ -1,17 +1,28 @@
 <template>
-  <div
+  <main
     class="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-center"
   >
     <div
       class="w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4"
     >
-      <div class="col-span-1 col-start-1 mb-6 sm:mb-0">
+      <!-- Next Appointment & Schedule -->
+      <section class="col-span-1 col-start-1 mb-6 sm:mb-0">
         <h2 class="mb-3 text-2xl">Next Appointment</h2>
+        <!-- Next Appointment -->
         <div class="flex flex-col">
+          <!-- Next Appointment -->
           <AppointmentCard
             v-if="scheduleData.nextAppointment"
             :appointment="scheduleData.nextAppointment"
           />
+          <!-- Skeleton Loader -->
+          <div
+            v-else-if="loading.schedule"
+            class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
+          >
+            <Loader2 class="text-primary-green h-32 animate-spin" />
+          </div>
+          <!-- No Appointments -->
           <div
             v-else
             class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
@@ -19,6 +30,8 @@
             <p class="text-gray-500">No appointments for today</p>
           </div>
         </div>
+
+        <!-- Header Schedule -->
         <div class="mb-3 mt-6 flex items-center justify-between">
           <h2 class="text-2xl">Schedule</h2>
           <RouterLink
@@ -33,6 +46,7 @@
           </RouterLink>
         </div>
 
+        <!-- Controls Schedule -->
         <div
           class="mb-3 flex items-center justify-between rounded-2xl bg-gray-500 p-1 text-xl sm:text-base"
         >
@@ -54,7 +68,9 @@
             />
           </button>
         </div>
+        <!-- Appointments Of Schedule -->
         <div class="flex flex-col gap-3">
+          <!-- Appointments -->
           <template
             v-for="(item, index) in scheduleData.appointments"
             v-if="scheduleData.appointments"
@@ -65,6 +81,7 @@
               :appointment="item"
             />
           </template>
+          <!-- Finished Appointments -->
           <template
             v-for="(item, index) in scheduleData.finishedAppointments"
             v-if="scheduleData.finishedAppointments"
@@ -75,6 +92,14 @@
               :appointment="item"
             />
           </template>
+          <!-- Skeleton Loader -->
+          <div
+            v-else-if="loading.schedule"
+            class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
+          >
+            <Loader2 class="text-primary-green h-32 animate-spin" />
+          </div>
+          <!-- No Appointments -->
           <div
             v-else
             class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
@@ -82,10 +107,13 @@
             <p class="text-gray-500">No appointments for today</p>
           </div>
         </div>
-      </div>
-      <div class="col-span-1 hidden md:block lg:col-span-2">
+      </section>
+      <!-- Weather & Map -->
+      <section class="col-span-1 hidden md:block lg:col-span-2">
+        <!-- Weather -->
         <div class="mb-3">
-          <h2 class="mb-3 text-2xl">Weather</h2>
+          <h2 class="mb-3 hidden text-2xl lg:block">Weather</h2>
+          <h2 class="mb-3 text-2xl lg:hidden">Map</h2>
           <div
             class="min-h-24 hidden items-center justify-center rounded-2xl bg-gray-200 px-5 py-3 lg:flex"
           >
@@ -109,13 +137,16 @@
             </div>
           </div>
         </div>
+        <!-- Map -->
         <Map
           class="h-72 w-full overflow-hidden rounded-2xl"
           :locations="scheduleData.todaysLocations"
           :controls="true"
         />
-      </div>
-      <div class="col-span-1 mb-3 lg:col-start-4">
+      </section>
+      <!-- Weather Notifications & Materials -->
+      <section class="col-span-1 mb-3 lg:col-start-4">
+        <!-- Header -->
         <button
           class="mb-3 flex w-full items-center justify-between"
           @click="handleMaterialsCollapsible()"
@@ -127,7 +158,9 @@
             :class="materialsCollapsed ? 'rotate-0' : 'rotate-180'"
           />
         </button>
+        <!-- Content -->
         <div v-show="!isMobile() || !materialsCollapsed">
+          <!-- Notifications -->
           <div
             v-if="forecast && forecast[0].rain"
             class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
@@ -155,6 +188,7 @@
             <h3 class="mb-3 text-xl">Hot weather</h3>
             <p>Don't forget sunscreen and drink enough water</p>
           </div>
+          <!-- Materials -->
           <div v-if="scheduleData.materials" class="flex flex-col gap-3">
             <ChecklistItem
               v-for="item in scheduleData.materials"
@@ -162,6 +196,14 @@
               :material="item"
             />
           </div>
+          <!-- Skeleton Loader -->
+          <div
+            v-else-if="loading.schedule"
+            class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
+          >
+            <Loader2 class="text-primary-green h-12 animate-spin" />
+          </div>
+          <!-- No Materials -->
           <div
             v-else
             class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
@@ -169,9 +211,9 @@
             <p class="text-gray-500">No materials for today</p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -195,6 +237,7 @@ import {
   Sun,
   ThermometerSnowflake,
 } from 'lucide-vue-next'
+import type { ComputedRef } from 'vue'
 import { computed, ref, watch, watchEffect } from 'vue'
 
 const { customUser } = useCustomUser()
@@ -205,6 +248,13 @@ const dateDisplay = ref('Today')
 const forecast = ref<any>()
 
 const materialsCollapsed = ref(true)
+const loading = ref<{
+  schedule: ComputedRef<boolean>
+}>({
+  schedule: computed(() => {
+    return scheduleLoading.value
+  }),
+})
 
 const getWeekForecast = async (lon: string, lat: string) => {
   await getForecastForWeek(lon, lat).then(data => {
@@ -342,12 +392,10 @@ watchEffect(() => {
   // log the queries
 
   // all errors
-  const errors = [scheduleError.value]
-  errors.forEach(error => {
-    if (error) {
-      LogRocket.captureException(error)
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (scheduleError.value) {
+    // console.log(scheduleError.value)
+    LogRocket.captureException(scheduleError.value)
+    showToast('error', 'Error', "Couldn't load schedule")
+  }
 })
 </script>
