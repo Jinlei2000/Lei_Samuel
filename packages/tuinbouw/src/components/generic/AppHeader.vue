@@ -3,14 +3,16 @@
   <Container
     class="fixed left-0 top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
   >
-    <header class="m-auto flex max-w-7xl items-center justify-between">
+    <header
+      class="w-[calc(100% - 24px)] m-auto mx-3 flex max-w-7xl items-center justify-between md:w-auto"
+    >
       <RouterLink
-        class="mr-6 flex w-fit items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
+        class="relative z-50 mr-6 flex w-fit items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
         to="/"
       >
         <Logo />
       </RouterLink>
-      <nav class="flex w-full gap-12 xl:gap-24">
+      <nav class="hidden w-full gap-12 md:flex xl:gap-24">
         <ul
           class="flex w-full items-center justify-between lg:justify-end lg:gap-12"
         >
@@ -132,8 +134,102 @@
           class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >Login<LogIn
         /></RouterLink>
-      </nav></header
-  ></Container>
+      </nav>
+      <nav class="block md:hidden">
+        <button
+          class="relative z-50 flex items-center justify-center rounded-md text-black"
+          @click="showMenu = !showMenu"
+        >
+          <Menu v-if="!showMenu" class="h-12 w-12" />
+          <X v-else class="h-12 w-12" />
+        </button>
+        <div
+          v-if="showMenu"
+          class="absolute left-0 top-0 z-40 h-screen w-screen bg-white"
+        >
+          <div class="flex h-full flex-col items-center justify-center gap-12">
+            <div class="flex flex-col items-center justify-center gap-12">
+              <RouterLink
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class="border-b-[1px] border-black"
+                :to="`/${role}/dashboard`"
+                >Dashboard</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin'"
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/users`"
+                >Users</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin'"
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/appointments`"
+                >Appointments</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin'"
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/schedules`"
+                >Schedules</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'admin' || role == 'employee'"
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/materials`"
+                >Materials</RouterLink
+              >
+              <RouterLink
+                v-if="role == 'employee'"
+                class="hover:text-primary-orange py-1 text-black transition-all"
+                active-class=" border-b-[1px] border-black"
+                :to="`/${role}/calendar`"
+                >Calendar</RouterLink
+              >
+            </div>
+            <div class="flex flex-col items-center justify-center gap-12">
+              <select
+                id="language"
+                v-model="locale"
+                class="block bg-transparent hover:cursor-pointer"
+                name="language"
+                @change="setLanguage"
+              >
+                <option
+                  v-for="(value, key) in SUPPORTED_LOCALES"
+                  :key="key"
+                  :value="key"
+                  @change="setLanguage"
+                >
+                  {{ value }}
+                </option>
+              </select>
+            </div>
+            <div class="flex flex-col items-center justify-center gap-12">
+              <Router-link :to="`/${role}/profile`">
+                <button
+                  class="hover:text-primary-green flex gap-3"
+                  @click="showProfileDropdown()"
+                >
+                  <User /> Profile
+                </button>
+              </Router-link>
+              <button
+                class="hover:text-primary-green flex gap-3"
+                @click="handleLogout()"
+              >
+                <LogOut /> Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header></Container
+  >
 </template>
 
 <script setup lang="ts">
@@ -146,7 +242,7 @@ import useLanguage from '@/composables/useLanguage'
 import { APPOINTMENT_CREATED } from '@/graphql/appointment.subscription'
 import router from '@/router'
 import { useSubscription } from '@vue/apollo-composable'
-import { LogIn, LogOut, User } from 'lucide-vue-next'
+import { LogIn, LogOut, Menu, User, X } from 'lucide-vue-next'
 import { ref, watch, watchEffect } from 'vue'
 
 const { logout } = useFirebase()
@@ -162,6 +258,9 @@ const role = ref('')
 const profileDropdown = ref(false)
 
 const newAppointments = ref(0)
+
+// Mobile menu
+const showMenu = ref(false)
 
 const showProfileDropdown = () => {
   profileDropdown.value = !profileDropdown.value
