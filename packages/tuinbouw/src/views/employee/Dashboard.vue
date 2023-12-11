@@ -112,7 +112,8 @@
       <section class="col-span-1 hidden md:block lg:col-span-2">
         <!-- Weather -->
         <div class="mb-3">
-          <h2 class="mb-3 text-2xl">Weather</h2>
+          <h2 class="mb-3 hidden text-2xl lg:block">Weather</h2>
+          <h2 class="mb-3 text-2xl lg:hidden">Map</h2>
           <div
             class="min-h-24 hidden items-center justify-center rounded-2xl bg-gray-200 px-5 py-3 lg:flex"
           >
