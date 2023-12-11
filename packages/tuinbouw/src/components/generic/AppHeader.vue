@@ -155,6 +155,7 @@
                 class="hover:text-primary-orange py-1 transition-all"
                 active-class="border-b-[1px] border-black"
                 :to="`/${role}/dashboard`"
+                @click="showMenu = false"
                 >Dashboard</RouterLink
               >
               <RouterLink
@@ -162,6 +163,7 @@
                 class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/users`"
+                @click="showMenu = false"
                 >Users</RouterLink
               >
               <RouterLink
@@ -169,6 +171,7 @@
                 class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/appointments`"
+                @click="showMenu = false"
                 >Appointments</RouterLink
               >
               <RouterLink
@@ -176,6 +179,7 @@
                 class="hover:text-primary-orange py-1transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/schedules`"
+                @click="showMenu = false"
                 >Schedules</RouterLink
               >
               <RouterLink
@@ -183,6 +187,7 @@
                 class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/materials`"
+                @click="showMenu = false"
                 >Materials</RouterLink
               >
               <RouterLink
@@ -190,12 +195,13 @@
                 class="hover:text-primary-orange py-1 transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/calendar`"
+                @click="showMenu = false"
                 >Calendar</RouterLink
               >
               <Router-link :to="`/${role}/profile`">
                 <button
                   class="hover:text-primary-green flex items-center gap-3"
-                  @click="showProfileDropdown()"
+                  @click="showMenu = false"
                 >
                   <User class="h-7 w-7" /> Profile
                 </button>
@@ -267,6 +273,7 @@ const handleLogout = async () => {
   console.log('logout')
 
   showProfileDropdown()
+  showMenu.value = false
 }
 
 const checkPath = () => {
