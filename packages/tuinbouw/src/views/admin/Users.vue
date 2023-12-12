@@ -2,31 +2,24 @@
   <section
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
-    <div class="flex w-full flex-col gap-3">
+    <div class="mb-4 flex w-full flex-col gap-3">
       <!-- Filters + Searchbar -->
-      <section :class="['relative flex w-full items-center justify-between']">
+      <section
+        class="relative flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-between"
+      >
         <!-- Filter -->
         <Filter v-model="variables.filters" :options="FILTER_OPTIONS_USERS" />
 
         <!-- Searchbar -->
-        <Search v-model="variables.searchString" />
+        <Search v-model="variables.searchString" class="w-full sm:w-auto" />
       </section>
 
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
         <h1 class="text-2xl">Users</h1>
-        <div class="flex gap-3">
-          <!-- Sort -->
-          <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
-          <!-- Add Employee -->
-          <button
-            class="bg-primary-green my-4 rounded px-4 py-2 text-white"
-            @click="toggleModal(null, 'create')"
-          >
-            Add Employee
-          </button>
-        </div>
+        <!-- Sort -->
+        <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
       </header>
     </div>
   </section>
@@ -43,6 +36,15 @@
   <!-- Users -->
   <section v-else-if="users && users.length > 0">
     <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+      <!-- Add Employee -->
+      <button
+        class="border-primary-green text-primary-green flex h-14 w-full items-center justify-center rounded-2xl border-[1px]"
+        @click="toggleModal(null, 'create')"
+      >
+        <PlusCircle class="mr-2" />
+        Add Employee
+      </button>
+      <!-- Users -->
       <button
         v-for="user in users"
         :key="user.id"
@@ -226,6 +228,7 @@ import {
 } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
+import { PlusCircle } from 'lucide-vue-next'
 import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 
