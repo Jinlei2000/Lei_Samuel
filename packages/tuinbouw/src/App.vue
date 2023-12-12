@@ -20,7 +20,7 @@ import useCustomUser from './composables/useCustomUser'
 import useGraphql from './composables/useGraphql'
 import useLanguage from './composables/useLanguage'
 import { DefaultApolloClient } from '@vue/apollo-composable'
-import { AlertTriangle, Check, Info, X, XCircle } from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
 import { provide } from 'vue'
 import { useI18n } from 'vue-i18n'
 
