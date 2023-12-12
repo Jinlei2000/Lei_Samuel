@@ -5,7 +5,9 @@
     >
       <div class="flex w-full flex-col gap-3">
         <!-- Filters + Searchbar -->
-        <section :class="['relative flex w-full items-center justify-between']">
+        <section
+          class="relative flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-between"
+        >
           <!-- Filter -->
           <Filter
             v-model="variables.filters"
@@ -15,6 +17,7 @@
           <Search
             v-if="props.showAllOverview"
             v-model="variables.searchString"
+            class="w-full sm:w-auto"
             placeholder="Search for appointments"
           />
         </section>
@@ -22,13 +25,11 @@
         <header class="flex w-full items-center justify-between">
           <!-- Title -->
           <h1 class="text-2xl">Appointments</h1>
-          <div class="flex gap-3">
-            <!-- Sort -->
-            <Sort
-              v-model="variables.order"
-              :options="SORT_OPTIONS_APPOINTMENTS"
-            />
-          </div>
+          <!-- Sort -->
+          <Sort
+            v-model="variables.order"
+            :options="SORT_OPTIONS_APPOINTMENTS"
+          />
         </header>
       </div>
     </section>

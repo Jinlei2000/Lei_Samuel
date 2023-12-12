@@ -2,11 +2,13 @@
   <main>
     <!-- Header -->
     <section
-      class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+      class="m-auto mb-4 mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
     >
       <div class="flex w-full flex-col gap-3">
-        <!-- Filters + Searchbar -->
-        <section :class="['relative flex w-full items-center justify-between']">
+        <!-- Filters -->
+        <section
+          class="relative flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-between"
+        >
           <!-- Filter -->
           <Filter
             v-model="variables.filters"
@@ -18,21 +20,8 @@
         <header class="flex w-full items-center justify-between">
           <!-- Title -->
           <h1 class="text-2xl">Schedules</h1>
-          <div class="flex gap-3">
-            <!-- Sort -->
-            <Sort v-model="variables.order" :options="SORT_OPTIONS_SCHEDULES" />
-            <!-- Add Schedule -->
-            <Router-link
-              class="flex w-full justify-end"
-              :to="`/admin/add-schedule`"
-            >
-              <button
-                class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
-              >
-                Add Schedule
-              </button>
-            </Router-link>
-          </div>
+          <!-- Sort -->
+          <Sort v-model="variables.order" :options="SORT_OPTIONS_SCHEDULES" />
         </header>
       </div>
     </section>
@@ -52,6 +41,16 @@
     <!-- Schedules -->
     <section v-else-if="schedules && schedules.length > 0">
       <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+        <!-- Add Schedule -->
+        <Router-link :to="`/admin/add-schedule`">
+          <button
+            class="border-primary-green text-primary-green flex h-14 w-full items-center justify-center rounded-2xl border-[1px]"
+          >
+            <PlusCircle class="mr-2" />
+            Add Schedule
+          </button>
+        </Router-link>
+        <!-- Schedules -->
         <button
           v-for="schedule in schedules"
           :key="schedule.id"
@@ -201,7 +200,7 @@ import type { Schedule } from '@/interfaces/schedule.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown, PlusCircle } from 'lucide-vue-next'
 import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 

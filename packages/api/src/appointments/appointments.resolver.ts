@@ -80,7 +80,6 @@ export class AppointmentsResolver {
     return this.appointmentsService.findOne(id)
   }
 
-  // TODO: add to documentation
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Appointment], { name: 'appointmentsAvailableByDate' })
