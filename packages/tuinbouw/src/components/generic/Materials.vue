@@ -4,10 +4,7 @@
     <section class="flex w-full flex-col gap-10">
       <!-- Filters + Searchbar -->
       <section
-        :class="[
-          'relative flex w-full items-center',
-          props.showAllOverview ? 'justify-between' : 'justify-end',
-        ]"
+        class="relative flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-between"
       >
         <!-- Filter -->
         <Filter
@@ -17,7 +14,11 @@
         />
 
         <!-- Searchbar -->
-        <Search v-model="variables.searchString" />
+        <Search
+          v-model="variables.searchString"
+          class="w-full sm:w-auto"
+          placeholder="Search for materials"
+        />
       </section>
 
       <!-- Title + Sort -->
