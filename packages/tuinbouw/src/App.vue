@@ -7,7 +7,7 @@
       <X :class="slotProps.class" />
     </template>
   </Toast>
-  <div class="text-black">
+  <div class="mx-4 text-black">
     <AppHeader />
     <RouterView />
   </div>
