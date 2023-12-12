@@ -19,7 +19,7 @@
         <div class="flex gap-3">
           <!-- Sort -->
           <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
-          <!-- add employee button -->
+          <!-- Add Employee -->
           <button
             class="bg-primary-green my-4 rounded px-4 py-2 text-white"
             @click="toggleModal(null, 'create')"

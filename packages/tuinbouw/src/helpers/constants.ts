@@ -161,6 +161,20 @@ export const SORT_OPTIONS_SCHEDULES = [
   },
 ]
 
+export const FILTER_OPTIONS_SCHEDULES = [
+  {
+    title: 'Final Date',
+    name: 'finalDate',
+    type: 'radio',
+    options: [
+      { label: 'All', value: '' },
+      { label: 'Today', value: 'T' },
+      { label: 'Future', value: 'F' },
+      { label: 'Past', value: 'P' },
+    ],
+  },
+]
+
 export const FILTER_OPTIONS_ABSENCES = [
   {
     title: 'Type',
