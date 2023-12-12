@@ -156,6 +156,10 @@ export const FILTER_OPTIONS_APPOINTMENTS = [
 
 export const SORT_OPTIONS_SCHEDULES = [
   {
+    label: 'Date Created',
+    value: 'createdAt',
+  },
+  {
     label: 'Date',
     value: 'finalDate',
   },
