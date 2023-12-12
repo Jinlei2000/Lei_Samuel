@@ -52,45 +52,44 @@
     <!-- Schedules -->
     <section v-else-if="schedules && schedules.length > 0">
       <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
-        <div v-for="schedule in schedules" :key="schedule.id">
-          <button
-            class="relative w-full rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
-            @click="toggleModal(schedule, 'detail')"
-          >
-            <div class="flex h-16 items-center justify-between sm:h-11">
-              <h2
-                class="ml-3 w-1/2 min-w-fit text-left text-base sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+        <button
+          v-for="schedule in schedules"
+          :key="schedule.id"
+          class="relative w-full rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
+          @click="toggleModal(schedule, 'detail')"
+        >
+          <div class="flex h-16 items-center justify-between sm:h-11">
+            <h2
+              class="ml-3 w-1/2 min-w-fit text-left text-base sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+            >
+              {{ formatDateTime(schedule.finalDate) }}
+            </h2>
+            <div class="flex items-center justify-end gap-12 p-1">
+              <ul class="flex -space-x-6 transition-all hover:space-x-1">
+                <li v-for="employee in schedule.employees" :key="employee.id">
+                  <div class="group relative">
+                    <Avatar
+                      class="h-8 w-8 overflow-hidden rounded-full border-2 text-sm"
+                      :user="employee"
+                    />
+                    <p
+                      class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 capitalize opacity-0 transition-all group-hover:opacity-100"
+                    >
+                      {{ employee.firstname }}
+                    </p>
+                  </div>
+                </li>
+              </ul>
+              <div
+                class="bg-primary-green flex h-9 w-9 items-center justify-center rounded-xl"
               >
-                {{ formatDateTime(schedule.finalDate) }}
-              </h2>
-              <div class="flex items-center justify-end gap-12 p-1">
-                <ul class="flex -space-x-6 transition-all hover:space-x-1">
-                  <li v-for="employee in schedule.employees" :key="employee.id">
-                    <div class="group relative">
-                      <img
-                        class="h-8 w-8 rounded-full"
-                        src="https://i.pravatar.cc/300"
-                        alt="Profile picture"
-                      />
-                      <p
-                        class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 capitalize opacity-0 transition-all group-hover:opacity-100"
-                      >
-                        {{ employee.firstname }}
-                      </p>
-                    </div>
-                  </li>
-                </ul>
-                <div
-                  class="bg-primary-green flex h-9 w-9 items-center justify-center rounded-xl"
-                >
-                  <p class="text-white">
-                    {{ schedule.appointments.length }}
-                  </p>
-                </div>
+                <p class="text-white">
+                  {{ schedule.appointments.length }}
+                </p>
               </div>
             </div>
-          </button>
-        </div>
+          </div>
+        </button>
       </div>
     </section>
 
@@ -135,10 +134,9 @@
             :key="employee.id"
             class="flex items-center gap-3"
           >
-            <img
-              class="h-8 w-8 rounded-full"
-              src="https://i.pravatar.cc/300"
-              alt="Profile picture"
+            <Avatar
+              class="h-8 w-8 overflow-hidden rounded-full text-sm"
+              :user="employee"
             />
             <p class="capitalize">{{ employee.fullname }}</p>
           </li>
@@ -185,6 +183,7 @@
 </template>
 
 <script setup lang="ts">
+import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
 import Filter from '@/components/generic/Filter.vue'
 import NoResult from '@/components/generic/NoResult.vue'
