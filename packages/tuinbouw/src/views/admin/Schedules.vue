@@ -164,14 +164,15 @@
       </div>
 
       <div class="flex justify-between">
+        <!-- Delete Button -->
         <CustomButton
           name="Delete"
-          :loading="deleteScheduleLoading"
+          :loading="loading.delete"
           variant="warning"
           @click="handleDeleteSchedule(selectedSchedule)"
         />
 
-        <!-- edit button -->
+        <!-- Edit Button -->
         <Router-link
           v-if="isNotInPastOrToday(selectedSchedule.finalDate.toString())"
           :to="`/admin/schedules/${selectedSchedule.id}/edit`"
@@ -181,11 +182,6 @@
       </div>
     </div>
   </Dialog>
-
-  <!-- show no schedules -->
-  <div v-if="schedules.length === 0 && !schedulesLoading">
-    <p class="text-6xl font-black">No Schedules Found</p>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -205,7 +201,9 @@ import {
 import type { Schedule } from '@/interfaces/schedule.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { ChevronDown } from 'lucide-vue-next'
+import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 
 // composables
@@ -222,13 +220,21 @@ const variables = ref<VariablesProps>({
 })
 
 const collapsed = ref(true)
+const loading = ref<{
+  schedules: ComputedRef<boolean>
+  delete: boolean
+}>({
+  schedules: computed(() => schedulesLoading.value),
+  delete: false,
+})
 
 const schedules = computed(() => schedulesResult.value?.schedules || [])
 
 const selectedSchedule = ref<Schedule | null>(null)
-const visible = ref({
+const visible = ref<{
+  detail: boolean
+}>({
   detail: false,
-  edit: false,
 })
 
 // graphql
@@ -241,21 +247,26 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const {
-  mutate: deleteSchedule,
-  error: deleteScheduleError,
-  loading: deleteScheduleLoading,
-} = useMutation(DELETE_SCHEDULE)
+const { mutate: deleteSchedule } = useMutation(DELETE_SCHEDULE)
 
 // logics
 // delete schedule
 const handleDeleteSchedule = async (schedule: Schedule) => {
-  await deleteSchedule({
-    id: schedule.id,
-  })
-  showToast('success', 'Success', `Schedule deleted`)
-  refetchSchedules()
-  toggleModal()
+  try {
+    loading.value.delete = true
+    await deleteSchedule({
+      id: schedule.id,
+    })
+    showToast('success', 'Success', `Schedule deleted`)
+    refetchSchedules()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't delete schedule")
+  } finally {
+    loading.value.delete = false
+  }
 }
 
 const toggleModal = (
@@ -265,7 +276,6 @@ const toggleModal = (
   selectedSchedule.value = schedule ? { ...schedule } : null
   visible.value = {
     detail: type === 'detail',
-    edit: type === 'edit',
   }
 }
 
@@ -278,11 +288,10 @@ watchEffect(() => {
   // if (schedules.value) console.log(schedules.value)
 
   // all errors
-  const errors = [schedulesError.value, deleteScheduleError.value]
-  errors.forEach(error => {
-    if (error) {
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (schedulesError.value) {
+    // console.log(schedulesError.value)
+    LogRocket.captureException(schedulesError.value)
+    showToast('error', 'Error', "Couldn't load schedules")
+  }
 })
 </script>

@@ -166,33 +166,30 @@
       <!-- Buttons -->
       <div v-if="!selectedAppointment.isDone" class="flex justify-between">
         <!-- Delete -->
-        <button
-          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+        <CustomButton
+          variant="warning"
+          name="Delete"
+          :loading="loading.delete"
           @click="handleDeleteAppointment(selectedAppointment.id)"
-        >
-          Delete
-        </button>
+        />
         <!-- Edit For Client -->
-        <button
+        <CustomButton
           v-if="
             (!showAllOverview && isOverToday(selectedAppointment)) ||
             (!showAllOverview && !selectedAppointment.isScheduled)
           "
-          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
+          name="Edit"
           @click="isEditing = true"
-        >
-          Edit
-        </button>
+        />
         <!-- Edit For Admin -->
-        <button
+        <CustomButton
           v-if="showAllOverview"
-          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
+          name="Edit"
           @click="isEditingAdmin = true"
-        >
-          Edit
-        </button>
+        />
       </div>
     </div>
+
     <!-- Edit Form For Client -->
     <div v-if="isEditing">
       <DynamicForm
@@ -229,6 +226,7 @@
 </template>
 
 <script setup lang="ts">
+import CustomButton from './generic/CustomButton.vue'
 import DynamicForm from './generic/DynamicForm.vue'
 import NoResult from './generic/NoResult.vue'
 import Filter from '@/components/generic/Filter.vue'
@@ -302,9 +300,11 @@ const variables = ref<VariablesProps>({
 })
 const loading = ref<{
   update: boolean
+  delete: boolean
   data: ComputedRef<boolean>
 }>({
   update: false,
+  delete: false,
   data: computed(
     () =>
       appointmentsByUserIdLoading.value ||
@@ -443,6 +443,7 @@ onMounted(() => {
 // delete appointment
 const handleDeleteAppointment = async (id: string): Promise<void> => {
   try {
+    loading.value.delete = true
     await deleteAppointment({
       id,
     })
@@ -453,6 +454,8 @@ const handleDeleteAppointment = async (id: string): Promise<void> => {
     // console.log(error)
     LogRocket.captureException(error as Error)
     showToast('error', 'Error', "Couldn't delete appointment")
+  } finally {
+    loading.value.delete = false
   }
 }
 

@@ -147,16 +147,12 @@
         <!-- Delete -->
         <CustomButton
           name="Delete"
+          variant="warning"
           :loading="loading.deleteEmployee"
           @click="handleDelete(selectedUser)"
         />
         <!-- Edit -->
-        <button
-          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
-          @click="isEditing = true"
-        >
-          Edit
-        </button>
+        <CustomButton name="Edit" @click="isEditing = true" />
       </div>
     </div>
     <!-- Edit Form -->
