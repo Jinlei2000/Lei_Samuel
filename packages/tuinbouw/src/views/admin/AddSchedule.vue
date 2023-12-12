@@ -1,5 +1,14 @@
 <template>
+  <!-- Loading Data -->
   <div
+    v-if="loadingAppointments && loadingEmployees && loadingMaterials"
+    class="flex h-screen w-full items-center justify-center"
+  >
+    <Loader2 class="text-primary-green -mt-24 h-12 w-12 animate-spin" />
+  </div>
+
+  <main
+    v-else
     class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-start justify-center gap-3"
   >
     <!-- Title -->
@@ -19,20 +28,8 @@
           errorMessages.finalDate || '&nbsp;'
         }}</span>
 
-        <!-- Loading Data -->
-        <div
-          v-if="loadingAppointments && loadingEmployees && loadingMaterials"
-          class="flex w-full items-center justify-center"
-        >
-          <div
-            class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200 text-center sm:w-1/2"
-          >
-            <Loader2 class="text-primary-green animate-spin" />
-          </div>
-        </div>
-
         <!-- Calendar -->
-        <div v-else class="m-auto flex w-fit flex-col items-center gap-6">
+        <div class="m-auto flex w-fit flex-col items-center gap-6">
           <p class="text-lg font-semibold text-gray-900">Choose a date</p>
 
           <!-- Loading Appointments & Employees -->
@@ -374,7 +371,7 @@
         </div>
       </div>
     </form>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
