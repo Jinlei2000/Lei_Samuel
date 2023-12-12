@@ -134,19 +134,14 @@
       <!-- Buttons -->
       <div v-if="props.showAllOverview" class="flex justify-between">
         <!-- Delete -->
-        <button
-          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+        <CustomButton
+          name="Delete"
+          :loading="loading.delete"
+          variant="warning"
           @click="handleDeleteMaterial(selectedMaterial!)"
-        >
-          Delete
-        </button>
+        />
         <!-- Edit -->
-        <button
-          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
-          @click="isEditing = true"
-        >
-          Edit
-        </button>
+        <CustomButton name="Edit" @click="isEditing = true" />
       </div>
     </div>
     <!-- Edit Form -->
@@ -169,6 +164,7 @@
 </template>
 
 <script setup lang="ts">
+import CustomButton from './CustomButton.vue'
 import DynamicForm from './DynamicForm.vue'
 import Filter from './Filter.vue'
 import NoResult from './NoResult.vue'
@@ -197,7 +193,7 @@ import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { ArrowLeft, Pencil, PlusCircle, Trash2, Wrench } from 'lucide-vue-next'
+import { PlusCircle, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
 import type { ComputedRef } from 'vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
@@ -227,10 +223,12 @@ const visible = ref<{
 const loading = ref<{
   update: boolean
   create: boolean
+  delete: boolean
   data: ComputedRef<boolean>
 }>({
   update: false,
   create: false,
+  delete: false,
   data: computed(
     () =>
       materialsLoading.value ||
@@ -437,6 +435,7 @@ const handleUpdatematerial = async (values: GenericObject): Promise<void> => {
 // handle delete material
 const handleDeleteMaterial = async (material: Material): Promise<void> => {
   try {
+    loading.value.delete = true
     // console.log(material.id)
     await deleteMaterial({
       id: material.id,
@@ -448,6 +447,8 @@ const handleDeleteMaterial = async (material: Material): Promise<void> => {
     // console.log(error)
     LogRocket.captureException(error as Error)
     showToast('error', 'Error', "Couldn't delete material")
+  } finally {
+    loading.value.delete = false
   }
 }
 

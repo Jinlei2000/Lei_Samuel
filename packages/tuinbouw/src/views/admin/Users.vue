@@ -19,7 +19,7 @@
         <div class="flex gap-3">
           <!-- Sort -->
           <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
-          <!-- add employee button -->
+          <!-- Add Employee -->
           <button
             class="bg-primary-green my-4 rounded px-4 py-2 text-white"
             @click="toggleModal(null, 'create')"
@@ -147,16 +147,12 @@
         <!-- Delete -->
         <CustomButton
           name="Delete"
+          variant="warning"
           :loading="loading.deleteEmployee"
           @click="handleDelete(selectedUser)"
         />
         <!-- Edit -->
-        <button
-          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
-          @click="isEditing = true"
-        >
-          Edit
-        </button>
+        <CustomButton name="Edit" @click="isEditing = true" />
       </div>
     </div>
     <!-- Edit Form -->

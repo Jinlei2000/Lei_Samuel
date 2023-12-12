@@ -1,109 +1,102 @@
 <template>
-  <div
-    class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-center justify-center gap-3"
-  >
-    <div class="flex w-full flex-col gap-3">
-      <!-- Title + Sort -->
-      <header class="flex w-full items-center justify-between">
-        <!-- Title -->
-        <h1 class="text-2xl">Schedules</h1>
-        <div class="flex gap-3">
-          <!-- Sort -->
-          <Sort v-model="variables.order" :options="SORT_OPTIONS_SCHEDULES" />
-        </div>
-      </header>
-    </div>
-    <div class="flex w-full justify-end">
-      <!-- add schedule button -->
-      <Router-link :to="`/admin/add-schedule`">
-        <button class="bg-primary-green rounded px-4 py-2 font-bold text-white">
-          Add Schedule
-        </button>
-      </Router-link>
-    </div>
-  </div>
+  <main>
+    <!-- Header -->
+    <section
+      class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+    >
+      <div class="flex w-full flex-col gap-3">
+        <!-- Filters + Searchbar -->
+        <section :class="['relative flex w-full items-center justify-between']">
+          <!-- Filter -->
+          <Filter
+            v-model="variables.filters"
+            :options="FILTER_OPTIONS_SCHEDULES"
+          />
+        </section>
 
-  <!-- show loading -->
-  <div v-if="schedulesLoading" class="m-auto flex max-w-7xl flex-col gap-3">
-    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-  </div>
-
-  <!-- show schedules -->
-  <div v-else-if="schedules && schedules.length > 0">
-    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
-      <div v-for="schedule in schedules" :key="schedule.id">
-        <button
-          class="relative w-full rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
-          @click="toggleModal(schedule, 'detail')"
-        >
-          <div class="flex h-16 items-center justify-between sm:h-11">
-            <h2
-              class="ml-3 w-1/2 min-w-fit text-left text-base sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+        <!-- Title + Sort -->
+        <header class="flex w-full items-center justify-between">
+          <!-- Title -->
+          <h1 class="text-2xl">Schedules</h1>
+          <div class="flex gap-3">
+            <!-- Sort -->
+            <Sort v-model="variables.order" :options="SORT_OPTIONS_SCHEDULES" />
+            <!-- Add Schedule -->
+            <Router-link
+              class="flex w-full justify-end"
+              :to="`/admin/add-schedule`"
             >
-              {{ formatDateTime(schedule.finalDate) }}
-            </h2>
-
-            <div class="flex items-center justify-end gap-12 p-1">
-              <ul class="flex -space-x-6 transition-all hover:space-x-1">
-                <li v-for="employee in schedule.employees" :key="employee.id">
-                  <div class="group relative">
-                    <img
-                      class="h-8 w-8 rounded-full"
-                      src="https://i.pravatar.cc/300"
-                      alt="Profile picture"
-                    />
-                    <p
-                      class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 capitalize opacity-0 transition-all group-hover:opacity-100"
-                    >
-                      {{ employee.firstname }}
-                    </p>
-                  </div>
-                </li>
-              </ul>
-              <div
-                class="bg-primary-green flex h-9 w-9 items-center justify-center rounded-xl"
+              <button
+                class="bg-primary-green my-4 rounded px-4 py-2 font-bold text-white"
               >
-                <p class="text-white">
-                  {{ schedule.appointments.length }}
-                </p>
+                Add Schedule
+              </button>
+            </Router-link>
+          </div>
+        </header>
+      </div>
+    </section>
+
+    <!-- Skeleton -->
+    <section
+      v-if="schedulesLoading"
+      class="m-auto flex max-w-7xl flex-col gap-3"
+    >
+      <div
+        v-for="i in 10"
+        :key="i"
+        class="h-11 w-full animate-pulse rounded-2xl bg-gray-200"
+      ></div>
+    </section>
+
+    <!-- Schedules -->
+    <section v-else-if="schedules && schedules.length > 0">
+      <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+        <div v-for="schedule in schedules" :key="schedule.id">
+          <button
+            class="relative w-full rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
+            @click="toggleModal(schedule, 'detail')"
+          >
+            <div class="flex h-16 items-center justify-between sm:h-11">
+              <h2
+                class="ml-3 w-1/2 min-w-fit text-left text-base sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
+              >
+                {{ formatDateTime(schedule.finalDate) }}
+              </h2>
+              <div class="flex items-center justify-end gap-12 p-1">
+                <ul class="flex -space-x-6 transition-all hover:space-x-1">
+                  <li v-for="employee in schedule.employees" :key="employee.id">
+                    <div class="group relative">
+                      <img
+                        class="h-8 w-8 rounded-full"
+                        src="https://i.pravatar.cc/300"
+                        alt="Profile picture"
+                      />
+                      <p
+                        class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 capitalize opacity-0 transition-all group-hover:opacity-100"
+                      >
+                        {{ employee.firstname }}
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+                <div
+                  class="bg-primary-green flex h-9 w-9 items-center justify-center rounded-xl"
+                >
+                  <p class="text-white">
+                    {{ schedule.appointments.length }}
+                  </p>
+                </div>
               </div>
             </div>
-
-            <!-- <div
-              class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-            >
-              <Router-link :to="`/admin/schedules/${schedule.id}`">
-                <button class="text-green-500">
-                  <Eye />
-                </button>
-              </Router-link>
-
-              <Router-link
-                v-if="isNotInPastOrToday(schedule.finalDate)"
-                :to="`/admin/schedules/${schedule.id}/edit`"
-              >
-                <button class="text-blue-500">
-                  <Pencil />
-                </button>
-              </Router-link>
-
-              <button
-                v-if="isNotInPastOrToday(schedule.finalDate)"
-                class="text-red-500"
-                @click="handleDeleteSchedule(schedule)"
-              >
-                <Trash2 />
-              </button>
-            </div> -->
-          </div>
-        </button>
+          </button>
+        </div>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <!-- No Schedules -->
+    <NoResult v-else-if="schedules.length === 0" />
+  </main>
 
   <!-- Detail Modal -->
   <Dialog
@@ -171,14 +164,15 @@
       </div>
 
       <div class="flex justify-between">
+        <!-- Delete Button -->
         <CustomButton
           name="Delete"
-          :loading="deleteScheduleLoading"
+          :loading="loading.delete"
           variant="warning"
           @click="handleDeleteSchedule(selectedSchedule)"
         />
 
-        <!-- edit button -->
+        <!-- Edit Button -->
         <Router-link
           v-if="isNotInPastOrToday(selectedSchedule.finalDate.toString())"
           :to="`/admin/schedules/${selectedSchedule.id}/edit`"
@@ -188,25 +182,28 @@
       </div>
     </div>
   </Dialog>
-
-  <!-- show no schedules -->
-  <div v-if="schedules.length === 0 && !schedulesLoading">
-    <p class="text-6xl font-black">No Schedules Found</p>
-  </div>
 </template>
 
 <script setup lang="ts">
 import CustomButton from '@/components/generic/CustomButton.vue'
+import Filter from '@/components/generic/Filter.vue'
+import NoResult from '@/components/generic/NoResult.vue'
 import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_SCHEDULE } from '@/graphql/schedule.mutation'
 import { GET_ALL_SCHEDULES } from '@/graphql/schedule.query'
-import { ORDER_DIRECTION, SORT_OPTIONS_SCHEDULES } from '@/helpers/constants'
+import {
+  FILTER_OPTIONS_SCHEDULES,
+  ORDER_DIRECTION,
+  SORT_OPTIONS_SCHEDULES,
+} from '@/helpers/constants'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ArrowLeft, ChevronDown, Eye, Pencil, Trash2 } from 'lucide-vue-next'
+import LogRocket from 'logrocket'
+import { ChevronDown } from 'lucide-vue-next'
+import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 
 // composables
@@ -223,13 +220,21 @@ const variables = ref<VariablesProps>({
 })
 
 const collapsed = ref(true)
+const loading = ref<{
+  schedules: ComputedRef<boolean>
+  delete: boolean
+}>({
+  schedules: computed(() => schedulesLoading.value),
+  delete: false,
+})
 
 const schedules = computed(() => schedulesResult.value?.schedules || [])
 
 const selectedSchedule = ref<Schedule | null>(null)
-const visible = ref({
+const visible = ref<{
+  detail: boolean
+}>({
   detail: false,
-  edit: false,
 })
 
 // graphql
@@ -242,35 +247,39 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const {
-  mutate: deleteSchedule,
-  error: deleteScheduleError,
-  loading: deleteScheduleLoading,
-} = useMutation(DELETE_SCHEDULE)
+const { mutate: deleteSchedule } = useMutation(DELETE_SCHEDULE)
 
 // logics
 // delete schedule
-const handleDeleteSchedule = async (schedule: Schedule) => {
-  await deleteSchedule({
-    id: schedule.id,
-  })
-  showToast('success', 'Success', `Schedule deleted`)
-  refetchSchedules()
-  toggleModal()
+const handleDeleteSchedule = async (schedule: Schedule): Promise<void> => {
+  try {
+    loading.value.delete = true
+    await deleteSchedule({
+      id: schedule.id,
+    })
+    showToast('success', 'Success', `Schedule deleted`)
+    refetchSchedules()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't delete schedule")
+  } finally {
+    loading.value.delete = false
+  }
 }
 
 const toggleModal = (
   schedule: Schedule | null = null,
   type: string = 'close',
-) => {
+): void => {
   selectedSchedule.value = schedule ? { ...schedule } : null
   visible.value = {
     detail: type === 'detail',
-    edit: type === 'edit',
   }
 }
 
-function toggleCollapsible() {
+function toggleCollapsible(): void {
   collapsed.value = !collapsed.value
 }
 
@@ -279,11 +288,10 @@ watchEffect(() => {
   // if (schedules.value) console.log(schedules.value)
 
   // all errors
-  const errors = [schedulesError.value, deleteScheduleError.value]
-  errors.forEach(error => {
-    if (error) {
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (schedulesError.value) {
+    // console.log(schedulesError.value)
+    LogRocket.captureException(schedulesError.value)
+    showToast('error', 'Error', "Couldn't load schedules")
+  }
 })
 </script>

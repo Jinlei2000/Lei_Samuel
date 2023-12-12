@@ -156,8 +156,26 @@ export const FILTER_OPTIONS_APPOINTMENTS = [
 
 export const SORT_OPTIONS_SCHEDULES = [
   {
+    label: 'Date Created',
+    value: 'createdAt',
+  },
+  {
     label: 'Date',
     value: 'finalDate',
+  },
+]
+
+export const FILTER_OPTIONS_SCHEDULES = [
+  {
+    title: 'Final Date',
+    name: 'finalDate',
+    type: 'radio',
+    options: [
+      { label: 'All', value: '' },
+      { label: 'Today', value: 'T' },
+      { label: 'Future', value: 'F' },
+      { label: 'Past', value: 'P' },
+    ],
   },
 ]
 
