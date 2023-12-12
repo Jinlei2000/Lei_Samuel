@@ -223,10 +223,9 @@
               @click="addSelectedEmployee(user)"
             >
               <div class="flex items-center gap-6 p-1">
-                <img
-                  class="h-12 w-12 rounded-xl"
-                  src="https://picsum.photos/200"
-                  alt="random picture"
+                <Avatar
+                  class="h-12 w-12 overflow-hidden rounded-xl text-sm"
+                  :user="user"
                 />
                 <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
                 <div
@@ -274,11 +273,11 @@
             type="button"
             @click="addSelectedMaterial(material)"
           >
-            <img
-              class="w-12 rounded-xl bg-gray-400"
-              src="https://picsum.photos/200"
-              alt="random picture"
-            />
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-400"
+            >
+              <Wrench class="h-6 w-6 stroke-gray-800" />
+            </div>
             <h2 class="truncate text-lg">{{ material.name }}</h2>
             <div
               v-if="isItemSelected(material.id, materialsIds)"
@@ -340,10 +339,9 @@
                 :key="user.id"
                 class="flex items-center gap-3"
               >
-                <img
-                  class="w-8 rounded-full bg-gray-400"
-                  src="https://picsum.photos/200"
-                  alt="random picture"
+                <Avatar
+                  class="h-8 w-8 overflow-hidden rounded-full text-sm"
+                  :user="user"
                 />
                 <p class="capitalize">{{ user.fullname }}</p>
               </li>
@@ -375,6 +373,7 @@
 </template>
 
 <script setup lang="ts">
+import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
@@ -391,6 +390,7 @@ import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
 import { Loader2 } from 'lucide-vue-next'
+import { Wrench } from 'lucide-vue-next'
 import {
   ArrowRight,
   Calendar as CalendarIcon,
