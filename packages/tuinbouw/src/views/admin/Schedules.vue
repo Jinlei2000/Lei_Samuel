@@ -251,7 +251,7 @@ const { mutate: deleteSchedule } = useMutation(DELETE_SCHEDULE)
 
 // logics
 // delete schedule
-const handleDeleteSchedule = async (schedule: Schedule) => {
+const handleDeleteSchedule = async (schedule: Schedule): Promise<void> => {
   try {
     loading.value.delete = true
     await deleteSchedule({
@@ -272,14 +272,14 @@ const handleDeleteSchedule = async (schedule: Schedule) => {
 const toggleModal = (
   schedule: Schedule | null = null,
   type: string = 'close',
-) => {
+): void => {
   selectedSchedule.value = schedule ? { ...schedule } : null
   visible.value = {
     detail: type === 'detail',
   }
 }
 
-function toggleCollapsible() {
+function toggleCollapsible(): void {
   collapsed.value = !collapsed.value
 }
 
