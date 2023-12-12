@@ -151,8 +151,6 @@ export class AppointmentsService {
   ): Promise<Appointment> {
     await this.findOne(id.toString())
 
-    // TODO: add logic no update if done or (not dont & overdate)
-
     // remove id
     delete updateAppointmentInput.id
 
@@ -180,8 +178,6 @@ export class AppointmentsService {
 
     return this.findOne(id.toString())
   }
-
-  // TODO: update done or not done
 
   // remove appointment only if not done & remove appointment id from schedules
   async remove(id: string): Promise<string> {

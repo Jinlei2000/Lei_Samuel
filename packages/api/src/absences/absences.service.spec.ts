@@ -79,7 +79,6 @@ describe('AbsencesService', () => {
         expect(saveSPy).toHaveBeenCalledTimes(1)
       })
 
-      // BUG: ask more info about this test
       it('should call absenceRepository.save with the correct parameters', async () => {
         const saveSPy = jest.spyOn(mockAbsencesRepository, 'save')
         const myInput: Partial<Absence> = createabsenceInputStub()
