@@ -11,7 +11,11 @@
         <Filter v-model="variables.filters" :options="FILTER_OPTIONS_USERS" />
 
         <!-- Searchbar -->
-        <Search v-model="variables.searchString" class="w-full sm:w-auto" />
+        <Search
+          v-model="variables.searchString"
+          class="w-full sm:w-auto"
+          placeholder="Search for users"
+        />
       </section>
 
       <!-- Title + Sort -->
