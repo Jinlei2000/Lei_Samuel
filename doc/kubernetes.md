@@ -30,6 +30,26 @@ docker push jinlei2000/api-tuinbouw-production-api
 docker push jinlei2000/api-tuinbouw-production-tuinbouw
 ```
 
+First add a firebase-admin credentials file to the cluster
+
+Open the Azure Cloud Shell and run the following commands:
+
+```bash
+touch credentials.json
+```
+
+Open the file
+
+```bash
+nano credentials.json
+```
+
+Copy the firebase-admin credentials to the file
+
+```bash
+kubectl create secret generic my-google-secret --from-file=credentials.json
+```
+
 Now apply all the Kubernetes files in the `kubernetes` folder 
 
 Go to the dashboard
@@ -37,7 +57,6 @@ Go to the dashboard
 - Add mongo presistent volume claim & presistent volume to the dashboard
 - Add all the services to the dashboard
 - Add configmap to the dashboard
-- Add all the secrets to the dashboard
 - Add all the deployments to the dashboard
 
 When your services is added copy the external IPs and place inside the `configmap.yaml` file

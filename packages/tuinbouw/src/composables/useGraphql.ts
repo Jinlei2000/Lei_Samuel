@@ -37,9 +37,8 @@ export default () => {
   })
 
   const wsLink = new GraphQLWsLink(
-    // BUG: use ENV variable
     createClient({
-      url: 'ws://localhost:3001/graphql',
+      url: import.meta.env.VITE_BACKEND_URL.replace('http', 'ws'),
     }),
   )
 
