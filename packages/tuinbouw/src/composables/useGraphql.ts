@@ -16,6 +16,7 @@ import { createClient } from 'graphql-ws'
 const { firebaseUser } = useFirebase()
 
 export default () => {
+  console.log('VITE_BACKEND_URL', import.meta.env.VITE_BACKEND_URL)
   const httpLink = createHttpLink({
     uri: import.meta.env.VITE_BACKEND_URL,
     credentials: 'same-origin',
@@ -36,6 +37,7 @@ export default () => {
   })
 
   const wsLink = new GraphQLWsLink(
+    // BUG: use ENV variable
     createClient({
       url: 'ws://localhost:3001/graphql',
     }),

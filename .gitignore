@@ -4,4 +4,6 @@
 **/credentials.json
 **/translations.json
 **/token.json
+**/configmap-api.yaml
+**/configmap-tuinbouw.yaml
 

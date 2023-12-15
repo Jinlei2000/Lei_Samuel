@@ -3,7 +3,7 @@
 ## Backend API
 
 - [x] De API is gebouwd met NestJS en wordt lokaal gehost via Docker.
-- [ ] Er is een bonuspunt als de API extern wordt gehost.
+- [x] Er is een bonuspunt als de API extern wordt gehost.
 
 ## Database
 
@@ -48,8 +48,8 @@
 ## Staging / Deployment
 
 - [x] De applicatie draait volledig in Docker.
-- [ ] De Docker image is beschikbaar op DockerHub / Harbor (optioneel).
-- [ ] Een geschikte Kubernetes deployment methodiek is gekozen (Canary, blue-green, rolling, enz.) (optioneel).
+- [x] De Docker image is beschikbaar op DockerHub / Harbor (optioneel).
+- [x] Een geschikte Kubernetes deployment methodiek is gekozen (Canary, blue-green, rolling, enz.) (optioneel).
 
 ## Testing
 
