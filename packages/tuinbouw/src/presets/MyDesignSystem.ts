@@ -317,7 +317,7 @@ export default {
       class: [
         'rounded-xl shadow-lg border-0 overflow-hidden',
         'transform scale-100',
-        'm-0 w-[50vw]',
+        'm-0 w-screen mx-3 md:mx-0 md:w-[50vw]',
         {
           'transition-none transform-none !w-screen !h-screen !max-h-full !top-0 !left-0':
             state.maximized,
