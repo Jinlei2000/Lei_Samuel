@@ -1,10 +1,10 @@
 <template>
   <div class="h-[80px]"></div>
   <Container
-    class="fixed left-0 top-0 z-50 w-full bg-white bg-opacity-50 py-4 backdrop-blur-2xl"
+    class="fixed left-0 top-0 z-50 w-full bg-white bg-opacity-50 px-3 py-4 backdrop-blur-2xl"
   >
     <header
-      class="w-[calc(100% - 24px)] m-auto mx-3 flex max-w-7xl items-center justify-between md:w-auto"
+      class="w-[calc(100% - 24px)] m-auto flex max-w-7xl items-center justify-between md:w-auto"
     >
       <RouterLink
         class="relative z-50 mr-6 flex w-fit items-center space-x-4 rounded-lg ring-blue-400 transition-all hover:scale-105 focus:outline-none focus-visible:ring-4"
@@ -131,7 +131,7 @@
         </div>
 
         <RouterLink
-          v-if="$route.path === '/'"
+          v-if="!customUser"
           to="auth/login"
           class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >Login<LogIn
