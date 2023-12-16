@@ -1,15 +1,10 @@
 <template>
-  <main
-    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
-  >
+  <main class="m-auto mt-12 flex max-w-7xl flex-col justify-center gap-5">
     <!-- Filters + Searchbar -->
-    <div class="flex w-full flex-col gap-10">
+    <section class="flex w-full flex-col gap-10">
       <!-- Filters + Searchbar -->
       <section
-        :class="[
-          'relative flex w-full items-center',
-          props.showAllOverview ? 'justify-between' : 'justify-end',
-        ]"
+        class="relative flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-between"
       >
         <!-- Filter -->
         <Filter
@@ -19,7 +14,11 @@
         />
 
         <!-- Searchbar -->
-        <Search v-model="variables.searchString" />
+        <Search
+          v-model="variables.searchString"
+          class="w-full sm:w-auto"
+          placeholder="Search for materials"
+        />
       </section>
 
       <!-- Title + Sort -->
@@ -29,10 +28,10 @@
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_MATERIALS" />
       </header>
-    </div>
+    </section>
 
-    <!-- Loading -->
-    <template v-if="loading.data">
+    <!-- Skeleton -->
+    <section v-if="loading.data">
       <div
         class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
@@ -44,10 +43,10 @@
           <div class="h-48 w-full rounded-2xl bg-neutral-200"></div>
         </div>
       </div>
-    </template>
+    </section>
 
     <!-- Materials -->
-    <template v-else-if="materials && materials.length > 0">
+    <section v-else-if="materials && materials.length > 0">
       <div
         class="grid-rows-auto grid w-full gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6"
       >
@@ -85,20 +84,10 @@
           </div>
         </button>
       </div>
-    </template>
+    </section>
 
-    <!-- TODO: design better -->
-    <!-- No results found -->
-    <template v-else-if="materials.length === 0">
-      <section class="flex flex-col items-center justify-center gap-5">
-        <img
-          class="h-80 w-80"
-          src="/assets/empty.svg"
-          alt="Empty results illustration"
-        />
-        <h2 class="text-2xl">Oops! No results found.</h2>
-      </section>
-    </template>
+    <!-- No Materials -->
+    <NoResult v-else-if="materials.length === 0" />
   </main>
 
   <!-- Create Modal -->
@@ -141,40 +130,45 @@
   >
     <!-- Show Detail -->
     <div v-if="!isEditing">
-      <!-- edit -->
-      <Pencil v-if="props.showAllOverview" @click="isEditing = true" />
-      <!-- delete -->
-      <Trash2
-        v-if="props.showAllOverview"
-        class="stroke-primary-red transition-all hover:cursor-pointer"
-        @click="handleDeleteMaterial(selectedMaterial!)"
-      />
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
+      <!-- Buttons -->
+      <div v-if="props.showAllOverview" class="flex justify-between">
+        <!-- Delete -->
+        <CustomButton
+          name="Delete"
+          :loading="loading.delete"
+          variant="warning"
+          @click="handleDeleteMaterial(selectedMaterial!)"
+        />
+        <!-- Edit -->
+        <CustomButton name="Edit" @click="isEditing = true" />
+      </div>
     </div>
-    <!-- Edit form -->
-    <div v-if="isEditing">
-      <ArrowLeft @click="isEditing = false" />
-      <DynamicForm
-        :schema="formUpdateMaterial"
-        :validation-schema="materialValidationSchema"
-        :handle-form="handleUpdatematerial"
-        :loading="loading.update"
-        :initial-values="{
-          name: selectedMaterial?.name,
-          serialNumber: selectedMaterial?.serialNumber,
-          isLoan: selectedMaterial?.isLoan,
-          userId: selectedMaterial?.user?.id,
-        }"
-        :reverse-switch="true"
-      />
-    </div>
+    <!-- Edit Form -->
+    <DynamicForm
+      v-if="isEditing"
+      :schema="formUpdateMaterial"
+      :validation-schema="materialValidationSchema"
+      :handle-form="handleUpdatematerial"
+      :loading="loading.update"
+      :cancel="() => (isEditing = false)"
+      :initial-values="{
+        name: selectedMaterial?.name,
+        serialNumber: selectedMaterial?.serialNumber,
+        isLoan: selectedMaterial?.isLoan,
+        userId: selectedMaterial?.user?.id,
+      }"
+      :reverse-switch="true"
+    />
   </Dialog>
 </template>
 
 <script setup lang="ts">
+import CustomButton from './CustomButton.vue'
 import DynamicForm from './DynamicForm.vue'
 import Filter from './Filter.vue'
+import NoResult from './NoResult.vue'
 import Search from './Search.vue'
 import Sort from './Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
@@ -200,7 +194,7 @@ import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { ArrowLeft, Pencil, PlusCircle, Trash2, Wrench } from 'lucide-vue-next'
+import { PlusCircle, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
 import type { ComputedRef } from 'vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
@@ -230,10 +224,12 @@ const visible = ref<{
 const loading = ref<{
   update: boolean
   create: boolean
+  delete: boolean
   data: ComputedRef<boolean>
 }>({
   update: false,
   create: false,
+  delete: false,
   data: computed(
     () =>
       materialsLoading.value ||
@@ -440,6 +436,7 @@ const handleUpdatematerial = async (values: GenericObject): Promise<void> => {
 // handle delete material
 const handleDeleteMaterial = async (material: Material): Promise<void> => {
   try {
+    loading.value.delete = true
     // console.log(material.id)
     await deleteMaterial({
       id: material.id,
@@ -451,6 +448,8 @@ const handleDeleteMaterial = async (material: Material): Promise<void> => {
     // console.log(error)
     LogRocket.captureException(error as Error)
     showToast('error', 'Error', "Couldn't delete material")
+  } finally {
+    loading.value.delete = false
   }
 }
 

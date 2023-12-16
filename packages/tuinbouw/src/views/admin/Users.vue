@@ -1,80 +1,82 @@
 <template>
-  <div
+  <section
     class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
   >
-    <div class="flex w-full flex-col gap-3">
+    <div class="mb-4 flex w-full flex-col gap-3">
       <!-- Filters + Searchbar -->
-      <section :class="['relative flex w-full items-center justify-between']">
+      <section
+        class="relative flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-between"
+      >
         <!-- Filter -->
         <Filter v-model="variables.filters" :options="FILTER_OPTIONS_USERS" />
 
         <!-- Searchbar -->
-        <Search v-model="variables.searchString" />
+        <Search
+          v-model="variables.searchString"
+          class="w-full sm:w-auto"
+          placeholder="Search for users"
+        />
       </section>
 
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
         <h1 class="text-2xl">Users</h1>
-        <div class="flex gap-3">
-          <!-- Sort -->
-          <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
-          <!-- add employee button -->
-          <button
-            class="bg-primary-green my-4 rounded px-4 py-2 text-white"
-            @click="toggleModal(null, 'create')"
-          >
-            Add Employee
-          </button>
-        </div>
+        <!-- Sort -->
+        <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
       </header>
     </div>
-  </div>
+  </section>
 
-  <!-- show loading -->
-  <div v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-    <div class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"></div>
-  </div>
+  <!-- Skeleton -->
+  <section v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
+    <div
+      v-for="i in 10"
+      :key="i"
+      class="h-12 w-full animate-pulse rounded-2xl bg-gray-200"
+    />
+  </section>
 
-  <!-- show users -->
-  <div v-else-if="users && users.length > 0">
+  <!-- Users -->
+  <section v-else-if="users && users.length > 0">
     <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+      <!-- Add Employee -->
+      <button
+        class="border-primary-green text-primary-green flex h-14 w-full items-center justify-center rounded-2xl border-[1px]"
+        @click="toggleModal(null, 'create')"
+      >
+        <PlusCircle class="mr-2" />
+        Add Employee
+      </button>
+      <!-- Users -->
       <button
         v-for="user in users"
         :key="user.id"
-        class="hover:scale-101 overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer"
+        class="hover:scale-101 rounded-2xl bg-gray-200 p-1 transition-all duration-100 hover:cursor-pointer"
         :class="user.uid === null ?? 'border-red-500'"
         @click="toggleModal(user, 'detail')"
       >
-        <div class="flex h-16 items-center justify-between sm:h-11">
-          <img
-            class="block h-full rounded-2xl p-1"
-            src="https://i.pravatar.cc/300"
-            alt="Profile picture"
-          />
-          <div class="flex w-full p-3">
-            <h2
-              class="w-1/3 min-w-fit text-left text-xl sm:text-lg md:w-1/4 lg:w-1/5"
-            >
-              {{ user.firstname }} {{ user.lastname }}
-            </h2>
-            <p class="hidden text-gray-600 sm:block">{{ user.email }}</p>
-            <!-- send email button -->
-            <CustomButton
-              v-if="user.uid === null"
-              name="Send email to create account"
-              :loading="
-                sendMailCurrentUserId === user.id && sendMailToEmployeeLoading
-              "
-              class="block w-full"
-              @click="handleSendMailToEmployee(user)"
+        <div class="flex h-16 items-center gap-3 sm:h-11">
+          <!-- Profile Picture -->
+          <div>
+            <Avatar
+              :user="user"
+              class="h-16 w-16 overflow-hidden rounded-2xl sm:h-11 sm:w-11"
             />
           </div>
-          <div class="flex w-1/4 min-w-fit justify-end gap-6 p-3 md:w-1/6">
+
+          <!-- Name + Email -->
+          <div class="flex w-full items-center">
+            <h2 class="w-1/3 text-left text-xl sm:text-lg md:w-1/4 lg:w-1/5">
+              {{ user.firstname }} {{ user.lastname }}
+            </h2>
+            <p class="hidden text-gray-600 sm:block">
+              {{ user.email }}
+            </p>
+          </div>
+
+          <!-- Role -->
+          <div class="flex w-1/4 justify-end p-3 md:w-1/6">
             <p
               class="rounded-full px-3 py-1 text-lg lowercase text-white sm:text-base"
               :class="
@@ -91,45 +93,17 @@
             </p>
           </div>
         </div>
-        <!-- <div
-          class="flex items-center justify-end space-x-4 border-t border-gray-200 p-6"
-        > -->
-        <!-- View More Button -->
-        <!-- <button
-            class="text-green-500 hover:underline"
-            @click="toggleModal(user, 'detail')"
-          >
-            <Eye />
-          </button> -->
-        <!-- Edit Button -->
-        <!-- <button
-            v-if="user.role === 'EMPLOYEE'"
-            class="text-blue-500 hover:underline"
-            @click="toggleModal(user, 'edit')"
-          >
-            <Pencil />
-          </button> -->
-        <!-- Delete Button -->
-        <!-- <button
-            v-if="user.role === 'EMPLOYEE'"
-            class="text-red-500 hover:underline"
-            @click="handleDelete(user)"
-          >
-            <Trash2 />
-          </button>
-        </div> -->
       </button>
     </div>
-  </div>
+  </section>
 
-  <!-- show no users -->
-  <div v-else-if="users.length === 0">
-    <p class="text-6xl font-black">Loading Users...</p>
-  </div>
+  <!-- No Users -->
+  <NoResult v-else-if="users.length === 0" />
 
   <!-- Detail Modal -->
   <Dialog
-    v-model:visible="visible.openModal"
+    v-if="selectedUser"
+    v-model:visible="visible.detail"
     modal
     header="User Details"
     :draggable="false"
@@ -140,54 +114,69 @@
       },
     }"
   >
-    <div v-if="selectedUser && visible.detail">
-      <h2 class="mb-2 text-xl font-semibold">
-        {{ selectedUser.fullname }}
-      </h2>
-      <p class="text-gray-600">
-        {{ selectedUser.email }}
-      </p>
-      <p class="text-gray-600">
-        {{ selectedUser.telephone }}
-      </p>
-      <div class="flex justify-between">
+    <!-- Show Detail -->
+    <!-- TODO: show more info -->
+    <div v-if="!isEditing">
+      <header class="mb-2">
+        <h2 class="mb-2 text-xl font-semibold">
+          {{ selectedUser.fullname }}
+        </h2>
+        <p class="text-gray-600">
+          {{ selectedUser.email }}
+        </p>
+        <p class="text-gray-600">
+          {{ selectedUser.telephone }}
+        </p>
+      </header>
+
+      <div class="mb-2 flex flex-col gap-2">
+        <!-- Upgrade to Admin -->
+        <CustomButton
+          v-if="selectedUser.role === 'EMPLOYEE'"
+          class="block w-full"
+          name="Upgrade to Admin"
+          :loading="loading.upgradeToAdmin"
+          @click="handleUpgradeToAdmin(selectedUser)"
+        />
+        <!-- Send Email to Employee (Create Account) -->
+        <CustomButton
+          v-if="selectedUser.uid === null"
+          name="Create Account"
+          :loading="loading.sendMailToEmployee"
+          class="block w-full"
+          @click="handleSendMailToEmployee(selectedUser)"
+        />
+      </div>
+
+      <!-- Delete & Edit -->
+      <div v-if="selectedUser.role === 'EMPLOYEE'" class="flex justify-between">
+        <!-- Delete -->
         <CustomButton
           name="Delete"
-          :loading="deleteUserLoading"
           variant="warning"
+          :loading="loading.deleteEmployee"
           @click="handleDelete(selectedUser)"
         />
-        <div class="flex gap-3">
-          <!-- upgrade to admin button -->
-          <CustomButton
-            v-if="selectedUser.role === 'EMPLOYEE'"
-            name="Upgrade to Admin"
-            :loading="upgradeToAdminLoading"
-            @click="handleUpgradeToAdmin(selectedUser)"
-          />
-          <!-- edit button -->
-          <CustomButton
-            name="Edit"
-            :loading="upgradeToAdminLoading"
-            @click="toggleModal(selectedUser, 'edit')"
-          />
-        </div>
+        <!-- Edit -->
+        <CustomButton name="Edit" @click="isEditing = true" />
       </div>
     </div>
-    <DynamicForm
-      v-if="selectedUser && visible.edit"
-      :schema="formUpdateEmployee"
-      :validation-schema="userUpdateAdminValidationSchema"
-      :handle-form="handleUpdateEmployee"
-      :loading="loading.updateEmployee"
-      :cancel="cancelUserEdit"
-      :initial-values="{
-        firstname: selectedUser?.firstname,
-        lastname: selectedUser?.lastname,
-        email: selectedUser?.email,
-        telephone: selectedUser?.telephone,
-      }"
-    />
+    <!-- Edit Form -->
+    <div v-if="isEditing">
+      <DynamicForm
+        :schema="formUpdateEmployee"
+        :validation-schema="userUpdateAdminValidationSchema"
+        :handle-form="handleUpdateEmployee"
+        :loading="loading.updateEmployee"
+        :cancel="cancelUserEdit"
+        :initial-values="{
+          firstname: selectedUser.firstname,
+          lastname: selectedUser.lastname,
+          email: selectedUser.email,
+          telephone: selectedUser.telephone,
+        }"
+      />
+    </div>
   </Dialog>
 
   <!-- Create Employee Modal -->
@@ -213,10 +202,11 @@
 </template>
 
 <script setup lang="ts">
+import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
-// components
 import Filter from '@/components/generic/Filter.vue'
+import NoResult from '@/components/generic/NoResult.vue'
 import Search from '@/components/generic/Search.vue'
 import Sort from '@/components/generic/Sort.vue'
 import useCustomToast from '@/composables/useCustomToast'
@@ -241,6 +231,9 @@ import {
   userUpdateAdminValidationSchema,
 } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
+import { PlusCircle } from 'lucide-vue-next'
+import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 
 // composables
@@ -255,20 +248,31 @@ const variables = ref<VariablesProps>({
   },
   searchString: '',
 })
-const visible = ref({
-  openModal: false,
+const visible = ref<{
+  detail: boolean
+  create: boolean
+}>({
   detail: false,
-  edit: false,
   create: false,
 })
 const selectedUser = ref<CustomUser | null>(null)
-const sendMailCurrentUserId = ref<string | null>(null)
 const users = computed(() => usersResult.value?.users || [])
-const loading = ref({
+const loading = ref<{
+  createEmployee: boolean
+  updateEmployee: boolean
+  deleteEmployee: boolean
+  upgradeToAdmin: boolean
+  sendMailToEmployee: boolean
+  data: ComputedRef<boolean>
+}>({
   createEmployee: false,
   updateEmployee: false,
+  deleteEmployee: false,
+  upgradeToAdmin: false,
+  sendMailToEmployee: false,
   data: computed(() => usersLoading.value),
 })
+const isEditing = ref<boolean>(false)
 // form update employee
 const formUpdateEmployee = {
   fields: [
@@ -355,103 +359,132 @@ const {
   fetchPolicy: 'cache-and-network',
 })
 
-const {
-  mutate: sendMailToEmployee,
-  loading: sendMailToEmployeeLoading,
-  error: sendMailToEmployeeError,
-} = useMutation(SEND_MAIL_TO_EMPLOYEE)
+const { mutate: sendMailToEmployee } = useMutation(SEND_MAIL_TO_EMPLOYEE)
 
-const { mutate: createEmployee, error: createEmployeeError } =
-  useMutation(CREATE_EMPLOYEE)
+const { mutate: createEmployee } = useMutation(CREATE_EMPLOYEE)
 
-const {
-  mutate: deleteUser,
-  loading: deleteUserLoading,
-  error: deleteUserError,
-} = useMutation(DELETE_USER)
+const { mutate: deleteUser } = useMutation(DELETE_USER)
 
-const { mutate: updateUser, error: updateUserError } = useMutation(UPDATE_USER)
+const { mutate: updateUser } = useMutation(UPDATE_USER)
 
-const {
-  mutate: upgradeToAdmin,
-  loading: upgradeToAdminLoading,
-  error: upgradeToAdminError,
-} = useMutation(UPDATE_USER_TO_ADMIN)
+const { mutate: upgradeToAdmin } = useMutation(UPDATE_USER_TO_ADMIN)
 
 // logics
 // handle edit employee
 const handleUpdateEmployee = async (values: CustomUser) => {
-  loading.value.updateEmployee = true
-  await updateUser({
-    updateUserInput: {
-      id: selectedUser.value?.id!,
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      telephone: values.telephone,
-    },
-  })
-  loading.value.updateEmployee = false
-  showToast('success', 'Success', 'User has been updated')
-  await refetchUsers()
-  toggleModal()
+  try {
+    loading.value.updateEmployee = true
+    await updateUser({
+      updateUserInput: {
+        id: selectedUser.value?.id!,
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+      },
+    })
+    loading.value.updateEmployee = false
+    showToast('success', 'Success', 'User has been updated')
+    await refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't update user")
+  } finally {
+    loading.value.updateEmployee = false
+  }
 }
 
 // handle delete user
 const handleDelete = async (user: CustomUser) => {
-  const email = user.email
-  await deleteUser({
-    id: user.id,
-  })
-  showToast('success', 'Success', `User ${email} has been deleted`)
-  refetchUsers()
-  toggleModal()
+  try {
+    loading.value.deleteEmployee = true
+    const email = user.email
+    await deleteUser({
+      id: user.id,
+    })
+    showToast('success', 'Success', `User ${email} has been deleted`)
+    refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't delete user")
+  } finally {
+    loading.value.deleteEmployee = false
+  }
 }
 
 // handle create employee
 const handleCreateEmployee = async (values: CustomUser) => {
-  console.log(values)
-  loading.value.createEmployee = true
-  await createEmployee({
-    createStaffInput: {
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      telephone: values.telephone,
-      locale: values.locale,
-    },
-  })
-  loading.value.createEmployee = false
-  showToast('success', 'Success', 'Employee has been created')
-  await refetchUsers()
-  toggleModal()
+  try {
+    // console.log(values)
+    loading.value.createEmployee = true
+    await createEmployee({
+      createStaffInput: {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        telephone: values.telephone,
+        locale: values.locale,
+      },
+    })
+    loading.value.createEmployee = false
+    showToast('success', 'Success', 'Employee has been created')
+    await refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't create employee")
+  } finally {
+    loading.value.createEmployee = false
+  }
 }
 
 // handle send email to employee
 const handleSendMailToEmployee = async (user: CustomUser) => {
-  sendMailCurrentUserId.value = user.id
-  await sendMailToEmployee({
-    userId: user.id,
-  })
-  showToast(
-    'success',
-    'Success',
-    `Email has been sent to ${user.email} to create an account`,
-  )
+  try {
+    loading.value.sendMailToEmployee = true
+    await sendMailToEmployee({
+      userId: user.id,
+    })
+    showToast(
+      'success',
+      'Success',
+      `Email has been sent to ${user.email} to create an account`,
+    )
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't send email to employee")
+  } finally {
+    loading.value.sendMailToEmployee = false
+  }
 }
 
 // handle upgrade to admin
 const handleUpgradeToAdmin = async (user: CustomUser) => {
-  await upgradeToAdmin({
-    id: user.id,
-  })
-  showToast(
-    'success',
-    'Success',
-    `User ${user.email} has been upgraded to admin`,
-  )
-  await refetchUsers()
-  toggleModal()
+  try {
+    loading.value.upgradeToAdmin = true
+    await upgradeToAdmin({
+      id: user.id,
+    })
+    showToast(
+      'success',
+      'Success',
+      `User ${user.email} has been upgraded to admin`,
+    )
+    await refetchUsers()
+    toggleModal()
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't upgrade user to admin")
+  } finally {
+    loading.value.upgradeToAdmin = false
+  }
 }
 
 // open or close modal
@@ -460,43 +493,11 @@ const toggleModal = (
   type: string = 'close',
 ) => {
   selectedUser.value = user ? { ...user } : null
+  isEditing.value = false
 
-  // switch case for type
-  switch (type) {
-    case 'edit':
-      visible.value = {
-        openModal: true,
-        detail: false,
-        edit: true,
-        create: false,
-      }
-      break
-    case 'detail':
-      visible.value = {
-        openModal: true,
-        detail: true,
-        edit: false,
-        create: false,
-      }
-      break
-    case 'create':
-      visible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: true,
-      }
-      break
-    case 'close':
-      visible.value = {
-        openModal: false,
-        detail: false,
-        edit: false,
-        create: false,
-      }
-      break
-    default:
-      break
+  visible.value = {
+    detail: type === 'detail',
+    create: type === 'create',
   }
 }
 
@@ -509,24 +510,10 @@ watchEffect(() => {
   // if (users.value) console.log(users.value)
 
   // all errors
-  const errors = [
-    usersError.value,
-    deleteUserError.value,
-    createEmployeeError.value,
-    sendMailToEmployeeError.value,
-    updateUserError.value,
-    upgradeToAdminError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      loading.value = {
-        ...loading.value,
-        createEmployee: false,
-        updateEmployee: false,
-      }
-
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (usersError.value) {
+    // console.log(usersError.value)
+    LogRocket.captureException(usersError.value as Error)
+    showToast('error', 'Error', "Couldn't load users")
+  }
 })
 </script>

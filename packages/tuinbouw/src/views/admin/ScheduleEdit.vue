@@ -1,21 +1,25 @@
 <template>
+  <!-- Loading Data -->
   <div
+    v-if="
+      scheduleLoading &&
+      loadingAppointments &&
+      loadingEmployees &&
+      loadingMaterials
+    "
+    class="flex h-screen w-full items-center justify-center"
+  >
+    <Loader2 class="text-primary-green -mt-24 h-12 w-12 animate-spin" />
+  </div>
+
+  <main
+    v-else
     class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-start justify-center gap-3"
   >
-    <!-- go back button -->
-    <button
-      class="flex items-center gap-1"
-      v-bind="$attrs"
-      @click="$router.go(-1)"
-    >
-      <ArrowLeft class="h-5 w-5" />
-      Go back
-    </button>
-
     <!-- Title -->
     <div class="mt-3 flex w-full items-center justify-between">
       <h1 class="text-2xl">Schedule Edit</h1>
-      <!-- reset all values back -->
+      <!-- Reset -->
       <CustomButton
         type="button"
         variant="secondary"
@@ -24,7 +28,7 @@
       />
     </div>
 
-    <!-- show schedule -->
+    <!-- Form -->
     <form v-if="schedule" class="w-full" @submit.prevent="handleUpdateSchedule">
       <!-- Final Date -->
       <div v-if="next === 0" class="w-full">
@@ -33,12 +37,13 @@
           <CustomButton name="Next" type="button" @click="handleNext()" />
         </div>
 
-        <!-- validation -->
-        <small id="text-error" class="p-error block">{{
+        <!-- Validation -->
+        <small class="p-error block">{{
           errorMessages.finalDate || '&nbsp;'
         }}</small>
 
-        <div class="m-auto flex w-fit flex-col items-center gap-6">
+        <!-- Calendar -->
+        <div class="flex w-full flex-col items-center gap-6">
           <p class="text-lg font-semibold text-gray-900">
             Your selected date is: {{ formatDateTime(values.finalDate) }}
           </p>
@@ -47,12 +52,12 @@
             <h1 class="flex animate-pulse space-x-4">Loading...</h1>
           </div>
 
-          <!-- show calendar -->
+          <!-- Calendar -->
           <Calendar
             id="finalDate"
+            v-model="finalDate"
             inline
             :manual-input="false"
-            v-bind="finalDate"
             :min-date="minDate"
             date-format="yy-mm-dd"
             @date-select="checkAvailability()"
@@ -69,99 +74,32 @@
           <CustomButton name="Next" type="button" @click="handleNext()" />
         </div>
 
-        <!-- validation -->
-        <small id="text-error" class="p-error block">{{
+        <!-- Validation -->
+        <small class="p-error block">{{
           errorMessages.appointmentsIds || '&nbsp;'
         }}</small>
 
-        <!-- loading appointments -->
-        <div v-if="loadingAppointments">
-          <h1 class="flex animate-pulse space-x-4">Loading...</h1>
-        </div>
-
         <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
-          <!-- Selected Appointments -->
-          <div v-for="a of selectedAppointmentsEdit" :key="a.id">
-            <div
-              :class="[
-                'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
-                isItemSelected(a.id!, appointmentsIds.modelValue)
-                  ? 'outline-primary-green outline'
-                  : '',
-              ]"
-            >
-              <div class="flex h-16 items-center justify-between sm:h-11">
-                <div class="flex w-1/2 p-3 sm:w-3/4">
-                  <input
-                    type="checkbox"
-                    class="mr-2"
-                    :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
-                    @click="addSelectedAppointment(a)"
-                  />
-                  <h2
-                    class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
-                  >
-                    {{ a.user.fullname }}
-                  </h2>
-                  <p class="hidden truncate text-gray-900 sm:block">
-                    {{ a.description }}
-                  </p>
-                </div>
-                <div
-                  class="flex w-1/2 min-w-fit items-center justify-end gap-3 p-3 sm:w-1/4"
-                >
-                  <div class="flex items-center gap-3">
-                    <p>
-                      {{ formatDateTime(a.startProposedDate) }}
-                    </p>
-                    <ArrowRight class="h-4 w-4" />
-                    <p>
-                      {{ formatDateTime(a.endProposedDate) }}
-                    </p>
-                  </div>
-
-                  <div class="h-5 w-5">
-                    <Star
-                      v-if="a.priority && !isOverToday(a)"
-                      class="fill-primary-yellow stroke-primary-yellow h-5 w-5"
-                    />
-                  </div>
-                  <div
-                    class="h-2 w-2 rounded-full"
-                    :class="
-                      a.type === 'repair'
-                        ? 'bg-primary-green'
-                        : a.type === 'maintenance'
-                          ? 'bg-primary-blue'
-                          : ''
-                    "
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Available Appointments -->
+          <!-- Selected Appointments & Available Appointments -->
           <div
-            v-for="a of appointments.appointmentsAvailableByDate"
+            v-for="a of [
+              ...selectedAppointmentsEdit,
+              ...appointments.appointmentsAvailableByDate,
+            ]"
             :key="a.id"
           >
-            <div
+            <button
               :class="[
                 'relative w-full  overflow-hidden rounded-2xl bg-gray-200 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300',
-                isItemSelected(a.id!, appointmentsIds.modelValue)
+                isItemSelected(a.id!, appointmentsIds)
                   ? 'outline-primary-green outline'
                   : '',
               ]"
+              type="button"
+              @click="addSelectedAppointment(a)"
             >
               <div class="flex h-16 items-center justify-between sm:h-11">
                 <div class="flex w-1/2 p-3 sm:w-3/4">
-                  <input
-                    type="checkbox"
-                    class="mr-2"
-                    :checked="isItemSelected(a.id, appointmentsIds.modelValue)"
-                    @click="addSelectedAppointment(a)"
-                  />
                   <h2
                     class="w-1/2 min-w-fit text-left text-base capitalize sm:w-1/3 sm:text-lg md:w-1/4 lg:w-1/6"
                   >
@@ -183,6 +121,7 @@
                       {{ formatDateTime(a.endProposedDate) }}
                     </p>
                   </div>
+
                   <div class="h-5 w-5">
                     <Star
                       v-if="a.priority && !isOverToday(a)"
@@ -201,25 +140,20 @@
                   ></div>
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
 
-        <!-- no appointments -->
+        <!-- No Appointments -->
         <div
           v-if="
             appointments &&
             appointments.appointmentsAvailableByDate.length === 0 &&
             selectedAppointmentsEdit.length === 0
           "
-          class="mx-auto max-w-md overflow-hidden rounded-md bg-white shadow-md"
+          class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
         >
-          <div class="p-4">
-            <h2 class="mb-2 text-xl font-semibold">No appointments</h2>
-            <p class="mb-1 text-gray-600">
-              There are no appointments available for this date
-            </p>
-          </div>
+          <p class="text-lg">No appointments</p>
         </div>
       </div>
 
@@ -291,26 +225,23 @@
           <CustomButton name="Next" type="button" @click="handleNext()" />
         </div>
 
-        <!-- validation -->
+        <!-- Validation -->
         <small id="text-error" class="p-error block">{{
           errorMessages.employeesIds || '&nbsp;'
         }}</small>
 
-        <!-- loading employees -->
-        <div v-if="loadingEmployees">
-          <h1 class="flex animate-pulse space-x-4">Loading...</h1>
-        </div>
-
-        <!-- show selected employees -->
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          <!-- Previously selected employees -->
+          <!-- Selected Employees & Available Employees -->
           <button
-            v-for="user in selectedEmployeesEdit"
+            v-for="user in [
+              ...selectedEmployeesEdit,
+              ...employees.usersEmployeesAvailableByDate,
+            ]"
             v-if="selectedEmployeesEdit && selectedEmployeesEdit.length > 0"
             :key="user.id"
             class="relative overflow-hidden rounded-2xl bg-gray-200 hover:bg-gray-400"
             :class="
-              isItemSelected(user.id, employeesIds.modelValue)
+              isItemSelected(user.id, employeesIds)
                 ? 'outline outline-primary-green'
                 : ''
             "
@@ -318,48 +249,17 @@
             @click="addSelectedEmployee(user)"
           >
             <div class="flex items-center gap-6 p-1">
-              <img
-                class="h-12 w-12 rounded-xl"
-                src="https://picsum.photos/200"
-                alt="random picture"
+              <Avatar
+                class="h-12 w-12 overflow-hidden rounded-xl text-sm"
+                :user="user"
               />
               <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
               <div
-                v-if="isItemSelected(user.id, employeesIds.modelValue)"
+                v-if="isItemSelected(user.id, employeesIds)"
                 class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
               >
                 <Check :size="16" class="text-white" />
               </div>
-            </div>
-          </button>
-
-          <!-- Available employees -->
-          <button
-            v-for="user in employees.usersEmployeesAvailableByDate"
-            v-if="
-              employees && employees.usersEmployeesAvailableByDate.length > 0
-            "
-            :key="user.id"
-            class="relative flex transform items-center gap-6 overflow-hidden rounded-2xl bg-gray-200 p-1 hover:bg-gray-400"
-            :class="
-              isItemSelected(user.id, employeesIds.modelValue)
-                ? 'outline outline-primary-green'
-                : ''
-            "
-            type="button"
-            @click="addSelectedEmployee(user)"
-          >
-            <img
-              class="h-12 w-12 rounded-xl"
-              src="https://picsum.photos/200"
-              alt="random picture"
-            />
-            <p class="text-lg">{{ user.firstname }} {{ user.lastname }}</p>
-            <div
-              v-if="isItemSelected(user.id, employeesIds.modelValue)"
-              class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
-            >
-              <Check :size="16" class="text-white" />
             </div>
           </button>
         </div>
@@ -373,64 +273,34 @@
           <CustomButton name="Next" type="button" @click="handleNext()" />
         </div>
 
-        <!-- loading -->
-        <div v-if="loadingMaterials">
-          <h1 class="flex animate-pulse space-x-4">Loading...</h1>
-        </div>
-
         <div
           class="grid-rows-auto grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
         >
-          <!-- Selected materials -->
+          <!-- Selected Materials & Availabe materials -->
           <button
-            v-for="material of selectedMaterialsEdit"
+            v-for="material of [
+              ...selectedMaterialsEdit,
+              ...materials.materials,
+            ]"
             v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
             :key="material.id"
             class="relative flex transform items-center gap-3 overflow-hidden rounded-2xl bg-gray-200 p-1 hover:bg-gray-400"
             :class="
-              isItemSelected(material.id, materialsIds.modelValue)
+              isItemSelected(material.id, materialsIds)
                 ? 'outline outline-primary-green'
                 : ''
             "
             type="button"
             @click="addSelectedMaterial(material)"
           >
-            <img
-              class="w-12 rounded-xl bg-gray-400"
-              src="https://picsum.photos/200"
-              alt="random picture"
-            />
-            <h2 class="truncate text-lg">{{ material.name }}</h2>
             <div
-              v-if="isItemSelected(material.id, materialsIds.modelValue)"
-              class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
+              class="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-400"
             >
-              <Check :size="16" class="text-white" />
+              <Wrench class="h-6 w-6 stroke-gray-800" />
             </div>
-          </button>
-
-          <!-- Availabe materials -->
-          <button
-            v-for="material of materials.materials"
-            v-if="materials && materials.materials.length > 0"
-            :key="material.id"
-            class="relative flex transform items-center gap-3 overflow-hidden rounded-2xl bg-gray-200 p-1 hover:bg-gray-400"
-            :class="
-              isItemSelected(material.id, materialsIds.modelValue)
-                ? 'outline outline-primary-green'
-                : ''
-            "
-            type="button"
-            @click="addSelectedMaterial(material)"
-          >
-            <img
-              class="w-12 rounded-xl bg-gray-400"
-              src="https://picsum.photos/200"
-              alt="random picture"
-            />
             <h2 class="truncate text-lg">{{ material.name }}</h2>
             <div
-              v-if="isItemSelected(material.id, materialsIds.modelValue)"
+              v-if="isItemSelected(material.id, materialsIds)"
               class="bg-primary-green absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-[2px]"
             >
               <Check :size="16" class="text-white" />
@@ -458,7 +328,7 @@
             <CalendarIcon />
             <div>{{ formatDateTime(values.finalDate) }}</div>
           </div>
-          <!-- show selected appointments -->
+          <!-- Selected appointments -->
           <div class="flex flex-col">
             <h3 class="mb-1 text-lg">Appointments</h3>
             <ul
@@ -472,7 +342,7 @@
             </ul>
           </div>
 
-          <!-- show selected employees -->
+          <!-- Selected employees -->
           <div class="flex flex-col gap-1">
             <h3 class="mb-1 text-lg">Employees</h3>
             <ul v-if="selectedEmployees.length > 0" class="flex flex-col gap-1">
@@ -481,17 +351,16 @@
                 :key="user.id"
                 class="flex items-center gap-3"
               >
-                <img
-                  class="w-8 rounded-full bg-gray-400"
-                  src="https://picsum.photos/200"
-                  alt="random picture"
+                <Avatar
+                  class="h-8 w-8 overflow-hidden rounded-full text-sm"
+                  :user="user"
                 />
                 <p class="capitalize">{{ user.fullname }}</p>
               </li>
             </ul>
           </div>
 
-          <!-- show selected materials -->
+          <!-- Selected Materials -->
           <div>
             <div
               class="mb-1 flex cursor-pointer justify-between"
@@ -506,28 +375,17 @@
               </li>
             </ul>
 
-            <!-- no selected materials -->
+            <!-- No Selected Materials -->
             <div v-if="selectedMaterials.length < 1">No materials selected</div>
           </div>
         </div>
       </div>
     </form>
-
-    <!-- loading -->
-    <div
-      v-if="
-        scheduleLoading &&
-        loadingAppointments &&
-        loadingEmployees &&
-        loadingMaterials
-      "
-    >
-      <p class="text-6xl font-black">Loading Schedule...</p>
-    </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
+import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -542,20 +400,19 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import type { Material } from '@/interfaces/material.interface'
 import { schedulesValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
+import { Wrench } from 'lucide-vue-next'
 import {
-  ArrowLeft,
   ArrowRight,
   Calendar as CalendarIcon,
   Check,
   ChevronDown,
+  Loader2,
   Star,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-
-// TODO: add steps (next.value) to the url as query params (e.g. /schedules/edit?step=1)
-// TODO: use useLazyQuery for materials and (employees or users) to prevent loading all materials and (employees or appointments)
 
 // composables
 const { showToast } = useCustomToast()
@@ -587,21 +444,19 @@ const errorMessages = ref<{
 })
 
 // update form
-const { defineComponentBinds, errors, values, validate, setValues } = useForm({
+const { defineField, errors, values, validate, setValues } = useForm({
   validationSchema: schedulesValidationSchema,
 })
 
-const finalDate = defineComponentBinds('finalDate')
-const appointmentsIds = defineComponentBinds('appointmentsIds')
-const employeesIds = defineComponentBinds('employeesIds')
-const materialsIds = defineComponentBinds('materialsIds')
+const [finalDate] = defineField('finalDate')
+const [appointmentsIds] = defineField('appointmentsIds')
+const [employeesIds] = defineField('employeesIds')
+const [materialsIds] = defineField('materialsIds')
 
 // graphql
-const { mutate: updateAppointment, error: errorUpdateAppointment } =
-  useMutation(UPDATE_APPOINTMENT)
+const { mutate: updateAppointment } = useMutation(UPDATE_APPOINTMENT)
 
-const { mutate: updateschedule, error: errorUpdateschedule } =
-  useMutation(UPDATE_SCHEDULE)
+const { mutate: updateschedule } = useMutation(UPDATE_SCHEDULE)
 
 const {
   result: schedule,
@@ -657,60 +512,64 @@ const {
 })
 
 // logics
-const handleUpdateSchedule = async () => {
-  loadingUpdate.value = true
-  await validate()
-  errorMessages.value = errors.value
-  if (Object.keys(errors.value).length === 0) {
-    // console.log('no errors', values)
-    const { finalDate, appointmentsIds, employeesIds, materialsIds } = values
+const handleUpdateSchedule = async (): Promise<void> => {
+  try {
+    loadingUpdate.value = true
+    await validate()
+    errorMessages.value = errors.value
+    if (Object.keys(errors.value).length === 0) {
+      // console.log('no errors', values)
+      const { finalDate, appointmentsIds, employeesIds, materialsIds } = values
 
-    // update appointments with price
-    for (const a of selectedAppointments.value) {
-      await updateAppointment({
-        updateAppointmentInput: {
-          id: a.id,
-          price: a.price,
-          isScheduled: true,
-          finalDate: formatDateTime(values.finalDate),
+      // update appointments with price
+      for (const a of selectedAppointments.value) {
+        await updateAppointment({
+          updateAppointmentInput: {
+            id: a.id,
+            price: a.price,
+            isScheduled: true,
+            finalDate: formatDateTime(values.finalDate),
+          },
+        })
+      }
+
+      // update appointments that unselected from schedule (isScheduled = false, finalDate = null)
+      const unselectedAppointmentsIds = selectedAppointmentsEdit.value
+        .map(a => a.id)
+        .filter(id => !appointmentsIds.includes(id))
+      for (const id of unselectedAppointmentsIds) {
+        await updateAppointment({
+          updateAppointmentInput: {
+            id: id,
+            isScheduled: false,
+            finalDate: null,
+          },
+        })
+      }
+
+      // update schedule
+      await updateschedule({
+        updateScheduleInput: {
+          id: schedule.value?.schedule.id,
+          finalDate: formatDateTime(finalDate),
+          appointmentIds: appointmentsIds,
+          employeeIds: employeesIds,
+          materialIds: materialsIds,
         },
       })
-    }
-
-    // update appointments that unselected from schedule (isScheduled = false, finalDate = null)
-    const unselectedAppointmentsIds = selectedAppointmentsEdit.value
-      .map(a => a.id)
-      .filter(id => !appointmentsIds.includes(id))
-    for (const id of unselectedAppointmentsIds) {
-      await updateAppointment({
-        updateAppointmentInput: {
-          id: id,
-          isScheduled: false,
-          finalDate: null,
-        },
-      })
-    }
-
-    // update schedule
-    await updateschedule({
-      updateScheduleInput: {
-        id: schedule.value?.schedule.id,
-        finalDate: formatDateTime(finalDate),
-        appointmentIds: appointmentsIds,
-        employeeIds: employeesIds,
-        materialIds: materialsIds,
-      },
-    }).then(() => {
-      loadingUpdate.value = false
       showToast('success', 'Success', 'Schedule updated')
       go(-1)
-    })
+    }
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't update schedule")
+  } finally {
+    loadingUpdate.value = false
   }
-
-  loadingUpdate.value = false
 }
 
-const handleNext = async () => {
+const handleNext = async (): Promise<void> => {
   // validate first step (final date)
   if (next.value === 0) {
     await validate()
@@ -779,7 +638,7 @@ const handleNext = async () => {
   }
 }
 
-const handleBack = () => {
+const handleBack = (): void => {
   if (next.value === 1) {
     // set all values to the original values
     setAllValues()
@@ -797,7 +656,7 @@ const handleBack = () => {
 
 // add appointment id in appointmentsIds array and add appointment in selectedAppointments array
 // remove appointment id in appointmentsIds array and remove appointment in selectedAppointments array
-const addSelectedAppointment = (appointment: Appointment) => {
+const addSelectedAppointment = (appointment: Appointment): void => {
   // check if appointment is already selected
   const index = values.appointmentsIds.indexOf(appointment.id!)
 
@@ -828,7 +687,7 @@ const addSelectedAppointment = (appointment: Appointment) => {
   }
 }
 
-const addSelectedEmployee = (user: CustomUser) => {
+const addSelectedEmployee = (user: CustomUser): void => {
   console.log('user', user)
   // check if user is already selected
   const index = values.employeesIds.indexOf(user.id)
@@ -858,7 +717,7 @@ const addSelectedEmployee = (user: CustomUser) => {
   }
 }
 
-const addSelectedMaterial = (material: Material) => {
+const addSelectedMaterial = (material: Material): void => {
   // check if material is already selected
   const index = values.materialsIds.indexOf(material.id)
 
@@ -888,12 +747,12 @@ const addSelectedMaterial = (material: Material) => {
 }
 
 // check if item is selected
-const isItemSelected = (id: string, itemIds: string[]) => {
+const isItemSelected = (id: string, itemIds: string[]): boolean => {
   return itemIds.includes(id)
 }
 
 // check if there are appointments and employees available for the selected date
-const checkAvailability = async () => {
+const checkAvailability = async (): Promise<void> => {
   // reset error messages
   errorMessages.value.finalDate = ''
   let error = ''
@@ -905,18 +764,15 @@ const checkAvailability = async () => {
   ) {
     await refetchAppointments()
     await refetchEmployees()
-    if (
-      appointments.value.appointmentsAvailableByDate.length === 0 &&
-      employees.value.usersEmployeesAvailableByDate.length === 0
-    ) {
+    if (appointments.value.length === 0 && employees.value.length === 0) {
       error = 'No appointments and employees available for this date'
     }
     // check if there are appointments available for the selected date
-    else if (appointments.value.appointmentsAvailableByDate.length === 0) {
+    else if (appointments.value.length === 0) {
       error = 'No appointments available for this date'
     }
     // check if there are employees available for the selected date
-    else if (employees.value.usersEmployeesAvailableByDate.length === 0) {
+    else if (employees.value.length === 0) {
       error = 'No employees available for this date'
     }
 
@@ -925,7 +781,7 @@ const checkAvailability = async () => {
 }
 
 // set all values for edit
-const setAllValues = () => {
+const setAllValues = (): void => {
   setValues({
     finalDate: schedule.value?.schedule.finalDate,
     appointmentsIds: schedule.value?.schedule.appointments.map(
@@ -963,7 +819,7 @@ const setAllValues = () => {
 }
 
 // reset all values back
-const reset = () => {
+const reset = (): void => {
   // reset all values
   setAllValues()
 
@@ -980,7 +836,7 @@ const reset = () => {
   next.value = 0
 }
 
-const toggleCollapsible = () => {
+const toggleCollapsible = (): void => {
   collapsed.value = !collapsed.value
 }
 
@@ -989,30 +845,35 @@ watchEffect(() => {
   // if (appointments.value) console.log(appointments.value)
   // if (employees.value) console.log(employees.value)
   // if (materials.value) console.log(materials.value)
+  // if (appointments.value)
+  //   console.log(appointments.value.appointmentsAvailableByDate)
 
   // set all values
   if (schedule.value) {
     setAllValues()
-    console.log(schedule.value)
-  }
-
-  if (appointments.value) {
-    console.log(appointments.value.appointmentsAvailableByDate)
+    // console.log(schedule.value)
   }
 
   // all errors
-  const errors = [
-    scheduleError.value,
-    errorAppointments.value,
-    errorEmployees.value,
-    errorMaterials.value,
-    errorUpdateAppointment.value,
-    errorUpdateschedule.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      showToast('error', 'Error', error.message)
-    }
-  })
+  if (scheduleError.value) {
+    // console.log(scheduleError.value)
+    LogRocket.captureException(scheduleError.value)
+    showToast('error', 'Error', "Couldn't load schedule")
+  }
+  if (errorAppointments.value) {
+    // console.log(errorAppointments.value)
+    LogRocket.captureException(errorAppointments.value)
+    showToast('error', 'Error', "Couldn't load appointments")
+  }
+  if (errorEmployees.value) {
+    // console.log(errorEmployees.value)
+    LogRocket.captureException(errorEmployees.value)
+    showToast('error', 'Error', "Couldn't load employees")
+  }
+  if (errorMaterials.value) {
+    // console.log(errorMaterials.value)
+    LogRocket.captureException(errorMaterials.value)
+    showToast('error', 'Error', "Couldn't load materials")
+  }
 })
 </script>

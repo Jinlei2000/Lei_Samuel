@@ -4,22 +4,10 @@
     <section class="flex w-full flex-col items-center gap-6">
       <div class="relative">
         <!-- Profile picture -->
-        <div>
-          <img
-            v-if="user.url"
-            class="h-24 w-24 rounded-full"
-            :src="user.url"
-            alt="Profile picture"
-          />
-          <div
-            v-else
-            class="bg-primary-green flex h-24 w-24 items-center justify-center rounded-full"
-          >
-            <p class="text-4xl text-white">
-              {{ user?.firstname[0].toUpperCase() }}
-            </p>
-          </div>
-        </div>
+        <Avatar
+          class="h-24 w-24 overflow-hidden rounded-full text-4xl"
+          :user="user"
+        />
         <!-- Edit profile picture -->
         <label
           class="bg-primary-orange absolute right-0 top-0 h-6 w-6 rounded-full"
@@ -355,18 +343,15 @@
         </div>
       </div>
       <div class="flex justify-between">
-        <button
-          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+        <!-- Delete Absence -->
+        <CustomButton
+          name="Delete"
+          :loading="loadingAbsence.delete"
+          variant="warning"
           @click="handleDeleteAbsence(selectedAbsence)"
-        >
-          Delete
-        </button>
-        <button
-          class="border-primary-blue text-primary-blue rounded-[4px] border px-3 py-1"
-          @click="isEditingAbsence = true"
-        >
-          Edit
-        </button>
+        />
+        <!-- Edit Absence -->
+        <CustomButton name="Edit" @click="isEditingAbsence = true" />
       </div>
     </div>
     <DynamicForm
@@ -439,27 +424,17 @@
         <Map class="h-full w-full" :locations="[selectedLocation]" />
       </div>
 
-      <div
-        class="flex"
-        :class="
-          user!.locations[0].id == selectedLocation.id
-            ? 'justify-end'
-            : 'justify-between'
-        "
-      >
-        <button
-          v-if="user!.locations[0].id != selectedLocation.id"
-          class="bg-primary-red rounded-[4px] px-3 py-1 text-white"
+      <div class="flex justify-between">
+        <!-- Delete Location -->
+        <CustomButton
+          v-if="!(user!.locations[0].id == selectedLocation.id)"
+          name="Delete"
+          :loading="loadingLocation.delete"
+          variant="warning"
           @click="handleDeleteLocation(selectedLocation.id)"
-        >
-          Delete
-        </button>
-        <button
-          class="border-primary-blue text-primary-blue justify-self-end rounded-[4px] border px-3 py-1"
-          @click="isEditingLocation = true"
-        >
-          Edit
-        </button>
+        />
+        <!-- Delete Edit -->
+        <CustomButton name="Edit" @click="isEditingLocation = true" />
       </div>
     </div>
 
@@ -656,6 +631,7 @@
 </template>
 
 <script setup lang="ts">
+import Avatar from './generic/Avatar.vue'
 import DynamicForm from './generic/DynamicForm.vue'
 import InputField from './generic/InputField.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
@@ -804,20 +780,23 @@ const handleUploadImage = async (event: Event): Promise<void> => {
       selectedPicture as File,
     )
     // update user in db
-    await updateUser({
+    const result = await updateUser({
       updateUserInput: {
         id: customUser.value?.id,
         url: url,
       },
     })
-
+    customUser.value! = {
+      ...customUser.value!,
+      url: result?.data?.updateUser?.url,
+    }
     showToast('success', 'Success', 'Profile picture has been updated')
     toggleUserModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't upload image")
+
+    showToast('error', 'Error', "Can't upload image")
   } finally {
     loadingUser.value.uploadPicture = false
   }
@@ -839,7 +818,7 @@ const handleDeleteUser = async (): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error) showToast('error', 'Error', "Can't delete user")
+    showToast('error', 'Error', "Can't delete user")
   }
 }
 
@@ -862,12 +841,12 @@ const handleUpdateUser = async (values: CustomUser): Promise<void> => {
         }),
       },
     })
-    showToast('success', 'Success', `You have updated your profile`)
     refetchUser()
+    showToast('success', 'Success', `You have updated your profile`)
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error) showToast('error', 'Error', "Can't update user")
+    showToast('error', 'Error', "Can't update user")
   } finally {
     loadingUser.value.update = false
   }
@@ -886,7 +865,7 @@ watchEffect(() => {
 
   // all errors
   if (userError.value) {
-    console.log(userError.value)
+    // console.log(userError.value)
     LogRocket.captureException(userError.value)
     showToast('error', 'Error', "Can't get your data")
   }
@@ -919,9 +898,11 @@ const variables = ref<VariablesProps>({
 const loadingAbsence = ref<{
   create: boolean
   update: boolean
+  delete: boolean
 }>({
   create: false,
   update: false,
+  delete: false,
 })
 const isEditingAbsence = ref<boolean>(false)
 
@@ -1011,8 +992,7 @@ const handleCreateAbsence = async (values: Absence): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't create a absence")
+    showToast('error', 'Error', "Can't create a absence")
   } finally {
     loadingAbsence.value.create = false
   }
@@ -1038,8 +1018,7 @@ const handleUpdateAbsence = async (values: Absence): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't update a absence")
+    showToast('error', 'Error', "Can't update a absence")
   } finally {
     loadingAbsence.value.update = false
   }
@@ -1048,6 +1027,7 @@ const handleUpdateAbsence = async (values: Absence): Promise<void> => {
 // handle delete absence
 const handleDeleteAbsence = async (absence: Absence): Promise<void> => {
   try {
+    loadingAbsence.value.delete = true
     await deleteAbsence({
       id: absence.id,
     })
@@ -1061,8 +1041,9 @@ const handleDeleteAbsence = async (absence: Absence): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't delete a absence")
+    showToast('error', 'Error', "Can't delete a absence")
+  } finally {
+    loadingAbsence.value.delete = false
   }
 }
 
@@ -1125,10 +1106,12 @@ const searchAddressResults = ref<Location[] | null>(null)
 const loadingLocation = ref<{
   create: boolean
   update: boolean
+  delete: boolean
   searchAddress: boolean
 }>({
   create: false,
   update: false,
+  delete: false,
   searchAddress: false,
 })
 const isEditingLocation = ref<boolean>(false)
@@ -1187,8 +1170,8 @@ const handleSearchAddress = async (): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't search for address")
+
+    showToast('error', 'Error', "Can't search for address")
   } finally {
     loadingLocation.value.searchAddress = false
   }
@@ -1218,8 +1201,7 @@ const handleCreateLocation = async (): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't create a location")
+    showToast('error', 'Error', "Can't create a location")
   } finally {
     loadingLocation.value.create = false
   }
@@ -1249,8 +1231,7 @@ const handleUpdateLocation = async (): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't update a location")
+    showToast('error', 'Error', "Can't update a location")
   } finally {
     loadingLocation.value.update = false
   }
@@ -1259,6 +1240,7 @@ const handleUpdateLocation = async (): Promise<void> => {
 // delete location
 const handleDeleteLocation = async (id: string): Promise<void> => {
   try {
+    loadingLocation.value.delete = true
     await deleteLocation({
       id: id,
     })
@@ -1268,8 +1250,9 @@ const handleDeleteLocation = async (id: string): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    if (error instanceof Error)
-      showToast('error', 'Error', "Can't delete a location")
+    showToast('error', 'Error', "Can't delete a location")
+  } finally {
+    loadingLocation.value.delete = false
   }
 }
 

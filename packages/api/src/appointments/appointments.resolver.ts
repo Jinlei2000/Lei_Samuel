@@ -6,6 +6,7 @@ import {
   Subscription,
   ObjectType,
   Field,
+  Int,
 } from '@nestjs/graphql'
 import { AppointmentsService } from './appointments.service'
 import { Appointment } from './entities/appointment.entity'
@@ -54,13 +55,31 @@ export class AppointmentsResolver {
     return this.appointmentsService.findAllByUserId(userId, filters, order)
   }
 
+  @AllowedRoles(Role.CLIENT)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Appointment], { name: 'appointmentsRecentByUserId' })
+  findAllRecentByUserId(
+    @Args('userId', { type: () => String }) userId: string,
+    @Args('amount', { type: () => Int }) amount: number,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    return this.appointmentsService.findAllRecentByUserId(
+      userId,
+      amount,
+      filters,
+      order,
+    )
+  }
+
   @UseGuards(FirebaseGuard)
   @Query(() => Appointment, { name: 'appointment' })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.appointmentsService.findOne(id)
   }
 
-  // TODO: add to documentation
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [Appointment], { name: 'appointmentsAvailableByDate' })

@@ -1,9 +1,9 @@
 <template>
-  <div
+  <main
     v-if="appointment"
     class="relative h-fit w-full overflow-hidden rounded-2xl bg-gray-200 p-3 pl-6"
     :class="appointment.isDone ? 'opacity-50' : ''"
-    @click="openModal()"
+    @click="toggleModal()"
   >
     <div
       class="absolute left-0 top-0 h-full w-1"
@@ -36,11 +36,11 @@
 
     <button
       class="absolute right-3 top-3 transition-all hover:scale-105"
-      @click="openModal()"
+      @click="toggleModal()"
     >
       <Info class="h-[24px] w-[24px]" />
     </button>
-  </div>
+  </main>
 
   <!-- Appointment Detail Modal -->
   <Dialog
@@ -88,22 +88,19 @@
 
     <div class="my-6 flex flex-col gap-3">
       <div class="flex gap-3">
-        <Clock />
-        <p class="">
-          {{ appointment.finalDate!.substring(11, 16) }}
-        </p>
-      </div>
-      <div class="flex gap-3">
         <MapPin />
-        <p class="">
+        <p>
           {{ appointment.location!.address }}
         </p>
+      </div>
+      <div class="h-48 w-full overflow-auto rounded-lg">
+        <Map class="h-full w-full" :locations="[appointment.location]" />
       </div>
     </div>
     <div class="flex w-full justify-between gap-3">
       <button
         class="flex h-fit items-center gap-2 rounded-[4px] bg-transparent px-3 py-[6px] outline outline-[1px] hover:bg-black hover:text-gray-200"
-        @click="closeModal()"
+        @click="toggleModal()"
       >
         Cancel
       </button>
@@ -121,23 +118,21 @@
       </button>
     </div>
   </Dialog>
-  <!-- End Appointment Detail Modal -->
 </template>
 
 <script setup lang="ts">
+import Map from '../Map.vue'
+import useCustomToast from '@/composables/useCustomToast'
 import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import type { Location } from '@/interfaces/location.interface'
 import { useMutation } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { Info, Navigation } from 'lucide-vue-next'
-import { CheckCircle, Clock, MapPin, XCircle } from 'lucide-vue-next'
+import { CheckCircle, MapPin, XCircle } from 'lucide-vue-next'
 import { type PropType, ref } from 'vue'
 
-const { mutate: updateAppointment, error: updateAppointmentError } =
-  useMutation<Appointment>(UPDATE_APPOINTMENT)
-
-const showModal = ref(false)
-
+// props
 const props = defineProps({
   appointment: Object as PropType<Appointment>,
   nav: {
@@ -146,28 +141,39 @@ const props = defineProps({
   },
 })
 
+// composable
+const { showToast } = useCustomToast()
+
+// variables
+const showModal = ref(false)
+
 const appointmentIsDone = ref(props.appointment?.isDone)
 
-// const updatedAppointment = ref<Appointment>(props.appointment)
+// graphql
+const { mutate: updateAppointment } =
+  useMutation<Appointment>(UPDATE_APPOINTMENT)
 
-const openModal = () => {
-  showModal.value = true
-}
-
-const closeModal = () => {
-  showModal.value = false
+// logics
+const toggleModal = () => {
+  showModal.value = !showModal.value
 }
 
 const handleAppointmentUpdate = () => {
-  updateAppointment({
-    updateAppointmentInput: {
-      id: props.appointment!.id,
-      isDone: !appointmentIsDone.value,
-    },
-  })
-  appointmentIsDone.value = !appointmentIsDone.value
+  try {
+    updateAppointment({
+      updateAppointmentInput: {
+        id: props.appointment!.id,
+        isDone: !appointmentIsDone.value,
+      },
+    })
+    appointmentIsDone.value = !appointmentIsDone.value
 
-  showModal.value = false
+    showModal.value = false
+  } catch (error) {
+    // console.log('error', error)
+    LogRocket.captureException(error as Error)
+    showToast('error', 'Error', "Couldn't update appointment")
+  }
 }
 
 // Open location in google maps

@@ -123,7 +123,7 @@ const uploadProfile = async (uid: string, file: File): Promise<string> => {
     const storageRef = profileRef(uid)
     uploadBytes(storageRef, file)
       .then((snapshot: UploadResult) => {
-        console.log('Uploaded a blob or file!', snapshot)
+        // console.log('Uploaded a blob or file!', snapshot)
         getDownloadURL(snapshot.ref)
           .then(url => {
             resolve(url.toString())
@@ -149,7 +149,7 @@ const updateProfile = async (
     if (file !== null) {
       uploadBytes(storageRef, file)
         .then((snapshot: UploadResult) => {
-          console.log('Uploaded new profile image!', snapshot)
+          // console.log('Uploaded new profile image!', snapshot)
           getDownloadURL(snapshot.ref)
             .then(url => {
               resolve(url.toString())

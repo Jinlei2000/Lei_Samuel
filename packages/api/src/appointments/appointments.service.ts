@@ -62,6 +62,30 @@ export class AppointmentsService {
     })
   }
 
+  async findAllRecentByUserId(
+    userId: string,
+    amount: number,
+    filters?: Array<string>,
+    order?: OrderByInput,
+  ): Promise<Appointment[]> {
+    // filter and order appointments
+    const whereQuery = filterAppointments(filters)
+    const orderQuery = orderAppointments(order)
+
+    return this.appointmentRepository.find({
+      where: {
+        ...whereQuery,
+        // @ts-ignore
+        'user.id': new ObjectId(userId),
+        // @ts-ignore
+        endProposedDate: { $gte: resetTime(new Date()) },
+      },
+      order: orderQuery,
+      // get only amount of appointments
+      take: amount,
+    })
+  }
+
   // find all appointments by date (between startProposedDate and endProposedDate)
   // not done & final date is passed (now) or null
   async findAllAvailableByDate(date: Date): Promise<Appointment[]> {
@@ -127,8 +151,6 @@ export class AppointmentsService {
   ): Promise<Appointment> {
     await this.findOne(id.toString())
 
-    // TODO: add logic no update if done or (not dont & overdate)
-
     // remove id
     delete updateAppointmentInput.id
 
@@ -156,8 +178,6 @@ export class AppointmentsService {
 
     return this.findOne(id.toString())
   }
-
-  // TODO: update done or not done
 
   // remove appointment only if not done & remove appointment id from schedules
   async remove(id: string): Promise<string> {

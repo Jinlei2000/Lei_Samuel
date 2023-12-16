@@ -32,7 +32,9 @@ export class Appointment {
   price?: number
 
   @Column()
-  @Field({ description: 'The type of appointment (repair, maintenance, etc)' })
+  @Field({
+    description: 'The type of appointment (repair, maintenance, other, etc)',
+  })
   type: string
 
   @Column()

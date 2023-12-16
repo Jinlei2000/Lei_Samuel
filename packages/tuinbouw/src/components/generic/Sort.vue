@@ -2,7 +2,7 @@
   <div class="relative flex items-center gap-3">
     <!-- Display selected field label and sorting icons -->
     <div class="flex flex-row-reverse items-center justify-center gap-1">
-      <p>
+      <p class="hidden sm:block">
         {{ selectedFieldLabel }}
       </p>
       <div>

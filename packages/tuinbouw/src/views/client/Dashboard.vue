@@ -16,6 +16,15 @@
       >
     </div>
   </div>
+  <!-- TODO: show map with al your location -->
+  <!-- TODO: button card to go to all appointments -->
+  <!-- TODO: button card to go to add appointment -->
+  <!-- TODO: show number of amount of appointments -->
+  <!-- TODO: show number of completed appointments -->
+  <!-- TODO: show number of appointments is scheduled -->
+  <!-- TODO: show number of appointments is not scheduled -->
+  <!-- TODO: show number of appointments is not completed -->
+  <!-- TODO: show appointments that has to rescheduled -->
 </template>
 
 <script setup lang="ts"></script>
