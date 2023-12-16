@@ -2,7 +2,7 @@
   <div class="m-auto flex max-w-7xl flex-col">
     <!-- Main Content -->
     <main
-      class="mt-12 flex flex-col-reverse items-center gap-6 md:mt-52 md:flex-row md:gap-12 lg:gap-24"
+      class="mt-24 flex flex-col-reverse items-center gap-6 md:mt-52 md:flex-row md:gap-12 lg:gap-24"
     >
       <div class="w-full md:w-3/5">
         <img
@@ -23,7 +23,7 @@
         </p>
         <router-link
           to="/auth/login"
-          class="bg-primary-orange w-fit rounded-lg px-4 py-2 text-white"
+          class="bg-primary-orange hidden w-fit rounded-lg px-4 py-2 text-white md:block"
         >
           Begin nu
         </router-link>
