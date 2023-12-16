@@ -37,7 +37,7 @@
       </li>
     </ul>
 
-    <div class="flex-end flex justify-between">
+    <div class="flex-end mt-3 flex justify-between">
       <CustomButton
         v-if="cancel"
         name="cancel"
