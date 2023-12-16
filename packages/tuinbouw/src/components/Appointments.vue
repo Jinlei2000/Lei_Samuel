@@ -165,7 +165,7 @@
         </div>
       </div>
       <!-- Buttons -->
-      <div v-if="!selectedAppointment.isDone" class="flex justify-between">
+      <div v-if="!selectedAppointment.isDone" class="mt-6 flex justify-between">
         <!-- Delete -->
         <CustomButton
           variant="warning"
