@@ -9,8 +9,8 @@
         Add New Appointment
       </button>
     </RouterLink>
-    <div class="flex w-full justify-between">
-      <p class="text-xl">Your upcoming appointments</p>
+    <div class="flex w-full items-center justify-between">
+      <p class="text-xl">Upcoming appointments</p>
       <RouterLink
         to="/client/appointments"
         class="text-primary-orange group flex items-center text-lg sm:text-base"
