@@ -21,7 +21,10 @@
     <div
       class="grid grid-flow-col gap-3 md:grid-flow-row md:grid-cols-2 md:items-start"
     >
-      <p class="overflow-hidden text-base">
+      <p
+        class="overflow-hidden text-base"
+        :class="variant == 'simple' ? 'col-span-2' : ''"
+      >
         {{ appointment.description }}
       </p>
       <button

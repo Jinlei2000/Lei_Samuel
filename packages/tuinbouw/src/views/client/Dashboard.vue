@@ -28,7 +28,7 @@
       class="flex flex-col gap-3"
     >
       <div v-for="(item, index) in upcomingAppointments" :key="index">
-        <AppointmentCard :appointment="item" :nav="false" />
+        <AppointmentCard :appointment="item" :nav="false" :variant="'simple'" />
       </div>
     </div>
   </div>
