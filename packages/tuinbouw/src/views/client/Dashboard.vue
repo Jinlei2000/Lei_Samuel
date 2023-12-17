@@ -1,9 +1,9 @@
 <template>
-  <div class="flex min-h-full flex-col items-center justify-center">
+  <div class="flex flex-col items-center justify-center">
     <h1
       class="mb-5 bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
     >
-      Dashboard
+      test
     </h1>
     <!-- make a list of buttons go to the right page -->
     <div class="flex gap-2">
@@ -14,6 +14,29 @@
         :to="`/client/${b}`"
         >{{ b }}</Router-link
       >
+    </div>
+  </div>
+  <div class="m-auto flex max-w-xl flex-col gap-3">
+    <h1 class="text-xl">Welkom, {{ customUser!.firstname }}</h1>
+    <Router-Link to="/client/add-appointment">
+      <button
+        class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
+      >
+        <PlusCircle class="mr-2" />
+        Add New Appointment
+      </button>
+    </Router-Link>
+    <p class="text-xl">Your appointments</p>
+    <div
+      v-if="upcomingAppointments && upcomingAppointments.length > 0"
+      class="flex flex-col gap-3"
+    >
+      <AppointmentCard
+        v-for="(item, index) in upcomingAppointments"
+        :key="index"
+        :appointment="item"
+        :nav="false"
+      />
     </div>
   </div>
   <!-- TODO: show map with al your location -->
@@ -27,4 +50,50 @@
   <!-- TODO: show appointments that has to rescheduled -->
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useCustomUser from '../../composables/useCustomUser'
+import AppointmentCard from '@/components/generic/AppointmentCard.vue'
+import {
+  GET_RECENT_APPOINTMENTS_BY_USERID,
+  GET_UPCOMING_APPOINTMENTS_BY_USERID,
+} from '@/graphql/appointment.query'
+import type { Appointment } from '@/interfaces/appointment.user.interface'
+import { useLazyQuery, useQuery } from '@vue/apollo-composable'
+import { PlusCircle } from 'lucide-vue-next'
+import { type ComputedRef, watchEffect } from 'vue'
+import { computed } from 'vue'
+
+const { customUser } = useCustomUser()
+
+const upcomingAppointments: ComputedRef<Appointment[]> = computed(() => {
+  return upcomingAppointmentsResult.value?.appointmentsUpcomingByUserId || []
+})
+
+const recentAppointments: ComputedRef<Appointment[]> = computed(() => {
+  return recentAppointmentsResult.value?.appointmentsRecentByUserId || []
+})
+
+// graphql
+const {
+  result: upcomingAppointmentsResult,
+  error: upcomingAppointmentsError,
+  loading: upcomingAppointmentsLoading,
+} = useQuery(GET_UPCOMING_APPOINTMENTS_BY_USERID, {
+  userId: customUser?.value?.id,
+  amount: 5,
+  fetchPolicy: 'cache-and-network',
+})
+
+const {
+  result: recentAppointmentsResult,
+  loading: recentAppointmentsLoading,
+  error: recentAppointmentsError,
+} = useQuery(GET_RECENT_APPOINTMENTS_BY_USERID, () => ({
+  userId: customUser.value?.id,
+  amount: 5,
+}))
+
+watchEffect(() => {
+  console.log(upcomingAppointmentsResult.value)
+})
+</script>
