@@ -58,16 +58,7 @@
 
         <!-- Recent Appointments -->
         <div class="hidden md:block">
-          <button
-            class="flex w-full items-center justify-between"
-            type="button"
-            @click="handleCollapsible()"
-          >
-            <h2 class="text-xl opacity-80">Recent appointments</h2>
-            <ChevronDown
-              :class="showAppointments ? 'transform rotate-180' : ''"
-            />
-          </button>
+          <h2 class="text-xl opacity-80">Recent appointments</h2>
 
           <!-- Skeleton Loader -->
           <div
@@ -79,12 +70,7 @@
 
           <!-- Appointments (top 5) -->
           <div
-            v-if="
-              (recentAppointments &&
-                recentAppointments.length > 0 &&
-                showAppointments) ||
-              !isMobile()
-            "
+            v-if="recentAppointments && recentAppointments.length > 0"
             class="mt-3 flex flex-col gap-3"
           >
             <AppointmentCard
