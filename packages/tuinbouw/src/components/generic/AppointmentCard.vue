@@ -139,6 +139,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  variant: {
+    type: String,
+    default: 'default',
+  },
 })
 
 // composable

@@ -26,17 +26,14 @@
         Add New Appointment
       </button>
     </Router-Link>
-    <p class="text-xl">Your appointments</p>
+    <p class="text-xl">Your upcoming appointments</p>
     <div
       v-if="upcomingAppointments && upcomingAppointments.length > 0"
       class="flex flex-col gap-3"
     >
-      <AppointmentCard
-        v-for="(item, index) in upcomingAppointments"
-        :key="index"
-        :appointment="item"
-        :nav="false"
-      />
+      <div v-for="(item, index) in upcomingAppointments" :key="index">
+        <AppointmentCard :appointment="item" :nav="false" />
+      </div>
     </div>
   </div>
   <!-- TODO: show map with al your location -->
