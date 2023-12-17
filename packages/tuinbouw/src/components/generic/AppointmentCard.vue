@@ -37,6 +37,7 @@
     <button
       class="absolute right-3 top-3 transition-all hover:scale-105"
       @click="toggleModal()"
+      @click.stop
     >
       <Info class="h-[24px] w-[24px]" />
     </button>
