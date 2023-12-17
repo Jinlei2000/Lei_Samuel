@@ -80,9 +80,10 @@
           <!-- Appointments (top 5) -->
           <div
             v-if="
-              recentAppointments &&
-              recentAppointments.length > 0 &&
-              showAppointments
+              (recentAppointments &&
+                recentAppointments.length > 0 &&
+                showAppointments) ||
+              !isMobile()
             "
             class="mt-3 flex flex-col gap-3"
           >
