@@ -116,3 +116,30 @@ export const GET_RECENT_APPOINTMENTS_BY_USERID = gql`
     }
   }
 `
+
+export const GET_UPCOMING_APPOINTMENTS_BY_USERID = gql`
+  query appointmentsUpcomingByUserId($userId: String!, $amount: Int!) {
+    appointmentsUpcomingByUserId(userId: $userId, amount: $amount) {
+      id
+      user {
+        id
+        fullname
+      }
+      location {
+        id
+        address
+      }
+      price
+      type
+      startProposedDate
+      endProposedDate
+      isScheduled
+      finalDate
+      isDone
+      description
+      priority
+      createdAt
+      updatedAt
+    }
+  }
+`
