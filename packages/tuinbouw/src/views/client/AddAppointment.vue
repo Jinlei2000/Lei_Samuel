@@ -1,16 +1,16 @@
 <template>
   <main class="m-auto max-w-7xl">
     <!-- Title -->
-    <div class="mb-3 mt-12 flex items-center gap-4">
+    <div class="mb-3 mt-6 flex items-center gap-4 md:mt-12">
       <h1 class="text-2xl">Create a new appointment</h1>
     </div>
     <!-- Form -->
     <form
-      class="grid grid-cols-3 grid-rows-2 gap-3"
+      class="grid grid-rows-2 gap-3 md:grid-cols-2 lg:grid-cols-3"
       @submit.prevent="handleCreateAppointment"
     >
       <!-- Locations & Recent Appointments -->
-      <div class="col-span-1 row-span-2 flex flex-col gap-12">
+      <div class="col-span-1 row-span-2 flex flex-col gap-3">
         <!-- Locations -->
         <div>
           <!-- Skeleton Loader -->
@@ -57,8 +57,8 @@
         </div>
 
         <!-- Recent Appointments -->
-        <div>
-          <h2 class="mb-3 text-xl opacity-80">Recent appointments</h2>
+        <div class="hidden md:block">
+          <h2 class="text-xl opacity-80">Recent appointments</h2>
 
           <!-- Skeleton Loader -->
           <div
@@ -71,7 +71,7 @@
           <!-- Appointments (top 5) -->
           <div
             v-if="recentAppointments && recentAppointments.length > 0"
-            class="flex flex-col gap-3"
+            class="mt-3 flex flex-col gap-3"
           >
             <AppointmentCard
               v-for="(item, index) in recentAppointments"
@@ -92,7 +92,7 @@
       </div>
       <!-- Extra info -->
       <div
-        class="col-span-2 flex min-h-[300px] flex-col gap-6 rounded-2xl bg-gray-200 px-3 pb-3 pt-6"
+        class="col-span-1 flex min-h-[300px] flex-col gap-6 rounded-2xl bg-gray-200 px-3 pb-3 pt-6 lg:col-span-2"
       >
         <!-- Type -->
         <div class="flex flex-col gap-3">
@@ -192,6 +192,52 @@
           />
         </div>
       </div>
+      <div class="block md:hidden">
+        <button
+          class="flex w-full items-center justify-between"
+          type="button"
+          @click="handleCollapsible()"
+        >
+          <h2 class="text-xl opacity-80">Recent appointments</h2>
+          <ChevronDown
+            :class="showAppointments ? 'transform rotate-180' : ''"
+          />
+        </button>
+
+        <!-- Skeleton Loader -->
+        <div
+          v-if="loading.recentAppointments"
+          class="flex w-full flex-col items-center gap-3 rounded-2xl bg-gray-200 p-3"
+        >
+          <Loader2 class="text-primary-green h-32 animate-spin" />
+        </div>
+
+        <!-- Appointments (top 5) -->
+        <div
+          v-if="
+            (recentAppointments &&
+              recentAppointments.length > 0 &&
+              showAppointments) ||
+            !isMobile()
+          "
+          class="mt-3 flex flex-col gap-3"
+        >
+          <AppointmentCard
+            v-for="(item, index) in recentAppointments"
+            :key="index"
+            :appointment="item"
+            :nav="false"
+          />
+        </div>
+
+        <!-- No Appointments -->
+        <div
+          v-if="recentAppointments.length === 0"
+          class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
+        >
+          <p class="text-gray-500">No recent appointments</p>
+        </div>
+      </div>
     </form>
   </main>
 </template>
@@ -212,7 +258,12 @@ import { appointmentCreateValidationSchema } from '@/validation/schema'
 import { useQuery } from '@vue/apollo-composable'
 import { useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { Calendar as CalendarIcon, Check, Loader2 } from 'lucide-vue-next'
+import {
+  Calendar as CalendarIcon,
+  Check,
+  ChevronDown,
+  Loader2,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
@@ -226,6 +277,7 @@ const { formatDateTime } = useTimeUtilities()
 const { showToast } = useCustomToast()
 
 // variables
+const showAppointments = ref<boolean>(false)
 const minDate = new Date()
 const locations: ComputedRef<Location[]> = computed(() => {
   return locationsResult.value?.locationsByUserId || []
@@ -320,6 +372,20 @@ const handleCreateAppointment = async (): Promise<void> => {
     showToast('error', 'Error', "Couldn't create appointment")
   } finally {
     loading.value.createAppointment = false
+  }
+}
+
+// Check if website is being viewed on mobile (responsiveness)
+const isMobile = () => {
+  if (window.innerWidth <= 768) {
+    return true
+  }
+  return false
+}
+
+const handleCollapsible = () => {
+  if (isMobile()) {
+    showAppointments.value = !showAppointments.value
   }
 }
 
