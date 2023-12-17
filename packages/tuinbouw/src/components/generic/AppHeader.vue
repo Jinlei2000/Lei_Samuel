@@ -292,7 +292,7 @@ const handleLogout = async (): Promise<void> => {
 }
 
 const checkPath = (): boolean => {
-  const paths = ['/auth/login', '/auth/register', '/auth/forgot-password', '/']
+  const paths = ['/auth/login', '/auth/register', '/auth/forgot-password']
   const routePath = currentRoute.value.path
 
   if (customUser.value && !paths.includes(routePath)) {
