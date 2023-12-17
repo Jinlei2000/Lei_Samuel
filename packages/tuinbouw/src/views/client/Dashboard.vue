@@ -18,15 +18,28 @@
   </div>
   <div class="m-auto flex max-w-xl flex-col gap-3">
     <h1 class="text-xl">Welkom, {{ customUser!.firstname }}</h1>
-    <Router-Link to="/client/add-appointment">
+    <RouterLink to="/client/add-appointment">
       <button
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
       >
         <PlusCircle class="mr-2" />
         Add New Appointment
       </button>
-    </Router-Link>
-    <p class="text-xl">Your upcoming appointments</p>
+    </RouterLink>
+    <div class="flex w-full justify-between">
+      <p class="text-xl">Your upcoming appointments</p>
+      <RouterLink
+        to="/client/appointments"
+        class="text-primary-orange group flex items-center text-lg sm:text-base"
+      >
+        All appointments
+        <ChevronRight
+          class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
+          stroke-width="1"
+        />
+      </RouterLink>
+    </div>
+
     <div
       v-if="upcomingAppointments && upcomingAppointments.length > 0"
       class="flex flex-col gap-3"
@@ -56,7 +69,7 @@ import {
 } from '@/graphql/appointment.query'
 import type { Appointment } from '@/interfaces/appointment.user.interface'
 import { useLazyQuery, useQuery } from '@vue/apollo-composable'
-import { PlusCircle } from 'lucide-vue-next'
+import { ChevronRight, PlusCircle } from 'lucide-vue-next'
 import { type ComputedRef, watchEffect } from 'vue'
 import { computed } from 'vue'
 
