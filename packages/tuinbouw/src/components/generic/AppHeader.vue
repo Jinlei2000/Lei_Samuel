@@ -18,7 +18,7 @@
         >
           <div
             v-if="checkPath()"
-            class="flex w-full items-center justify-between lg:w-auto lg:justify-center lg:gap-12"
+            class="flex w-full items-center justify-end md:gap-6 lg:w-auto lg:justify-center lg:gap-12"
           >
             <li>
               <RouterLink
