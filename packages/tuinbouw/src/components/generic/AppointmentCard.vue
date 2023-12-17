@@ -109,8 +109,11 @@
         Cancel
       </button>
       <button
-        class="bg-primary-green flex h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
-        :class="appointmentIsDone ? 'bg-primary-orange' : 'bg-primary-green'"
+        class="bg-primary-green h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        :class="[
+          appointmentIsDone ? 'bg-primary-orange' : 'bg-primary-green',
+          variant === 'simple' ? 'hidden' : 'flex',
+        ]"
         @click="handleAppointmentUpdate()"
       >
         {{ appointmentIsDone ? 'Unfinish' : 'Finish'
