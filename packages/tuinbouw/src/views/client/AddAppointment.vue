@@ -6,11 +6,11 @@
     </div>
     <!-- Form -->
     <form
-      class="grid grid-cols-3 grid-rows-2 gap-3"
+      class="grid grid-rows-2 gap-3 md:grid-cols-2 lg:grid-cols-3"
       @submit.prevent="handleCreateAppointment"
     >
       <!-- Locations & Recent Appointments -->
-      <div class="col-span-1 row-span-2 flex flex-col gap-12">
+      <div class="col-span-1 row-span-2 flex flex-col gap-3">
         <!-- Locations -->
         <div>
           <!-- Skeleton Loader -->
@@ -58,7 +58,16 @@
 
         <!-- Recent Appointments -->
         <div>
-          <h2 class="mb-3 text-xl opacity-80">Recent appointments</h2>
+          <button
+            class="flex w-full items-center justify-between"
+            type="button"
+            @click="handleCollapsible()"
+          >
+            <h2 class="text-xl opacity-80">Recent appointments</h2>
+            <ChevronDown
+              :class="showAppointments ? 'transform rotate-180' : ''"
+            />
+          </button>
 
           <!-- Skeleton Loader -->
           <div
@@ -70,8 +79,12 @@
 
           <!-- Appointments (top 5) -->
           <div
-            v-if="recentAppointments && recentAppointments.length > 0"
-            class="flex flex-col gap-3"
+            v-if="
+              recentAppointments &&
+              recentAppointments.length > 0 &&
+              showAppointments
+            "
+            class="mt-3 flex flex-col gap-3"
           >
             <AppointmentCard
               v-for="(item, index) in recentAppointments"
@@ -92,7 +105,7 @@
       </div>
       <!-- Extra info -->
       <div
-        class="col-span-2 flex min-h-[300px] flex-col gap-6 rounded-2xl bg-gray-200 px-3 pb-3 pt-6"
+        class="col-span-1 flex min-h-[300px] flex-col gap-6 rounded-2xl bg-gray-200 px-3 pb-3 pt-6 lg:col-span-2"
       >
         <!-- Type -->
         <div class="flex flex-col gap-3">
@@ -212,7 +225,12 @@ import { appointmentCreateValidationSchema } from '@/validation/schema'
 import { useQuery } from '@vue/apollo-composable'
 import { useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { Calendar as CalendarIcon, Check, Loader2 } from 'lucide-vue-next'
+import {
+  Calendar as CalendarIcon,
+  Check,
+  ChevronDown,
+  Loader2,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
@@ -226,6 +244,7 @@ const { formatDateTime } = useTimeUtilities()
 const { showToast } = useCustomToast()
 
 // variables
+const showAppointments = ref<boolean>(false)
 const minDate = new Date()
 const locations: ComputedRef<Location[]> = computed(() => {
   return locationsResult.value?.locationsByUserId || []
@@ -320,6 +339,20 @@ const handleCreateAppointment = async (): Promise<void> => {
     showToast('error', 'Error', "Couldn't create appointment")
   } finally {
     loading.value.createAppointment = false
+  }
+}
+
+// Check if website is being viewed on mobile (responsiveness)
+const isMobile = () => {
+  if (window.innerWidth <= 768) {
+    return true
+  }
+  return false
+}
+
+const handleCollapsible = () => {
+  if (isMobile()) {
+    showAppointments.value = !showAppointments.value
   }
 }
 
