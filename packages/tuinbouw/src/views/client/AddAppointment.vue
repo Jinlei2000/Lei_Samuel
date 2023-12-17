@@ -1,7 +1,7 @@
 <template>
   <main class="m-auto max-w-7xl">
     <!-- Title -->
-    <div class="mb-3 mt-12 flex items-center gap-4">
+    <div class="mb-3 mt-6 flex items-center gap-4 md:mt-12">
       <h1 class="text-2xl">Create a new appointment</h1>
     </div>
     <!-- Form -->
@@ -57,7 +57,7 @@
         </div>
 
         <!-- Recent Appointments -->
-        <div>
+        <div class="hidden md:block">
           <button
             class="flex w-full items-center justify-between"
             type="button"
@@ -204,6 +204,52 @@
             :disabled="locations.length === 0"
             name="Create Appointment"
           />
+        </div>
+      </div>
+      <div class="block md:hidden">
+        <button
+          class="flex w-full items-center justify-between"
+          type="button"
+          @click="handleCollapsible()"
+        >
+          <h2 class="text-xl opacity-80">Recent appointments</h2>
+          <ChevronDown
+            :class="showAppointments ? 'transform rotate-180' : ''"
+          />
+        </button>
+
+        <!-- Skeleton Loader -->
+        <div
+          v-if="loading.recentAppointments"
+          class="flex w-full flex-col items-center gap-3 rounded-2xl bg-gray-200 p-3"
+        >
+          <Loader2 class="text-primary-green h-32 animate-spin" />
+        </div>
+
+        <!-- Appointments (top 5) -->
+        <div
+          v-if="
+            (recentAppointments &&
+              recentAppointments.length > 0 &&
+              showAppointments) ||
+            !isMobile()
+          "
+          class="mt-3 flex flex-col gap-3"
+        >
+          <AppointmentCard
+            v-for="(item, index) in recentAppointments"
+            :key="index"
+            :appointment="item"
+            :nav="false"
+          />
+        </div>
+
+        <!-- No Appointments -->
+        <div
+          v-if="recentAppointments.length === 0"
+          class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
+        >
+          <p class="text-gray-500">No recent appointments</p>
         </div>
       </div>
     </form>
