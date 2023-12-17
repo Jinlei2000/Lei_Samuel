@@ -74,6 +74,25 @@ export class AppointmentsResolver {
     )
   }
 
+  @AllowedRoles(Role.CLIENT)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Appointment], { name: 'appointmentsUpcomingByUserId' })
+  findAllUpcomingByUserId(
+    @Args('userId', { type: () => String }) userId: string,
+    @Args('amount', { type: () => Int }) amount: number,
+    @Args('filters', { type: () => [String], nullable: true })
+    filters?: Array<string>,
+    @Args('order', { type: () => OrderByInput, nullable: true })
+    order?: OrderByInput,
+  ) {
+    return this.appointmentsService.findAllUpcomingByUserId(
+      userId,
+      amount,
+      filters,
+      order,
+    )
+  }
+
   @UseGuards(FirebaseGuard)
   @Query(() => Appointment, { name: 'appointment' })
   findOne(@Args('id', { type: () => String }) id: string) {

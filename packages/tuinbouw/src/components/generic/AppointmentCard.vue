@@ -21,7 +21,10 @@
     <div
       class="grid grid-flow-col gap-3 md:grid-flow-row md:grid-cols-2 md:items-start"
     >
-      <p class="overflow-hidden text-base">
+      <p
+        class="overflow-hidden text-base"
+        :class="variant == 'simple' ? 'col-span-2' : ''"
+      >
         {{ appointment.description }}
       </p>
       <button
@@ -37,6 +40,7 @@
     <button
       class="absolute right-3 top-3 transition-all hover:scale-105"
       @click="toggleModal()"
+      @click.stop
     >
       <Info class="h-[24px] w-[24px]" />
     </button>
@@ -105,8 +109,11 @@
         Cancel
       </button>
       <button
-        class="bg-primary-green flex h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
-        :class="appointmentIsDone ? 'bg-primary-orange' : 'bg-primary-green'"
+        class="bg-primary-green h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        :class="[
+          appointmentIsDone ? 'bg-primary-orange' : 'bg-primary-green',
+          variant === 'simple' ? 'hidden' : 'flex',
+        ]"
         @click="handleAppointmentUpdate()"
       >
         {{ appointmentIsDone ? 'Unfinish' : 'Finish'
@@ -138,6 +145,10 @@ const props = defineProps({
   nav: {
     type: Boolean,
     default: true,
+  },
+  variant: {
+    type: String,
+    default: 'default',
   },
 })
 

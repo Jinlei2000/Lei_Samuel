@@ -86,6 +86,29 @@ export class AppointmentsService {
     })
   }
 
+  async findAllUpcomingByUserId(
+    userId: string,
+    amount?: number,
+    filters?: Array<string>,
+    order?: OrderByInput,
+  ): Promise<Appointment[]> {
+    // filter and order appointments
+    const whereQuery = filterAppointments(filters)
+    const orderQuery = orderAppointments(order)
+
+    return this.appointmentRepository.find({
+      where: {
+        ...whereQuery,
+        // @ts-ignore
+        'user.id': new ObjectId(userId),
+        // @ts-ignore
+        endProposedDate: { $gte: resetTime(new Date()) },
+      },
+      order: orderQuery,
+      take: amount,
+    })
+  }
+
   // find all appointments by date (between startProposedDate and endProposedDate)
   // not done & final date is passed (now) or null
   async findAllAvailableByDate(date: Date): Promise<Appointment[]> {

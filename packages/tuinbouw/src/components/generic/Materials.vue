@@ -133,7 +133,7 @@
       <p>{{ selectedMaterial?.serialNumber }}</p>
       <p>{{ selectedMaterial?.name }}</p>
       <!-- Buttons -->
-      <div v-if="props.showAllOverview" class="flex justify-between">
+      <div v-if="props.showAllOverview" class="mt-3 flex justify-between">
         <!-- Delete -->
         <CustomButton
           name="Delete"
