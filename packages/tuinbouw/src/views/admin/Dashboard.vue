@@ -57,6 +57,7 @@ import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
+import { useQuery } from '@vue/apollo-composable'
 import { ref } from 'vue'
 
 export default {
@@ -100,6 +101,15 @@ export default {
       setLocale(target.value)
       console.log(target.value)
     }
+
+    // // GraphQL
+    // const {
+    //   result: schedules,
+    //   error: schedulesError,
+    //   loading: schedulesLoading,
+    // } = useQuery(GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID, variables, {
+    //   fetchPolicy: 'cache-and-network',
+    // })
 
     return {
       userCredentials,

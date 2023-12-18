@@ -45,6 +45,14 @@ export class SchedulesResolver {
     return this.schedulesService.findOne(id)
   }
 
+  // Get all schedules for certain date
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Schedule], { name: 'schedulesByDate' })
+  findSchedulesByDate(@Args('date', { type: () => String }) date: string) {
+    return this.schedulesService.findSchedulesByDate(date)
+  }
+
   // Get schedule for today by employeeId
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)

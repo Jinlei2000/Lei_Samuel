@@ -94,6 +94,40 @@ export const GET_SCHEDULE_BY_ID = gql`
   }
 `
 
+export const GET_SCHEDULES_BY_DATE = gql`
+  query schedulesByDate($date: String!) {
+    schedulesByDate(date: $date) {
+      id
+      appointments {
+        id
+        user {
+          fullname
+        }
+        location {
+          id
+          address
+          lat
+          lng
+          userId
+        }
+        price
+        type
+        finalDate
+        isDone
+        description
+        priority
+      }
+      materials {
+        name
+      }
+      employees {
+        id
+        fullname
+      }
+    }
+  }
+`
+
 export const GET_SCHEDULE_BY_USER_AND_DATE = gql`
   query scheduleByDateAndUserId($date: String!, $userId: String!) {
     scheduleByDateAndUserId(date: $date, userId: $userId) {
