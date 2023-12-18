@@ -21,7 +21,7 @@
           to="/auth/login"
           class="bg-primary-orange hidden w-fit rounded-lg px-4 py-2 text-white md:block"
         >
-          {{ $t('home.start') }}
+          {{ $t('home.button.start') }}
         </router-link>
       </div>
     </main>
