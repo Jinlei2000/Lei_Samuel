@@ -97,7 +97,7 @@ async function generateTranslations(auth) {
   for (const locale in SUPPORTED_LOCALES) {
     const res = await sheets.spreadsheets.values.get({
       spreadsheetId: '1TDmenAQpN4M8_zz083mAqjlszCk1l8GZrke2SpCWKnM',
-      range: locale,
+      range: 'languages',
     })
     const rows = res.data.values
     console.log(rows)
@@ -108,8 +108,13 @@ async function generateTranslations(auth) {
     }
 
     const translations = { [locale]: {} }
+    const localeIndex = {
+      en: 2,
+      nl: 3,
+      fr: 4,
+    }
     for (const row of rows) {
-      translations[locale][row[0]] = row[2]
+      translations[locale][row[0]] = row[localeIndex[locale]]
     }
 
     await fs.writeFile(
