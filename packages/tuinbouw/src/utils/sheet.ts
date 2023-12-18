@@ -55,6 +55,7 @@ async function saveCredentials(client) {
  */
 async function authorize() {
   let client = await loadSavedCredentialsIfExist()
+  console.log("xxx",client)
   if (client) {
     return client
   }

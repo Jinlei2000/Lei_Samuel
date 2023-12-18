@@ -10,7 +10,9 @@
           >
             Welcome back!
           </h1>
-          <span v-if="errorLogin" class="text-red-600">{{ errorLogin }}</span>
+          <span v-if="errorLogin" class="text-red-600">
+            {{ $t(errorLogin) }}
+          </span>
           <DynamicForm
             :schema="formLogin"
             :validation-schema="loginValidationSchema"
@@ -50,6 +52,7 @@ import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
 import { loginValidationSchema } from '@/validation/schema'
+import type { AuthError, ErrorFn } from 'firebase/auth'
 import LogRocket from 'logrocket'
 import { type GenericObject } from 'vee-validate'
 import { ref } from 'vue'
@@ -88,7 +91,7 @@ const formLogin = {
   },
 }
 
-const handleLogin = async (values: GenericObject) => {
+const handleLogin = async (values: GenericObject): Promise<void> => {
   loading.value = true
   try {
     await login(values.email, values.password)
@@ -99,9 +102,9 @@ const handleLogin = async (values: GenericObject) => {
 
     await setLocale(customUser.value!.locale!)
   } catch (error) {
-    console.log(error)
+    // console.log(error.code)
     LogRocket.captureException(error as Error)
-    errorLogin.value = (error as Error).message
+    errorLogin.value = (error as AuthError).code
   }
   loading.value = false
 }
