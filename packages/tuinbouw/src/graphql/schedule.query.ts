@@ -122,6 +122,7 @@ export const GET_SCHEDULES_BY_DATE = gql`
       }
       employees {
         id
+        firstname
         fullname
       }
     }

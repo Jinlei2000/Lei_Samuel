@@ -1,124 +1,95 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center">
-    <div class="text-center">
-      <h1
-        class="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl"
-      >
-        Dashboard
-      </h1>
-      <p class="mt-2 text-xl text-gray-600 dark:text-gray-400">
-        You are logged in as
-        <span class="font-semibold">{{ userCredentials.email }}</span>
-      </p>
-      <button
-        class="focus:shadow-outline-red my-4 block rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
-        @click="handleLogout"
-      >
-        logout
-      </button>
+  <div class="m-auto mt-12 flex max-w-xl flex-col gap-3 md:mt-24">
+    <h1 class="text-xl">
+      {{ $t('account.welcome') }} {{ customUser!.firstname }}
+    </h1>
 
-      <p class="text-lg">
-        {{ $t('account.welcome') }}
-      </p>
-
-      <label class="block" for="language">Select Language</label>
-      <select
-        id="language"
-        v-model="locale"
-        class="mb-3 block"
-        name="language"
-        @change="setLanguage"
+    <div
+      v-if="todaysSchedules && todaysSchedules.length > 0"
+      class="flex flex-col gap-3"
+    >
+      <div
+        v-for="(schedule, index) in todaysSchedules"
+        :key="index"
+        class="relative flex w-full items-center justify-between rounded-2xl bg-gray-200 p-1 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
       >
-        <option
-          v-for="(value, key) in SUPPORTED_LOCALES"
-          :key="key"
-          :value="key"
-          @change="setLanguage"
+        <ul class="flex -space-x-6 transition-all hover:space-x-1">
+          <li
+            v-for="employee in schedule.employees"
+            :key="employee.id"
+            class="flex items-center"
+          >
+            <div class="group relative">
+              <Avatar
+                class="h-8 w-8 overflow-hidden rounded-full border-2 text-sm"
+                :user="employee"
+              />
+              <p
+                class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-lg border border-black border-opacity-60 bg-white bg-opacity-70 px-3 capitalize opacity-0 transition-all group-hover:opacity-100"
+              >
+                {{ employee.firstname }}
+              </p>
+            </div>
+          </li>
+        </ul>
+        <div
+          class="bg-primary-green flex h-9 w-9 items-center justify-center rounded-xl"
         >
-          {{ value }}
-        </option>
-      </select>
-
-      <!-- make a list of buttons go to the right page -->
-      <Router-link
-        v-for="b in listButtons"
-        :key="b"
-        class="focus:shadow-outline-red mt-4 rounded-lg border border-transparent bg-red-600 px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none active:bg-red-600"
-        :to="`/admin/${b.toLowerCase()}`"
-        >{{ b }}</Router-link
-      >
+          <p class="text-white">
+            {{ schedule.appointments.length }}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
+import Avatar from '@/components/generic/Avatar.vue'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
+import useTimeUtilities from '@/composables/useTimeUtilities'
+import { GET_SCHEDULES_BY_DATE } from '@/graphql/schedule.query'
+import type { Schedule } from '@/interfaces/schedule.interface'
 import router from '@/router'
 import { useQuery } from '@vue/apollo-composable'
 import { ref } from 'vue'
+import { watchEffect } from 'vue'
+import { type ComputedRef } from 'vue'
+import { computed } from 'vue'
 
-export default {
-  setup() {
-    const listButtons = ref([
-      'Appointments',
-      'Users',
-      'Profile',
-      'Schedules',
-      'Materials',
-      'Add-Schedule',
-      'Absences',
-    ])
-    const { firebaseUser, logout } = useFirebase()
-    const { setLocale, locale } = useLanguage()
-    const { customUser } = useCustomUser()
+const listButtons = ref([
+  'Appointments',
+  'Users',
+  'Profile',
+  'Schedules',
+  'Materials',
+  'Add-Schedule',
+  'Absences',
+])
+const { firebaseUser, logout } = useFirebase()
+const { setLocale, locale } = useLanguage()
+const { customUser } = useCustomUser()
+const { formatDateTime } = useTimeUtilities()
 
-    const handleLogout = async () => {
-      await logout()
-      customUser.value = null
-      // go to login page
-      router.replace('/auth/login')
-      console.log('logout')
-    }
+const todaysSchedules: ComputedRef<Schedule[]> = computed(() => {
+  return schedulesResult.value?.schedulesByDate || []
+})
 
-    const userCredentials = ref<{ email: string | null }>({
-      email: '',
-    })
+// Create brearer token
+firebaseUser.value?.getIdToken().then(token => {
+  console.log(`{"Authorization": "Bearer ${token}"}`)
+})
 
-    if (firebaseUser.value) {
-      userCredentials.value.email = firebaseUser.value.email
-    }
-
-    // Create brearer token
-    firebaseUser.value?.getIdToken().then(token => {
-      console.log(`{"Authorization": "Bearer ${token}"}`)
-    })
-
-    const setLanguage = (e: Event) => {
-      const target = e.target as HTMLSelectElement
-      setLocale(target.value)
-      console.log(target.value)
-    }
-
-    // // GraphQL
-    // const {
-    //   result: schedules,
-    //   error: schedulesError,
-    //   loading: schedulesLoading,
-    // } = useQuery(GET_SCHEDULES_FROM_DATE_FOR_DAYS_BY_USER_ID, variables, {
-    //   fetchPolicy: 'cache-and-network',
-    // })
-
-    return {
-      userCredentials,
-      handleLogout,
-      listButtons,
-      setLanguage,
-      SUPPORTED_LOCALES,
-      locale,
-    }
-  },
-}
+// GraphQL
+const {
+  result: schedulesResult,
+  error: schedulesError,
+  loading: schedulesLoading,
+} = useQuery(GET_SCHEDULES_BY_DATE, {
+  date: new Date().toISOString().slice(0, 10),
+  fetchPolicy: 'cache-and-network',
+})
 </script>
