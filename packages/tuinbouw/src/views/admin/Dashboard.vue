@@ -5,6 +5,7 @@
       schedules
     </h1>
 
+    <!-- Todays schedules -->
     <div
       v-if="todaysSchedules && todaysSchedules.length > 0"
       class="flex flex-col gap-3"
@@ -42,6 +43,14 @@
           </p>
         </div>
       </button>
+    </div>
+
+    <!-- No schedules -->
+    <div
+      v-else-if="todaysSchedules.length === 0"
+      class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
+    >
+      <p>No schedules today</p>
     </div>
   </div>
 
