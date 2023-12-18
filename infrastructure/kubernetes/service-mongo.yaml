@@ -1,0 +1,11 @@
+# service-mongo.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: tuinbouw
+spec:
+  ports:
+    - port: 27017
+  selector:
+    app: mongodb

@@ -27,6 +27,8 @@ For our Advanced Fullstack Development class project, we're crafting a comprehen
 
 ### Tools & Deployment
 - [Docker](https://www.docker.com/) for seamless deployment and scalability.
+- [Kubernetes](https://kubernetes.io/) for container orchestration.
+- [Azure](https://azure.microsoft.com/) for kubernetes hosting.
 - [Prettier](https://prettier.io/) for consistent code formatting.
 - [ESLint](https://eslint.org/) for maintaining code integrity.
 - [Lerna](https://lerna.js.org/) for simplified development.
@@ -103,43 +105,124 @@ For our Advanced Fullstack Development class project, we're crafting a comprehen
   </a>
 </p>
 
-
 ## Getting started
 
 ### Environment variables
 
-documentatie over de environment variables
+#### Frontend
 
-#### Logrocket
-
-#### Firebase
-
-#### TomTom
-
-#### Nodemailer
+Go to packages/tuinbouw and add the following environment variables to the `.env` and `.env.production.local` files:
 
 
-### Running the application 
+```env
+# .env
+# Firebase > Project settings > General > Your apps > Firebase SDK snippet > Config
+VITE_apiKey=
+VITE_authDomain=
+VITE_projectId=
+VITE_storageBucket=
+VITE_messagingSenderId=
+VITE_appId=
 
-### Docker Desktop
+VITE_BACKEND_URL=http://localhost:3001/graphql
 
-### Seed firebase authentication data (users)
+# TomTom Developer > Developer portal > My projects > API keys
+VITE_TOMTOM_API_KEY=
 
-### Seed data in the database
+# OpenWeather > My API keys
+VITE_OPENWEATHER_apiKey=
 
+# LogRocket > Create Account 
+VITE_LOGROCKET_ID=
+```
 
+```env
+# .env.production.local
+VITE_apiKey=
+VITE_authDomain=
+VITE_projectId=
+VITE_storageBucket=
+VITE_messagingSenderId=
+VITE_appId=
+
+VITE_BACKEND_URL=http://localhost:3001/graphql
+
+VITE_TOMTOM_API_KEY=
+
+VITE_OPENWEATHER_apiKey=
+
+VITE_LOGROCKET_ID=
+```
+
+#### Backend
+
+Go to packages/backend and add the following environment variables to the `.env` and `.env.production.local` files:
+
+```env
+# .env
+# Path to the firebase service account key file
+GOOGLE_APPLICATION_CREDENTIALS= 
+
+# Add email and password for the email account that will be used to send emails
+MAIL_USER=
+MAIL_PASSWORD=
+MAIL_FROM=noreply@noreply.com
+
+URL_FRONTEND=http://localhost:8081 #CORS origin External port of the Tuinbouw service
+DB_HOST=localhost
+DB_PORT=27027
+DB_NAME=api
+
+# Firebase > Project settings > General > Your apps > Firebase SDK snippet > Config
+FIREBASE_STORAGE_BUCKET=
+
+NODE_ENV=development
+```
+
+```env
+# .env.production.local
+
+MAIL_USER=
+MAIL_PASSWORD=
+MAIL_FROM=
+
+URL_FRONTEND=http://localhost:8081 #CORS origin External port of the Tuinbouw service
+DB_HOST=mongodb
+DB_PORT=27017
+DB_NAME=api
+
+NODE_ENV=production
+
+FIREBASE_STORAGE_BUCKET=
+
+CLI_PATH=./packages/api/dist/cli.js
+```	
+
+### Running the application locally with Docker
+
+Open your docker desktop and run the following command in the root folder of the project:
+
+```bash
+docker-compose up --build
+```
+
+### Running the application in Azure Kubernetes Service
+
+Here more information about how to deploy the application in Azure Kubernetes Service.
+
+[Link](doc\kubernetes.md)
+
+### Seed the database
+
+Here more information about how to seed the database.
+
+[Link](doc\seed.md)
 
 ## Testing
 
-### Backend
+Here more information about how to test the application.
 
-#### Unit tests (Jest)
-
-#### E2E tests (Supertest)
-
-### Frontend
-
-#### E2E tests (Playwright)
+[Link](doc\tests.md)
 
 
 

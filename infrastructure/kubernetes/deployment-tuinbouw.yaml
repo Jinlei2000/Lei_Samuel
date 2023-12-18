@@ -1,0 +1,24 @@
+# deployment-tuinbouw.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tuinbouw
+  namespace: tuinbouw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tuinbouw
+  template:
+    metadata:
+      labels:
+        app: tuinbouw
+    spec:
+      containers:
+        - name: tuinbouw
+          image: jinlei2000/api-tuinbouw-production-tuinbouw
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: tuinbouw-configmap
