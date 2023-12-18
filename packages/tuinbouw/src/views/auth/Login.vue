@@ -8,11 +8,9 @@
           <h1
             class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
-            Welcome back!
+            {{ $t('auth.login.title') }}
           </h1>
-          <span v-if="errorLogin" class="text-red-600">
-            {{ $t(errorLogin) }}
-          </span>
+          <CustomError v-if="errorLogin" :error="errorLogin" />
           <DynamicForm
             :schema="formLogin"
             :validation-schema="loginValidationSchema"
@@ -25,17 +23,17 @@
                 to="/auth/forgot-password"
                 class="text-primary-600 text-sm font-medium underline hover:underline"
               >
-                Forgot password?
+                {{ $t('auth.login.forgotPassword') }}
               </RouterLink>
             </div>
             <div class="my-3 border-t border-gray-300" />
             <p class="text-sm font-light text-gray-500">
-              Don’t have an account yet?
+              {{ $t('auth.login.register.text') }}
               <RouterLink
                 to="/auth/register"
                 class="text-primary-600 font-medium hover:underline"
               >
-                Register
+                {{ $t('auth.login.register.link') }}
               </RouterLink>
             </p>
           </div>
@@ -46,13 +44,14 @@
 </template>
 
 <script setup lang="ts">
+import CustomError from '@/components/generic/CustomError.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
 import router from '@/router'
 import { loginValidationSchema } from '@/validation/schema'
-import type { AuthError, ErrorFn } from 'firebase/auth'
+import { type AuthError } from 'firebase/auth'
 import LogRocket from 'logrocket'
 import { type GenericObject } from 'vee-validate'
 import { ref } from 'vue'
@@ -92,8 +91,8 @@ const formLogin = {
 }
 
 const handleLogin = async (values: GenericObject): Promise<void> => {
-  loading.value = true
   try {
+    loading.value = true
     await login(values.email, values.password)
     // Restore custom user
     await restoreCustomUser()
@@ -102,10 +101,14 @@ const handleLogin = async (values: GenericObject): Promise<void> => {
 
     await setLocale(customUser.value!.locale!)
   } catch (error) {
-    // console.log(error.code)
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    errorLogin.value = (error as AuthError).code
+    // check if error is AuthError
+    if ((error as AuthError)?.code !== undefined) {
+      errorLogin.value = (error as AuthError).code
+    }
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 </script>
