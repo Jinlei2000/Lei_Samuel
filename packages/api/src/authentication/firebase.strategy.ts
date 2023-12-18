@@ -52,7 +52,7 @@ export class FirebaseAuthStrategy extends PassportStrategy(
       } else if (e.code === 'auth/id-token-revoked') {
         this.logger.warn('auth/id-token-revoked')
       }
-
+      console.error(err)
       throw new UnauthorizedException()
     }
   }

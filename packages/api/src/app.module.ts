@@ -63,11 +63,11 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
       },
     }),
 
+    AuthenticationModule,
     UsersModule,
     LocationsModule,
     AppointmentsModule,
     MaterialsModule,
-    AuthenticationModule,
     SeedModule,
     MailModule,
     AbsencesModule,

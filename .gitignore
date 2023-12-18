@@ -7,3 +7,5 @@
 **/configmap-api.yaml
 **/configmap-tuinbouw.yaml
 
+infrastructure/kubernetes/configmap-api.yaml
+infrastructure/kubernetes/configmap-tuinbouw.yaml
