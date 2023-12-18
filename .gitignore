@@ -5,3 +5,5 @@
 **/translations.json
 **/token.json
 
+infrastructure/kubernetes/configmap-api.yaml
+infrastructure/kubernetes/configmap-tuinbouw.yaml
