@@ -52,6 +52,11 @@
     >
       <p>No schedules today</p>
     </div>
+
+    <h2 class="text-xl">Todays absences</h2>
+
+    <!-- Todays absences -->
+    
   </div>
 
   <!-- Detail Modal -->

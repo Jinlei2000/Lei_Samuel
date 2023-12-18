@@ -41,3 +41,22 @@ export const GET_ALL_ABSENCES_BY_USERID = gql`
     }
   }
 `
+
+export const GET_ALL_ABSENCES_BY_DATE = gql`
+  query absencesByDate($date: String!) {
+    absencesByDate(date: $date) {
+      id
+      user {
+        id
+        firstname
+      }
+      description
+      type
+      startDate
+      endDate
+      totalDays
+      createdAt
+      updatedAt
+    }
+  }
+`

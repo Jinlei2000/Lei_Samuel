@@ -50,6 +50,13 @@ export class AbsencesResolver {
     return this.absencesService.findAllByUserId(userId, filters, order)
   }
 
+  @AllowedRoles(Role.ADMIN)
+  @UseGuards(FirebaseGuard, RolesGuard)
+  @Query(() => [Absence], { name: 'absencesByDate' })
+  findAllByDate(@Args('date', { type: () => String }) date: string) {
+    return this.absencesService.findAllByDate(date)
+  }
+
   @AllowedRoles(Role.ADMIN, Role.EMPLOYEE)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => Absence, { name: 'absence' })
