@@ -1,17 +1,19 @@
 <template>
   <div class="m-auto mt-12 flex max-w-xl flex-col gap-3 md:mt-24">
     <h1 class="text-xl">
-      {{ $t('account.welcome') }} {{ customUser!.firstname }}
+      {{ $t('account.welcome') }} {{ customUser!.firstname }}! These are todays
+      schedules
     </h1>
 
     <div
       v-if="todaysSchedules && todaysSchedules.length > 0"
       class="flex flex-col gap-3"
     >
-      <div
+      <button
         v-for="(schedule, index) in todaysSchedules"
         :key="index"
         class="relative flex w-full items-center justify-between rounded-2xl bg-gray-200 p-1 transition-all duration-100 hover:cursor-pointer hover:bg-gray-300"
+        @click="toggleModal(schedule, 'detail')"
       >
         <ul class="flex -space-x-6 transition-all hover:space-x-1">
           <li
@@ -39,9 +41,72 @@
             {{ schedule.appointments.length }}
           </p>
         </div>
-      </div>
+      </button>
     </div>
   </div>
+
+  <!-- Detail Modal -->
+  <Dialog
+    v-model:visible="visible.detail"
+    modal
+    header="Appointment Detail"
+    :draggable="false"
+    :close-on-escape="true"
+    :pt="{
+      root: {
+        class: 'max-w-lg',
+      },
+    }"
+  >
+    <div v-if="selectedSchedule" class="flex flex-col gap-6">
+      <div class="flex flex-col gap-3">
+        <h3 class="text-lg">Appointments:</h3>
+        <ul class="flex flex-col gap-1">
+          <li
+            v-for="appointment in selectedSchedule.appointments"
+            :key="appointment.id"
+            class="flex items-center gap-3"
+          >
+            <p>{{ appointment.location.address }}</p>
+          </li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-3">
+        <h3 class="text-lg">Employees:</h3>
+        <ul class="flex flex-col gap-3">
+          <li
+            v-for="employee in selectedSchedule.employees"
+            :key="employee.id"
+            class="flex items-center gap-3"
+          >
+            <Avatar
+              class="h-8 w-8 overflow-hidden rounded-full text-sm"
+              :user="employee"
+            />
+            <p class="capitalize">{{ employee.fullname }}</p>
+          </li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-3">
+        <div
+          class="flex cursor-pointer justify-between"
+          @click="toggleCollapsible()"
+        >
+          <h3 class="text-lg">Materials:</h3>
+          <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
+        </div>
+        <ul v-if="!collapsed" class="flex flex-col gap-3">
+          <li
+            v-for="material in selectedSchedule.materials"
+            :key="material.id"
+            class="flex items-center gap-3"
+          >
+            <p class="capitalize">{{ material.name }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script lang="ts" setup>
@@ -55,6 +120,7 @@ import { GET_SCHEDULES_BY_DATE } from '@/graphql/schedule.query'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import router from '@/router'
 import { useQuery } from '@vue/apollo-composable'
+import { ChevronDown } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { watchEffect } from 'vue'
 import { type ComputedRef } from 'vue'
@@ -78,10 +144,32 @@ const todaysSchedules: ComputedRef<Schedule[]> = computed(() => {
   return schedulesResult.value?.schedulesByDate || []
 })
 
+const selectedSchedule = ref<Schedule | null>(null)
+const visible = ref<{
+  detail: boolean
+}>({
+  detail: false,
+})
+const collapsed = ref(true)
+
 // Create brearer token
 firebaseUser.value?.getIdToken().then(token => {
   console.log(`{"Authorization": "Bearer ${token}"}`)
 })
+
+const toggleModal = (
+  schedule: Schedule | null = null,
+  type: string = 'close',
+): void => {
+  selectedSchedule.value = schedule ? { ...schedule } : null
+  visible.value = {
+    detail: type === 'detail',
+  }
+}
+
+const toggleCollapsible = () => {
+  collapsed.value = !collapsed.value
+}
 
 // GraphQL
 const {
