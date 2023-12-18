@@ -14,6 +14,7 @@ export const i18nOptions: I18nOptions = {
   legacy: false,
   messages: {},
   missingWarn: false, // Disable missing key warnings
+  fallbackWarn: false, // Disable fallback warnings
 }
 
 export const i18n = createI18n(i18nOptions)
