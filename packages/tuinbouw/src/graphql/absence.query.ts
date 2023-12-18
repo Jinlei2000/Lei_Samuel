@@ -29,6 +29,7 @@ export const GET_ALL_ABSENCES_BY_USERID = gql`
       id
       user {
         id
+        fullname
         firstname
       }
       description
@@ -48,6 +49,7 @@ export const GET_ALL_ABSENCES_BY_DATE = gql`
       id
       user {
         id
+        fullname
         firstname
       }
       description

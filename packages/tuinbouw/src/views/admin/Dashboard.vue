@@ -56,7 +56,45 @@
     <h2 class="text-xl">Todays absences</h2>
 
     <!-- Todays absences -->
-    
+    <div
+      v-if="todaysAbsences && todaysAbsences.length > 0"
+      class="flex flex-col gap-3"
+    >
+      <div
+        v-for="(absence, index) in todaysAbsences"
+        :key="index"
+        class="flex items-center justify-between rounded-2xl bg-gray-200 p-2 px-3 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <Avatar
+            class="h-10 w-10 overflow-hidden rounded-full border-2 text-sm"
+            :user="absence.user"
+          />
+          <p class="capitalize">
+            {{ absence.user.fullname }}
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <!-- days left -->
+          <p>
+            {{
+              (
+                Math.abs(
+                  new Date(absence.endDate).getTime() - new Date().getTime(),
+                ) /
+                (1000 * 3600 * 24)
+              ).toFixed(0)
+            }}
+            day(s) left
+          </p>
+          <p
+            class="bg-primary-orange rounded-full px-3 py-1 capitalize text-white"
+          >
+            {{ absence.type }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Detail Modal -->
@@ -130,7 +168,9 @@ import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
 import useTimeUtilities from '@/composables/useTimeUtilities'
+import { GET_ALL_ABSENCES_BY_DATE } from '@/graphql/absence.query'
 import { GET_SCHEDULES_BY_DATE } from '@/graphql/schedule.query'
+import type { Absence } from '@/interfaces/absence.interface'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import router from '@/router'
 import { useQuery } from '@vue/apollo-composable'
@@ -140,22 +180,16 @@ import { watchEffect } from 'vue'
 import { type ComputedRef } from 'vue'
 import { computed } from 'vue'
 
-const listButtons = ref([
-  'Appointments',
-  'Users',
-  'Profile',
-  'Schedules',
-  'Materials',
-  'Add-Schedule',
-  'Absences',
-])
-const { firebaseUser, logout } = useFirebase()
-const { setLocale, locale } = useLanguage()
+const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
 const { formatDateTime } = useTimeUtilities()
 
 const todaysSchedules: ComputedRef<Schedule[]> = computed(() => {
   return schedulesResult.value?.schedulesByDate || []
+})
+
+const todaysAbsences: ComputedRef<Absence[]> = computed(() => {
+  return absencesResult.value?.absencesByDate || []
 })
 
 const selectedSchedule = ref<Schedule | null>(null)
@@ -193,5 +227,19 @@ const {
 } = useQuery(GET_SCHEDULES_BY_DATE, {
   date: new Date().toISOString().slice(0, 10),
   fetchPolicy: 'cache-and-network',
+})
+
+const {
+  result: absencesResult,
+  error: absencesError,
+  loading: absencesLoading,
+} = useQuery(GET_ALL_ABSENCES_BY_DATE, {
+  date: new Date().toISOString().slice(0, 10),
+  fetchPolicy: 'cache-and-network',
+})
+
+watchEffect(() => {
+  console.log('schedules', schedulesResult.value?.schedulesByDate)
+  console.log('absences', absencesResult.value?.absencesByDate)
 })
 </script>
