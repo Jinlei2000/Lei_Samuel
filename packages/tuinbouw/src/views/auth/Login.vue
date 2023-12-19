@@ -70,13 +70,13 @@ const loading = ref(false)
 const formLogin = {
   fields: [
     {
-      label: 'Email',
+      label: 'auth.login.form.email',
       name: 'email',
       placeholder: 'john@gmail.com',
       as: 'input',
     },
     {
-      label: 'Password',
+      label: 'auth.login.form.password',
       name: 'password',
       placeholder: '••••••••',
       as: 'input',
@@ -86,7 +86,7 @@ const formLogin = {
 
   button: {
     class: 'w-full flex justify-center',
-    name: 'Login',
+    name: 'auth.login.form.submit',
   },
 }
 

@@ -100,7 +100,7 @@ async function generateTranslations(auth) {
       range: 'languages',
     })
     const rows = res.data.values
-    console.log(rows)
+    // console.log(rows)
 
     if (!rows || rows.length === 0) {
       console.log('No data found.')
@@ -122,6 +122,7 @@ async function generateTranslations(auth) {
       JSON.stringify(translations),
     )
   }
+  console.log('Translations generated 😋')
 }
 
 authorize().then(generateTranslations).catch(console.error)
