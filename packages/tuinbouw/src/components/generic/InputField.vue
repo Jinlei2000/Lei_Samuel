@@ -2,9 +2,11 @@
   <div class="flex w-full flex-col">
     <div class="mb-2 flex items-center gap-3">
       <label class="block text-sm font-medium text-gray-900" :for="id">
-        {{ label }}
+        {{ $t(label) }}
       </label>
-      <span v-if="error" class="block text-sm text-red-500">{{ error }}</span>
+      <span v-if="error" class="block text-sm text-red-500">{{
+        $t(error)
+      }}</span>
     </div>
     <input
       :id="id"
