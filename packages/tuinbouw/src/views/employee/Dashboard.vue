@@ -281,7 +281,7 @@ const getWeekForecast = async (lon: string, lat: string) => {
   await getForecastForWeek(lon, lat).then(data => {
     forecast.value = data
   })
-  console.log(forecast.value)
+  // console.log(forecast.value)
 }
 
 const getWeatherIconUrl = (icon: string) => {
