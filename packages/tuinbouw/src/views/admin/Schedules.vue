@@ -115,7 +115,7 @@
       </h2>
       <div class="flex flex-col gap-3">
         <h3 class="text-lg">Appointments</h3>
-        <ul class="flex flex-col gap-1">
+        <ul class="flex flex-col gap-3">
           <li
             v-for="appointment in selectedSchedule.appointments"
             :key="appointment.id"
@@ -138,7 +138,15 @@
                 <h4 class="text-lg capitalize">
                   {{ appointment.user.fullname }}
                 </h4>
-                <p class="">{{ appointment.description }}</p>
+                <p class="line-clamp-2">
+                  {{ appointment.description }}Nostrud veniam adipisicing
+                  pariatur reprehenderit. Sint aliqua ea incididunt sint
+                  exercitation. Nisi esse ad irure in ad aliqua sint laboris ad
+                  proident duis nostrud. Fugiat irure sint tempor magna ut
+                  nostrud ad duis officia aliqua laborum. Magna adipisicing
+                  dolore proident veniam Lorem consectetur sunt eiusmod sint
+                  reprehenderit.
+                </p>
               </div>
               <p class="text-xs text-gray-900">
                 {{ appointment.location.address }}
