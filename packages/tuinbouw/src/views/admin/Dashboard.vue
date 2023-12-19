@@ -130,7 +130,7 @@
     </div>
   </div>
 
-  <!-- Detail Modal -->
+  <!-- Absence Detail Modal -->
   <Dialog
     v-model:visible="visible.detail"
     modal
@@ -145,14 +145,42 @@
   >
     <div v-if="selectedSchedule" class="flex flex-col gap-6">
       <div class="flex flex-col gap-3">
-        <h3 class="text-lg">Appointments:</h3>
-        <ul class="flex flex-col gap-1">
+        <h3 class="text-lg">Appointments</h3>
+        <ul class="flex flex-col gap-3">
           <li
             v-for="appointment in selectedSchedule.appointments"
             :key="appointment.id"
-            class="flex items-center gap-3"
+            class="relative flex h-28 gap-3 overflow-hidden rounded-lg bg-gray-200"
           >
-            <p>{{ appointment.location.address }}</p>
+            <div
+              class="absolute left-0 top-0 h-full w-1"
+              :class="
+                appointment?.type === 'maintenance'
+                  ? 'bg-primary-green'
+                  : appointment?.type === 'repair'
+                    ? 'bg-primary-orange'
+                    : appointment?.type === 'inspection'
+                      ? 'bg-primary-blue'
+                      : 'bg-transparent'
+              "
+            ></div>
+            <div class="flex h-full w-2/3 flex-col justify-between p-3">
+              <div>
+                <h4 class="text-lg capitalize">
+                  {{ appointment.user.fullname }}
+                </h4>
+                <p class="truncate">{{ appointment.description }}</p>
+              </div>
+
+              <p class="text-xs text-gray-900">
+                {{ appointment.location.address }}
+              </p>
+            </div>
+            <div
+              class="h-auto w-1/3 overflow-auto rounded-3xl rounded-t-none rounded-bl-none"
+            >
+              <Map class="h-full w-full" :locations="[appointment.location]" />
+            </div>
           </li>
         </ul>
       </div>
@@ -197,6 +225,7 @@
 <script lang="ts" setup>
 import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import Avatar from '@/components/generic/Avatar.vue'
+import Map from '@/components/Map.vue'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import useLanguage from '@/composables/useLanguage'
