@@ -322,7 +322,7 @@
         </div>
 
         <div
-          class="m-auto flex w-1/3 flex-col gap-3 rounded-2xl bg-gray-200 p-6"
+          class="m-auto flex w-full flex-col gap-3 rounded-2xl bg-gray-200 p-6 sm:w-2/3 md:w-1/2 lg:w-1/3"
         >
           <div class="flex gap-3">
             <CalendarIcon />
