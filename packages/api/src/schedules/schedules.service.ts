@@ -42,6 +42,17 @@ export class SchedulesService {
     })
   }
 
+  // find all schedules for certain date
+  async findSchedulesByDate(date: string): Promise<Schedule[]> {
+    const schedules = await this.scheduleRepository.find({
+      where: {
+        finalDate: new Date(date),
+      },
+    })
+
+    return schedules
+  }
+
   // find all scheduled employees on a specific date (return uids)
   async findAllScheduledUsersByDate(date: Date): Promise<string[]> {
     const schedules = await this.scheduleRepository.find({
