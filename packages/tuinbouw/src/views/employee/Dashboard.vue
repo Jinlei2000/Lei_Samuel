@@ -7,7 +7,9 @@
     >
       <!-- Next Appointment & Schedule -->
       <section class="col-span-1 col-start-1 mb-6 sm:mb-0">
-        <h2 class="mb-3 text-2xl">Next Appointment</h2>
+        <h2 class="mb-3 text-2xl">
+          {{ $t('dashboard.employee.title.next.appointment') }}
+        </h2>
         <!-- Next Appointment -->
         <div class="flex flex-col">
           <!-- Next Appointment -->
@@ -27,18 +29,22 @@
             v-else
             class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
           >
-            <p class="text-gray-500">No appointments for today</p>
+            <p class="text-gray-500">
+              {{ $t('dashboard.employee.no.appointments.today') }}
+            </p>
           </div>
         </div>
 
         <!-- Header Schedule -->
         <div class="mb-3 mt-6 flex items-center justify-between">
-          <h2 class="text-2xl">Schedule</h2>
+          <h2 class="text-2xl">
+            {{ $t('dashboard.employee.title.schedule') }}
+          </h2>
           <RouterLink
             :to="`/employee/calendar`"
             class="text-primary-orange group flex items-center text-lg sm:text-base"
           >
-            Calendar
+            {{ $t('dashboard.employee.button.calender') }}
             <ChevronRight
               class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
               stroke-width="1"
@@ -58,7 +64,7 @@
               @click="prevDay"
             />
           </button>
-          <p>{{ dateDisplay }}</p>
+          <p>{{ $t(dateDisplay) }}</p>
           <button
             class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
@@ -104,7 +110,9 @@
             v-else
             class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
           >
-            <p class="text-gray-500">No appointments for today</p>
+            <p class="text-gray-500">
+              {{ $t('dashboard.employee.no.appointments.today') }}
+            </p>
           </div>
         </div>
       </section>
@@ -112,8 +120,12 @@
       <section class="col-span-1 hidden md:block lg:col-span-2">
         <!-- Weather -->
         <div class="mb-3">
-          <h2 class="mb-3 hidden text-2xl lg:block">Weather</h2>
-          <h2 class="mb-3 text-2xl lg:hidden">Map</h2>
+          <h2 class="mb-3 hidden text-2xl lg:block">
+            {{ $t('dashboard.employee.title.weather') }}
+          </h2>
+          <h2 class="mb-3 text-2xl lg:hidden">
+            {{ $t('dashboard.employee.title.map') }}
+          </h2>
           <div
             class="min-h-24 hidden items-center justify-center rounded-2xl bg-gray-200 px-5 py-3 lg:flex"
           >
@@ -124,7 +136,7 @@
                 :key="index"
                 class="flex flex-col items-center"
               >
-                <h3>{{ days[new Date(item.dt_txt).getDay()] }}</h3>
+                <h3>{{ $t(days[new Date(item.dt_txt).getDay()]) }}</h3>
                 <img
                   class="h-20 w-20 mix-blend-multiply"
                   :src="getWeatherIconUrl(item.weather[0].icon)"
@@ -151,7 +163,9 @@
           class="mb-3 flex w-full items-center justify-between"
           @click="handleMaterialsCollapsible()"
         >
-          <h2 class="text-2xl">Tools for the day</h2>
+          <h2 class="text-2xl">
+            {{ $t('dashboard.employee.title.tools') }}
+          </h2>
           <ChevronDown
             v-if="isMobile()"
             class="h-8 w-8 transform transition-all"
@@ -166,18 +180,21 @@
             class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
           >
             <CloudRainWind class="absolute right-3 top-3 h-7 w-7" />
-            <h3 class="mb-3 text-xl">Rain expected</h3>
-            <p>Make sure to add rain-gear to your arsenal</p>
+            <h3 class="mb-3 text-xl">
+              {{ $t('dashboard.employee.weather.rain.title') }}
+            </h3>
+            <p>{{ $t('dashboard.employee.weather.rain.text') }}</p>
           </div>
           <div
             v-if="forecast && forecast[0].main.temp < 10"
             class="bg-primary-blue relative mb-3 rounded-2xl p-3 text-white"
           >
             <ThermometerSnowflake class="absolute right-3 top-3 h-7 w-7" />
-            <h3 class="mb-3 text-xl">Cold weather</h3>
+            <h3 class="mb-3 text-xl">
+              {{ $t('dashboard.employee.weather.cold.title') }}
+            </h3>
             <p>
-              Bundle up, rest in warm areas, protect yourself to prevent
-              cold-related harm.
+              {{ $t('dashboard.employee.weather.cold.text') }}
             </p>
           </div>
           <div
@@ -185,8 +202,10 @@
             class="bg-primary-red relative mb-3 rounded-2xl p-3 text-white"
           >
             <Sun class="absolute right-3 top-3 h-7 w-7" />
-            <h3 class="mb-3 text-xl">Hot weather</h3>
-            <p>Don't forget sunscreen and drink enough water</p>
+            <h3 class="mb-3 text-xl">
+              {{ $t('dashboard.employee.weather.hot.title') }}
+            </h3>
+            <p>{{ $t('dashboard.employee.weather.hot.text') }}</p>
           </div>
           <!-- Materials -->
           <div v-if="scheduleData.materials" class="flex flex-col gap-3">
@@ -208,7 +227,9 @@
             v-else
             class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
           >
-            <p class="text-gray-500">No materials for today</p>
+            <p class="text-gray-500">
+              {{ $t('dashboard.employee.no.materials') }}
+            </p>
           </div>
         </div>
       </section>
@@ -244,7 +265,7 @@ const { customUser } = useCustomUser()
 const { showToast } = useCustomToast()
 
 const myDate = ref(new Date())
-const dateDisplay = ref('Today')
+const dateDisplay = ref('dashboard.employee.schedule.today')
 const forecast = ref<any>()
 
 const materialsCollapsed = ref(true)
@@ -260,7 +281,7 @@ const getWeekForecast = async (lon: string, lat: string) => {
   await getForecastForWeek(lon, lat).then(data => {
     forecast.value = data
   })
-  console.log(forecast.value)
+  // console.log(forecast.value)
 }
 
 const getWeatherIconUrl = (icon: string) => {
@@ -329,13 +350,13 @@ const scheduleData = ref({
 })
 
 const days = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
+  'dashboard.employee.schedule.sunday',
+  'dashboard.employee.schedule.monday',
+  'dashboard.employee.schedule.tuesday',
+  'dashboard.employee.schedule.wednesday',
+  'dashboard.employee.schedule.thursday',
+  'dashboard.employee.schedule.friday',
+  'dashboard.employee.schedule.saturday',
 ]
 
 // nextday function
@@ -356,13 +377,13 @@ const prevDay = () => {
 watch(myDate, () => {
   switch (myDate.value.getDate()) {
     case new Date().getDate():
-      dateDisplay.value = 'Today'
+      dateDisplay.value = 'dashboard.employee.schedule.today'
       break
     case new Date().getDate() + 1:
-      dateDisplay.value = 'Tomorrow'
+      dateDisplay.value = 'dashboard.employee.schedule.tomorrow'
       break
     case new Date().getDate() - 1:
-      dateDisplay.value = 'Yesterday'
+      dateDisplay.value = 'dashboard.employee.schedule.yesterday'
       break
     default:
       dateDisplay.value =
@@ -395,7 +416,7 @@ watchEffect(() => {
   if (scheduleError.value) {
     // console.log(scheduleError.value)
     LogRocket.captureException(scheduleError.value)
-    showToast('error', 'Error', "Couldn't load schedule")
+    showToast('error', 'toast.error', 'dashboard.employee.error.schedules')
   }
 })
 </script>
