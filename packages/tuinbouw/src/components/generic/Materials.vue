@@ -141,9 +141,11 @@
 
       <div v-if="showAllOverview">
         <p v-if="selectedMaterial?.user?.id" class="text-primary-orange m-0">
-          Not available
+          {{ $t('material.card.not.available') }}
         </p>
-        <p v-else class="text-primary-green text-base">Available</p>
+        <p v-else class="text-primary-green text-base">
+          {{ $t('material.card.available') }}
+        </p>
       </div>
 
       <!-- Product foto -->
