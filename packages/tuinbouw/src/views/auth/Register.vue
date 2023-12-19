@@ -18,12 +18,12 @@
             :loading="loading"
           />
           <p class="text-sm font-light text-gray-500">
-            {{ $t('auth.register.register.text') }}
+            {{ $t('auth.register.login.text') }}
             <RouterLink
               to="/auth/login"
               class="text-primary-600 font-medium hover:underline"
             >
-              {{ $t('auth.register.register.link') }}
+              {{ $t('auth.register.login.link') }}
             </RouterLink>
           </p>
         </div>
