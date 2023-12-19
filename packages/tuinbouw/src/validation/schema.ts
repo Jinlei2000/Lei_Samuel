@@ -120,10 +120,10 @@ export const materialValidationSchema = yup.object({
 })
 
 export const appointmentCreateValidationSchema = yup.object({
-  startProposedDate: yup.date().required(),
-  endProposedDate: yup.date().required(),
+  startProposedDate: yup.date().required('invalid.start.date.required'),
+  endProposedDate: yup.date().required('invalid.start.date.required'),
   description: yup.string(),
-  type: yup.string().required(),
+  type: yup.string().required('invalid.type.required'),
 })
 
 export const appointmentEditAdminValidationSchema = yup.object({
