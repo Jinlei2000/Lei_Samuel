@@ -351,13 +351,16 @@
       <div class="flex justify-between">
         <!-- Delete Absence -->
         <CustomButton
-          name="Delete"
+          name="profile.form.absence.delete"
           :loading="loadingAbsence.delete"
           variant="warning"
           @click="handleDeleteAbsence(selectedAbsence)"
         />
         <!-- Edit Absence -->
-        <CustomButton name="Edit" @click="isEditingAbsence = true" />
+        <CustomButton
+          name="profile.form.absence.edit"
+          @click="isEditingAbsence = true"
+        />
       </div>
     </div>
     <DynamicForm
@@ -882,7 +885,7 @@ watchEffect(() => {
   if (userError.value) {
     // console.log(userError.value)
     LogRocket.captureException(userError.value)
-    showToast('error', 'Error', "Can't get your data")
+    showToast('error', 'toast.error', 'profile.toast.error.user')
   }
 })
 //#endregion
@@ -1001,13 +1004,13 @@ const handleCreateAbsence = async (values: Absence): Promise<void> => {
         description: values.description,
       },
     })
-    showToast('success', 'Success', 'Absence has been created')
+    showToast('success', 'toast.success', 'profile.toast.create.absence')
     await refetch()
     toggleAbsenceModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't create a absence")
+    showToast('error', 'toast.error', 'profile.toast.error.create.absence')
   } finally {
     loadingAbsence.value.create = false
   }
@@ -1027,13 +1030,13 @@ const handleUpdateAbsence = async (values: Absence): Promise<void> => {
         description: values.description,
       },
     })
-    showToast('success', 'Success', 'Absence has been updated')
+    showToast('success', 'toast.success', 'profile.toast.update.absence')
     await refetch()
     toggleAbsenceModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't update a absence")
+    showToast('error', 'toast.error', 'profile.toast.error.update.absence')
   } finally {
     loadingAbsence.value.update = false
   }
@@ -1046,17 +1049,13 @@ const handleDeleteAbsence = async (absence: Absence): Promise<void> => {
     await deleteAbsence({
       id: absence.id,
     })
-    showToast(
-      'success',
-      'Success',
-      `Absence of ${absence.user.firstname} has been deleted`,
-    )
+    showToast('success', 'toast.success', `profile.toast.delete.absence`)
     await refetch()
     toggleAbsenceModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't delete a absence")
+    showToast('error', 'toast.error', 'profile.toast.error.delete.absence')
   } finally {
     loadingAbsence.value.delete = false
   }
@@ -1103,7 +1102,7 @@ watchEffect(() => {
   if (absencesByUserIdError.value) {
     // console.log(absencesByUserIdError.value)
     LogRocket.captureException(absencesByUserIdError.value)
-    showToast('error', 'Error', "Can't get your absences data")
+    showToast('error', 'toast.error', 'profile.toast.error.absence')
   }
 })
 //#endregion
@@ -1186,7 +1185,7 @@ const handleSearchAddress = async (): Promise<void> => {
     // console.log(error)
     LogRocket.captureException(error as Error)
 
-    showToast('error', 'Error', "Can't search for address")
+    showToast('error', 'toast.error', 'profile.toast.error.search.address')
   } finally {
     loadingLocation.value.searchAddress = false
   }
@@ -1209,14 +1208,14 @@ const handleCreateLocation = async (): Promise<void> => {
           userId: customUser.value?.id,
         },
       })
-      showToast('success', 'Success', `You have created a new location`)
+      showToast('success', 'toast.success', `profile.toast.create.location`)
       refetchUser()
       toggleLocationModal()
     }
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't create a location")
+    showToast('error', 'toast.error', 'profile.toast.error.create.location')
   } finally {
     loadingLocation.value.create = false
   }
@@ -1239,14 +1238,14 @@ const handleUpdateLocation = async (): Promise<void> => {
           lng: valuesLocation.selectedAddress.lng,
         },
       })
-      showToast('success', 'Success', `You have updated a location`)
+      showToast('success', 'toast.success', `profile.toast.update.location`)
       refetchUser()
       toggleLocationModal()
     }
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't update a location")
+    showToast('error', 'toast.error', 'profile.toast.error.update.location')
   } finally {
     loadingLocation.value.update = false
   }
@@ -1260,12 +1259,12 @@ const handleDeleteLocation = async (id: string): Promise<void> => {
       id: id,
     })
     toggleLocationModal() // close modal
-    showToast('success', 'Success', `You have deleted a location`)
+    showToast('success', 'toast.success', `profile.toast.delete.location`)
     refetchUser()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't delete a location")
+    showToast('error', 'toast.error', 'profile.toast.error.delete.location')
   } finally {
     loadingLocation.value.delete = false
   }
