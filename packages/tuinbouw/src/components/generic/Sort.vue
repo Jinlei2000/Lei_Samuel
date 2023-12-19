@@ -3,7 +3,7 @@
     <!-- Display selected field label and sorting icons -->
     <div class="flex flex-row-reverse items-center justify-center gap-1">
       <p class="hidden sm:block">
-        {{ selectedFieldLabel }}
+        {{ $t(selectedFieldLabel) }}
       </p>
       <div>
         <ArrowDownWideNarrow
@@ -25,7 +25,7 @@
         @click="toggleSortDropdown"
       >
         <ListFilter class="m-1 h-5 w-5" />
-        <p class="m-0 text-lg">Sort</p>
+        <p class="m-0 text-lg">{{ $t('sort.button.name') }}</p>
         <ChevronDown
           :class="[
             'h-[22px] w-[22px] transition-all',
@@ -65,7 +65,7 @@
             >
               <Check class="h-3 w-3" />
             </div>
-            <label :for="option.value">{{ option.label }}</label>
+            <label :for="option.value">{{ $t(option.label) }}</label>
           </li>
         </ul>
       </div>
@@ -103,11 +103,17 @@ const props = defineProps({
 // variables
 // show dropdown
 const sort = ref(false)
-const selectedFieldLabel = computed(
-  () =>
-    props.modelValue!.field.charAt(0).toUpperCase() +
-    props.modelValue!.field.slice(1),
-)
+const selectedFieldLabel = computed(() => {
+  let label = ''
+  const value = props.modelValue!.field
+  for (const option of props.options!) {
+    if (option.value === value) {
+      label = option.label
+      break
+    }
+  }
+  return label
+})
 
 // sorting direction
 const isDescending = computed(
@@ -118,18 +124,18 @@ const isAscending = computed(
 )
 
 // toggle the sorting direction
-const toggleSortDirection = () => {
+const toggleSortDirection = (): void => {
   props.modelValue!.direction = isDescending.value
     ? ORDER_DIRECTION.ASC
     : ORDER_DIRECTION.DESC
 }
 
 // logics
-const toggleSortDropdown = () => {
+const toggleSortDropdown = (): void => {
   sort.value = !sort.value
 }
 
-const updateSortField = (field: string) => {
+const updateSortField = (field: string): void => {
   props.modelValue!.field = field
   toggleSortDropdown()
 }
