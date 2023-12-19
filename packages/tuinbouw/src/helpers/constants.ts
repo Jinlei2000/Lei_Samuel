@@ -28,34 +28,37 @@ export const SUPPORTED_LOCALES_TYPES = () => {
 
 export const SORT_OPTIONS_MATERIALS = [
   {
-    label: 'Date Created',
+    label: 'material.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Name',
+    label: 'material.sort.name',
     value: 'name',
   },
 ]
 
 export const FILTER_OPTIONS_MATERIALS = [
   {
-    title: 'Availability',
+    title: 'material.filter.availability',
     name: 'availability',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Available', value: 'A' },
-      { label: 'Not Available', value: 'NA' },
+      { label: 'material.filter.availability.option.all', value: '' },
+      { label: 'material.filter.availability.option.availability', value: 'A' },
+      {
+        label: 'material.filter.availability.option.not.availability',
+        value: 'NA',
+      },
     ],
   },
   {
-    title: 'Loanable',
+    title: 'material.filter.loanable',
     name: 'loanable',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Loanable', value: 'L' },
-      { label: 'Not Loanable', value: 'NL' },
+      { label: 'material.filter.loanable.option.all', value: '' },
+      { label: 'material.filter.loanable.option.loanable', value: 'L' },
+      { label: 'material.filter.loanable.option.not.loanable', value: 'NL' },
     ],
   },
 ]

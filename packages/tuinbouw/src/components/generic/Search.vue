@@ -9,7 +9,7 @@
       :value="modelValue"
       class="h-12 w-full rounded-full bg-gray-200 py-3 pl-11 text-lg"
       type="text"
-      :placeholder="placeholder"
+      :placeholder="$t(placeholder)"
       @input="
         $emit('update:modelValue', ($event.target as HTMLInputElement)?.value)
       "

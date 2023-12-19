@@ -1,7 +1,7 @@
 export default {
   toast: {
     root: {
-      class: ['w-96', 'opacity-90'],
+      class: ['w-[90vw] sm:w-96', 'opacity-90'],
     },
     container: ({ props }: any) => ({
       class: [
@@ -18,7 +18,7 @@ export default {
         },
       ],
     }),
-    content: 'flex items-center py-5 px-7',
+    content: 'flex items-center py-2 px-3 sm:py-5 sm:px-7',
     icon: {
       class: ['w-6 h-6', 'text-lg mr-2'],
     },
