@@ -73,7 +73,7 @@ const handleForgotPwd = async (values: CustomUser) => {
     loading.value = true
     await forgotPassword(values.email)
     // console.log('Reset password email sent')
-    showToast('success', 'toast.success', 'auth.forgotpwd.form.submit')
+    showToast('success', 'toast.success', 'auth.forgotpwd.toast.succes')
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
