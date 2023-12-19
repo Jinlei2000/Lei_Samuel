@@ -134,7 +134,7 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    header="Appointment Detail"
+    header="Schedule Detail"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
