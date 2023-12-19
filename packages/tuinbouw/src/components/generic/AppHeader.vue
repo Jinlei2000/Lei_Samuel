@@ -117,14 +117,18 @@
                   class="hover:text-primary-green flex gap-3"
                   @click="showProfileDropdown()"
                 >
-                  <User /> {{ $t('navbar.avatar.dropdown.profile') }}
+                  <User />
+                  <p>{{ $t('navbar.avatar.dropdown.profile') }}</p>
                 </button>
               </Router-link>
               <button
-                class="hover:text-primary-green flex gap-3"
+                class="hover:text-primary-green flex gap-3 text-left"
                 @click="handleLogout()"
               >
-                <LogOut /> {{ $t('navbar.avatar.dropdown.logout') }}
+                <LogOut />
+                <p class="whitespace-nowrap">
+                  {{ $t('navbar.avatar.dropdown.logout') }}
+                </p>
               </button>
             </div>
           </div>
