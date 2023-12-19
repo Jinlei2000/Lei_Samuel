@@ -1,27 +1,25 @@
 import * as yup from 'yup'
 
 export const absenceValidationSchema = yup.object({
-  startDate: yup.string().required(),
-  endDate: yup.string().required(),
-  type: yup.string().required(),
+  startDate: yup.string().required('invalid.start.date.required'),
+  endDate: yup.string().required('invalid.end.date.required'),
+  type: yup.string().required('invalid.type.required'),
   description: yup.string().optional(),
 })
 
 export const userUpdateValidationSchema = yup.object({
-  firstname: yup.string().required(),
-  lastname: yup.string().required(),
+  firstname: yup.string().required('invalid.firstname.required'),
+  lastname: yup.string().required('invalid.lastname.required'),
   telephone: yup
     .string()
-    .matches(/^[0-9]+$/, 'Must be only digits')
-    .min(10)
-    .max(10)
+    .matches(/^[0-9]+$/, 'invalid.telephone.match')
     .optional()
     .nullable(),
   invoiceOption: yup.string().optional().nullable(),
   company: yup.boolean().optional().nullable(),
   btwNumber: yup
     .string()
-    .matches(/^[A-Za-z\d]{5,15}$/, 'Not a valid VAT Number')
+    .matches(/^[A-Za-z\d]{5,15}$/, 'invalid.btw.match')
     .nullable()
     .when('company', (company, schema) => {
       if (company[0] === true) {
@@ -32,9 +30,12 @@ export const userUpdateValidationSchema = yup.object({
 })
 
 export const locationValidationSchema = yup.object({
-  locationTitle: yup.string().required(),
-  searchAdressInput: yup.string().required().trim(),
-  selectedAddress: yup.object().required(),
+  locationTitle: yup.string().required('invalid.location.title.required'),
+  searchAdressInput: yup
+    .string()
+    .required('invalid.location.search.address.required')
+    .trim(),
+  selectedAddress: yup.object().required('invalid.location.address.required'),
 })
 
 export const forgotPasswordValidationSchema = yup.object({
@@ -60,53 +61,49 @@ export const registerValidationSchema = yup.object({
 })
 
 export const userUpdateAdminValidationSchema = yup.object({
-  email: yup.string().required().email(),
-  firstname: yup.string().required(),
-  lastname: yup.string().required(),
+  email: yup.string().required('invalid.email.required').email('invalid.email'),
+  firstname: yup.string().required('invalid.firstname.required'),
+  lastname: yup.string().required('invalid.lastname.required'),
   telephone: yup
     .string()
-    .matches(/^[0-9]+$/, 'Must be only digits')
-    .min(10)
-    .max(10)
+    .matches(/^[0-9]+$/, 'invalid.telephone.match')
     .optional()
     .nullable(),
 })
 
 export const userCreateEmployeeValidationSchema = yup.object({
-  email: yup.string().required().email(),
-  firstname: yup.string().required(),
-  lastname: yup.string().required(),
+  email: yup.string().required('invalid.email.required').email('invalid.email'),
+  firstname: yup.string().required('invalid.firstname.required'),
+  lastname: yup.string().required('invalid.lastname.required'),
   telephone: yup
     .string()
-    .matches(/^[0-9]+$/, 'Must be only digits')
-    .min(10)
-    .max(10)
+    .matches(/^[0-9]+$/, 'invalid.telephone.match')
     .optional()
     .nullable(),
-  locale: yup.string().required(),
+  locale: yup.string().required('invalid.locale.required'),
 })
 
 export const schedulesValidationSchema = yup.object({
-  finalDate: yup.string().required(),
-  appointmentsIds: yup.array().required().min(1),
-  employeesIds: yup.array().required().min(1),
+  finalDate: yup.string().required('invalid.final.date.required'),
+  appointmentsIds: yup.array().required().min(1, 'invalid.appointments.min'),
+  employeesIds: yup.array().required().min(1, 'invalid.employees.min'),
   materialsIds: yup.array().required(),
 })
 
 export const appointmentUpdateValidationSchema = yup.object({
-  locationId: yup.string().required(),
-  type: yup.string().required(),
-  startProposedDate: yup.string().required(),
-  endProposedDate: yup.string().required(),
+  locationId: yup.string().required('invalid.location.required'),
+  type: yup.string().required('invalid.type.required'),
+  startProposedDate: yup.string().required('invalid.start.date.required'),
+  endProposedDate: yup.string().required('invalid.end.date.required'),
   description: yup.string().optional(),
 })
 
 export const materialValidationSchema = yup.object({
-  name: yup.string().required(),
+  name: yup.string().required('invalid.material.name.required'),
   serialNumber: yup
     .string()
-    .required()
-    .matches(/^[0-9]+$/, 'Must be only digits'),
+    .required('invalid.material.serialnumber.required')
+    .matches(/^[0-9]+$/, 'invalid.material.serialnumber.match'),
   isLoan: yup.boolean().required(),
   userId: yup
     .string()
@@ -120,10 +117,10 @@ export const materialValidationSchema = yup.object({
 })
 
 export const appointmentCreateValidationSchema = yup.object({
-  startProposedDate: yup.date().required(),
-  endProposedDate: yup.date().required(),
+  startProposedDate: yup.date().required('invalid.start.date.required'),
+  endProposedDate: yup.date().required('invalid.start.date.required'),
   description: yup.string(),
-  type: yup.string().required(),
+  type: yup.string().required('invalid.type.required'),
 })
 
 export const appointmentEditAdminValidationSchema = yup.object({
