@@ -63,24 +63,24 @@
     <!-- About me -->
     <section class="w-full">
       <div class="mb-3 flex w-full justify-between">
-        <h2 class="text-2xl">About me</h2>
+        <h2 class="text-2xl">{{ $t('profile.about.title') }}</h2>
         <button
           class="text-primary-orange flex items-center gap-2 text-lg"
           @click="toggleUserModal('update')"
         >
-          <Edit2 class="h-5 w-5" /> Edit
+          <Edit2 class="h-5 w-5" /> {{ $t('profile.about.button.edit') }}
         </button>
       </div>
       <ul class="flex w-full flex-col rounded-2xl bg-gray-200 p-6">
         <li
           class="flex items-center justify-between border-b-[1px] border-white pb-6"
         >
-          <p class="text-lg">Telephone</p>
+          <p class="text-lg">{{ $t('profile.about.telephone') }}</p>
           <p v-if="user && user.telephone">{{ user.telephone }}</p>
-          <p v-else>unknown</p>
+          <p v-else>{{ $t('profile.about.unknown') }}</p>
         </li>
         <li class="flex items-center justify-between pt-6">
-          <p class="text-lg">Address</p>
+          <p class="text-lg">{{ $t('profile.about.address') }}</p>
           <p
             v-if="
               user &&
@@ -91,7 +91,7 @@
           >
             {{ user.locations[0].address }}
           </p>
-          <p v-else>unknown</p>
+          <p v-else>{{ $t('profile.about.unknown') }}</p>
         </li>
       </ul>
     </section>
@@ -101,13 +101,13 @@
       v-if="customUser?.role == 'ADMIN' || customUser?.role == 'EMPLOYEE'"
       class="flex w-full flex-col gap-3"
     >
-      <h2 class="text-2xl">Absences</h2>
+      <h2 class="text-2xl">{{ $t('profile.absences.title') }}</h2>
       <button
         class="border-primary-green text-primary-green flex h-16 w-full items-center justify-center rounded-2xl border-[1px]"
         @click="toggleAbsenceModal(null, 'create')"
       >
         <PlusCircle class="mr-2" />
-        Add New Absence
+        {{ $t('profile.absences.button') }}
       </button>
       <div
         v-if="absences && absences.length > 0"
@@ -123,12 +123,14 @@
             <p class="min-w-1/3">
               {{ formatAbsenceDate(absence.startDate) }}
             </p>
-            <p class="opacity-70">{{ absence.totalDays }} days</p>
+            <p class="opacity-70">
+              {{ absence.totalDays }} {{ $t('profile.absences.days') }}
+            </p>
           </div>
           <p
             class="bg-primary-orange rounded-full px-3 py-1 capitalize text-white"
           >
-            {{ absence.type }}
+            {{ $t(absence.type) }}
           </p>
         </button>
       </div>
@@ -136,13 +138,13 @@
         v-else-if="absences.length === 0"
         class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
       >
-        <p class="text-lg">No absences</p>
+        <p class="text-lg">{{ $t('profile.no.absences') }}</p>
       </div>
     </section>
 
     <!-- Locations -->
     <section class="flex w-full flex-col gap-3">
-      <h2 class="text-2xl">Locations</h2>
+      <h2 class="text-2xl">{{ $t('profile.location.title') }}</h2>
       <button
         v-if="
           customUser?.role == 'CLIENT' ||
@@ -152,7 +154,7 @@
         @click="toggleLocationModal(null, 'create')"
       >
         <PlusCircle class="mr-2" />
-        Add Location
+        {{ $t('profile.location.button') }}
       </button>
       <div
         v-if="user.locations && user.locations.length > 0"
@@ -185,7 +187,7 @@
         v-else-if="user.locations.length === 0"
         class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
       >
-        <p class="text-lg">No locations</p>
+        <p class="text-lg">{{ $t('profile.no.location') }}</p>
       </div>
     </section>
 
@@ -194,7 +196,7 @@
       class="bg-primary-red rounded-2xl py-3 text-white"
       @click="handleDeleteUser()"
     >
-      Delete Account
+      {{ $t('profile.button.delete') }}
     </button>
   </main>
 
@@ -285,7 +287,7 @@
   <Dialog
     v-model:visible="userModalVisible.update"
     modal
-    header="Update User"
+    :header="$t('profile.modal.update.user.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -315,7 +317,7 @@
   <Dialog
     v-model:visible="absenceModalVisible.detail"
     modal
-    header="Absence Details"
+    :header="$t('profile.modal.detail.absence.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -333,10 +335,14 @@
           <h2 class="text-xl font-semibold">
             {{ formatAbsenceDate(selectedAbsence.startDate) }}
           </h2>
-          <p class="text-gray-900">{{ selectedAbsence.totalDays }} days</p>
+          <p class="text-gray-900">
+            {{ selectedAbsence.totalDays }} {{ $t('profile.absences.days') }}
+          </p>
         </div>
         <div>
-          <h3 class="text-sm">Description:</h3>
+          <h3 class="text-sm">
+            {{ $t('profile.modal.detail.absence.description') }}
+          </h3>
           <p>
             {{ selectedAbsence.description }}
           </p>
@@ -374,7 +380,7 @@
   <Dialog
     v-model:visible="absenceModalVisible.create"
     modal
-    header="Create Absence"
+    :header="$t('profile.modal.create.absence.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -395,7 +401,7 @@
   <Dialog
     v-model:visible="locationModalVisible.detail"
     modal
-    header="Location Details"
+    :header="$t('profile.modal.detail.location.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -428,13 +434,16 @@
         <!-- Delete Location -->
         <CustomButton
           v-if="!(user!.locations[0].id == selectedLocation.id)"
-          name="Delete"
+          name="profile.form.location.delete"
           :loading="loadingLocation.delete"
           variant="warning"
           @click="handleDeleteLocation(selectedLocation.id)"
         />
         <!-- Delete Edit -->
-        <CustomButton name="Edit" @click="isEditingLocation = true" />
+        <CustomButton
+          name="profile.form.location.edit"
+          @click="isEditingLocation = true"
+        />
       </div>
     </div>
 
@@ -445,9 +454,9 @@
         <InputField
           id="title"
           v-model="locationTitle"
-          label="Title"
+          label="profile.form.location.title"
           name="title"
-          placeholder="Home"
+          :placeholder="$t('profile.form.location.title.placeholder')"
           :error="errorMessages.locationTitle"
           :field-attrs="locationTitleAttrs"
         />
@@ -456,14 +465,14 @@
           <InputField
             id="address"
             v-model="searchAdressInput"
-            label="Address"
+            label="profile.form.location.address"
             name="address"
-            placeholder="Search Address"
+            :placeholder="$t('profile.form.location.search.address')"
             :error="errorMessages.searchAdressInput"
             :field-attrs="searchAdressInputAttrs"
           />
           <CustomButton
-            name="Search"
+            name="profile.form.location.button.search"
             :loading="loadingLocation.searchAddress"
             @click="handleSearchAddress()"
           />
@@ -476,7 +485,9 @@
         class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
       >
         <div>
-          <p class="text-sm font-medium opacity-50">Your current location is</p>
+          <p class="text-sm font-medium opacity-50">
+            {{ $t('profile.modal.detail.location.current.location') }}
+          </p>
           <p :for="`${selectedLocation.id}`" class="text-lg">
             {{ selectedLocation.address }}
           </p>
@@ -512,7 +523,9 @@
         v-else
         class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
       >
-        <p class="text-lg">No locations</p>
+        <p class="text-lg">
+          {{ $t('profile.modal.detail.location.no.location') }}
+        </p>
       </div>
 
       <small
@@ -523,14 +536,14 @@
 
       <div class="flex justify-between">
         <CustomButton
-          name="Cancel"
+          name="profile.form.location.cancel"
           variant="secondary"
           @click="cancelLocationEdit()"
         />
         <CustomButton
           type="submit"
           variant="primary"
-          name="Update Location"
+          name="profile.form.location.update.submit"
           :loading="loadingLocation.update"
         />
       </div>
@@ -541,7 +554,7 @@
   <Dialog
     v-model:visible="locationModalVisible.create"
     modal
-    header="Create Location"
+    :header="$t('profile.modal.create.location.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -556,9 +569,9 @@
         <InputField
           id="title"
           v-model="locationTitle"
-          label="Title"
+          label="profile.form.location.title"
           name="title"
-          placeholder="Home"
+          :placeholder="$t('profile.form.location.title.placeholder')"
           :error="errorMessages.locationTitle"
           :field-attrs="locationTitleAttrs"
         />
@@ -567,14 +580,14 @@
           <InputField
             id="address"
             v-model="searchAdressInput"
-            label="Address"
+            label="profile.form.location.address"
             name="address"
-            placeholder="Search Address"
+            :placeholder="$t('profile.form.location.search.address')"
             :error="errorMessages.searchAdressInput"
             :field-attrs="searchAdressInputAttrs"
           />
           <CustomButton
-            name="Search"
+            name="profile.form.location.button.search"
             :loading="loadingLocation.searchAddress"
             @click="handleSearchAddress()"
           />
@@ -610,7 +623,9 @@
         v-else
         class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
       >
-        <p class="text-lg">No locations</p>
+        <p class="text-lg">
+          {{ $t('profile.modal.detail.location.no.location') }}
+        </p>
       </div>
 
       <small
@@ -622,7 +637,7 @@
       <div class="mt-3 flex w-full justify-end">
         <CustomButton
           type="submit"
-          name="Create Location"
+          name="profile.form.location.create.submit"
           :loading="loadingLocation.create"
         />
       </div>
@@ -699,19 +714,19 @@ const user = computed<CustomUser | null>(() => userResult.value?.user || null)
 const formUpdateUser = {
   fields: [
     {
-      label: 'First Name',
+      label: 'profile.form.user.firstname',
       name: 'firstname',
       placeholder: 'John',
       as: 'input',
     },
     {
-      label: 'Last Name',
+      label: 'profile.form.user.lastname',
       name: 'lastname',
       placeholder: 'Doe',
       as: 'input',
     },
     {
-      label: 'Telephone (optional)',
+      label: 'profile.form.user.telephone',
       name: 'telephone',
       placeholder: '0412345678',
       as: 'input',
@@ -720,21 +735,21 @@ const formUpdateUser = {
     ...(customUser.value?.role === Role.CLIENT
       ? [
           {
-            label: 'Select Invoice Option',
+            label: 'profile.form.user.invoice',
             name: 'invoiceOption',
             as: 'select',
             type: 'select',
             options: INVOICE_OPTIONS,
-            placeholder: 'Select a type',
+            placeholder: 'profile.form.user.invoice.placeholder',
           },
           {
-            label: 'Company (optional)',
+            label: 'profile.form.user.company',
             name: 'company',
             as: 'switch',
             type: 'switch',
           },
           {
-            label: 'BTW Number (optional)',
+            label: 'profile.form.user.btw',
             name: 'btwNumber',
             placeholder: 'BE0123456789',
             as: 'input',
@@ -745,7 +760,7 @@ const formUpdateUser = {
   ],
 
   button: {
-    name: 'Update User',
+    name: 'profile.form.user.submit',
   },
 }
 
@@ -790,13 +805,13 @@ const handleUploadImage = async (event: Event): Promise<void> => {
       ...customUser.value!,
       url: result?.data?.updateUser?.url,
     }
-    showToast('success', 'Success', 'Profile picture has been updated')
+    showToast('success', 'toast.success', 'profile.toast.upload.image')
     toggleUserModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
 
-    showToast('error', 'Error', "Can't upload image")
+    showToast('error', 'toast.error', 'profile.toast.error.upload.image')
   } finally {
     loadingUser.value.uploadPicture = false
   }
@@ -811,14 +826,14 @@ const handleDeleteUser = async (): Promise<void> => {
     await deleteUser({
       id: customUser.value?.id,
     })
-    showToast('success', 'Success', `You have deleted your account`)
+    showToast('success', 'toast.success', `profile.toast.delete.account`)
     firebaseUser.value = null
     customUser.value = null
     replace('/')
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't delete user")
+    showToast('error', 'toast.error', 'profile.toast.error.delete.account')
   }
 }
 
@@ -842,11 +857,11 @@ const handleUpdateUser = async (values: CustomUser): Promise<void> => {
       },
     })
     refetchUser()
-    showToast('success', 'Success', `You have updated your profile`)
+    showToast('success', 'toast.success', `profile.toast.update.user`)
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Can't update user")
+    showToast('error', 'toast.error', 'profile.toast.error.update.user')
   } finally {
     loadingUser.value.update = false
   }
@@ -910,41 +925,41 @@ const isEditingAbsence = ref<boolean>(false)
 const formAbsence = {
   fields: [
     {
-      label: 'Type',
+      label: 'profile.form.absence.type',
       name: 'type',
       as: 'select',
       type: 'select',
       options: ABSENCE_TYPES,
-      placeholder: 'Select a type',
+      placeholder: 'profile.form.absence.type.placeholder',
     },
     {
-      label: 'Start Date',
+      label: 'profile.form.absence.start.date',
       name: 'startDate',
       as: 'input',
       type: 'date',
-      placeholder: 'Select a start date',
+      placeholder: 'profile.form.absence.start.date.placeholder',
       minDate: new Date(),
     },
     {
-      label: 'End Date',
+      label: 'profile.form.absence.end.date',
       name: 'endDate',
       as: 'input',
       type: 'date',
-      placeholder: 'Select a end date',
+      placeholder: 'profile.form.absence.end.date.placeholder',
       setMinEndDate: true,
     },
     {
-      label: 'Description',
+      label: 'profile.form.absence.description',
       name: 'description',
       as: 'textarea',
       type: 'textarea',
-      placeholder: 'Reason for absence',
+      placeholder: 'profile.form.absence.description.placeholder',
       rows: 5,
     },
   ],
 
   button: {
-    name: 'Update Absence',
+    name: 'profile.form.absence.submit',
   },
 }
 

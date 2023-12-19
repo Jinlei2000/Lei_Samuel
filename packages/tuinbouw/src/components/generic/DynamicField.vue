@@ -63,7 +63,7 @@
       :min-date="field.setMinEndDate ? minEndDate : field.minDate"
       show-icon
       date-format="yy-mm-dd"
-      :placeholder="field.placeholder"
+      :placeholder="$t(field.placeholder)"
       :pt="{
         root: {
           class: ['w-full'],
@@ -79,7 +79,6 @@
           ],
         },
       }"
-      v-bind="field"
       @date-select="
         $event => {
           // Set minEndDate to the selected date if setMinEndDate is true
