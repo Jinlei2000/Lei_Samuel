@@ -20,7 +20,7 @@
     <h2 class="mb-1 text-xl">{{ appointment.user?.fullname }}</h2>
     <div class="flex items-end justify-between gap-3">
       <p
-        class="overflow-hidden text-base"
+        class="line-clamp-2 overflow-hidden text-base"
         :class="variant == 'simple' ? 'col-span-2' : ''"
       >
         {{ appointment.description }}
