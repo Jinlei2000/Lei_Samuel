@@ -117,14 +117,18 @@
                   class="hover:text-primary-green flex gap-3"
                   @click="showProfileDropdown()"
                 >
-                  <User /> {{ $t('navbar.avatar.dropdown.profile') }}
+                  <User />
+                  <p>{{ $t('navbar.avatar.dropdown.profile') }}</p>
                 </button>
               </Router-link>
               <button
-                class="hover:text-primary-green flex gap-3"
+                class="hover:text-primary-green flex gap-3 text-left"
                 @click="handleLogout()"
               >
-                <LogOut /> {{ $t('navbar.avatar.dropdown.logout') }}
+                <LogOut />
+                <p class="whitespace-nowrap">
+                  {{ $t('navbar.avatar.dropdown.logout') }}
+                </p>
               </button>
             </div>
           </div>
@@ -132,7 +136,7 @@
         <RouterLink
           v-if="!customUser"
           :to="`/auth/login`"
-          class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
+          class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 whitespace-nowrap rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >{{ $t('navbar.login') }}<LogIn
         /></RouterLink>
       </nav>

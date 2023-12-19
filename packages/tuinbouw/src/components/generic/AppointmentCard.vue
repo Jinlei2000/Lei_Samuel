@@ -18,9 +18,7 @@
       "
     ></div>
     <h2 class="mb-1 text-xl">{{ appointment.user?.fullname }}</h2>
-    <div
-      class="grid grid-flow-col gap-3 md:grid-flow-row md:grid-cols-2 md:items-start"
-    >
+    <div class="flex items-end justify-between gap-3">
       <p
         class="overflow-hidden text-base"
         :class="variant == 'simple' ? 'col-span-2' : ''"
@@ -29,7 +27,7 @@
       </p>
       <button
         v-if="nav"
-        class="bg-primary-orange flex items-center gap-2 self-end rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        class="bg-primary-orange flex w-fit items-center gap-2 self-end rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
         @click="navigateToLocation(appointment.location!)"
         @click.stop
       >
