@@ -447,6 +447,7 @@ const handleDeleteMaterial = async (material: Material): Promise<void> => {
       id: material.id,
     })
     showToast('success', 'toast.success', 'material.toast.delete')
+
     await refetch()
     toggleModal()
   } catch (error) {

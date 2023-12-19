@@ -1,8 +1,23 @@
 <template>
   <Toast position="bottom-right">
-    <!-- <template #container="slotProps">
-      {{ slotProps.message }}
-    </template> -->
+    <template #message="slotProps">
+      <div class="flex w-full items-center justify-between gap-2 sm:gap-4">
+        <div class="flex items-center">
+          <Info v-if="slotProps.message.severity === 'info'" />
+          <Check v-else-if="slotProps.message.severity === 'success'" />
+          <AlertTriangle v-else-if="slotProps.message.severity === 'warning'" />
+          <XCircle v-else-if="slotProps.message.severity === 'error'" />
+        </div>
+        <div class="flex w-full flex-col justify-between pr-2">
+          <div class="text-lg font-medium">
+            {{ $t(slotProps.message.summary) }}
+          </div>
+          <div>
+            {{ $t(slotProps.message.detail) }}
+          </div>
+        </div>
+      </div>
+    </template>
     <template #closeicon="slotProps">
       <X :class="slotProps.class" />
     </template>
@@ -20,7 +35,7 @@ import useCustomUser from './composables/useCustomUser'
 import useGraphql from './composables/useGraphql'
 import useLanguage from './composables/useLanguage'
 import { DefaultApolloClient } from '@vue/apollo-composable'
-import { X } from 'lucide-vue-next'
+import { AlertTriangle, Check, Info, X, XCircle } from 'lucide-vue-next'
 import { provide } from 'vue'
 import { useI18n } from 'vue-i18n'
 
