@@ -56,8 +56,8 @@
           class="border-primary-green col-span-1 flex h-48 w-full items-center justify-center rounded-2xl border transition-all hover:scale-105 hover:cursor-pointer"
           @click="toggleModal(null, 'create')"
         >
-          <div class="text-primary-green flex items-center gap-3">
-            <PlusCircle class="h-6 w-6" />
+          <div class="text-primary-green flex flex-col items-center gap-3">
+            <PlusCircle class="h-12 w-12" stroke-width="1px" />
             <p class="text-lg">{{ $t('material.button.add') }}</p>
           </div>
         </button>
