@@ -44,6 +44,9 @@
       }"
       @change="handleChange($event.value, false)"
     >
+      <template #option="slotProps">
+        <span>{{ $t(slotProps.option.name) }}</span>
+      </template>
       <template #dropdownicon>
         <ChevronDownIcon />
       </template>

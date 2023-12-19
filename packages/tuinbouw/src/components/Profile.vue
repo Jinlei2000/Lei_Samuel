@@ -534,7 +534,7 @@
       <small
         v-if="errorMessages.selectedAddress"
         class="p-error text-sm text-red-500"
-        >{{ errorMessages.selectedAddress || '&nbsp;' }}</small
+        >{{ $t(errorMessages.selectedAddress) }}</small
       >
 
       <div class="mt-3 flex justify-between">
@@ -634,7 +634,7 @@
       <small
         v-if="errorMessages.selectedAddress"
         class="p-error text-sm text-red-500"
-        >{{ errorMessages.selectedAddress || '&nbsp;' }}</small
+        >{{ $t(errorMessages.selectedAddress) }}</small
       >
 
       <div class="mt-3 flex w-full justify-end">
@@ -678,8 +678,8 @@ import type { Absence } from '@/interfaces/absence.interface'
 import { type CustomUser, Role } from '@/interfaces/custom.user.interface'
 import type { Location } from '@/interfaces/location.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
-import { absenceValidationSchema } from '@/validation/schema'
 import {
+  absenceValidationSchema,
   locationValidationSchema,
   userUpdateValidationSchema,
 } from '@/validation/schema'
