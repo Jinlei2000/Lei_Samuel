@@ -38,19 +38,25 @@ export const locationValidationSchema = yup.object({
 })
 
 export const forgotPasswordValidationSchema = yup.object({
-  email: yup.string().required().email(),
+  email: yup.string().required('invalid.email.required').email('invalid.email'),
 })
 
 export const loginValidationSchema = yup.object({
-  email: yup.string().required().email(),
-  password: yup.string().required().min(6),
+  email: yup.string().required('invalid.email.required').email('invalid.email'),
+  password: yup
+    .string()
+    .required('invalid.password.required')
+    .min(6, 'invalid.password.min'),
 })
 
 export const registerValidationSchema = yup.object({
-  email: yup.string().required().email(),
-  password: yup.string().required().min(6),
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
+  email: yup.string().required('invalid.email.required').email('invalid.email'),
+  password: yup
+    .string()
+    .required('invalid.password.required')
+    .min(6, 'invalid.password.min'),
+  firstName: yup.string().required('invalid.firstname.required'),
+  lastName: yup.string().required('invalid.lastname.required'),
 })
 
 export const userUpdateAdminValidationSchema = yup.object({
