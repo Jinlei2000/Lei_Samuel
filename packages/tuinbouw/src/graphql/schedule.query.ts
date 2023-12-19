@@ -6,9 +6,19 @@ export const GET_ALL_SCHEDULES = gql`
       id
       appointments {
         id
-        location {
-          address
+        user {
+          id
+          fullname
         }
+        location {
+          id
+          address
+          lat
+          lng
+          userId
+        }
+        description
+        type
       }
       employees {
         id

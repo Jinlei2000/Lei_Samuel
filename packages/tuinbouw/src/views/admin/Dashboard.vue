@@ -169,7 +169,7 @@
                 <h4 class="text-lg capitalize">
                   {{ appointment.user.fullname }}
                 </h4>
-                <p class="truncate">{{ appointment.description }}</p>
+                <p class="line-clamp-2">{{ appointment.description }}</p>
               </div>
 
               <p class="text-xs text-gray-900">
