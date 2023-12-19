@@ -34,7 +34,7 @@
         class="flex items-center justify-between gap-6 text-left text-lg"
         @click="toggleAccordion(index)"
       >
-        <p>{{ option.title }}</p>
+        <p>{{ $t(option.title) }}</p>
         <ChevronDown
           :class="[
             'h-[22px] w-[22px] transition-all',
@@ -166,12 +166,12 @@ const updateFilters = (): void => {
 }
 
 // show/hide accordion
-const toggleAccordion = (index: number) => {
+const toggleAccordion = (index: number): void => {
   isAccordionsOpen.value[index - 1] = !isAccordionsOpen.value[index - 1]
 }
 
 // show/hide dropdown
-const toggleFilterDropdown = () => {
+const toggleFilterDropdown = (): void => {
   isDropdownOpen.value = !isDropdownOpen.value
 }
 </script>
