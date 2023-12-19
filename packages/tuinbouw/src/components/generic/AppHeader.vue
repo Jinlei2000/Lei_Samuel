@@ -136,7 +136,7 @@
         <RouterLink
           v-if="!customUser"
           :to="`/auth/login`"
-          class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
+          class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 whitespace-nowrap rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
           >{{ $t('navbar.login') }}<LogIn
         /></RouterLink>
       </nav>
