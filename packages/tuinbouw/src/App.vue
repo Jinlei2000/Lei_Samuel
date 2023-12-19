@@ -8,14 +8,14 @@
     </template>
   </Toast>
   <div class="mx-4 text-black">
-    <AppHeader />
+    <Appheader />
     <RouterView />
   </div>
 </template>
 
 <script setup lang="ts">
 // import type AppHeaderVue from '../components/generic/AppHeader.vue'
-import AppHeader from './components/generic/AppHeader.vue'
+import Appheader from './components/generic/appheader.vue'
 import useCustomUser from './composables/useCustomUser'
 import useGraphql from './composables/useGraphql'
 import useLanguage from './composables/useLanguage'

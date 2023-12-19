@@ -45,7 +45,7 @@
     <div class="flex-end mt-3 flex justify-between">
       <CustomButton
         v-if="cancel"
-        name="cancel"
+        name="dynamic.form.button.cancel"
         variant="secondary"
         @click="cancel()"
       />

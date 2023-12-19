@@ -5,7 +5,7 @@
       src="/assets/empty.svg"
       alt="Empty results illustration"
     />
-    <h2 class="text-2xl">Oops! No results found.</h2>
+    <h2 class="text-2xl">{{ $t('no.result.text') }}</h2>
   </section>
 </template>
 

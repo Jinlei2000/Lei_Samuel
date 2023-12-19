@@ -12,7 +12,7 @@
     }"
     :as="field.as"
     :name="field.name"
-    v-bind="field"
+    :placeholder="$t(field.placeholder)"
   >
   </Field>
 
@@ -25,8 +25,8 @@
     <Dropdown
       :id="field.name"
       v-model="fieldProps.value"
-      :placeholder="field.placeholder"
       :options="field.options"
+      :placeholder="$t(field.placeholder)"
       :option-label="field.optionLabel ?? 'name'"
       :option-value="field.optionValue ?? 'name'"
       :editable="field.editable ?? false"
@@ -42,7 +42,6 @@
           ],
         },
       }"
-      v-bind="field"
       @change="handleChange($event.value, false)"
     >
       <template #dropdownicon>
