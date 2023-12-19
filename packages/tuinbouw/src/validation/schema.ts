@@ -84,26 +84,26 @@ export const userCreateEmployeeValidationSchema = yup.object({
 })
 
 export const schedulesValidationSchema = yup.object({
-  finalDate: yup.string().required(),
-  appointmentsIds: yup.array().required().min(1),
-  employeesIds: yup.array().required().min(1),
+  finalDate: yup.string().required('invalid.final.date.required'),
+  appointmentsIds: yup.array().required().min(1, 'invalid.appointments.min'),
+  employeesIds: yup.array().required().min(1, 'invalid.employees.min'),
   materialsIds: yup.array().required(),
 })
 
 export const appointmentUpdateValidationSchema = yup.object({
-  locationId: yup.string().required(),
-  type: yup.string().required(),
-  startProposedDate: yup.string().required(),
-  endProposedDate: yup.string().required(),
+  locationId: yup.string().required('invalid.location.required'),
+  type: yup.string().required('invalid.type.required'),
+  startProposedDate: yup.string().required('invalid.start.date.required'),
+  endProposedDate: yup.string().required('invalid.end.date.required'),
   description: yup.string().optional(),
 })
 
 export const materialValidationSchema = yup.object({
-  name: yup.string().required(),
+  name: yup.string().required('invalid.material.name.required'),
   serialNumber: yup
     .string()
-    .required()
-    .matches(/^[0-9]+$/, 'Must be only digits'),
+    .required('invalid.material.serialnumber.required')
+    .matches(/^[0-9]+$/, 'invalid.material.serialnumber.match'),
   isLoan: yup.boolean().required(),
   userId: yup
     .string()
