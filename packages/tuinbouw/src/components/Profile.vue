@@ -485,7 +485,7 @@
       <!-- Show Selected Location -->
       <div
         v-if="selectedLocation && selectedLocation.address"
-        class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
+        class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4"
       >
         <div>
           <p class="text-sm font-medium opacity-50">
@@ -502,7 +502,7 @@
         <div
           v-for="(coordinate, index) in searchAddressResults"
           :key="index"
-          class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4 shadow"
+          class="address-card-container mt-4 overflow-hidden rounded-lg bg-gray-200 p-4"
         >
           <div class="flex items-center">
             <input
@@ -523,8 +523,8 @@
 
       <!-- Show No esults -->
       <div
-        v-else
-        class="h-17 mt-4 flex items-center justify-center rounded-2xl bg-gray-200"
+        v-else-if="searchAddressResults && searchAddressResults.length == 0"
+        class="h-17 mt-4 flex items-center justify-center rounded-lg bg-gray-200"
       >
         <p class="text-lg">
           {{ $t('profile.modal.detail.location.no.location') }}
@@ -537,7 +537,7 @@
         >{{ errorMessages.selectedAddress || '&nbsp;' }}</small
       >
 
-      <div class="flex justify-between">
+      <div class="mt-3 flex justify-between">
         <CustomButton
           name="profile.form.location.cancel"
           variant="secondary"
