@@ -130,8 +130,27 @@
   >
     <!-- Show Detail -->
     <div v-if="!isEditing">
-      <p>{{ selectedMaterial?.serialNumber }}</p>
-      <p>{{ selectedMaterial?.name }}</p>
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl">{{ selectedMaterial?.name }}</h2>
+        <p class="text-sm text-gray-900">
+          #{{ selectedMaterial?.serialNumber }}
+        </p>
+      </div>
+
+      <div v-if="showAllOverview">
+        <p v-if="selectedMaterial?.user?.id" class="text-primary-orange m-0">
+          Not available
+        </p>
+        <p v-else class="text-primary-green text-base">Available</p>
+      </div>
+
+      <!-- Product foto -->
+      <div
+        class="mb-6 mt-3 flex h-96 w-full items-center justify-center rounded-md bg-gray-200"
+      >
+        <Wrench class="h-10 w-10 stroke-gray-800" />
+      </div>
+
       <!-- Buttons -->
       <div v-if="props.showAllOverview" class="mt-3 flex justify-between">
         <!-- Delete -->
@@ -194,7 +213,7 @@ import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { materialValidationSchema } from '@/validation/schema'
 import { useLazyQuery, useMutation } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { PlusCircle, Wrench } from 'lucide-vue-next'
+import { Hash, PlusCircle, Wrench } from 'lucide-vue-next'
 import { type GenericObject } from 'vee-validate'
 import type { ComputedRef } from 'vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
