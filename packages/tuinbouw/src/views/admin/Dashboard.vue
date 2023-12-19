@@ -53,7 +53,20 @@
       <p>No schedules today</p>
     </div>
 
-    <h2 class="text-xl">Todays absences</h2>
+    <!-- Absences -->
+    <div class="mt-3 flex items-center justify-between">
+      <h2 class="text-xl">Todays absences</h2>
+      <RouterLink
+        :to="`/admin/absences`"
+        class="text-primary-orange group flex items-center text-lg sm:text-base"
+      >
+        All absences
+        <ChevronRight
+          class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
+          stroke-width="1"
+        />
+      </RouterLink>
+    </div>
 
     <!-- Todays absences -->
     <div
@@ -94,6 +107,14 @@
           </p>
         </div>
       </div>
+    </div>
+
+    <!-- No absences -->
+    <div
+      v-else-if="todaysAbsences.length === 0"
+      class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
+    >
+      <p>No absences today</p>
     </div>
   </div>
 
@@ -174,7 +195,7 @@ import type { Absence } from '@/interfaces/absence.interface'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import router from '@/router'
 import { useQuery } from '@vue/apollo-composable'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown, ChevronRight } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { watchEffect } from 'vue'
 import { type ComputedRef } from 'vue'
