@@ -129,7 +129,6 @@
             </div>
           </div>
         </div>
-        {{ $route.path }}
         <RouterLink
           v-if="!customUser"
           :to="`/auth/login`"
