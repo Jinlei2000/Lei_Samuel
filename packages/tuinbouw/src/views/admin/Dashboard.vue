@@ -185,7 +185,7 @@
         </ul>
       </div>
       <div class="flex flex-col gap-3">
-        <h3 class="text-lg">Employees:</h3>
+        <h3 class="text-lg">Employees</h3>
         <ul class="flex flex-col gap-3">
           <li
             v-for="employee in selectedSchedule.employees"
@@ -208,12 +208,13 @@
           <h3 class="text-lg">Materials:</h3>
           <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
         </div>
-        <ul v-if="!collapsed" class="flex flex-col gap-3">
+        <ul v-if="!collapsed" class="flex list-disc flex-col gap-3">
           <li
             v-for="material in selectedSchedule.materials"
             :key="material.id"
-            class="flex items-center gap-3"
+            class="flex items-center gap-2"
           >
+            <Wrench class="h-3 w-3" />
             <p class="capitalize">{{ material.name }}</p>
           </li>
         </ul>
@@ -236,7 +237,7 @@ import type { Absence } from '@/interfaces/absence.interface'
 import type { Schedule } from '@/interfaces/schedule.interface'
 import router from '@/router'
 import { useQuery } from '@vue/apollo-composable'
-import { ChevronDown, ChevronRight } from 'lucide-vue-next'
+import { ChevronDown, ChevronRight, Wrench } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { watchEffect } from 'vue'
 import { type ComputedRef } from 'vue'
