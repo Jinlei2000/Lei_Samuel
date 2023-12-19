@@ -6,7 +6,7 @@
       @click="toggleFilterDropdown"
     >
       <FilterIcon class="h-5 w-5" />
-      <p class="m-0 text-lg">Filter</p>
+      <p class="m-0 text-lg">{{ $t('filter.button.name') }}</p>
       <ChevronDown
         :class="[
           'h-[22px] w-[22px] transition-all',
@@ -76,7 +76,7 @@
               <Check class="h-3 w-3" />
             </span>
             <label :for="inputOption.value">
-              {{ inputOption.label }}
+              {{ $t(inputOption.label) }}
             </label>
           </div>
         </div>
@@ -161,7 +161,7 @@ const updateFilters = (): void => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', 'Something went wrong with the filters')
+    showToast('error', 'toast.error', 'filter.error')
   }
 }
 
