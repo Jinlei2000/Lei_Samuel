@@ -17,7 +17,7 @@
         <Search
           v-model="variables.searchString"
           class="w-full sm:w-auto"
-          placeholder="Search for materials"
+          placeholder="material.search.placeholder"
         />
       </section>
 
