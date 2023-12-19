@@ -1,9 +1,21 @@
 <template>
   <div class="m-auto mt-12 flex max-w-xl flex-col gap-3 md:mt-24">
-    <h1 class="text-xl">
-      {{ $t('account.welcome') }} {{ customUser!.firstname }}! These are todays
-      schedules
-    </h1>
+    <div class="mt-3 flex items-center justify-between">
+      <h1 class="text-xl">
+        {{ $t('account.welcome') }} {{ customUser!.firstname }}! These are
+        todays schedules
+      </h1>
+      <RouterLink
+        :to="`/admin/schedules`"
+        class="text-primary-orange group flex items-center text-lg sm:text-base"
+      >
+        Schedules
+        <ChevronRight
+          class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
+          stroke-width="1"
+        />
+      </RouterLink>
+    </div>
 
     <!-- Todays schedules -->
     <div
@@ -60,7 +72,7 @@
         :to="`/admin/absences`"
         class="text-primary-orange group flex items-center text-lg sm:text-base"
       >
-        All absences
+        Absences
         <ChevronRight
           class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
           stroke-width="1"
