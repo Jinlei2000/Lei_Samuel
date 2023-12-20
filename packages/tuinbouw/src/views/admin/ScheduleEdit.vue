@@ -18,12 +18,12 @@
   >
     <!-- Title -->
     <div class="mt-3 flex w-full items-center justify-between">
-      <h1 class="text-2xl">Schedule Edit</h1>
+      <h1 class="text-2xl">{{ $t('edit.schedule.title') }}</h1>
       <!-- Reset -->
       <CustomButton
         type="button"
         variant="secondary"
-        name="Reset"
+        name="edit.schedule.button.reset"
         @click="reset()"
       />
     </div>
@@ -32,24 +32,33 @@
     <form v-if="schedule" class="w-full" @submit.prevent="handleUpdateSchedule">
       <!-- Final Date -->
       <div v-if="next === 0" class="w-full">
-        <h2 class="mb-3 text-xl">Final Date</h2>
+        <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.final.date') }}</h2>
         <div class="flex w-full justify-end">
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+          <CustomButton
+            name="edit.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Validation -->
-        <small class="p-error block">{{
-          errorMessages.finalDate || '&nbsp;'
-        }}</small>
+        <CustomError
+          v-if="errorMessages.finalDate"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.finalDate"
+        />
 
         <!-- Calendar -->
         <div class="flex w-full flex-col items-center gap-6">
           <p class="text-lg font-semibold text-gray-900">
-            Your selected date is: {{ formatDateTime(values.finalDate) }}
+            {{ $t('edit.schedule.sub.selected.date') }}:
+            {{ formatDateTime(values.finalDate) }}
           </p>
 
           <div v-if="loadingAppointments || loadingEmployees">
-            <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+            <h1 class="flex animate-pulse space-x-4">
+              {{ $t('edit.schedule.loading') }}...
+            </h1>
           </div>
 
           <!-- Calendar -->
@@ -68,16 +77,26 @@
 
       <!-- Appointments -->
       <div v-if="next === 1" class="w-full">
-        <h2 class="mb-3 text-xl">Appointments</h2>
-        <div class="flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.appointments') }}</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton
+            name="edit.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="edit.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Validation -->
-        <small class="p-error block">{{
-          errorMessages.appointmentsIds || '&nbsp;'
-        }}</small>
+        <CustomError
+          v-if="errorMessages.appointmentsIds"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.appointmentsIds"
+        />
 
         <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
           <!-- Selected Appointments & Available Appointments -->
@@ -159,16 +178,26 @@
 
       <!-- Fill in price of appointments -->
       <div v-if="next === 2">
-        <h2 class="mb-3 text-xl">Price Appointments</h2>
-        <div class="flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.price') }}</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton
+            name="edit.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="edit.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- validation -->
-        <small id="text-error" class="p-error block">{{
-          errorMessages.prices || '&nbsp;'
-        }}</small>
+        <CustomError
+          v-if="errorMessages.prices"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.prices"
+        />
 
         <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
           <!-- Selected Appointments -->
@@ -219,16 +248,26 @@
 
       <!-- Employees -->
       <div v-if="next === 3">
-        <h2 class="mb-3 text-xl">Employees</h2>
-        <div class="flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.employees') }}</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton
+            name="edit.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="edit.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Validation -->
-        <small id="text-error" class="p-error block">{{
-          errorMessages.employeesIds || '&nbsp;'
-        }}</small>
+        <CustomError
+          v-if="errorMessages.employeesIds"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.employeesIds"
+        />
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           <!-- Selected Employees & Available Employees -->
@@ -267,10 +306,18 @@
 
       <!-- Materials -->
       <div v-if="next === 4">
-        <h2 class="mb-3 text-xl">Materials</h2>
+        <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.materials') }}</h2>
         <div class="mb-6 flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+          <CustomButton
+            name="edit.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="edit.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <div
@@ -279,7 +326,7 @@
           <!-- Selected Materials & Availabe materials -->
           <button
             v-for="material of [
-              ...selectedMaterialsEdit,
+              // ...selectedMaterialsEdit,
               ...materials.materials,
             ]"
             v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
@@ -311,11 +358,15 @@
 
       <!-- See All -->
       <div v-if="next === 5">
-        <h2 class="mb-3 text-xl">Overview</h2>
+        <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.see.all') }}</h2>
         <div class="mb-6 flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
           <CustomButton
-            name="Update Schedule"
+            name="edit.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="edit.schedule.button.edit"
             :loading="loadingUpdate"
             type="submit"
           />
@@ -330,7 +381,9 @@
           </div>
           <!-- Selected appointments -->
           <div class="flex flex-col">
-            <h3 class="mb-1 text-lg">Appointments</h3>
+            <h3 class="mb-1 text-lg">
+              {{ $t('edit.schedule.sub.appointments') }}
+            </h3>
             <ul
               v-if="selectedAppointments.length > 0"
               class="flex flex-col gap-1"
@@ -344,7 +397,9 @@
 
           <!-- Selected employees -->
           <div class="flex flex-col gap-1">
-            <h3 class="mb-1 text-lg">Employees</h3>
+            <h3 class="mb-1 text-lg">
+              {{ $t('edit.schedule.sub.employees') }}
+            </h3>
             <ul v-if="selectedEmployees.length > 0" class="flex flex-col gap-1">
               <li
                 v-for="user of selectedEmployees"
@@ -366,7 +421,9 @@
               class="mb-1 flex cursor-pointer justify-between"
               @click="toggleCollapsible()"
             >
-              <h3 class="text-lg">Materials</h3>
+              <h3 class="text-lg">
+                {{ $t('edit.schedule.sub.materials') }}
+              </h3>
               <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
             </div>
             <ul v-if="selectedMaterials.length > 0 && !collapsed">
@@ -376,7 +433,9 @@
             </ul>
 
             <!-- No Selected Materials -->
-            <div v-if="selectedMaterials.length < 1">No materials selected</div>
+            <div v-if="selectedMaterials.length < 1">
+              {{ $t('edit.schedule.no.material') }}
+            </div>
           </div>
         </div>
       </div>
@@ -387,6 +446,7 @@
 <script setup lang="ts">
 import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
+import CustomError from '@/components/generic/CustomError.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { UPDATE_APPOINTMENT } from '@/graphql/appointment.mutation'
@@ -557,13 +617,13 @@ const handleUpdateSchedule = async (): Promise<void> => {
           materialIds: materialsIds,
         },
       })
-      showToast('success', 'Success', 'Schedule updated')
+      showToast('success', 'toast.success', 'edit.schedule.toast.update')
       go(-1)
     }
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't update schedule")
+    showToast('error', 'toast.error', 'edit.schedule.toast.error.update')
   } finally {
     loadingUpdate.value = false
   }
@@ -610,7 +670,7 @@ const handleNext = async (): Promise<void> => {
     let priceError = ''
     for (const a of selectedAppointments.value) {
       if (!a.price) {
-        priceError = 'Fill in price of all appointments'
+        priceError = 'edit.schedule.error.price'
         break
       }
     }
@@ -660,7 +720,7 @@ const addSelectedAppointment = (appointment: Appointment): void => {
   // check if appointment is already selected
   const index = values.appointmentsIds.indexOf(appointment.id!)
 
-  console.log('index', index)
+  // console.log('index', index)
 
   // if appointment is already selected, remove it
   if (index > -1) {
@@ -688,11 +748,11 @@ const addSelectedAppointment = (appointment: Appointment): void => {
 }
 
 const addSelectedEmployee = (user: CustomUser): void => {
-  console.log('user', user)
+  // console.log('user', user)
   // check if user is already selected
   const index = values.employeesIds.indexOf(user.id)
 
-  console.log(index)
+  // console.log(index)
 
   // if user is already selected, remove it
   if (index > -1) {
@@ -764,18 +824,20 @@ const checkAvailability = async (): Promise<void> => {
   ) {
     await refetchAppointments()
     await refetchEmployees()
-    if (appointments.value.length === 0 && employees.value.length === 0) {
-      error = 'No appointments and employees available for this date'
+    if (
+      appointments.value.appointmentsAvailableByDate.length === 0 &&
+      employees.value.usersEmployeesAvailableByDate.length === 0
+    ) {
+      error = 'edit.schedule.error.no.appointment.employees'
     }
     // check if there are appointments available for the selected date
-    else if (appointments.value.length === 0) {
-      error = 'No appointments available for this date'
+    else if (appointments.value.appointmentsAvailableByDate.length === 0) {
+      error = 'edit.schedule.error.no.appointment'
     }
     // check if there are employees available for the selected date
-    else if (employees.value.length === 0) {
-      error = 'No employees available for this date'
+    else if (employees.value.usersEmployeesAvailableByDate.length === 0) {
+      error = 'edit.schedule.error.no.employees'
     }
-
     errorMessages.value.finalDate = error
   }
 }
@@ -858,22 +920,22 @@ watchEffect(() => {
   if (scheduleError.value) {
     // console.log(scheduleError.value)
     LogRocket.captureException(scheduleError.value)
-    showToast('error', 'Error', "Couldn't load schedule")
+    showToast('error', 'toast.error', 'edit.schedule.toast.error.schedule')
   }
   if (errorAppointments.value) {
     // console.log(errorAppointments.value)
     LogRocket.captureException(errorAppointments.value)
-    showToast('error', 'Error', "Couldn't load appointments")
+    showToast('error', 'toast.error', 'edit.schedule.toast.error.appointments')
   }
   if (errorEmployees.value) {
     // console.log(errorEmployees.value)
     LogRocket.captureException(errorEmployees.value)
-    showToast('error', 'Error', "Couldn't load employees")
+    showToast('error', 'toast.error', 'edit.schedule.toast.error.employees')
   }
   if (errorMaterials.value) {
     // console.log(errorMaterials.value)
     LogRocket.captureException(errorMaterials.value)
-    showToast('error', 'Error', "Couldn't load materials")
+    showToast('error', 'toast.error', 'edit.schedule.toast.error.materials')
   }
 })
 </script>

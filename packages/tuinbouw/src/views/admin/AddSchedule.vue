@@ -795,7 +795,6 @@ const checkAvailability = async (): Promise<void> => {
   else if (employees.value.length === 0) {
     error = 'add.schedule.error.no.employees'
   }
-
   errorMessages.value.finalDate = error
 }
 
