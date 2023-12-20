@@ -87,7 +87,7 @@
       </p>
       <!-- Delete button -->
       <CustomButton
-        name="Delete"
+        name="absences.modal.detail.button.delete"
         :loading="loading.delete"
         variant="warning"
         @click="handleDelete(selectedAbsence!)"
