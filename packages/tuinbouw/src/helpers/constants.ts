@@ -187,36 +187,36 @@ export const FILTER_OPTIONS_SCHEDULES = [
 
 export const FILTER_OPTIONS_ABSENCES = [
   {
-    title: 'Type',
+    title: 'absences.filter.type',
     name: 'type',
     type: 'checkbox',
     options: [
-      { label: 'Sick', value: 'S' },
-      { label: 'Vacation', value: 'V' },
-      { label: 'Other', value: 'O' },
+      { label: 'absences.filter.type.option.sick', value: 'S' },
+      { label: 'absences.filter.type.option.vacation', value: 'V' },
+      { label: 'absences.filter.type.option.other', value: 'O' },
     ],
   },
 ]
 
 export const SORT_OPTIONS_ABSENCES = [
   {
-    label: 'Date Created',
+    label: 'absences.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Start Date',
+    label: 'absences.sort.start.date',
     value: 'startDate',
   },
   {
-    label: 'End Date',
+    label: 'absences.sort.end.date',
     value: 'endDate',
   },
   {
-    label: 'Total Days',
+    label: 'absences.sort.total.days',
     value: 'totalDays',
   },
   {
-    label: 'Type',
+    label: 'absences.sort.type',
     value: 'type',
   },
 ]

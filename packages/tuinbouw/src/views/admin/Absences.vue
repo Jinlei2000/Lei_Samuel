@@ -15,7 +15,7 @@
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
-        <h1 class="text-2xl">Absences</h1>
+        <h1 class="text-2xl">{{ $t('absences.title') }}</h1>
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_ABSENCES" />
       </header>
@@ -46,12 +46,14 @@
             <p class="min-w-1/3">
               {{ formatAbsenceDate(absence.startDate) }}
             </p>
-            <p class="opacity-70">{{ absence.totalDays }} days</p>
+            <p class="opacity-70">
+              {{ absence.totalDays }} {{ $t('absences.days') }}
+            </p>
           </div>
           <p
             class="bg-primary-orange rounded-full px-3 py-1 capitalize text-white"
           >
-            {{ absence.type }}
+            {{ $t(absence.type) }}
           </p>
         </button>
       </div>
@@ -65,7 +67,7 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    header="Absence Details"
+    :header="$t('material.modal.detail.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -162,17 +164,13 @@ const handleDelete = async (absence: Absence): Promise<void> => {
     await deleteAbsence({
       id: absence.id,
     })
-    showToast(
-      'success',
-      'Success',
-      `Absence of ${absence.user.firstname} has been deleted`,
-    )
+    showToast('success', 'toast.success', `absences.toast.delete`)
     await refetchAbsences()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't delete absence")
+    showToast('error', 'toast.error', 'absences.toast.error.delete')
   } finally {
     loading.value.delete = false
   }
@@ -208,7 +206,7 @@ watchEffect(() => {
   if (absencesError.value) {
     // console.log(absencesError.value)
     LogRocket.captureException(absencesError.value)
-    showToast('error', 'Error', "Couldn't load absences")
+    showToast('error', 'toast.error', 'absences.toast.absences')
   }
 })
 </script>
