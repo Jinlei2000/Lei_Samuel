@@ -27,6 +27,20 @@
       </RouterLink>
     </div>
 
+    <!-- Loading Skeletons -->
+    <div v-if="upcomingAppointmentsLoading" class="flex flex-col gap-3">
+      <div v-for="index in 5" :key="index">
+        <div
+          class="flex animate-pulse flex-col gap-3 rounded-2xl bg-gray-200 p-3"
+        >
+          <div class="flex flex-col gap-3">
+            <div class="h-4 w-32 rounded-lg bg-gray-500"></div>
+            <div class="h-4 w-72 rounded-lg bg-gray-500"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div
       v-if="upcomingAppointments && upcomingAppointments.length > 0"
       class="flex flex-col gap-3"
@@ -37,7 +51,11 @@
     </div>
 
     <div
-      v-else
+      v-else-if="
+        upcomingAppointments &&
+        upcomingAppointments.length === 0 &&
+        !upcomingAppointmentsLoading
+      "
       class="flex flex-col items-center justify-center gap-3 rounded-2xl bg-gray-200 p-6"
     >
       <p class="text-lg">Geen afspraken gepland</p>
@@ -65,12 +83,15 @@ const upcomingAppointments: ComputedRef<Appointment[]> = computed(() => {
 })
 
 // graphql
-const { result: upcomingAppointmentsResult, error: upcomingAppointmentsError } =
-  useQuery(GET_UPCOMING_APPOINTMENTS_BY_USERID, {
-    userId: customUser?.value?.id,
-    amount: 5,
-    fetchPolicy: 'cache-and-network',
-  })
+const {
+  result: upcomingAppointmentsResult,
+  error: upcomingAppointmentsError,
+  loading: upcomingAppointmentsLoading,
+} = useQuery(GET_UPCOMING_APPOINTMENTS_BY_USERID, {
+  userId: customUser?.value?.id,
+  amount: 5,
+  fetchPolicy: 'cache-and-network',
+})
 
 watchEffect(() => {
   // log the queries
