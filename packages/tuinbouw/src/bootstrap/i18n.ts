@@ -12,14 +12,9 @@ export const i18nOptions: I18nOptions = {
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
   legacy: false,
-  messages: {
-    en: {
-      hello: 'hello world',
-    },
-    nl: {
-      hello: 'hallo wereld',
-    },
-  },
+  messages: {},
+  missingWarn: false, // Disable missing key warnings
+  fallbackWarn: false, // Disable fallback warnings
 }
 
 export const i18n = createI18n(i18nOptions)

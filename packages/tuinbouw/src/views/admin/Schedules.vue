@@ -114,14 +114,49 @@
         {{ formatDateTime(selectedSchedule.finalDate.toString()) }}
       </h2>
       <div class="flex flex-col gap-3">
-        <h3 class="text-lg">Appointments:</h3>
-        <ul class="flex flex-col gap-1">
+        <h3 class="text-lg">Appointments</h3>
+        <ul class="flex flex-col gap-3">
           <li
             v-for="appointment in selectedSchedule.appointments"
             :key="appointment.id"
-            class="flex items-center gap-3"
+            class="relative flex h-28 gap-3 overflow-hidden rounded-lg bg-gray-200"
           >
-            <p>{{ appointment.location.address }}</p>
+            <div
+              class="absolute left-0 top-0 h-full w-1"
+              :class="
+                appointment?.type === 'maintenance'
+                  ? 'bg-primary-green'
+                  : appointment?.type === 'repair'
+                    ? 'bg-primary-orange'
+                    : appointment?.type === 'inspection'
+                      ? 'bg-primary-blue'
+                      : 'bg-transparent'
+              "
+            ></div>
+            <div class="flex h-full w-2/3 flex-col justify-between p-3">
+              <div>
+                <h4 class="text-lg capitalize">
+                  {{ appointment.user.fullname }}
+                </h4>
+                <p class="line-clamp-2">
+                  {{ appointment.description }}Nostrud veniam adipisicing
+                  pariatur reprehenderit. Sint aliqua ea incididunt sint
+                  exercitation. Nisi esse ad irure in ad aliqua sint laboris ad
+                  proident duis nostrud. Fugiat irure sint tempor magna ut
+                  nostrud ad duis officia aliqua laborum. Magna adipisicing
+                  dolore proident veniam Lorem consectetur sunt eiusmod sint
+                  reprehenderit.
+                </p>
+              </div>
+              <p class="text-xs text-gray-900">
+                {{ appointment.location.address }}
+              </p>
+            </div>
+            <div
+              class="h-auto w-1/3 overflow-auto rounded-3xl rounded-t-none rounded-bl-none"
+            >
+              <Map class="h-full w-full" :locations="[appointment.location]" />
+            </div>
           </li>
         </ul>
       </div>
@@ -153,8 +188,9 @@
           <li
             v-for="material in selectedSchedule.materials"
             :key="material.id"
-            class="flex items-center gap-3"
+            class="flex items-center gap-2"
           >
+            <Wrench class="h-3 w-3" />
             <p class="capitalize">{{ material.name }}</p>
           </li>
         </ul>
@@ -187,6 +223,7 @@ import CustomButton from '@/components/generic/CustomButton.vue'
 import Filter from '@/components/generic/Filter.vue'
 import NoResult from '@/components/generic/NoResult.vue'
 import Sort from '@/components/generic/Sort.vue'
+import Map from '@/components/Map.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useTimeUtilities from '@/composables/useTimeUtilities'
 import { DELETE_SCHEDULE } from '@/graphql/schedule.mutation'
@@ -200,7 +237,7 @@ import type { Schedule } from '@/interfaces/schedule.interface'
 import type { VariablesProps } from '@/interfaces/variablesProps.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { ChevronDown, PlusCircle } from 'lucide-vue-next'
+import { ChevronDown, PlusCircle, Wrench } from 'lucide-vue-next'
 import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 

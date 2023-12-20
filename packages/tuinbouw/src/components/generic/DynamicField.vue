@@ -12,7 +12,7 @@
     }"
     :as="field.as"
     :name="field.name"
-    v-bind="field"
+    :placeholder="$t(field.placeholder)"
   >
   </Field>
 
@@ -25,8 +25,8 @@
     <Dropdown
       :id="field.name"
       v-model="fieldProps.value"
-      :placeholder="field.placeholder"
       :options="field.options"
+      :placeholder="$t(field.placeholder)"
       :option-label="field.optionLabel ?? 'name'"
       :option-value="field.optionValue ?? 'name'"
       :editable="field.editable ?? false"
@@ -42,9 +42,19 @@
           ],
         },
       }"
-      v-bind="field"
       @change="handleChange($event.value, false)"
     >
+      <!-- <template #value="slotProps">
+        <div v-if="slotProps.value">
+          {{ $t(slotProps.value.name) }}
+        </div>
+        <span v-else>
+          {{ slotProps.placeholder }}
+        </span>
+      </template> -->
+      <template #option="slotProps">
+        {{ $t(slotProps.option.name) }}
+      </template>
       <template #dropdownicon>
         <ChevronDownIcon />
       </template>
@@ -64,7 +74,7 @@
       :min-date="field.setMinEndDate ? minEndDate : field.minDate"
       show-icon
       date-format="yy-mm-dd"
-      :placeholder="field.placeholder"
+      :placeholder="$t(field.placeholder)"
       :pt="{
         root: {
           class: ['w-full'],
@@ -80,7 +90,6 @@
           ],
         },
       }"
-      v-bind="field"
       @date-select="
         $event => {
           // Set minEndDate to the selected date if setMinEndDate is true

@@ -2,7 +2,7 @@
   <main class="m-auto max-w-7xl">
     <!-- Title -->
     <div class="mb-3 mt-6 flex items-center gap-4 md:mt-12">
-      <h1 class="text-2xl">Create a new appointment</h1>
+      <h1 class="text-2xl">{{ $t('add.appointment.title') }}</h1>
     </div>
     <!-- Form -->
     <form
@@ -35,7 +35,7 @@
               }"
               @click="selectedLocation = location"
             >
-              <h3 class="w-1/5 text-lg">Home</h3>
+              <h3 class="w-1/5 text-lg">{{ location.title }}</h3>
               <p>{{ location.address }}</p>
               <div
                 v-if="selectedLocation == location"
@@ -51,14 +51,19 @@
             to="/client/profile"
             class="flex w-full flex-col gap-3 rounded-2xl bg-gray-200 p-3"
           >
-            <p class="text-md">You haven't created any locations yet</p>
-            <CustomButton type="button" name="Add Location" />
+            <p class="text-md">{{ $t('add.appointment.no.location') }}</p>
+            <CustomButton
+              type="button"
+              name="add.appointment.button.add.location"
+            />
           </RouterLink>
         </div>
 
         <!-- Recent Appointments -->
         <div class="hidden md:block">
-          <h2 class="text-xl opacity-80">Recent appointments</h2>
+          <h2 class="text-xl opacity-80">
+            {{ $t('add.appointment.title.recent') }}
+          </h2>
 
           <!-- Skeleton Loader -->
           <div
@@ -86,7 +91,9 @@
             v-if="recentAppointments.length === 0"
             class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
           >
-            <p class="text-gray-500">No recent appointments</p>
+            <p class="text-gray-500">
+              {{ $t('add.appointment.title.recent') }}
+            </p>
           </div>
         </div>
       </div>
@@ -96,52 +103,60 @@
       >
         <!-- Type -->
         <div class="flex flex-col gap-3">
-          <label for="type" class="text-xl">Type afspraak</label>
+          <label for="type" class="text-xl">{{
+            $t('add.appointment.form.title.type')
+          }}</label>
           <select
             id="type"
             v-model="type"
             class="w-fit rounded bg-gray-400 p-3"
             name="type"
           >
-            <option value="" disabled selected>Select a type</option>
+            <option value="" disabled selected>
+              {{ $t('add.appointment.form.type.placeholder') }}
+            </option>
             <option
               v-for="type in APPOINTMENT_TYPES"
               :key="type.name"
+              :value="type.value"
               class="capitalize"
             >
-              {{ type.name }}
+              {{ $t(type.name) }}
             </option>
           </select>
           <span v-if="errorMessages.type" class="block text-sm text-red-500">{{
-            errorMessages.type
+            $t(errorMessages.type)
           }}</span>
         </div>
         <!-- Description -->
         <div class="flex flex-col gap-3">
-          <label for="" class="text-xl">Omschrijving</label>
+          <label for="description" class="text-xl">{{
+            $t('add.appointment.form.title.description')
+          }}</label>
           <textarea
-            id=""
+            id="description"
             v-model="description"
             class="rounded bg-gray-400 p-3"
-            name=""
+            name="description"
             rows="5"
           ></textarea>
           <span
             v-if="errorMessages.description"
             class="block text-sm text-red-500"
-            >{{ errorMessages.description }}</span
+            >{{ $t(errorMessages.description) }}</span
           >
         </div>
         <!-- Date -->
         <div class="flex w-full flex-col gap-3">
           <div class="flex flex-col gap-2">
-            <label for="" class="text-xl">Kies een moment</label>
+            <label for="date" class="text-xl">{{
+              $t('add.appointment.form.title.date')
+            }}</label>
             <p class="max-w-xs">
-              We plannen de afspraak in tussen de data die je gekozen hebt
+              {{ $t('add.appointment.form.text.date') }}
             </p>
           </div>
           <div class="flex w-full items-center justify-between">
-            <!-- TODO: fix styling -->
             <Calendar
               v-model="startProposedDate"
               show-icon
@@ -175,12 +190,12 @@
           <span
             v-if="errorMessages.startProposedDate"
             class="block text-sm text-red-500"
-            >{{ errorMessages.startProposedDate }}</span
+            >{{ $t(errorMessages.startProposedDate) }}</span
           >
           <span
             v-if="errorMessages.endProposedDate"
             class="block text-sm text-red-500"
-            >{{ errorMessages.endProposedDate }}</span
+            >{{ $t(errorMessages.endProposedDate) }}</span
           >
         </div>
         <div class="flex justify-end">
@@ -188,7 +203,7 @@
             type="submit"
             :loading="loading.createAppointment"
             :disabled="locations.length === 0"
-            name="Create Appointment"
+            name="add.appointment.form.submit"
           />
         </div>
       </div>
@@ -198,7 +213,9 @@
           type="button"
           @click="handleCollapsible()"
         >
-          <h2 class="text-xl opacity-80">Recent appointments</h2>
+          <h2 class="text-xl opacity-80">
+            {{ $t('add.appointment.title.recent') }}
+          </h2>
           <ChevronDown
             :class="showAppointments ? 'transform rotate-180' : ''"
           />
@@ -235,7 +252,7 @@
           v-if="recentAppointments.length === 0"
           class="flex h-32 w-full items-center justify-center rounded-2xl bg-gray-200"
         >
-          <p class="text-gray-500">No recent appointments</p>
+          <p class="text-gray-500">{{ $t('add.appointment.no.recent') }}</p>
         </div>
       </div>
     </form>
@@ -347,7 +364,7 @@ const handleCreateAppointment = async (): Promise<void> => {
     loading.value.createAppointment = true
     await validate()
     errorMessages.value = errors.value
-    console.log(values)
+    // console.log(values)
     if (Object.keys(errors.value).length === 0) {
       await addAppointment({
         input: {
@@ -363,13 +380,13 @@ const handleCreateAppointment = async (): Promise<void> => {
           priority: false,
         },
       })
-      showToast('success', 'Success', 'Afspraak is gemaakt')
+      showToast('success', 'toast.success', 'add.appointment.toast.create')
       replace('/client/appointments')
     }
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't create appointment")
+    showToast('error', 'toast.error', 'add.appointment.toast.error.create')
   } finally {
     loading.value.createAppointment = false
   }
@@ -393,20 +410,24 @@ watchEffect(() => {
   // default first location selected
   selectedLocation.value = locations.value?.[0]
 
-  if (recentAppointmentsResult.value) {
-    console.log(recentAppointmentsResult.value)
-  }
+  // if (recentAppointmentsResult.value) {
+  //   console.log(recentAppointmentsResult.value)
+  // }
 
   // all errors
   if (locationsError.value) {
     // console.log(locationsError.value)
     LogRocket.captureException(locationsError.value)
-    showToast('error', 'Error', "Couldn't load locations")
+    showToast('error', 'toast.error', 'add.appointment.toast.error.location')
   }
   if (recentAppointmentsError.value) {
     // console.log(recentAppointmentsError.value)
     LogRocket.captureException(recentAppointmentsError.value)
-    showToast('error', 'Error', "Couldn't load recent appointments")
+    showToast(
+      'error',
+      'toast.error',
+      'add.appointment.toast.error.appointments ',
+    )
   }
 })
 </script>

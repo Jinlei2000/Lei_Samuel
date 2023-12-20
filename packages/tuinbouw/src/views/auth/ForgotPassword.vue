@@ -1,5 +1,5 @@
 <template>
-  <section class="">
+  <section>
     <div
       class="mx-auto flex h-screen flex-col items-center justify-center px-6 py-8 lg:py-0"
     >
@@ -8,11 +8,9 @@
           <h1
             class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
-            Reset Password
+            {{ $t('auth.forgotpwd.title') }}
           </h1>
-          <span v-if="errorForgotPwd" class="text-red-600">{{
-            errorForgotPwd
-          }}</span>
+          <CustomError v-if="errorForgotPwd" :error="errorForgotPwd" />
           <DynamicForm
             :schema="formForgotPwd"
             :validation-schema="forgotPasswordValidationSchema"
@@ -20,12 +18,12 @@
             :loading="loading"
           />
           <p class="text-sm font-light text-gray-500">
-            Know your password?
+            {{ $t('auth.forgotpwd.login.text') }}
             <RouterLink
               to="/auth/login"
               class="text-primary-600 font-medium hover:underline"
             >
-              Login
+              {{ $t('auth.forgotpwd.login.link') }}
             </RouterLink>
           </p>
         </div>
@@ -35,11 +33,13 @@
 </template>
 
 <script setup lang="ts">
+import CustomError from '@/components/generic/CustomError.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useFirebase from '@/composables/useFirebase'
 import type { CustomUser } from '@/interfaces/custom.user.interface'
 import { forgotPasswordValidationSchema } from '@/validation/schema'
+import type { AuthError } from 'firebase/auth'
 import LogRocket from 'logrocket'
 import { ref } from 'vue'
 
@@ -55,7 +55,7 @@ const loading = ref(false)
 const formForgotPwd = {
   fields: [
     {
-      label: 'Email',
+      label: 'auth.forgotpwd.form.email',
       name: 'email',
       placeholder: 'john@gmail.com',
       as: 'input',
@@ -64,26 +64,25 @@ const formForgotPwd = {
 
   button: {
     class: 'w-full flex justify-center',
-    name: 'Reset Password',
+    name: 'auth.forgotpwd.form.submit',
   },
 }
 
 const handleForgotPwd = async (values: CustomUser) => {
-  loading.value = true
-  await forgotPassword(values.email)
-    .then(() => {
-      console.log('Reset password email sent')
-      showToast(
-        'success',
-        'Success',
-        'Check your inbox for the reset password email',
-      )
-    })
-    .catch(error => {
-      console.log(error)
-      LogRocket.captureException(error)
-      errorForgotPwd.value = error.message
-    })
-  loading.value = false
+  try {
+    loading.value = true
+    await forgotPassword(values.email)
+    // console.log('Reset password email sent')
+    showToast('success', 'toast.success', 'auth.forgotpwd.toast.succes')
+  } catch (error) {
+    // console.log(error)
+    LogRocket.captureException(error as Error)
+    // check if error is AuthError
+    if ((error as AuthError)?.code !== undefined) {
+      errorForgotPwd.value = (error as AuthError).code
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>

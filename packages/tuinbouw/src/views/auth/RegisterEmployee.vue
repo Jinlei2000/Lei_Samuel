@@ -8,7 +8,7 @@
           <h1
             class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
           >
-            Create an employee account
+            {{ $t('auth.register.employee.title') }}
           </h1>
           <span v-if="errorRegister" class="text-red-600">{{
             errorRegister
@@ -20,12 +20,12 @@
             :loading="loading"
           />
           <p class="text-sm font-light text-gray-500">
-            Already have an account?
+            {{ $t('auth.register.employee.login.text') }}
             <RouterLink
               to="/auth/login"
               class="text-primary-600 font-medium hover:underline"
             >
-              Login
+              {{ $t('auth.register.employee.login.link') }}
             </RouterLink>
           </p>
         </div>
@@ -45,6 +45,7 @@ import type { CustomUser } from '@/interfaces/custom.user.interface'
 import router from '@/router'
 import { registerValidationSchema } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
+import type { AuthError } from 'firebase/auth'
 import LogRocket from 'logrocket'
 import { type GenericObject } from 'vee-validate'
 import { ref, watchEffect } from 'vue'
@@ -65,25 +66,25 @@ const loading = ref(false)
 const formRegister = {
   fields: [
     {
-      label: 'First name',
+      label: 'auth.register.employee.form.firstname',
       name: 'firstName',
       placeholder: 'John',
       as: 'input',
     },
     {
-      label: 'Last name',
+      label: 'auth.register.employee.form.lastname',
       name: 'lastName',
       placeholder: 'Doe',
       as: 'input',
     },
     {
-      label: 'Email',
+      label: 'auth.register.employee.form.email',
       name: 'email',
       placeholder: 'john@gmail.com',
       as: 'input',
     },
     {
-      label: 'Password',
+      label: 'auth.register.employee.form.password',
       name: 'password',
       placeholder: '••••••••',
       as: 'input',
@@ -93,18 +94,18 @@ const formRegister = {
 
   button: {
     class: 'w-full flex justify-center',
-    name: 'Create an account',
+    name: 'auth.register.employee.form.submit',
   },
 }
 
 // graphQL
-const { mutate: updateEmployee, error: addEmployeeError } =
-  useMutation<CustomUser>(UPDATE_EMPLOYEE_REGISTER)
+const { mutate: updateEmployee } = useMutation<CustomUser>(
+  UPDATE_EMPLOYEE_REGISTER,
+)
 
-const {
-  mutate: deleteAllMailTokensByUserId,
-  error: deleteAllMailTokensByUserIdError,
-} = useMutation(DELETE_ALL_MAILTOKENS_BY_USERID)
+const { mutate: deleteAllMailTokensByUserId } = useMutation(
+  DELETE_ALL_MAILTOKENS_BY_USERID,
+)
 
 const { result: mailTokenResult, error: mailTokenError } = useQuery(
   GET_MAILTOKEN_BY_TOKEN,
@@ -114,10 +115,9 @@ const { result: mailTokenResult, error: mailTokenError } = useQuery(
 )
 
 const handleRegister = async (values: GenericObject) => {
-  console.log('handleRegister')
-  loading.value = true
-
   try {
+    // console.log('handleRegister')
+    loading.value = true
     if (mailTokenResult.value) {
       const userId = mailTokenResult.value.getMailTokenByToken.userId
 
@@ -143,28 +143,29 @@ const handleRegister = async (values: GenericObject) => {
         userId: userId,
       })
 
-      console.log('Register success')
+      // console.log('Register success')
       replace('/auth/login')
     }
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     LogRocket.captureException(error as Error)
-    errorRegister.value = (error as Error).message
+    // check if error is AuthError
+    if ((error as AuthError)?.code !== undefined) {
+      errorRegister.value = (error as AuthError).code
+    } else {
+      errorRegister.value = 'auth.register.employee.error'
+    }
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
 watchEffect(() => {
   // all errors
-  const errors = [
-    addEmployeeError.value,
-    mailTokenError.value,
-    deleteAllMailTokensByUserIdError.value,
-  ]
-  errors.forEach(error => {
-    if (error) {
-      errorRegister.value = error.message
-    }
-  })
+  if (mailTokenError.value) {
+    // console.log(mailTokenError.value)
+    LogRocket.captureException(mailTokenError.value)
+    errorRegister.value = 'auth.register.employee.error.token'
+  }
 })
 </script>
