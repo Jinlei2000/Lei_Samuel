@@ -2,7 +2,7 @@
   <div
     class="mb-3 flex w-full items-center justify-center gap-6 sm:gap-24 lg:gap-0"
   >
-    <p>Project by Lei Jin & Samuel Vanhaecke for MCT</p>
+    <p>Lei Jin & Samuel Vanhaecke for MCT</p>
     <div class="py-2 lg:hidden">
       <select
         id="language"
