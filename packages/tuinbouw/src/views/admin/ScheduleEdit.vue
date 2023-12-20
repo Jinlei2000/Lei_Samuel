@@ -179,7 +179,7 @@
       <!-- Fill in price of appointments -->
       <div v-if="next === 2">
         <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.price') }}</h2>
-        <div class="mt-6 flex w-full justify-between">
+        <div class="mb-6 flex w-full justify-between">
           <CustomButton
             name="edit.schedule.button.back"
             type="button"
@@ -249,7 +249,7 @@
       <!-- Employees -->
       <div v-if="next === 3">
         <h2 class="mb-3 text-xl">{{ $t('edit.schedule.sub.employees') }}</h2>
-        <div class="mt-6 flex w-full justify-between">
+        <div class="mb-6 flex w-full justify-between">
           <CustomButton
             name="edit.schedule.button.back"
             type="button"
@@ -326,7 +326,7 @@
           <!-- Selected Materials & Availabe materials -->
           <button
             v-for="material of [
-              ...selectedMaterialsEdit,
+              // ...selectedMaterialsEdit,
               ...materials.materials,
             ]"
             v-if="selectedMaterialsEdit && selectedMaterialsEdit.length > 0"
@@ -824,18 +824,20 @@ const checkAvailability = async (): Promise<void> => {
   ) {
     await refetchAppointments()
     await refetchEmployees()
-    if (appointments.value.length === 0 && employees.value.length === 0) {
+    if (
+      appointments.value.appointmentsAvailableByDate.length === 0 &&
+      employees.value.usersEmployeesAvailableByDate.length === 0
+    ) {
       error = 'edit.schedule.error.no.appointment.employees'
     }
     // check if there are appointments available for the selected date
-    else if (appointments.value.length === 0) {
+    else if (appointments.value.appointmentsAvailableByDate.length === 0) {
       error = 'edit.schedule.error.no.appointment'
     }
     // check if there are employees available for the selected date
-    else if (employees.value.length === 0) {
+    else if (employees.value.usersEmployeesAvailableByDate.length === 0) {
       error = 'edit.schedule.error.no.employees'
     }
-
     errorMessages.value.finalDate = error
   }
 }
