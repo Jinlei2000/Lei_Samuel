@@ -25,7 +25,7 @@
   <div class="mx-4 flex min-h-screen flex-col text-black">
     <Appheader />
     <RouterView />
-    <AppFooter class="mt-auto" />
+    <!-- <AppFooter class="mt-auto" /> -->
   </div>
 </template>
 
