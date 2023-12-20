@@ -58,7 +58,7 @@
       "
       class="flex flex-col items-center justify-center gap-3 rounded-2xl bg-gray-200 p-6"
     >
-      <p class="text-lg">Geen afspraken gepland</p>
+      <p class="text-lg">{{ $t('dashboard.client.no.upcoming') }}</p>
     </div>
   </div>
 </template>
