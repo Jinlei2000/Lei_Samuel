@@ -22,15 +22,17 @@
       <X :class="slotProps.class" />
     </template>
   </Toast>
-  <div class="mx-4 text-black">
+  <div class="mx-4 flex min-h-screen flex-col text-black">
     <Appheader />
     <RouterView />
+    <AppFooter class="mt-auto" />
   </div>
 </template>
 
 <script setup lang="ts">
 // import type AppHeaderVue from '../components/generic/AppHeader.vue'
-import Appheader from './components/generic/appheader.vue'
+import AppFooter from './components/AppFooter.vue'
+import Appheader from './components/generic/AppHeader.vue'
 import useCustomUser from './composables/useCustomUser'
 import useGraphql from './composables/useGraphql'
 import useLanguage from './composables/useLanguage'
