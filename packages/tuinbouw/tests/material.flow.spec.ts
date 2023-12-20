@@ -46,17 +46,18 @@ test('Create Material', async ({ page }) => {
 
 test('Edit Material', async ({ page }) => {
   await page.getByRole('link', { name: 'Materials' }).click()
+  await page.getByRole('button', { name: 'lawn mower Available' }).click()
   await page.getByRole('button', { name: 'Edit' }).click()
-  await page.getByPlaceholder('Forklift').click()
-  await page.getByPlaceholder('Forklift').fill('lawn mower')
   await page.getByPlaceholder('123456789').click()
-  await page.getByPlaceholder('123456789').fill('89452489456')
-  await page.locator('#isLoan span').click()
-  await page.getByRole('button', { name: 'Edit Material' }).click()
+  await page.getByPlaceholder('123456789').fill('8945248545')
+  await page.getByRole('button', { name: 'Update Material' }).click()
 })
 
 test('Delete Material', async ({ page }) => {
   await page.getByRole('link', { name: 'Materials' }).click()
-  await page.getByRole('button', { name: 'lawn mower Available' }).click()
+  await page
+    .getByRole('button', { name: 'lawn mower available' })
+    .first()
+    .click()
   await page.getByRole('button', { name: 'Delete' }).click()
 })
