@@ -444,7 +444,10 @@ const handleUpdatematerial = async (values: GenericObject): Promise<void> => {
     await updateMaterial({
       updateMaterialInput: {
         id: selectedMaterial.value?.id,
-        ...values,
+        serialNumber: parseInt(values.serialNumber),
+        name: values.name,
+        isLoan: values.isLoan,
+        userId: values.userId,
       },
     })
     showToast('success', 'toast.success', 'material.toast.update')
