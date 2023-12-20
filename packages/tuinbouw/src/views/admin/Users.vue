@@ -136,7 +136,7 @@
           <p v-if="selectedUser.telephone" class="text-gray-600">
             {{ selectedUser.telephone }}
           </p>
-          <p v-else class="text-gray-600">Unknown</p>
+          <p v-else class="text-gray-600">{{ $t('users.unknown') }}</p>
         </div>
         <div
           v-if="selectedUser.locations.length > 0"
