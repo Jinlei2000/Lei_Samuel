@@ -168,10 +168,15 @@
           v-else
           class="flex items-center justify-center rounded-2xl bg-gray-200 p-6"
         >
-          <p class="text-gray-900">No locations</p>
+          <p class="text-gray-900">
+            {{ $t('users.modal.detail.no.location') }}
+          </p>
         </div>
         <div v-if="selectedUser.role == 'EMPLOYEE'" class="mb-3">
-          <p>Absences: {{ selectedUser.absentCount }}</p>
+          <p>
+            {{ $t('users.modal.detail.absences') }}:
+            {{ selectedUser.absentCount }}
+          </p>
         </div>
       </div>
 
