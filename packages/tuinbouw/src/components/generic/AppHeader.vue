@@ -25,7 +25,7 @@
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class="border-b-[1px] border-black"
                 :to="`/${role}/dashboard`"
-                >Dashboard</RouterLink
+                >{{ $t('navbar.dashboard') }}</RouterLink
               >
             </li>
             <li v-if="role == 'admin'">
@@ -33,7 +33,7 @@
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/users`"
-                >Users</RouterLink
+                >{{ $t('navbar.users') }}</RouterLink
               >
             </li>
             <li v-if="role == 'admin'" class="relative">
@@ -50,7 +50,7 @@
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/appointments`"
                 @click="newAppointments = 0"
-                >Appointments</RouterLink
+                >{{ $t('navbar.appointments') }}</RouterLink
               >
             </li>
             <li v-if="role == 'admin'">
@@ -58,7 +58,7 @@
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/schedules`"
-                >Schedules</RouterLink
+                >{{ $t('navbar.schedules') }}</RouterLink
               >
             </li>
             <li v-if="role == 'admin' || role == 'employee'">
@@ -66,7 +66,7 @@
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/materials`"
-                >Materials</RouterLink
+                >{{ $t('navbar.materials') }}</RouterLink
               >
             </li>
             <li v-if="role == 'employee'">
@@ -74,7 +74,7 @@
                 class="hover:text-primary-orange py-1 text-black transition-all"
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/calendar`"
-                >Calendar</RouterLink
+                >{{ $t('navbar.calendar') }}</RouterLink
               >
             </li>
           </div>
@@ -117,31 +117,34 @@
                   class="hover:text-primary-green flex gap-3"
                   @click="showProfileDropdown()"
                 >
-                  <User /> Profile
+                  <User />
+                  <p>{{ $t('navbar.avatar.dropdown.profile') }}</p>
                 </button>
               </Router-link>
               <button
-                class="hover:text-primary-green flex gap-3"
+                class="hover:text-primary-green flex gap-3 text-left"
                 @click="handleLogout()"
               >
-                <LogOut /> Logout
+                <LogOut />
+                <p class="whitespace-nowrap">
+                  {{ $t('navbar.avatar.dropdown.logout') }}
+                </p>
               </button>
             </div>
           </div>
         </div>
-
         <RouterLink
           v-if="!customUser"
-          to="auth/login"
-          class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
-          >Login<LogIn
+          :to="`/auth/login`"
+          class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 whitespace-nowrap rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px]"
+          >{{ $t('navbar.login') }}<LogIn
         /></RouterLink>
       </nav>
       <RouterLink
         v-if="!customUser"
-        to="auth/login"
+        :to="`/auth/login`"
         class="hover:text-primary-green bg-primary-green hover:outline-primary-green flex gap-2 rounded-md px-4 py-2 text-gray-200 hover:bg-transparent hover:outline hover:outline-[1px] md:hidden"
-        >Login<LogIn
+        >{{ $t('navbar.login') }}<LogIn
       /></RouterLink>
       <nav v-if="customUser" class="block md:hidden">
         <button
@@ -164,7 +167,7 @@
                 active-class="border-b-[1px] border-black"
                 :to="`/${role}/dashboard`"
                 @click="showMenu = false"
-                >Dashboard</RouterLink
+                >{{ $t('navbar.dashboard') }}</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin'"
@@ -172,7 +175,7 @@
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/users`"
                 @click="showMenu = false"
-                >Users</RouterLink
+                >{{ $t('navbar.users') }}</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin'"
@@ -180,7 +183,7 @@
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/appointments`"
                 @click="showMenu = false"
-                >Appointments</RouterLink
+                >{{ $t('navbar.appointments') }}</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin'"
@@ -188,7 +191,7 @@
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/schedules`"
                 @click="showMenu = false"
-                >Schedules</RouterLink
+                >{{ $t('navbar.schedules') }}</RouterLink
               >
               <RouterLink
                 v-if="role == 'admin' || role == 'employee'"
@@ -196,7 +199,7 @@
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/materials`"
                 @click="showMenu = false"
-                >Materials</RouterLink
+                >{{ $t('navbar.materials') }}</RouterLink
               >
               <RouterLink
                 v-if="role == 'employee'"
@@ -204,14 +207,15 @@
                 active-class=" border-b-[1px] border-black"
                 :to="`/${role}/calendar`"
                 @click="showMenu = false"
-                >Calendar</RouterLink
+                >{{ $t('navbar.calendar') }}</RouterLink
               >
               <Router-link :to="`/${role}/profile`">
                 <button
                   class="hover:text-primary-green flex items-center gap-3"
                   @click="showMenu = false"
                 >
-                  <User class="h-7 w-7" /> Profile
+                  <User class="h-7 w-7" />
+                  {{ $t('navbar.avatar.dropdown.profile') }}
                 </button>
               </Router-link>
             </div>
@@ -222,7 +226,7 @@
                 class="bg-primary-red flex w-full justify-center gap-3 rounded-xl py-3 text-white"
                 @click="handleLogout()"
               >
-                <LogOut /> Logout
+                <LogOut /> {{ $t('navbar.avatar.dropdown.logout') }}
               </button>
             </div>
           </div>

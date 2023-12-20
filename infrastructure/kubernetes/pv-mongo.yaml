@@ -1,0 +1,15 @@
+# pv-mongo.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongodb-pv
+  namespace: tuinbouw
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  azureFile:
+    secretName: azure-secret
+    shareName: your-azure-file-share
+    readOnly: false

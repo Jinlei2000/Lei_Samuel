@@ -14,7 +14,9 @@
     :disabled="loading"
     v-bind="$attrs"
   >
-    <span :class="loading ? 'invisible' : ''">{{ name }}</span>
+    <span :class="loading ? 'invisible' : ''">
+      {{ $t(name!) }}
+    </span>
     <span
       v-if="loading"
       class="rotate absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"

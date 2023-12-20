@@ -7,5 +7,6 @@
   "editor.formatOnSave": true,
   "[vue]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
+  },
+  "svg.preview.background": "dark-transparent"
 }

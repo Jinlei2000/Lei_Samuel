@@ -2,7 +2,7 @@
   <main class="m-auto mt-12 flex max-w-7xl flex-col gap-3">
     <!-- Week selection -->
     <section class="flex w-full grid-cols-3 flex-col gap-3 md:grid md:gap-0">
-      <h1 class="col-start-1 text-2xl">Calendar</h1>
+      <h1 class="col-start-1 text-2xl">{{ $t('calendar.title') }}</h1>
       <div class="flex gap-3">
         <div
           class="col-start-2 row-start-2 flex w-full items-center justify-between justify-self-center rounded-2xl bg-gray-500 p-1 md:row-start-1"
@@ -31,7 +31,7 @@
           class="border-primary-green text-primary-green flex w-fit items-center justify-center gap-3 rounded-2xl border px-[18px] transition-all hover:scale-105"
           @click="getWeekBounds"
         >
-          Today
+          {{ $t('calendar.button.today') }}
         </button>
       </div>
     </section>
@@ -120,7 +120,7 @@
             v-if="!schedulesLoading"
             class="flex h-20 w-full items-center justify-center rounded-2xl bg-gray-200 p-3"
           >
-            <p>No Appointments this day</p>
+            <p>{{ $t('calendar.no.appointments.day') }}</p>
           </div>
         </div>
       </div>
@@ -128,7 +128,7 @@
         v-if="!schedulesLoading && weekSchedules && weekSchedules.length < 1"
         class="col-span-5 flex h-36 w-full items-center justify-center rounded-2xl bg-gray-200"
       >
-        <p>No Appointments this week</p>
+        <p>{{ $t('calendar.no.appointments.week') }}</p>
       </div>
     </section>
   </main>
@@ -288,7 +288,7 @@ watchEffect(() => {
   if (schedulesError.value) {
     // console.log(schedulesError.value)
     LogRocket.captureException(schedulesError.value)
-    showToast('error', 'Error', "Couldn't load schedules")
+    showToast('error', 'toast.error', 'calendar.error.schedules')
   }
 })
 </script>

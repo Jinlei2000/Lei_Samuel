@@ -6,9 +6,19 @@ export const GET_ALL_SCHEDULES = gql`
       id
       appointments {
         id
-        location {
-          address
+        user {
+          id
+          fullname
         }
+        location {
+          id
+          address
+          lat
+          lng
+          userId
+        }
+        description
+        type
       }
       employees {
         id
@@ -90,6 +100,41 @@ export const GET_SCHEDULE_BY_ID = gql`
       createdBy
       createdAt
       updatedAt
+    }
+  }
+`
+
+export const GET_SCHEDULES_BY_DATE = gql`
+  query schedulesByDate($date: String!) {
+    schedulesByDate(date: $date) {
+      id
+      appointments {
+        id
+        user {
+          fullname
+        }
+        location {
+          id
+          address
+          lat
+          lng
+          userId
+        }
+        price
+        type
+        finalDate
+        isDone
+        description
+        priority
+      }
+      materials {
+        name
+      }
+      employees {
+        id
+        firstname
+        fullname
+      }
     }
   }
 `

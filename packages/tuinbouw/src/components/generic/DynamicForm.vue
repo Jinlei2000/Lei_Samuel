@@ -12,8 +12,9 @@
           v-if="shouldDisplay(field.displayIf, switchValue, reverseSwitch)"
           class="mb-2 block text-sm font-medium text-gray-900"
           :for="field.name"
-          >{{ field.label }}</label
         >
+          {{ $t(field.label!) }}
+        </label>
 
         <DynamicField
           :field="field"
@@ -32,15 +33,19 @@
           "
           :show="shouldDisplay(field.displayIf, switchValue, reverseSwitch)"
         />
-
-        <ErrorMessage class="block text-sm text-red-500" :name="field.name" />
+        <span
+          v-if="errors[field.name]"
+          class="capitalize-first block text-sm text-red-500"
+        >
+          {{ CapFirst($t(errors[field.name]!)) }}
+        </span>
       </li>
     </ul>
 
     <div class="flex-end mt-3 flex justify-between">
       <CustomButton
         v-if="cancel"
-        name="cancel"
+        name="dynamic.form.button.cancel"
         variant="secondary"
         @click="cancel()"
       />
@@ -58,7 +63,8 @@
 <script setup lang="ts">
 import DynamicField from './DynamicField.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
-import { configure, ErrorMessage, Form } from 'vee-validate'
+import { CapFirst } from '@/helpers/functions'
+import { configure, Form } from 'vee-validate'
 import { onBeforeMount, ref } from 'vue'
 
 const props = defineProps({

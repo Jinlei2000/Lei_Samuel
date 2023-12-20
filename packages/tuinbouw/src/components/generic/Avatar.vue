@@ -3,7 +3,7 @@
     <img
       v-if="user.url"
       :src="user.url"
-      class="object-cover"
+      class="h-full w-full object-cover"
       alt="user avatar"
     />
     <div

@@ -15,7 +15,7 @@
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
-        <h1 class="text-2xl">Absences</h1>
+        <h1 class="text-2xl">{{ $t('absences.title') }}</h1>
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_ABSENCES" />
       </header>
@@ -35,32 +35,26 @@
       v-else-if="absences && absences.length > 0"
       class="m-auto max-w-7xl"
     >
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="flex w-full flex-col gap-3">
         <button
-          v-for="a in absences"
-          :key="a.id"
-          class="overflow-hidden rounded-lg bg-white text-left shadow"
-          @click="toggleModal(a, 'detail')"
+          v-for="absence in absences"
+          :key="absence.id"
+          class="flex items-center justify-between rounded-2xl bg-gray-200 p-3 pl-6 text-left"
+          @click="toggleModal(absence, 'detail')"
         >
-          <div class="px-4 py-5 sm:p-6">
-            <!-- Absence details go here -->
-            <h3 class="text-lg font-semibold text-gray-900">
-              {{ a.user.id }}
-            </h3>
-            <p class="mt-1 text-sm text-gray-500">{{ a.description }}</p>
-            <!-- Add more details as needed -->
-            <p class="mt-2 text-sm font-medium text-indigo-600">{{ a.type }}</p>
-            <p class="mt-2 text-sm font-medium text-gray-600">
-              {{ formatDateTime(a.startDate) }} -
-              {{ formatDateTime(a.endDate) }}
+          <div class="flex w-1/2 gap-3 sm:gap-0">
+            <p class="min-w-1/3">
+              {{ formatAbsenceDate(absence.startDate) }}
             </p>
-            <p class="mt-2 text-sm font-medium text-gray-600">
-              Total Days: {{ a.totalDays }}
-            </p>
-            <p class="mt-2 text-sm text-gray-500">
-              Created At: {{ formatDateTime(a.createdAt) }}
+            <p class="opacity-70">
+              {{ absence.totalDays }} {{ $t('absences.days') }}
             </p>
           </div>
+          <p
+            class="bg-primary-orange rounded-full px-3 py-1 capitalize text-white"
+          >
+            {{ $t(absence.type) }}
+          </p>
         </button>
       </div>
     </section>
@@ -73,7 +67,7 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    header="Absence Details"
+    :header="$t('material.modal.detail.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -93,7 +87,7 @@
       </p>
       <!-- Delete button -->
       <CustomButton
-        name="Delete"
+        name="absences.modal.detail.button.delete"
         :loading="loading.delete"
         variant="warning"
         @click="handleDelete(selectedAbsence!)"
@@ -170,20 +164,26 @@ const handleDelete = async (absence: Absence): Promise<void> => {
     await deleteAbsence({
       id: absence.id,
     })
-    showToast(
-      'success',
-      'Success',
-      `Absence of ${absence.user.firstname} has been deleted`,
-    )
+    showToast('success', 'toast.success', `absences.toast.delete`)
     await refetchAbsences()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't delete absence")
+    showToast('error', 'toast.error', 'absences.toast.error.delete')
   } finally {
     loading.value.delete = false
   }
+}
+
+// Change date to mm/dd/yyyy
+const formatAbsenceDate = (date: string): string => {
+  const dateObj = new Date(date)
+  return new Intl.DateTimeFormat('en', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(dateObj)
 }
 
 // open or close modal
@@ -206,7 +206,7 @@ watchEffect(() => {
   if (absencesError.value) {
     // console.log(absencesError.value)
     LogRocket.captureException(absencesError.value)
-    showToast('error', 'Error', "Couldn't load absences")
+    showToast('error', 'toast.error', 'absences.toast.absences')
   }
 })
 </script>

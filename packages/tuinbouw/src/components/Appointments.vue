@@ -18,13 +18,13 @@
             v-if="props.showAllOverview"
             v-model="variables.searchString"
             class="w-full sm:w-auto"
-            placeholder="Search for appointments"
+            placeholder="appointment.search.placeholder"
           />
         </section>
         <!-- Title + Sort -->
         <header class="flex w-full items-center justify-between">
           <!-- Title -->
-          <h1 class="text-2xl">Appointments</h1>
+          <h1 class="text-2xl">{{ $t('appointment.title') }}</h1>
           <!-- Sort -->
           <Sort
             v-model="variables.order"
@@ -80,7 +80,9 @@
                   <div v-else class="flex gap-3">
                     <div v-if="isOverToday(a)" class="flex items-center gap-2">
                       <Clock class="stroke-primary-red h-5 w-5" />
-                      <p class="text-primary-red">Reschedule</p>
+                      <p class="text-primary-red">
+                        {{ $t('appointment.list.reschedule') }}
+                      </p>
                     </div>
                     <Star
                       v-if="a.priority && !isOverToday(a)"
@@ -120,7 +122,7 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    header="Appointment Detail"
+    :header="$t('appointment.modal.detail.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -137,12 +139,10 @@
       <p class="text-gray-900">
         {{ selectedAppointment.description }}
       </p>
-      <!-- TODO: show more inside detail only for admin -->
-      <!-- user info (location (maybe with map), photo, name, phone) -->
       <div class="mt-6 flex flex-col gap-3">
         <div v-if="selectedAppointment.priority" class="flex gap-3">
           <Star class="fill-primary-yellow stroke-primary-yellow" />
-          <p>Priority</p>
+          <p>{{ $t('appointment.modal.detail.priority') }}</p>
         </div>
         <div class="flex gap-3">
           <CalendarIcon
@@ -159,9 +159,11 @@
             {{ formatDateTime(selectedAppointment.finalDate) }}
           </p>
           <p v-if="isOverToday(selectedAppointment)" class="text-primary-red">
-            Reschedule
+            {{ $t('appointment.modal.detail.priority') }}
           </p>
-          <p v-if="!selectedAppointment.isScheduled">Not scheduled</p>
+          <p v-if="!selectedAppointment.isScheduled">
+            {{ $t('appointment.modal.detail.no.scheduled') }}
+          </p>
         </div>
       </div>
       <!-- Buttons -->
@@ -169,7 +171,7 @@
         <!-- Delete -->
         <CustomButton
           variant="warning"
-          name="Delete"
+          name="appointment.modal.detail.button.delete"
           :loading="loading.delete"
           @click="handleDeleteAppointment(selectedAppointment.id)"
         />
@@ -179,13 +181,13 @@
             (!showAllOverview && isOverToday(selectedAppointment)) ||
             (!showAllOverview && !selectedAppointment.isScheduled)
           "
-          name="Edit"
+          name="appointment.modal.detail.button.edit"
           @click="isEditing = true"
         />
         <!-- Edit For Admin -->
         <CustomButton
           v-if="showAllOverview"
-          name="Edit"
+          name="appointment.modal.detail.button.edit"
           @click="isEditingAdmin = true"
         />
       </div>
@@ -325,59 +327,61 @@ const isEditingAdmin = ref<boolean>(false)
 const formAppointment = ref({
   fields: [
     {
-      label: 'Location',
+      label: 'appointment.form.location',
       name: 'locationId',
       as: 'select',
       type: 'select',
       options: locations,
       optionValue: 'id',
       optionLabel: 'address',
-      placeholder: 'Select a location',
+      placeholder: 'appointment.form.location.placeholder',
     },
     {
-      label: 'Type',
+      label: 'appointment.form.type',
       name: 'type',
       as: 'select',
       type: 'select',
       options: APPOINTMENT_TYPES,
-      placeholder: 'Select a type',
+      optionLabel: 'name',
+      optionValue: 'value',
+      placeholder: 'appointment.form.type.placeholder',
     },
     {
-      label: 'Start Proposed Date',
+      label: 'appointment.form.start.date',
       name: 'startProposedDate',
       as: 'input',
       type: 'date',
-      placeholder: 'Select a start proposed date',
+      placeholder: 'appointment.form.start.date.placeholder',
       minDate: new Date(),
       linkName: 'endProposedDate',
     },
     {
-      label: 'End Proposed Date',
+      label: 'appointment.form.end.date',
       name: 'endProposedDate',
       as: 'input',
       type: 'date',
-      placeholder: 'Select a end proposed date',
+      placeholder: 'appointment.form.end.date.placeholder',
       setMinEndDate: true,
     },
     {
-      label: 'Description',
+      label: 'appointment.form.description',
       name: 'description',
       as: 'textarea',
       type: 'textarea',
-      placeholder: 'Type your description here...',
+      placeholder: 'appointment.form.description.placeholder',
       rows: 5,
     },
   ],
 
   button: {
-    name: 'Update Appointment',
+    name: 'appointment.form.update.submit',
   },
 })
 
 const formEditAdminAppointment = ref({
   fields: [
     {
-      label: 'Priority',
+      label: 'appointment.form.priority',
       name: 'priority',
       as: 'switch',
       type: 'switch',
@@ -385,7 +389,7 @@ const formEditAdminAppointment = ref({
   ],
 
   button: {
-    name: 'Update Appointment',
+    name: 'appointment.form.update.submit',
   },
 })
 
@@ -448,13 +452,13 @@ const handleDeleteAppointment = async (id: string): Promise<void> => {
     await deleteAppointment({
       id,
     })
-    showToast('success', 'Success', 'Appointment deleted')
+    showToast('success', 'toast.success', 'appointment.toast.delete')
     refetch()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't delete appointment")
+    showToast('error', 'toast.error', 'appointment.toast.error.delete')
   } finally {
     loading.value.delete = false
   }
@@ -477,13 +481,13 @@ const handleUpdateAppointment = async (
         description: values.description,
       },
     })
-    showToast('success', 'Success', 'Appointment updated')
+    showToast('success', 'toast.success', 'appointment.toast.update')
     await refetch()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't update appointment")
+    showToast('error', 'toast.error', 'appointment.toast.error.update')
   } finally {
     loading.value.update = false
   }
@@ -501,13 +505,13 @@ const handleUpdateAppointmentForAdmin = async (
         priority: values.priority,
       },
     })
-    showToast('success', 'Success', 'Appointment updated')
+    showToast('success', 'toast.success', 'appointment.toast.update')
     await refetch()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't update appointment")
+    showToast('error', 'toast.error', 'appointment.toast.error.update')
   } finally {
     loading.value.update = false
   }
@@ -540,15 +544,15 @@ watchEffect(() => {
   if (appointmentsError.value) {
     // console.log(appointmentsError.value)
     LogRocket.captureException(appointmentsError.value as Error)
-    showToast('error', 'Error', "Couldn't load appointments")
+    showToast('error', 'toast.error', 'appointment.toast.appointments')
   } else if (appointmentsByUserIdError.value) {
     // console.log(appointmentsByUserIdError.value)
     LogRocket.captureException(appointmentsByUserIdError.value as Error)
-    showToast('error', 'Error', "Couldn't load appointments")
+    showToast('error', 'toast.error', 'appointment.toast.appointments')
   } else if (locationsError.value) {
     // console.log(locationsError.value)
     LogRocket.captureException(locationsError.value as Error)
-    showToast('error', 'Error', "Couldn't load locations")
+    showToast('error', 'toast.error', 'appointment.toast.locations')
   }
 })
 </script>

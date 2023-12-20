@@ -12,29 +12,37 @@
     class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-start justify-center gap-3"
   >
     <!-- Title -->
-    <h1 class="mt-3 text-2xl">Add Schedule</h1>
+    <h1 class="mt-3 text-2xl">{{ $t('add.schedule.title') }}</h1>
 
     <!-- Form -->
     <form class="w-full" @submit.prevent="handleCreateSchedule">
       <!-- Final Date -->
       <div v-if="next === 0" class="w-full">
-        <h2 class="mb-3 text-xl">Final Date</h2>
+        <h2 class="mb-3 text-xl">{{ $t('add.schedule.sub.final.date') }}</h2>
         <div class="flex w-full justify-end">
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+          <CustomButton
+            name="add.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{
-          errorMessages.finalDate || '&nbsp;'
-        }}</span>
+        <CustomError
+          v-if="errorMessages.finalDate"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.finalDate"
+        />
 
         <!-- Calendar -->
         <div class="m-auto flex w-fit flex-col items-center gap-6">
-          <p class="text-lg font-semibold text-gray-900">Choose a date</p>
+          <p class="text-lg font-semibold text-gray-900">
+            {{ $t('add.schedule.sub.choose.date') }}
+          </p>
 
           <!-- Loading Appointments & Employees -->
           <div v-if="loadingAppointments || loadingEmployees">
-            <h1 class="flex animate-pulse space-x-4">Loading...</h1>
+            <h1 class="flex animate-pulse space-x-4">{{ $t('loading') }}...</h1>
           </div>
 
           <!-- Calendar -->
@@ -52,16 +60,26 @@
 
       <!-- Appointments -->
       <div v-if="next === 1">
-        <h2 class="mb-3 text-xl">Appointments</h2>
-        <div class="flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">{{ $t('add.schedule.sub.appointments') }}</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton
+            name="add.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="add.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{
-          errorMessages.appointmentsIds || '&nbsp;'
-        }}</span>
+        <CustomError
+          v-if="errorMessages.appointmentsIds"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.appointmentsIds"
+        />
 
         <!-- Appointments -->
         <div
@@ -130,22 +148,32 @@
           v-else-if="appointments.length === 0"
           class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
         >
-          <p class="text-lg">No appointments</p>
+          <p class="text-lg">{{ $t('add.schedule.no.appointment') }}</p>
         </div>
       </div>
 
       <!-- Fill in price of appointments -->
       <div v-if="next === 2">
-        <h2 class="mb-3 text-xl">Price Appointments</h2>
-        <div class="flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">{{ $t('add.schedule.sub.price') }}</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton
+            name="add.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="add.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{
-          errorMessages.prices || '&nbsp;'
-        }}</span>
+        <CustomError
+          v-if="errorMessages.prices"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.prices"
+        />
 
         <!-- Show Appointments With Price Input -->
         <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
@@ -196,16 +224,26 @@
 
       <!-- Employees -->
       <div v-if="next === 3">
-        <h2 class="mb-3 text-xl">Employees</h2>
-        <div class="flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+        <h2 class="mb-3 text-xl">{{ $t('add.schedule.sub.employees') }}</h2>
+        <div class="mb-6 flex w-full justify-between">
+          <CustomButton
+            name="add.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="add.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{
-          errorMessages.employeesIds || '&nbsp;'
-        }}</span>
+        <CustomError
+          v-if="errorMessages.employeesIds"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.employeesIds"
+        />
 
         <!-- Employees -->
         <div v-if="employees && employees.length > 0">
@@ -244,16 +282,24 @@
           v-else-if="employees.length === 0"
           class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
         >
-          <p class="text-lg">No employees</p>
+          <p class="text-lg">{{ $t('add.schedule.no.employee') }}</p>
         </div>
       </div>
 
       <!-- Materials -->
       <div v-if="next === 4">
-        <h2 class="mb-3 text-xl">Materials</h2>
+        <h2 class="mb-3 text-xl">{{ $t('add.schedule.sub.materials') }}</h2>
         <div class="mb-6 flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
-          <CustomButton name="Next" type="button" @click="handleNext()" />
+          <CustomButton
+            name="add.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="add.schedule.button.next"
+            type="button"
+            @click="handleNext()"
+          />
         </div>
 
         <!-- Materials -->
@@ -293,24 +339,28 @@
           v-else-if="materials.length === 0"
           class="flex h-20 items-center justify-center rounded-2xl bg-gray-200"
         >
-          <p class="text-lg">No materials</p>
+          <p class="text-lg">{{ $t('add.schedule.no.material') }}</p>
         </div>
       </div>
 
       <!-- See All -->
       <div v-if="next === 5">
-        <h2 class="mb-3 text-xl">Overview</h2>
+        <h2 class="mb-3 text-xl">{{ $t('add.schedule.sub.see.all') }}</h2>
         <div class="mb-6 flex w-full justify-between">
-          <CustomButton name="Back" type="button" @click="handleBack()" />
           <CustomButton
-            name="Create Schedule"
+            name="add.schedule.button.back"
+            type="button"
+            @click="handleBack()"
+          />
+          <CustomButton
+            name="add.schedule.button.create"
             :loading="loadingCreate"
             type="submit"
           />
         </div>
 
         <div
-          class="m-auto flex w-1/3 flex-col gap-3 rounded-2xl bg-gray-200 p-6"
+          class="m-auto flex w-full flex-col gap-3 rounded-2xl bg-gray-200 p-6 sm:w-2/3 md:w-1/2 lg:w-1/3"
         >
           <div class="flex gap-3">
             <CalendarIcon />
@@ -318,7 +368,9 @@
           </div>
           <!-- Selected Appointments -->
           <div class="flex flex-col">
-            <h3 class="mb-1 text-lg">Appointments</h3>
+            <h3 class="mb-1 text-lg">
+              {{ $t('add.schedule.sub.appointments') }}
+            </h3>
             <ul
               v-if="selectedAppointments.length > 0"
               class="flex flex-col gap-1"
@@ -332,7 +384,7 @@
 
           <!-- Selected Employees -->
           <div class="flex flex-col gap-1">
-            <h3 class="mb-1 text-lg">Employees</h3>
+            <h3 class="mb-1 text-lg">{{ $t('add.schedule.sub.employees') }}</h3>
             <ul v-if="selectedEmployees.length > 0" class="flex flex-col gap-1">
               <li
                 v-for="user of selectedEmployees"
@@ -354,7 +406,7 @@
               class="mb-1 flex cursor-pointer justify-between"
               @click="toggleCollapsible()"
             >
-              <h3 class="text-lg">Materials</h3>
+              <h3 class="text-lg">{{ $t('add.schedule.sub.materials') }}</h3>
               <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
             </div>
             <ul v-if="selectedMaterials.length > 0 && !collapsed">
@@ -364,7 +416,9 @@
             </ul>
 
             <!-- No Selected Materials -->
-            <div v-if="selectedMaterials.length < 1">No materials selected</div>
+            <div v-if="selectedMaterials.length < 1">
+              {{ $t('add.schedule.no.material') }}
+            </div>
           </div>
         </div>
       </div>
@@ -375,6 +429,7 @@
 <script setup lang="ts">
 import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
+import CustomError from '@/components/generic/CustomError.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'
@@ -525,7 +580,7 @@ const handleCreateSchedule = async (): Promise<void> => {
         },
       }).then(async ({ data }: any) => {
         loadingCreate.value = false
-        showToast('success', 'Success', 'Schedule created')
+        showToast('success', 'toast.success', 'add.schedule.toast.create')
         // redirect to schedule detail page
         replace(`/admin/schedules`)
       })
@@ -533,7 +588,7 @@ const handleCreateSchedule = async (): Promise<void> => {
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't create schedule")
+    showToast('error', 'toast.error', 'add.schedule.toast.error.create')
   } finally {
     loadingCreate.value = false
   }
@@ -568,7 +623,7 @@ const handleNext = async (): Promise<void> => {
     let priceError = ''
     for (const a of selectedAppointments.value) {
       if (!a.price) {
-        priceError = 'Fill in price of all appointments'
+        priceError = 'add.schedule.error.price'
         break
       }
     }
@@ -730,15 +785,15 @@ const checkAvailability = async (): Promise<void> => {
   await refetchAppointments()
   await refetchEmployees()
   if (appointments.value.length === 0 && employees.value.length === 0) {
-    error = 'No appointments and employees available for this date'
+    error = 'add.schedule.error.no.appointment.employees'
   }
   // check if there are appointments available for the selected date
   else if (appointments.value.length === 0) {
-    error = 'No appointments available for this date'
+    error = 'add.schedule.error.no.appointment'
   }
   // check if there are employees available for the selected date
   else if (employees.value.length === 0) {
-    error = 'No employees available for this date'
+    error = 'add.schedule.error.no.employees'
   }
 
   errorMessages.value.finalDate = error
@@ -758,17 +813,17 @@ watchEffect(() => {
   if (errorAppointments.value) {
     // console.log(errorAppointments.value)
     LogRocket.captureException(errorAppointments.value)
-    showToast('error', 'Error', "Couldn't load appointments")
+    showToast('error', 'toast.error', 'add.schedule.toast.error.appointments')
   }
   if (errorEmployees.value) {
     // console.log(errorEmployees.value)
     LogRocket.captureException(errorEmployees.value)
-    showToast('error', 'Error', "Couldn't load employees")
+    showToast('error', 'toast.error', 'add.schedule.toast.error.employees')
   }
   if (errorMaterials.value) {
     // console.log(errorMaterials.value)
     LogRocket.captureException(errorMaterials.value)
-    showToast('error', 'Error', "Couldn't load materials")
+    showToast('error', 'toast.error', 'add.schedule.toast.error.materials')
   }
 })
 </script>

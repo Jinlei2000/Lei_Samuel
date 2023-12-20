@@ -62,6 +62,20 @@ export class AbsencesService {
     return absences
   }
 
+  async findAllByDate(date: string): Promise<Absence[]> {
+    const absences = await this.absenceRepository.find({
+      where: {
+        // check if date is between start and end date of absence
+        // @ts-ignore
+        startDate: { $lte: new Date(date) }, // lte = less than or equal
+        // @ts-ignore
+        endDate: { $gte: new Date(date) }, // gte = greater than or equal
+      },
+    })
+
+    return absences
+  }
+
   // find all users that is a absent on a specific date (return array of users id's)
   async findAllUsersByDate(date: Date): Promise<string[]> {
     const absences = await this.absenceRepository.find({

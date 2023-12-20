@@ -1,0 +1,31 @@
+# deployment-api.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: tuinbouw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: jinlei2000/api-tuinbouw-production-api
+          ports:
+            - containerPort: 3001
+          envFrom:
+            - configMapRef:
+                name: api-configmap
+          volumeMounts:
+            - name: google-credentials
+              mountPath: '/app/google-credentials'
+      volumes:
+        - name: google-credentials
+          secret:
+            secretName: my-google-secret

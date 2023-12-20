@@ -17,14 +17,14 @@
         <Search
           v-model="variables.searchString"
           class="w-full sm:w-auto"
-          placeholder="Search for materials"
+          placeholder="material.search.placeholder"
         />
       </section>
 
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
-        <h1 class="text-2xl">Materials</h1>
+        <h1 class="text-2xl">{{ $t('material.title') }}</h1>
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_MATERIALS" />
       </header>
@@ -56,9 +56,9 @@
           class="border-primary-green col-span-1 flex h-48 w-full items-center justify-center rounded-2xl border transition-all hover:scale-105 hover:cursor-pointer"
           @click="toggleModal(null, 'create')"
         >
-          <div class="text-primary-green flex items-center gap-3">
-            <PlusCircle class="h-6 w-6" />
-            <p class="text-lg">Add New Material</p>
+          <div class="text-primary-green flex flex-col items-center gap-3">
+            <PlusCircle class="h-12 w-12" stroke-width="1px" />
+            <p class="text-lg">{{ $t('material.button.add') }}</p>
           </div>
         </button>
         <!-- Material cards -->
@@ -77,9 +77,11 @@
             <h2 class="truncate text-lg">{{ material.name }}</h2>
             <div v-if="showAllOverview">
               <p v-if="material.user?.id" class="text-primary-orange m-0">
-                Not available
+                {{ $t('material.card.not.available') }}
               </p>
-              <p v-else class="text-primary-green text-base">Available</p>
+              <p v-else class="text-primary-green text-base">
+                {{ $t('material.card.available') }}
+              </p>
             </div>
           </div>
         </button>
@@ -94,7 +96,7 @@
   <Dialog
     v-model:visible="visible.create"
     modal
-    header="Create Material"
+    :header="$t('material.modal.create.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -119,7 +121,7 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    header="Detail Material"
+    :header="$t('material.modal.detail.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -130,19 +132,43 @@
   >
     <!-- Show Detail -->
     <div v-if="!isEditing">
-      <p>{{ selectedMaterial?.serialNumber }}</p>
-      <p>{{ selectedMaterial?.name }}</p>
+      <div class="flex items-center gap-3">
+        <h2 class="text-xl">{{ selectedMaterial?.name }}</h2>
+        <p class="text-sm text-gray-900">
+          #{{ selectedMaterial?.serialNumber }}
+        </p>
+      </div>
+
+      <div v-if="showAllOverview">
+        <p v-if="selectedMaterial?.user?.id" class="text-primary-orange m-0">
+          {{ $t('material.card.not.available') }}
+        </p>
+        <p v-else class="text-primary-green text-base">
+          {{ $t('material.card.available') }}
+        </p>
+      </div>
+
+      <!-- Product foto -->
+      <div
+        class="mb-6 mt-3 flex h-96 w-full items-center justify-center rounded-md bg-gray-200"
+      >
+        <Wrench class="h-10 w-10 stroke-gray-800" />
+      </div>
+
       <!-- Buttons -->
       <div v-if="props.showAllOverview" class="mt-3 flex justify-between">
         <!-- Delete -->
         <CustomButton
-          name="Delete"
+          name="material.modal.detail.button.delete"
           :loading="loading.delete"
           variant="warning"
           @click="handleDeleteMaterial(selectedMaterial!)"
         />
         <!-- Edit -->
-        <CustomButton name="Edit" @click="isEditing = true" />
+        <CustomButton
+          name="material.modal.detail.button.edit"
+          @click="isEditing = true"
+        />
       </div>
     </div>
     <!-- Edit Form -->
@@ -257,27 +283,27 @@ const isEditing = ref<boolean>(false)
 const formUpdateMaterial = ref({
   fields: [
     {
-      label: 'Name',
+      label: 'material.form.name',
       name: 'name',
-      placeholder: 'Forklift',
+      placeholder: 'material.form.name.placeholder',
       as: 'input',
     },
     {
-      label: 'Serial Number',
+      label: 'material.form.serial.number',
       name: 'serialNumber',
       placeholder: '123456789',
       as: 'input',
     },
     {
-      label: 'Is Loan',
+      label: 'material.form.loan',
       name: 'isLoan',
       as: 'switch',
       type: 'switch',
     },
     {
-      label: 'User',
+      label: 'material.form.user',
       name: 'userId',
-      placeholder: 'Select a user',
+      placeholder: 'material.form.user.placeholder',
       as: 'select',
       type: 'select',
       options: users,
@@ -289,7 +315,7 @@ const formUpdateMaterial = ref({
   ],
 
   button: {
-    name: 'Update Material',
+    name: 'material.form.update.submit',
   },
 })
 
@@ -297,27 +323,27 @@ const formUpdateMaterial = ref({
 const formCreateMaterial = ref({
   fields: [
     {
-      label: 'Name',
+      label: 'material.form.name',
       name: 'name',
-      placeholder: 'Forklift',
+      placeholder: 'material.form.name.placeholder',
       as: 'input',
     },
     {
-      label: 'Serial Number',
+      label: 'material.form.serial.number',
       name: 'serialNumber',
       placeholder: '123456789',
       as: 'input',
     },
     {
-      label: 'Is Loan',
+      label: 'material.form.loan',
       name: 'isLoan',
       as: 'switch',
       type: 'switch',
     },
     {
-      label: 'User',
+      label: 'material.form.user',
       name: 'userId',
-      placeholder: 'Select a user',
+      placeholder: 'material.form.user.placeholder',
       as: 'select',
       type: 'select',
       options: users,
@@ -329,7 +355,7 @@ const formCreateMaterial = ref({
   ],
 
   button: {
-    name: 'Create Material',
+    name: 'material.form.create.submit',
   },
 })
 
@@ -398,13 +424,13 @@ const handleCreateMaterial = async (values: GenericObject): Promise<void> => {
         userId: values.userId,
       },
     })
-    showToast('success', 'Success', 'Material has been created')
+    showToast('success', 'toast.success', 'material.toast.create')
     await refetch()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't create material")
+    showToast('error', 'toast.error', 'material.toast.error.create')
   } finally {
     loading.value.create = false
   }
@@ -421,13 +447,13 @@ const handleUpdatematerial = async (values: GenericObject): Promise<void> => {
         ...values,
       },
     })
-    showToast('success', 'Success', 'Material has been updated')
+    showToast('success', 'toast.success', 'material.toast.update')
     await refetch()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't update material")
+    showToast('error', 'toast.error', 'material.toast.error.update')
   } finally {
     loading.value.update = false
   }
@@ -441,13 +467,14 @@ const handleDeleteMaterial = async (material: Material): Promise<void> => {
     await deleteMaterial({
       id: material.id,
     })
-    showToast('success', 'Success', 'Material has been deleted')
+    showToast('success', 'toast.success', 'material.toast.delete')
+
     await refetch()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't delete material")
+    showToast('error', 'toast.error', 'material.toast.error.delete')
   } finally {
     loading.value.delete = false
   }
@@ -477,17 +504,17 @@ watchEffect(() => {
   if (usersError.value) {
     // console.log(usersError.value)
     LogRocket.captureException(usersError.value)
-    showToast('error', 'Error', "Couldn't load users")
+    showToast('error', 'toast.error', 'material.toast.error.users')
   }
   if (materialsError.value) {
     // console.log(materialsError.value)
     LogRocket.captureException(materialsError.value)
-    showToast('error', 'Error', "Couldn't load materials")
+    showToast('error', 'toast.error', 'material.toast.error.materials')
   }
   if (materialsByUserIdError.value) {
     // console.log(materialsByUserIdError.value)
     LogRocket.captureException(materialsByUserIdError.value)
-    showToast('error', 'Error', "Couldn't load materials")
+    showToast('error', 'toast.error', 'material.toast.error.materials')
   }
 })
 </script>

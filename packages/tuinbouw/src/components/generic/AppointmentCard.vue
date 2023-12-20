@@ -18,22 +18,21 @@
       "
     ></div>
     <h2 class="mb-1 text-xl">{{ appointment.user?.fullname }}</h2>
-    <div
-      class="grid grid-flow-col gap-3 md:grid-flow-row md:grid-cols-2 md:items-start"
-    >
+    <div class="flex items-end justify-between gap-3">
       <p
-        class="overflow-hidden text-base"
+        class="line-clamp-2 overflow-hidden text-base"
         :class="variant == 'simple' ? 'col-span-2' : ''"
       >
         {{ appointment.description }}
       </p>
       <button
         v-if="nav"
-        class="bg-primary-orange flex items-center gap-2 self-end rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
+        class="bg-primary-orange flex w-fit items-center gap-2 self-end rounded-[8px] py-[6px] pl-3 pr-[7px] text-gray-200"
         @click="navigateToLocation(appointment.location!)"
         @click.stop
       >
-        Navigate <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
+        {{ $t('component.appointment.card.button.navigate') }}
+        <Navigation stroke-width="2" class="h-[17px] w-[17px]" />
       </button>
     </div>
 
@@ -86,7 +85,7 @@
               : ''
         "
       >
-        {{ appointment.type }}
+        {{ $t(appointment.type) }}
       </p>
     </div>
 
@@ -106,7 +105,7 @@
         class="flex h-fit items-center gap-2 rounded-[4px] bg-transparent px-3 py-[6px] outline outline-[1px] hover:bg-black hover:text-gray-200"
         @click="toggleModal()"
       >
-        Cancel
+        {{ $t('component.appointment.card.button.cancel') }}
       </button>
       <button
         class="bg-primary-green h-fit items-center gap-2 rounded-[4px] py-[6px] pl-3 pr-[7px] text-gray-200"
@@ -116,7 +115,12 @@
         ]"
         @click="handleAppointmentUpdate()"
       >
-        {{ appointmentIsDone ? 'Unfinish' : 'Finish'
+        {{
+          $t(
+            appointmentIsDone
+              ? 'component.appointment.card.button.unfinish'
+              : 'component.appointment.card.button.finish',
+          )
         }}<XCircle
           v-if="appointmentIsDone"
           stroke-width="2"
@@ -183,7 +187,11 @@ const handleAppointmentUpdate = () => {
   } catch (error) {
     // console.log('error', error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't update appointment")
+    showToast(
+      'error',
+      'toast.error',
+      'component.appointment.card.error.appointment',
+    )
   }
 }
 
