@@ -28,9 +28,11 @@
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{
-          $t(errorMessages.finalDate!)
-        }}</span>
+        <CustomError
+          v-if="errorMessages.finalDate"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.finalDate"
+        />
 
         <!-- Calendar -->
         <div class="m-auto flex w-fit flex-col items-center gap-6">
@@ -73,9 +75,11 @@
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{
-          $t(errorMessages.appointmentsIds!)
-        }}</span>
+        <CustomError
+          v-if="errorMessages.appointmentsIds"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.appointmentsIds"
+        />
 
         <!-- Appointments -->
         <div
@@ -165,7 +169,11 @@
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{ $t(errorMessages.prices!) }}</span>
+        <CustomError
+          v-if="errorMessages.prices"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.prices"
+        />
 
         <!-- Show Appointments With Price Input -->
         <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
@@ -231,9 +239,11 @@
         </div>
 
         <!-- Validation -->
-        <span class="block text-red-500">{{
-          $t(errorMessages.employeesIds!)
-        }}</span>
+        <CustomError
+          v-if="errorMessages.employeesIds"
+          class="w-50 my-1 py-2 sm:w-96"
+          :error="errorMessages.employeesIds"
+        />
 
         <!-- Employees -->
         <div v-if="employees && employees.length > 0">
@@ -419,6 +429,7 @@
 <script setup lang="ts">
 import Avatar from '@/components/generic/Avatar.vue'
 import CustomButton from '@/components/generic/CustomButton.vue'
+import CustomError from '@/components/generic/CustomError.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
 import useTimeUtilities from '@/composables/useTimeUtilities'

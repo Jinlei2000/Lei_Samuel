@@ -1,5 +1,6 @@
 <template>
   <div
+    v-bind="$attrs"
     class="rounded border border-red-400 bg-red-100 p-3 text-sm text-red-600"
   >
     {{ CapFirst($t(error)) }}
