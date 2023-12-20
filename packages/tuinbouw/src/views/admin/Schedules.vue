@@ -19,7 +19,7 @@
         <!-- Title + Sort -->
         <header class="flex w-full items-center justify-between">
           <!-- Title -->
-          <h1 class="text-2xl">Schedules</h1>
+          <h1 class="text-2xl">{{ $t('schedule.title') }}</h1>
           <!-- Sort -->
           <Sort v-model="variables.order" :options="SORT_OPTIONS_SCHEDULES" />
         </header>
@@ -47,7 +47,7 @@
             class="border-primary-green text-primary-green flex h-14 w-full items-center justify-center rounded-2xl border-[1px]"
           >
             <PlusCircle class="mr-2" />
-            Add Schedule
+            {{ $t('schedule.button.add') }}
           </button>
         </Router-link>
         <!-- Schedules -->
@@ -100,7 +100,7 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    header="Appointment Detail"
+    :header="$t('schedule.modal.detail.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -114,7 +114,7 @@
         {{ formatDateTime(selectedSchedule.finalDate.toString()) }}
       </h2>
       <div class="flex flex-col gap-3">
-        <h3 class="text-lg">Appointments</h3>
+        <h3 class="text-lg">{{ $t('schedule.modal.detail.appointments') }}</h3>
         <ul class="flex flex-col gap-3">
           <li
             v-for="appointment in selectedSchedule.appointments"
@@ -139,13 +139,7 @@
                   {{ appointment.user.fullname }}
                 </h4>
                 <p class="line-clamp-2">
-                  {{ appointment.description }}Nostrud veniam adipisicing
-                  pariatur reprehenderit. Sint aliqua ea incididunt sint
-                  exercitation. Nisi esse ad irure in ad aliqua sint laboris ad
-                  proident duis nostrud. Fugiat irure sint tempor magna ut
-                  nostrud ad duis officia aliqua laborum. Magna adipisicing
-                  dolore proident veniam Lorem consectetur sunt eiusmod sint
-                  reprehenderit.
+                  {{ appointment.description }}
                 </p>
               </div>
               <p class="text-xs text-gray-900">
@@ -161,7 +155,7 @@
         </ul>
       </div>
       <div class="flex flex-col gap-3">
-        <h3 class="text-lg">Employees:</h3>
+        <h3 class="text-lg">{{ $t('schedule.modal.detail.employees') }}:</h3>
         <ul class="flex flex-col gap-3">
           <li
             v-for="employee in selectedSchedule.employees"
@@ -181,7 +175,7 @@
           class="flex cursor-pointer justify-between"
           @click="toggleCollapsible()"
         >
-          <h3 class="text-lg">Materials:</h3>
+          <h3 class="text-lg">{{ $t('schedule.modal.detail.materials') }}:</h3>
           <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
         </div>
         <ul v-if="!collapsed" class="flex flex-col gap-3">
@@ -199,7 +193,7 @@
       <div class="flex justify-between">
         <!-- Delete Button -->
         <CustomButton
-          name="Delete"
+          name="schedule.button.delete"
           :loading="loading.delete"
           variant="warning"
           @click="handleDeleteSchedule(selectedSchedule)"
@@ -210,7 +204,7 @@
           v-if="isNotInPastOrToday(selectedSchedule.finalDate.toString())"
           :to="`/admin/schedules/${selectedSchedule.id}/edit`"
         >
-          <CustomButton name="Edit" />
+          <CustomButton name="schedule.button.edit" />
         </Router-link>
       </div>
     </div>
@@ -292,13 +286,13 @@ const handleDeleteSchedule = async (schedule: Schedule): Promise<void> => {
     await deleteSchedule({
       id: schedule.id,
     })
-    showToast('success', 'Success', `Schedule deleted`)
+    showToast('success', 'toast.success', `schedule.toast.delete`)
     refetchSchedules()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't delete schedule")
+    showToast('error', 'toast.error', 'schedule.toast.error.delete')
   } finally {
     loading.value.delete = false
   }
@@ -326,7 +320,7 @@ watchEffect(() => {
   if (schedulesError.value) {
     // console.log(schedulesError.value)
     LogRocket.captureException(schedulesError.value)
-    showToast('error', 'Error', "Couldn't load schedules")
+    showToast('error', 'toast.error', 'schedule.toast.error.schedules')
   }
 })
 </script>

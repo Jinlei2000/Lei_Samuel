@@ -16,7 +16,7 @@ import { createClient } from 'graphql-ws'
 const { firebaseUser } = useFirebase()
 
 export default () => {
-  console.log('VITE_BACKEND_URL', import.meta.env.VITE_BACKEND_URL)
+  // console.log('VITE_BACKEND_URL', import.meta.env.VITE_BACKEND_URL)
   const httpLink = createHttpLink({
     uri: import.meta.env.VITE_BACKEND_URL,
     credentials: 'same-origin',

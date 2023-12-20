@@ -162,25 +162,25 @@ export const FILTER_OPTIONS_APPOINTMENTS = [
 
 export const SORT_OPTIONS_SCHEDULES = [
   {
-    label: 'Date Created',
+    label: 'schedules.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Date',
+    label: 'schedules.sort.final.date',
     value: 'finalDate',
   },
 ]
 
 export const FILTER_OPTIONS_SCHEDULES = [
   {
-    title: 'Final Date',
+    title: 'schedules.filter.final.date',
     name: 'finalDate',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Today', value: 'T' },
-      { label: 'Future', value: 'F' },
-      { label: 'Past', value: 'P' },
+      { label: 'schedules.filter.final.date.option.all', value: '' },
+      { label: 'schedules.filter.final.date.option.today', value: 'T' },
+      { label: 'schedules.filter.final.date.option.future', value: 'F' },
+      { label: 'schedules.filter.final.date.option.past', value: 'P' },
     ],
   },
 ]
