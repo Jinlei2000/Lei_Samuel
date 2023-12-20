@@ -933,6 +933,8 @@ const formAbsence = {
       as: 'select',
       type: 'select',
       options: ABSENCE_TYPES,
+      optionLabel: 'name',
+      optionValue: 'value',
       placeholder: 'profile.form.absence.type.placeholder',
     },
     {

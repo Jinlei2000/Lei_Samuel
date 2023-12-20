@@ -44,8 +44,16 @@
       }"
       @change="handleChange($event.value, false)"
     >
+      <!-- <template #value="slotProps">
+        <div v-if="slotProps.value">
+          {{ $t(slotProps.value.name) }}
+        </div>
+        <span v-else>
+          {{ slotProps.placeholder }}
+        </span>
+      </template> -->
       <template #option="slotProps">
-        <span>{{ $t(slotProps.option.name) }}</span>
+        {{ $t(slotProps.option.name) }}
       </template>
       <template #dropdownicon>
         <ChevronDownIcon />

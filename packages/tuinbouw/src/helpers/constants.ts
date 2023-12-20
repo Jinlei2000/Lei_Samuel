@@ -2,15 +2,15 @@ import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 
 // dropdown options of absence types
 export const ABSENCE_TYPES = [
-  { name: 'sick' },
-  { name: 'vacation' },
-  { name: 'other' },
+  { name: 'sick', value: 'sick' },
+  { name: 'vacation', value: 'vacation' },
+  { name: 'other', value: 'other' },
 ]
 
 export const APPOINTMENT_TYPES = [
-  { name: 'maintenance' },
-  { name: 'repair' },
-  { name: 'other' },
+  { name: 'maintenance', value: 'maintenance' },
+  { name: 'repair', value: 'repair' },
+  { name: 'other', value: 'other' },
 ]
 
 export const ORDER_DIRECTION = {
@@ -89,70 +89,73 @@ export const FILTER_OPTIONS_USERS = [
 
 export const SORT_OPTIONS_APPOINTMENTS = [
   {
-    label: 'Date Created',
+    label: 'appointment.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Price',
+    label: 'appointment.sort.price',
     value: 'price',
   },
   {
-    label: 'Type',
+    label: 'appointment.sort.type',
     value: 'type',
   },
   {
-    label: 'Start Date',
+    label: 'appointment.sort.start.date',
     value: 'startProposedDate',
   },
   {
-    label: 'End Date',
+    label: 'appointment.sort.end.date',
     value: 'endProposedDate',
   },
   {
-    label: 'Final Date',
+    label: 'appointment.sort.final.date',
     value: 'finalDate',
   },
 ]
 
 export const FILTER_OPTIONS_APPOINTMENTS = [
   {
-    title: 'Scheduled',
+    title: 'appointment.filter.scheduled',
     name: 'scheduled',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Scheduled', value: 'S' },
-      { label: 'Not Scheduled', value: 'NS' },
+      { label: 'appointment.filter.scheduled.option.all', value: '' },
+      { label: 'appointment.filter.scheduled.option.scheduled', value: 'S' },
+      {
+        label: 'appointment.filter.scheduled.option.not.scheduled',
+        value: 'NS',
+      },
     ],
   },
   {
-    title: 'Type',
+    title: 'appointment.filter.type',
     name: 'type',
     type: 'checkbox',
     options: [
-      { label: 'Repair', value: 'R' },
-      { label: 'Maintenance', value: 'M' },
-      { label: 'Other', value: 'O' },
+      { label: 'appointment.filter.type.option.repair', value: 'R' },
+      { label: 'appointment.filter.type.option.maintenance', value: 'M' },
+      { label: 'appointment.filter.type.option.other', value: 'O' },
     ],
   },
   {
-    title: 'Status',
+    title: 'appointment.filter.status',
     name: 'status',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Done', value: 'D' },
-      { label: 'Not Done', value: 'ND' },
+      { label: 'appointment.filter.status.option.all', value: '' },
+      { label: 'appointment.filter.status.option.done', value: 'D' },
+      { label: 'appointment.filter.status.option.not.done', value: 'ND' },
     ],
   },
   {
-    title: 'Priority',
+    title: 'appointment.filter.priority',
     name: 'priority',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Priority', value: 'P' },
-      { label: 'Not Priority', value: 'NP' },
+      { label: 'appointment.filter.priority.option.all', value: '' },
+      { label: 'appointment.filter.priority.option.priority', value: 'P' },
+      { label: 'appointment.filter.priority.option.not.priority', value: 'NP' },
     ],
   },
 ]

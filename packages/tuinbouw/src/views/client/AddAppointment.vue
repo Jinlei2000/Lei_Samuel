@@ -118,6 +118,7 @@
             <option
               v-for="type in APPOINTMENT_TYPES"
               :key="type.name"
+              :value="type.value"
               class="capitalize"
             >
               {{ $t(type.name) }}
