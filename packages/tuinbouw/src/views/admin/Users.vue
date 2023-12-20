@@ -21,7 +21,7 @@
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
-        <h1 class="text-2xl">Users</h1>
+        <h1 class="text-2xl">{{ $t('users.title') }}</h1>
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
       </header>
@@ -46,7 +46,7 @@
         @click="toggleModal(null, 'create')"
       >
         <PlusCircle class="mr-2" />
-        Add Employee
+        {{ $t('users.button.add') }}
       </button>
       <!-- Users -->
       <button
@@ -89,7 +89,7 @@
                       : ''
               "
             >
-              {{ user.role }}
+              {{ $t(user.role) }}
             </p>
           </div>
         </div>
@@ -105,7 +105,7 @@
     v-if="selectedUser"
     v-model:visible="visible.detail"
     modal
-    header="User Details"
+    :header="$t('users.modal.detail.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -115,7 +115,6 @@
     }"
   >
     <!-- Show Detail -->
-    <!-- TODO: show more info -->
     <div v-if="!isEditing">
       <header class="mb-2">
         <h2 class="mb-2 text-xl font-semibold">
@@ -134,14 +133,14 @@
         <CustomButton
           v-if="selectedUser.role === 'EMPLOYEE'"
           class="block w-full"
-          name="Upgrade to Admin"
+          name="users.modal.detail.button.upgrade"
           :loading="loading.upgradeToAdmin"
           @click="handleUpgradeToAdmin(selectedUser)"
         />
         <!-- Send Email to Employee (Create Account) -->
         <CustomButton
           v-if="selectedUser.uid === null"
-          name="Create Account"
+          name="users.modal.detail.button.account"
           :loading="loading.sendMailToEmployee"
           class="block w-full"
           @click="handleSendMailToEmployee(selectedUser)"
@@ -152,13 +151,16 @@
       <div v-if="selectedUser.role === 'EMPLOYEE'" class="flex justify-between">
         <!-- Delete -->
         <CustomButton
-          name="Delete"
+          name="users.modal.detail.button.delete"
           variant="warning"
           :loading="loading.deleteEmployee"
           @click="handleDelete(selectedUser)"
         />
         <!-- Edit -->
-        <CustomButton name="Edit" @click="isEditing = true" />
+        <CustomButton
+          name="users.modal.detail.button.edit"
+          @click="isEditing = true"
+        />
       </div>
     </div>
     <!-- Edit Form -->
@@ -183,7 +185,7 @@
   <Dialog
     v-model:visible="visible.create"
     modal
-    header="Create Employee"
+    :header="$t('users.modal.create.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -277,25 +279,25 @@ const isEditing = ref<boolean>(false)
 const formUpdateEmployee = {
   fields: [
     {
-      label: 'First name',
+      label: 'users.form.firstname',
       name: 'firstname',
       placeholder: 'John',
       as: 'input',
     },
     {
-      label: 'Last name',
+      label: 'users.form.lastname',
       name: 'lastname',
       placeholder: 'Doe',
       as: 'input',
     },
     {
-      label: 'Email',
+      label: 'users.form.email',
       name: 'email',
       placeholder: 'john@gmail.com',
       as: 'input',
     },
     {
-      label: 'Telephone (optional)',
+      label: 'users.form.telephone',
       name: 'telephone',
       placeholder: '0412345678',
       as: 'input',
@@ -303,49 +305,49 @@ const formUpdateEmployee = {
   ],
 
   button: {
-    name: 'Update User',
+    name: 'users.form.update.submit',
   },
 }
 // form create employee
 const formCreateEmployee = {
   fields: [
     {
-      label: 'First name',
+      label: 'users.form.firstname',
       name: 'firstname',
       placeholder: 'John',
       as: 'input',
     },
     {
-      label: 'Last name',
+      label: 'users.form.lastname',
       name: 'lastname',
       placeholder: 'Doe',
       as: 'input',
     },
     {
-      label: 'Email',
+      label: 'users.form.email',
       name: 'email',
       placeholder: 'john@gmail.com',
       as: 'input',
     },
     {
-      label: 'Telephone (optional)',
+      label: 'users.form.telephone',
       name: 'telephone',
       placeholder: '0412345678',
       as: 'input',
     },
     {
-      label: 'Select Language',
+      label: 'users.form.locale',
       name: 'locale',
       as: 'select',
       type: 'select',
       options: SUPPORTED_LOCALES_TYPES(),
       optionValue: 'value',
-      placeholder: 'Select a language',
+      placeholder: 'users.form.locale.placeholder',
     },
   ],
 
   button: {
-    name: 'Create Employee',
+    name: 'users.form.create.submit',
   },
 }
 
