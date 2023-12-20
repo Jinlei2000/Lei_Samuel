@@ -147,7 +147,7 @@
             :key="location.id"
             class="flex items-center justify-between overflow-hidden rounded-2xl bg-gray-200 text-left"
           >
-            <div class="flex w-1/2 flex-col gap-2 py-3 pl-6">
+            <div class="flex w-2/3 flex-col gap-2 py-3 pl-6 sm:w-1/2">
               <!-- location or nothing -->
               <h3 class="text-lg">{{ location.title }}</h3>
               <div>
@@ -158,7 +158,7 @@
               </div>
             </div>
             <div
-              class="h-28 w-1/2 overflow-auto rounded-3xl rounded-t-none rounded-bl-none"
+              class="h-28 w-1/3 overflow-auto rounded-3xl rounded-t-none rounded-bl-none sm:w-1/2"
             >
               <Map class="h-full w-full" :locations="[location]" />
             </div>
@@ -169,6 +169,9 @@
           class="flex items-center justify-center rounded-2xl bg-gray-200 p-6"
         >
           <p class="text-gray-900">No locations</p>
+        </div>
+        <div v-if="selectedUser.role == 'EMPLOYEE'" class="mb-3">
+          <p>Absences: {{ selectedUser.absentCount }}</p>
         </div>
       </div>
 
