@@ -1,0 +1,187 @@
+[
+  {
+    "name": "Pruning Shears",
+    "isLoan": true,
+    "serialNumber": 12345
+  },
+  {
+    "name": "Gardening Gloves",
+    "isLoan": true,
+    "serialNumber": 54321
+  },
+  {
+    "name": "Wheelbarrow",
+    "isLoan": true,
+    "serialNumber": 98765
+  },
+  {
+    "name": "Watering Can",
+    "isLoan": true,
+    "serialNumber": 54378
+  },
+  {
+    "name": "Garden Fork",
+    "isLoan": true,
+    "serialNumber": 89673
+  },
+  {
+    "name": "Planting Trowel",
+    "isLoan": true,
+    "serialNumber": 25897
+  },
+  {
+    "name": "Cultivator",
+    "isLoan": true,
+    "serialNumber": 98745
+  },
+  {
+    "name": "Garden Sprayer",
+    "isLoan": true,
+    "serialNumber": 63214
+  },
+  {
+    "name": "Knee Pads",
+    "isLoan": true,
+    "serialNumber": 74125
+  },
+  {
+    "name": "Pruning Saw",
+    "isLoan": true,
+    "serialNumber": 89547
+  },
+  {
+    "name": "Garden Cart",
+    "isLoan": true,
+    "serialNumber": 47896
+  },
+  {
+    "name": "Plant Labels",
+    "isLoan": true,
+    "serialNumber": 12369
+  },
+  {
+    "name": "Garden Trowel",
+    "isLoan": true,
+    "serialNumber": 87451
+  },
+  {
+    "name": "Hedge Trimmer",
+    "isLoan": true,
+    "serialNumber": 96325
+  },
+  {
+    "name": "Garden Hoe",
+    "isLoan": true,
+    "serialNumber": 75312
+  },
+  {
+    "name": "Sprinkler System",
+    "isLoan": true,
+    "serialNumber": 63541
+  },
+  {
+    "name": "Garden Stake",
+    "isLoan": true,
+    "serialNumber": 85236
+  },
+  {
+    "name": "Garden Pruner",
+    "isLoan": true,
+    "serialNumber": 15486
+  },
+  {
+    "name": "Garden Spade",
+    "isLoan": true,
+    "serialNumber": 98547
+  },
+  {
+    "name": "Leaf Rake",
+    "isLoan": true,
+    "serialNumber": 21453
+  },
+  {
+    "name": "Hedging Shears",
+    "isLoan": true,
+    "serialNumber": 75236
+  },
+  {
+    "name": "Garden Hoe",
+    "isLoan": true,
+    "serialNumber": 32641
+  },
+  {
+    "name": "Floral Scissors",
+    "isLoan": true,
+    "serialNumber": 74568
+  },
+  {
+    "name": "Garden Kneeler",
+    "isLoan": true,
+    "serialNumber": 63254
+  },
+  {
+    "name": "Lawn Sprinkler",
+    "isLoan": true,
+    "serialNumber": 41253
+  },
+  {
+    "name": "Plant Watering Spikes",
+    "isLoan": true,
+    "serialNumber": 54879
+  },
+  {
+    "name": "Compost Bin",
+    "isLoan": true,
+    "serialNumber": 78541
+  },
+  {
+    "name": "Garden Wire",
+    "isLoan": true,
+    "serialNumber": 36524
+  },
+  {
+    "name": "Garden Fork",
+    "isLoan": true,
+    "serialNumber": 51247
+  },
+  {
+    "name": "Weeding Tool",
+    "isLoan": true,
+    "serialNumber": 78962
+  },
+  {
+    "name": "Garden Hand Rake",
+    "isLoan": true,
+    "serialNumber": 89521
+  },
+  {
+    "name": "Pruning Loppers",
+    "isLoan": true,
+    "serialNumber": 63247
+  },
+  {
+    "name": "Plant Potting Bench",
+    "isLoan": true,
+    "serialNumber": 47895
+  },
+  {
+    "name": "Garden Soil Moisture Meter",
+    "isLoan": true,
+    "serialNumber": 98456
+  },
+  {
+    "name": "Garden Sprayer",
+    "isLoan": true,
+    "serialNumber": 24785
+  },
+  {
+    "name": "Hand Cultivator",
+    "isLoan": true,
+    "serialNumber": 69852
+  },
+  {
+    "name": "Garden Tool Set",
+    "isLoan": true,
+    "serialNumber": 23641
+  }
+]

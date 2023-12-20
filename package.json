@@ -1,0 +1,23 @@
+{
+  "name": "lei_samuel",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "npx lerna run --scope=tuinbouw dev",
+    "dev:api": "npx lerna run --scope=api dev",
+    "translate": "npm run generate:translations -w tuinbouw",
+    "dev:lerna": "npx lerna run --scope={tuinbouw,api} dev --stream",
+    "lint": "npx lerna run --scope={tuinbouw,api} lint --stream",
+    "dev:emulate": "npx lerna run --scope={tuinbouw,api} dev:emulate --stream"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Lei & Samuel",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^7.4.2"
+  }
+}
