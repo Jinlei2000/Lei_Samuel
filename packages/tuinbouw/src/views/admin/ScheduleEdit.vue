@@ -752,7 +752,7 @@ const addSelectedEmployee = (user: CustomUser): void => {
   // check if user is already selected
   const index = values.employeesIds.indexOf(user.id)
 
-  console.log(index)
+  // console.log(index)
 
   // if user is already selected, remove it
   if (index > -1) {
