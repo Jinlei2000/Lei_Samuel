@@ -35,6 +35,13 @@
         <AppointmentCard :appointment="item" :nav="false" :variant="'simple'" />
       </div>
     </div>
+
+    <div
+      v-else
+      class="flex flex-col items-center justify-center gap-3 rounded-2xl bg-gray-200 p-6"
+    >
+      <p class="text-lg">Geen afspraken gepland</p>
+    </div>
   </div>
 </template>
 
