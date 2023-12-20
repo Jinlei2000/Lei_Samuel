@@ -21,7 +21,7 @@
       <!-- Title + Sort -->
       <header class="flex w-full items-center justify-between">
         <!-- Title -->
-        <h1 class="text-2xl">Users</h1>
+        <h1 class="text-2xl">{{ $t('users.title') }}</h1>
         <!-- Sort -->
         <Sort v-model="variables.order" :options="SORT_OPTIONS_USERS" />
       </header>
@@ -46,7 +46,7 @@
         @click="toggleModal(null, 'create')"
       >
         <PlusCircle class="mr-2" />
-        Add Employee
+        {{ $t('users.button.add') }}
       </button>
       <!-- Users -->
       <button
@@ -89,7 +89,7 @@
                       : ''
               "
             >
-              {{ user.role }}
+              {{ $t(user.role) }}
             </p>
           </div>
         </div>
@@ -105,7 +105,7 @@
     v-if="selectedUser"
     v-model:visible="visible.detail"
     modal
-    header="User Details"
+    :header="$t('users.modal.detail.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -115,7 +115,6 @@
     }"
   >
     <!-- Show Detail -->
-    <!-- TODO: show more info -->
     <div v-if="!isEditing">
       <header class="mb-2">
         <h2 class="mb-2 text-xl font-semibold">
@@ -134,14 +133,14 @@
         <CustomButton
           v-if="selectedUser.role === 'EMPLOYEE'"
           class="block w-full"
-          name="Upgrade to Admin"
+          name="users.modal.detail.button.upgrade"
           :loading="loading.upgradeToAdmin"
           @click="handleUpgradeToAdmin(selectedUser)"
         />
         <!-- Send Email to Employee (Create Account) -->
         <CustomButton
           v-if="selectedUser.uid === null"
-          name="Create Account"
+          name="users.modal.detail.button.account"
           :loading="loading.sendMailToEmployee"
           class="block w-full"
           @click="handleSendMailToEmployee(selectedUser)"
@@ -152,13 +151,16 @@
       <div v-if="selectedUser.role === 'EMPLOYEE'" class="flex justify-between">
         <!-- Delete -->
         <CustomButton
-          name="Delete"
+          name="users.modal.detail.button.delete"
           variant="warning"
           :loading="loading.deleteEmployee"
           @click="handleDelete(selectedUser)"
         />
         <!-- Edit -->
-        <CustomButton name="Edit" @click="isEditing = true" />
+        <CustomButton
+          name="users.modal.detail.button.edit"
+          @click="isEditing = true"
+        />
       </div>
     </div>
     <!-- Edit Form -->
@@ -183,7 +185,7 @@
   <Dialog
     v-model:visible="visible.create"
     modal
-    header="Create Employee"
+    :header="$t('users.modal.create.title')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -277,25 +279,25 @@ const isEditing = ref<boolean>(false)
 const formUpdateEmployee = {
   fields: [
     {
-      label: 'First name',
+      label: 'users.form.firstname',
       name: 'firstname',
       placeholder: 'John',
       as: 'input',
     },
     {
-      label: 'Last name',
+      label: 'users.form.lastname',
       name: 'lastname',
       placeholder: 'Doe',
       as: 'input',
     },
     {
-      label: 'Email',
+      label: 'users.form.email',
       name: 'email',
       placeholder: 'john@gmail.com',
       as: 'input',
     },
     {
-      label: 'Telephone (optional)',
+      label: 'users.form.telephone',
       name: 'telephone',
       placeholder: '0412345678',
       as: 'input',
@@ -303,49 +305,49 @@ const formUpdateEmployee = {
   ],
 
   button: {
-    name: 'Update User',
+    name: 'users.form.update.submit',
   },
 }
 // form create employee
 const formCreateEmployee = {
   fields: [
     {
-      label: 'First name',
+      label: 'users.form.firstname',
       name: 'firstname',
       placeholder: 'John',
       as: 'input',
     },
     {
-      label: 'Last name',
+      label: 'users.form.lastname',
       name: 'lastname',
       placeholder: 'Doe',
       as: 'input',
     },
     {
-      label: 'Email',
+      label: 'users.form.email',
       name: 'email',
       placeholder: 'john@gmail.com',
       as: 'input',
     },
     {
-      label: 'Telephone (optional)',
+      label: 'users.form.telephone',
       name: 'telephone',
       placeholder: '0412345678',
       as: 'input',
     },
     {
-      label: 'Select Language',
+      label: 'users.form.locale',
       name: 'locale',
       as: 'select',
       type: 'select',
       options: SUPPORTED_LOCALES_TYPES(),
       optionValue: 'value',
-      placeholder: 'Select a language',
+      placeholder: 'users.form.locale.placeholder',
     },
   ],
 
   button: {
-    name: 'Create Employee',
+    name: 'users.form.create.submit',
   },
 }
 
@@ -384,13 +386,13 @@ const handleUpdateEmployee = async (values: CustomUser) => {
       },
     })
     loading.value.updateEmployee = false
-    showToast('success', 'Success', 'User has been updated')
+    showToast('success', 'toast.success', 'users.toast.update')
     await refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't update user")
+    showToast('error', 'toast.error', 'users.toast.error.update')
   } finally {
     loading.value.updateEmployee = false
   }
@@ -404,13 +406,13 @@ const handleDelete = async (user: CustomUser) => {
     await deleteUser({
       id: user.id,
     })
-    showToast('success', 'Success', `User ${email} has been deleted`)
+    showToast('success', 'toast.success', `users.toast.delete`)
     refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't delete user")
+    showToast('error', 'toast.error', 'users.toast.error.delete')
   } finally {
     loading.value.deleteEmployee = false
   }
@@ -431,13 +433,13 @@ const handleCreateEmployee = async (values: CustomUser) => {
       },
     })
     loading.value.createEmployee = false
-    showToast('success', 'Success', 'Employee has been created')
+    showToast('success', 'toast.success', 'users.toast.create')
     await refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't create employee")
+    showToast('error', 'toast.error', 'users.toast.error.create')
   } finally {
     loading.value.createEmployee = false
   }
@@ -450,15 +452,11 @@ const handleSendMailToEmployee = async (user: CustomUser) => {
     await sendMailToEmployee({
       userId: user.id,
     })
-    showToast(
-      'success',
-      'Success',
-      `Email has been sent to ${user.email} to create an account`,
-    )
+    showToast('success', 'toast.success', `users.toast.email ${user.email}`)
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't send email to employee")
+    showToast('error', 'toast.error', 'users.toast.error.email')
   } finally {
     loading.value.sendMailToEmployee = false
   }
@@ -471,17 +469,13 @@ const handleUpgradeToAdmin = async (user: CustomUser) => {
     await upgradeToAdmin({
       id: user.id,
     })
-    showToast(
-      'success',
-      'Success',
-      `User ${user.email} has been upgraded to admin`,
-    )
+    showToast('success', 'toast.success', `users.toast.upgrade`)
     await refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't upgrade user to admin")
+    showToast('error', 'toast.error', 'users.toast.error.upgrade')
   } finally {
     loading.value.upgradeToAdmin = false
   }
@@ -513,7 +507,7 @@ watchEffect(() => {
   if (usersError.value) {
     // console.log(usersError.value)
     LogRocket.captureException(usersError.value as Error)
-    showToast('error', 'Error', "Couldn't load users")
+    showToast('error', 'toast.error', 'users.toast.user')
   }
 })
 </script>
