@@ -386,13 +386,13 @@ const handleUpdateEmployee = async (values: CustomUser) => {
       },
     })
     loading.value.updateEmployee = false
-    showToast('success', 'Success', 'User has been updated')
+    showToast('success', 'toast.success', 'users.toast.update')
     await refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't update user")
+    showToast('error', 'toast.error', 'users.toast.error.update')
   } finally {
     loading.value.updateEmployee = false
   }
@@ -406,13 +406,13 @@ const handleDelete = async (user: CustomUser) => {
     await deleteUser({
       id: user.id,
     })
-    showToast('success', 'Success', `User ${email} has been deleted`)
+    showToast('success', 'toast.success', `users.toast.delete`)
     refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't delete user")
+    showToast('error', 'toast.error', 'users.toast.error.delete')
   } finally {
     loading.value.deleteEmployee = false
   }
@@ -433,13 +433,13 @@ const handleCreateEmployee = async (values: CustomUser) => {
       },
     })
     loading.value.createEmployee = false
-    showToast('success', 'Success', 'Employee has been created')
+    showToast('success', 'toast.success', 'users.toast.create')
     await refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't create employee")
+    showToast('error', 'toast.error', 'users.toast.error.create')
   } finally {
     loading.value.createEmployee = false
   }
@@ -452,15 +452,11 @@ const handleSendMailToEmployee = async (user: CustomUser) => {
     await sendMailToEmployee({
       userId: user.id,
     })
-    showToast(
-      'success',
-      'Success',
-      `Email has been sent to ${user.email} to create an account`,
-    )
+    showToast('success', 'toast.success', `users.toast.email ${user.email}`)
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't send email to employee")
+    showToast('error', 'toast.error', 'users.toast.error.email')
   } finally {
     loading.value.sendMailToEmployee = false
   }
@@ -473,17 +469,13 @@ const handleUpgradeToAdmin = async (user: CustomUser) => {
     await upgradeToAdmin({
       id: user.id,
     })
-    showToast(
-      'success',
-      'Success',
-      `User ${user.email} has been upgraded to admin`,
-    )
+    showToast('success', 'toast.success', `users.toast.upgrade`)
     await refetchUsers()
     toggleModal()
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
-    showToast('error', 'Error', "Couldn't upgrade user to admin")
+    showToast('error', 'toast.error', 'users.toast.error.upgrade')
   } finally {
     loading.value.upgradeToAdmin = false
   }
@@ -515,7 +507,7 @@ watchEffect(() => {
   if (usersError.value) {
     // console.log(usersError.value)
     LogRocket.captureException(usersError.value as Error)
-    showToast('error', 'Error', "Couldn't load users")
+    showToast('error', 'toast.error', 'users.toast.user')
   }
 })
 </script>
