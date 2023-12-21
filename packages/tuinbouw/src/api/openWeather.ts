@@ -34,6 +34,6 @@ export const getForecastForWeek = async (
       week.push(item)
     }
   })
-  console.log(week)
+  // console.log(week)
   return week
 }

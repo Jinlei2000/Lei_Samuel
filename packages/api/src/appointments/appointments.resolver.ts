@@ -38,8 +38,10 @@ export class AppointmentsResolver {
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
+    @Args('searchString', { type: () => String, nullable: true })
+    searchString?: string,
   ) {
-    return this.appointmentsService.findAll(filters, order)
+    return this.appointmentsService.findAll(filters, order, searchString)
   }
 
   @AllowedRoles(Role.CLIENT)
@@ -51,8 +53,15 @@ export class AppointmentsResolver {
     filters?: Array<string>,
     @Args('order', { type: () => OrderByInput, nullable: true })
     order?: OrderByInput,
+    @Args('searchString', { type: () => String, nullable: true })
+    searchString?: string,
   ) {
-    return this.appointmentsService.findAllByUserId(userId, filters, order)
+    return this.appointmentsService.findAllByUserId(
+      userId,
+      filters,
+      order,
+      searchString,
+    )
   }
 
   @AllowedRoles(Role.CLIENT)

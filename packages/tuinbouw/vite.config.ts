@@ -12,11 +12,6 @@ export default defineConfig({
     vue(),
     UnoCSS({
       presets: [presetUno(), presetAttributify()],
-      // include: [
-      //   './index.html',
-      //   './src/**/*.{vue,js,ts,jsx,tsx}',
-      //   './node_modules/primevue/**/*.{vue,js,ts,jsx,tsx}',
-      // ],
       content: {
         pipeline: {
           include: [

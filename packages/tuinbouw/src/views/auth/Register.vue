@@ -6,7 +6,7 @@
       <div class="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0">
         <div class="space-y-4 p-6 sm:p-8 md:space-y-6">
           <h1
-            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
+            class="text-primary-green text-xl font-bold leading-tight tracking-tight md:text-2xl"
           >
             {{ $t('auth.register.title') }}
           </h1>
@@ -17,11 +17,11 @@
             :handle-form="handleRegister"
             :loading="loading"
           />
-          <p class="text-sm font-light text-gray-500">
+          <p class="text-sm font-light text-gray-900">
             {{ $t('auth.register.login.text') }}
             <RouterLink
               to="/auth/login"
-              class="text-primary-600 font-medium hover:underline"
+              class="hover:text-primary-orange font-medium underline"
             >
               {{ $t('auth.register.login.link') }}
             </RouterLink>
@@ -102,8 +102,8 @@ const handleRegister = async (values: GenericObject) => {
     await addClient({
       createClientInput: {
         uid: userData.uid,
-        firstname: values.firstName,
-        lastname: values.lastName,
+        firstname: values.firstName.toLowerCase(),
+        lastname: values.lastName.toLowerCase(),
         email: values.email,
         // Add the user's locale language to the database
         locale: locale.value,

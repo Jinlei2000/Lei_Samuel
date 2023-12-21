@@ -1,6 +1,6 @@
 <template>
   <section
-    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+    class="mx-auto mt-12 flex w-full max-w-7xl flex-col items-center justify-center gap-5"
   >
     <div class="mb-4 flex w-full flex-col gap-3">
       <!-- Filters + Searchbar -->
@@ -29,7 +29,10 @@
   </section>
 
   <!-- Skeleton -->
-  <section v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
+  <section
+    v-if="loading.data"
+    class="mx-auto flex w-full max-w-7xl flex-col gap-3"
+  >
     <div
       v-for="i in 10"
       :key="i"
@@ -39,7 +42,7 @@
 
   <!-- Users -->
   <section v-else-if="users && users.length > 0">
-    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+    <div class="mx-auto mb-4 flex max-w-7xl flex-col gap-3">
       <!-- Add Employee -->
       <button
         class="border-primary-green text-primary-green flex h-14 w-full items-center justify-center rounded-2xl border-[1px]"

@@ -1,6 +1,6 @@
 <template>
   <main
-    class="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-center"
+    class="mx-auto mt-12 flex w-full max-w-7xl flex-col items-center justify-center"
   >
     <div
       class="w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4"
@@ -64,7 +64,10 @@
               @click="prevDay"
             />
           </button>
-          <p>{{ $t(dateDisplay) }}</p>
+          <p>
+            {{ $t(dateDisplay.split(' ')[0]) }}
+            {{ dateDisplay.split(' ')[1] }}
+          </p>
           <button
             class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
