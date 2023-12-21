@@ -1,5 +1,5 @@
 <template>
-  <div class="m-auto mt-12 flex max-w-xl flex-col gap-3 md:mt-24">
+  <div class="m-auto mt-12 flex w-full max-w-xl flex-col gap-3 md:mt-24">
     <div class="mt-3 flex items-center justify-between">
       <h1 class="text-xl">
         {{ $t('dashboard.admin.welcome') }} {{ customUser!.firstname }}!
