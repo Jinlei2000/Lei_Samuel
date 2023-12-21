@@ -64,7 +64,10 @@
               @click="prevDay"
             />
           </button>
-          <p>{{ $t(dateDisplay) }}</p>
+          <p>
+            {{ $t(dateDisplay.split(' ')[0]) }}
+            {{ dateDisplay.split(' ')[1] }}
+          </p>
           <button
             class="bg-primary-orange rounded-xl p-1 transition-all hover:scale-110"
           >
