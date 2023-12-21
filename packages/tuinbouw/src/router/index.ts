@@ -81,10 +81,6 @@ const router = createRouter({
           component: () => import('../views/admin/Schedules.vue'),
         },
         {
-          path: 'schedules/:id',
-          component: () => import('../views/admin/ScheduleDetail.vue'),
-        },
-        {
           path: 'schedules/:id/edit',
           component: () => import('../views/admin/ScheduleEdit.vue'),
         },

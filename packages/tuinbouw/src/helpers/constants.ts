@@ -2,15 +2,15 @@ import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 
 // dropdown options of absence types
 export const ABSENCE_TYPES = [
-  { name: 'sick' },
-  { name: 'vacation' },
-  { name: 'other' },
+  { name: 'sick', value: 'sick' },
+  { name: 'vacation', value: 'vacation' },
+  { name: 'other', value: 'other' },
 ]
 
 export const APPOINTMENT_TYPES = [
-  { name: 'maintenance' },
-  { name: 'repair' },
-  { name: 'other' },
+  { name: 'maintenance', value: 'maintenance' },
+  { name: 'repair', value: 'repair' },
+  { name: 'other', value: 'other' },
 ]
 
 export const ORDER_DIRECTION = {
@@ -65,155 +65,158 @@ export const FILTER_OPTIONS_MATERIALS = [
 
 export const SORT_OPTIONS_USERS = [
   {
-    label: 'Date Created',
+    label: 'schedules.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Name',
+    label: 'schedules.sort.name',
     value: 'fullname',
   },
 ]
 
 export const FILTER_OPTIONS_USERS = [
   {
-    title: 'Role',
+    title: 'schedules.filter.role',
     name: 'role',
     type: 'checkbox',
     options: [
-      { label: 'Admin', value: 'A' },
-      { label: 'Employee', value: 'E' },
-      { label: 'Client', value: 'C' },
+      { label: 'schedules.filter.role.option.admin', value: 'A' },
+      { label: 'schedules.filter.role.option.employee', value: 'E' },
+      { label: 'schedules.filter.role.option.client', value: 'C' },
     ],
   },
 ]
 
 export const SORT_OPTIONS_APPOINTMENTS = [
   {
-    label: 'Date Created',
+    label: 'appointment.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Price',
+    label: 'appointment.sort.price',
     value: 'price',
   },
   {
-    label: 'Type',
+    label: 'appointment.sort.type',
     value: 'type',
   },
   {
-    label: 'Start Date',
+    label: 'appointment.sort.start.date',
     value: 'startProposedDate',
   },
   {
-    label: 'End Date',
+    label: 'appointment.sort.end.date',
     value: 'endProposedDate',
   },
   {
-    label: 'Final Date',
+    label: 'appointment.sort.final.date',
     value: 'finalDate',
   },
 ]
 
 export const FILTER_OPTIONS_APPOINTMENTS = [
   {
-    title: 'Scheduled',
+    title: 'appointment.filter.scheduled',
     name: 'scheduled',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Scheduled', value: 'S' },
-      { label: 'Not Scheduled', value: 'NS' },
+      { label: 'appointment.filter.scheduled.option.all', value: '' },
+      { label: 'appointment.filter.scheduled.option.scheduled', value: 'S' },
+      {
+        label: 'appointment.filter.scheduled.option.not.scheduled',
+        value: 'NS',
+      },
     ],
   },
   {
-    title: 'Type',
+    title: 'appointment.filter.type',
     name: 'type',
     type: 'checkbox',
     options: [
-      { label: 'Repair', value: 'R' },
-      { label: 'Maintenance', value: 'M' },
-      { label: 'Other', value: 'O' },
+      { label: 'appointment.filter.type.option.repair', value: 'R' },
+      { label: 'appointment.filter.type.option.maintenance', value: 'M' },
+      { label: 'appointment.filter.type.option.other', value: 'O' },
     ],
   },
   {
-    title: 'Status',
+    title: 'appointment.filter.status',
     name: 'status',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Done', value: 'D' },
-      { label: 'Not Done', value: 'ND' },
+      { label: 'appointment.filter.status.option.all', value: '' },
+      { label: 'appointment.filter.status.option.done', value: 'D' },
+      { label: 'appointment.filter.status.option.not.done', value: 'ND' },
     ],
   },
   {
-    title: 'Priority',
+    title: 'appointment.filter.priority',
     name: 'priority',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Priority', value: 'P' },
-      { label: 'Not Priority', value: 'NP' },
+      { label: 'appointment.filter.priority.option.all', value: '' },
+      { label: 'appointment.filter.priority.option.priority', value: 'P' },
+      { label: 'appointment.filter.priority.option.not.priority', value: 'NP' },
     ],
   },
 ]
 
 export const SORT_OPTIONS_SCHEDULES = [
   {
-    label: 'Date Created',
+    label: 'schedules.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Date',
+    label: 'schedules.sort.final.date',
     value: 'finalDate',
   },
 ]
 
 export const FILTER_OPTIONS_SCHEDULES = [
   {
-    title: 'Final Date',
+    title: 'schedules.filter.final.date',
     name: 'finalDate',
     type: 'radio',
     options: [
-      { label: 'All', value: '' },
-      { label: 'Today', value: 'T' },
-      { label: 'Future', value: 'F' },
-      { label: 'Past', value: 'P' },
+      { label: 'schedules.filter.final.date.option.all', value: '' },
+      { label: 'schedules.filter.final.date.option.today', value: 'T' },
+      { label: 'schedules.filter.final.date.option.future', value: 'F' },
+      { label: 'schedules.filter.final.date.option.past', value: 'P' },
     ],
   },
 ]
 
 export const FILTER_OPTIONS_ABSENCES = [
   {
-    title: 'Type',
+    title: 'absences.filter.type',
     name: 'type',
     type: 'checkbox',
     options: [
-      { label: 'Sick', value: 'S' },
-      { label: 'Vacation', value: 'V' },
-      { label: 'Other', value: 'O' },
+      { label: 'absences.filter.type.option.sick', value: 'S' },
+      { label: 'absences.filter.type.option.vacation', value: 'V' },
+      { label: 'absences.filter.type.option.other', value: 'O' },
     ],
   },
 ]
 
 export const SORT_OPTIONS_ABSENCES = [
   {
-    label: 'Date Created',
+    label: 'absences.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Start Date',
+    label: 'absences.sort.start.date',
     value: 'startDate',
   },
   {
-    label: 'End Date',
+    label: 'absences.sort.end.date',
     value: 'endDate',
   },
   {
-    label: 'Total Days',
+    label: 'absences.sort.total.days',
     value: 'totalDays',
   },
   {
-    label: 'Type',
+    label: 'absences.sort.type',
     value: 'type',
   },
 ]

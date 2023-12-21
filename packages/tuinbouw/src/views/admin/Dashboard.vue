@@ -2,14 +2,14 @@
   <div class="m-auto mt-12 flex max-w-xl flex-col gap-3 md:mt-24">
     <div class="mt-3 flex items-center justify-between">
       <h1 class="text-xl">
-        {{ $t('account.welcome') }} {{ customUser!.firstname }}! These are
-        todays schedules
+        {{ $t('dashboard.admin.welcome') }} {{ customUser!.firstname }}!
+        {{ $t('dashboard.admin.schedule.text') }}
       </h1>
       <RouterLink
         :to="`/admin/schedules`"
         class="text-primary-orange group flex items-center text-lg sm:text-base"
       >
-        Schedules
+        {{ $t('dashboard.admin.button.schedules') }}
         <ChevronRight
           class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
           stroke-width="1"
@@ -62,17 +62,17 @@
       v-else-if="todaysSchedules.length === 0"
       class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
     >
-      <p>No schedules today</p>
+      <p>{{ $t('dashboard.admin.no.schedules') }}</p>
     </div>
 
     <!-- Absences -->
     <div class="mt-3 flex items-center justify-between">
-      <h2 class="text-xl">Todays absences</h2>
+      <h2 class="text-xl">{{ $t('dashboard.admin.absences') }}</h2>
       <RouterLink
         :to="`/admin/absences`"
         class="text-primary-orange group flex items-center text-lg sm:text-base"
       >
-        Absences
+        {{ $t('dashboard.admin.button.absences') }}
         <ChevronRight
           class="h-8 w-8 transition-all group-hover:translate-x-1 sm:h-auto sm:w-auto"
           stroke-width="1"
@@ -110,12 +110,12 @@
                 (1000 * 3600 * 24)
               ).toFixed(0)
             }}
-            day(s) left
+            {{ $t('dashboard.admin.days.left') }}
           </p>
           <p
             class="bg-primary-orange rounded-full px-3 py-1 capitalize text-white"
           >
-            {{ absence.type }}
+            {{ $t(absence.type) }}
           </p>
         </div>
       </div>
@@ -126,7 +126,7 @@
       v-else-if="todaysAbsences.length === 0"
       class="flex h-12 w-full items-center justify-center rounded-2xl bg-gray-200"
     >
-      <p>No absences today</p>
+      <p>{{ $t('dashboard.admin.no.absences') }}</p>
     </div>
   </div>
 
@@ -134,7 +134,7 @@
   <Dialog
     v-model:visible="visible.detail"
     modal
-    header="Schedule Detail"
+    :header="$t('dashboard.admin.modal.detail')"
     :draggable="false"
     :close-on-escape="true"
     :pt="{
@@ -145,7 +145,7 @@
   >
     <div v-if="selectedSchedule" class="flex flex-col gap-6">
       <div class="flex flex-col gap-3">
-        <h3 class="text-lg">Appointments</h3>
+        <h3 class="text-lg">{{ $t('dashboard.admin.modal.appointments') }}</h3>
         <ul class="flex flex-col gap-3">
           <li
             v-for="appointment in selectedSchedule.appointments"
@@ -185,7 +185,7 @@
         </ul>
       </div>
       <div class="flex flex-col gap-3">
-        <h3 class="text-lg">Employees</h3>
+        <h3 class="text-lg">{{ $t('dashboard.admin.modal.employees') }}</h3>
         <ul class="flex flex-col gap-3">
           <li
             v-for="employee in selectedSchedule.employees"
@@ -205,7 +205,7 @@
           class="flex cursor-pointer justify-between"
           @click="toggleCollapsible()"
         >
-          <h3 class="text-lg">Materials:</h3>
+          <h3 class="text-lg">{{ $t('dashboard.admin.modal.materials') }}:</h3>
           <ChevronDown :class="collapsed ? 'transform rotate-180' : ''" />
         </div>
         <ul v-if="!collapsed" class="flex list-disc flex-col gap-3">
@@ -224,28 +224,24 @@
 </template>
 
 <script lang="ts" setup>
-import { SUPPORTED_LOCALES } from '@/bootstrap/i18n'
 import Avatar from '@/components/generic/Avatar.vue'
 import Map from '@/components/Map.vue'
+import useCustomToast from '@/composables/useCustomToast'
 import useCustomUser from '@/composables/useCustomUser'
-import useFirebase from '@/composables/useFirebase'
-import useLanguage from '@/composables/useLanguage'
-import useTimeUtilities from '@/composables/useTimeUtilities'
 import { GET_ALL_ABSENCES_BY_DATE } from '@/graphql/absence.query'
 import { GET_SCHEDULES_BY_DATE } from '@/graphql/schedule.query'
 import type { Absence } from '@/interfaces/absence.interface'
 import type { Schedule } from '@/interfaces/schedule.interface'
-import router from '@/router'
 import { useQuery } from '@vue/apollo-composable'
+import LogRocket from 'logrocket'
 import { ChevronDown, ChevronRight, Wrench } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { watchEffect } from 'vue'
 import { type ComputedRef } from 'vue'
 import { computed } from 'vue'
 
-const { firebaseUser } = useFirebase()
 const { customUser } = useCustomUser()
-const { formatDateTime } = useTimeUtilities()
+const { showToast } = useCustomToast()
 
 const todaysSchedules: ComputedRef<Schedule[]> = computed(() => {
   return schedulesResult.value?.schedulesByDate || []
@@ -263,11 +259,6 @@ const visible = ref<{
 })
 const collapsed = ref(true)
 
-// Create brearer token
-firebaseUser.value?.getIdToken().then(token => {
-  console.log(`{"Authorization": "Bearer ${token}"}`)
-})
-
 const toggleModal = (
   schedule: Schedule | null = null,
   type: string = 'close',
@@ -283,26 +274,37 @@ const toggleCollapsible = () => {
 }
 
 // GraphQL
-const {
-  result: schedulesResult,
-  error: schedulesError,
-  loading: schedulesLoading,
-} = useQuery(GET_SCHEDULES_BY_DATE, {
-  date: new Date().toISOString().slice(0, 10),
-  fetchPolicy: 'cache-and-network',
-})
+const { result: schedulesResult, error: schedulesError } = useQuery(
+  GET_SCHEDULES_BY_DATE,
+  {
+    date: new Date().toISOString().slice(0, 10),
+    fetchPolicy: 'cache-and-network',
+  },
+)
 
-const {
-  result: absencesResult,
-  error: absencesError,
-  loading: absencesLoading,
-} = useQuery(GET_ALL_ABSENCES_BY_DATE, {
-  date: new Date().toISOString().slice(0, 10),
-  fetchPolicy: 'cache-and-network',
-})
+const { result: absencesResult, error: absencesError } = useQuery(
+  GET_ALL_ABSENCES_BY_DATE,
+  {
+    date: new Date().toISOString().slice(0, 10),
+    fetchPolicy: 'cache-and-network',
+  },
+)
 
 watchEffect(() => {
-  console.log('schedules', schedulesResult.value?.schedulesByDate)
-  console.log('absences', absencesResult.value?.absencesByDate)
+  // log the queries
+  // console.log('schedules', schedulesResult.value?.schedulesByDate)
+  // console.log('absences', absencesResult.value?.absencesByDate)
+
+  // all errors
+  if (absencesError.value) {
+    // console.log(absencesError.value)
+    LogRocket.captureException(absencesError.value)
+    showToast('error', 'toast.error', 'dashboard.admin.toast.error.absences')
+  }
+  if (schedulesError.value) {
+    // console.log(schedulesError.value)
+    LogRocket.captureException(schedulesError.value)
+    showToast('error', 'toast.error', 'dashboard.admin.toast.error.users')
+  }
 })
 </script>

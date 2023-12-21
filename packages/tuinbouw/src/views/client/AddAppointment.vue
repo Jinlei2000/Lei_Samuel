@@ -118,6 +118,7 @@
             <option
               v-for="type in APPOINTMENT_TYPES"
               :key="type.name"
+              :value="type.value"
               class="capitalize"
             >
               {{ $t(type.name) }}
@@ -155,12 +156,14 @@
               {{ $t('add.appointment.form.text.date') }}
             </p>
           </div>
-          <div class="flex w-full items-center justify-between">
+          <div
+            class="flex w-fit flex-col items-center justify-between gap-3 lg:w-full lg:flex-row lg:items-center lg:gap-0"
+          >
             <Calendar
               v-model="startProposedDate"
               show-icon
               :pt="{
-                root: { class: 'w-1/3' },
+                root: { class: 'w-fit lg:w-1/3' },
                 input: { class: 'h-fit p-3 bg-gray-400' },
               }"
               :min-date="minDate"
@@ -170,12 +173,13 @@
                 <CalendarIcon class="h-5 w-5" />
               </template>
             </Calendar>
-            <img src="/assets/doubleArrow.svg" />
+            <img class="hidden lg:block" src="/assets/doubleArrow.svg" />
+            <img class="lg:hidden" src="/assets/doubleArrow_vertical.svg" />
             <Calendar
               v-model="endProposedDate"
               show-icon
               :pt="{
-                root: { class: 'w-1/3' },
+                root: { class: 'w-fit lg:w-1/3' },
                 input: { class: 'h-fit p-3 bg-gray-400' },
               }"
               :min-date="startProposedDate"

@@ -25,12 +25,14 @@
   <div class="mx-4 text-black">
     <Appheader />
     <RouterView />
+    <AppFooter class="mt-48" />
   </div>
 </template>
 
 <script setup lang="ts">
 // import type AppHeaderVue from '../components/generic/AppHeader.vue'
-import Appheader from './components/generic/appheader.vue'
+import AppFooter from './components/AppFooter.vue'
+import Appheader from './components/generic/AppHeader.vue'
 import useCustomUser from './composables/useCustomUser'
 import useGraphql from './composables/useGraphql'
 import useLanguage from './composables/useLanguage'

@@ -23,5 +23,20 @@ npx jest materials/materials.service.spec
 npm run test:e2e -w api
 ```
 
+## Frontend e2e tests
+
+go to packages/tuinbouw
+
+```bash
+npx playwright test --ui
+```
+
+or
+
+```bash
+npx playwright test
+```
+
+
 
 
