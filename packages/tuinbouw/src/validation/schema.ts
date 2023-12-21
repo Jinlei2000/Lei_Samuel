@@ -61,7 +61,6 @@ export const registerValidationSchema = yup.object({
 })
 
 export const userUpdateAdminValidationSchema = yup.object({
-  email: yup.string().required('invalid.email.required').email('invalid.email'),
   firstname: yup.string().required('invalid.firstname.required'),
   lastname: yup.string().required('invalid.lastname.required'),
   telephone: yup

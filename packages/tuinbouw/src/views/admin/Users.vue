@@ -347,12 +347,6 @@ const formUpdateEmployee = {
       as: 'input',
     },
     {
-      label: 'users.form.email',
-      name: 'email',
-      placeholder: 'john@gmail.com',
-      as: 'input',
-    },
-    {
       label: 'users.form.telephone',
       name: 'telephone',
       placeholder: '0412345678',
