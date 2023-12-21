@@ -7,7 +7,7 @@
     </div>
     <input
       :value="modelValue"
-      class="h-12 w-full rounded-full bg-gray-200 py-3 pl-11 text-lg"
+      class="h-12 w-full rounded-full bg-gray-200 py-3 pl-11 pr-3 text-lg"
       type="text"
       :placeholder="$t(placeholder)"
       @input="

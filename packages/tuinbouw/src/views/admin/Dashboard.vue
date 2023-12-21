@@ -57,6 +57,22 @@
       </button>
     </div>
 
+    <!-- Skeletons -->
+    <div v-else-if="schedulesLoading" class="flex flex-col gap-3">
+      <div
+        v-for="index in 3"
+        :key="index"
+        class="flex animate-pulse items-center justify-between rounded-2xl bg-gray-200 p-1"
+      >
+        <div class="flex -space-x-6">
+          <div class="h-8 w-8 rounded-full bg-gray-300"></div>
+          <div class="h-8 w-8 rounded-full bg-gray-300"></div>
+          <div class="h-8 w-8 rounded-full bg-gray-300"></div>
+        </div>
+        <div class="h-9 w-9 rounded-xl bg-gray-300"></div>
+      </div>
+    </div>
+
     <!-- No schedules -->
     <div
       v-else-if="todaysSchedules.length === 0"
@@ -121,6 +137,19 @@
       </div>
     </div>
 
+    <!-- Skeletons -->
+    <!-- Skeletons -->
+    <div v-else-if="absencesLoading" class="flex flex-col gap-3">
+      <div
+        v-for="index in 3"
+        :key="index"
+        class="flex animate-pulse items-center justify-between rounded-2xl bg-gray-200 p-2 px-3 text-left"
+      >
+        <div class="h-10 w-10 rounded-full bg-gray-300"></div>
+        <div class="h-8 w-24 rounded-full bg-gray-300"></div>
+      </div>
+    </div>
+
     <!-- No absences -->
     <div
       v-else-if="todaysAbsences.length === 0"
@@ -172,9 +201,12 @@
                 <p class="line-clamp-2">{{ appointment.description }}</p>
               </div>
 
-              <p class="text-xs text-gray-900">
-                {{ appointment.location.address }}
-              </p>
+              <div class="flex w-full items-center justify-between">
+                <p class="text-xs text-gray-900">
+                  {{ appointment.location.address }}
+                </p>
+                <p class="text-xs">€{{ appointment.price }}</p>
+              </div>
             </div>
             <div
               class="h-auto w-1/3 overflow-auto rounded-3xl rounded-t-none rounded-bl-none"
@@ -274,21 +306,23 @@ const toggleCollapsible = () => {
 }
 
 // GraphQL
-const { result: schedulesResult, error: schedulesError } = useQuery(
-  GET_SCHEDULES_BY_DATE,
-  {
-    date: new Date().toISOString().slice(0, 10),
-    fetchPolicy: 'cache-and-network',
-  },
-)
+const {
+  result: schedulesResult,
+  error: schedulesError,
+  loading: schedulesLoading,
+} = useQuery(GET_SCHEDULES_BY_DATE, {
+  date: new Date().toISOString().slice(0, 10),
+  fetchPolicy: 'cache-and-network',
+})
 
-const { result: absencesResult, error: absencesError } = useQuery(
-  GET_ALL_ABSENCES_BY_DATE,
-  {
-    date: new Date().toISOString().slice(0, 10),
-    fetchPolicy: 'cache-and-network',
-  },
-)
+const {
+  result: absencesResult,
+  error: absencesError,
+  loading: absencesLoading,
+} = useQuery(GET_ALL_ABSENCES_BY_DATE, {
+  date: new Date().toISOString().slice(0, 10),
+  fetchPolicy: 'cache-and-network',
+})
 
 watchEffect(() => {
   // log the queries
