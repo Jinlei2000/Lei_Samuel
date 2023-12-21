@@ -8,9 +8,7 @@
           src="/assets/not-found.svg"
           alt="Page not found"
         />
-        <h1
-          class="mt-3 text-2xl font-semibold dark:text-white md:text-3xl"
-        >
+        <h1 class="mt-3 text-2xl font-semibold dark:text-white md:text-3xl">
           Page not found
         </h1>
         <p class="mt-4 text-gray-900 dark:text-gray-400">
