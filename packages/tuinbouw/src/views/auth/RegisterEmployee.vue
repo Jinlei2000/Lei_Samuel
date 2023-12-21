@@ -10,9 +10,7 @@
           >
             {{ $t('auth.register.employee.title') }}
           </h1>
-          <span v-if="errorRegister" class="text-red-600">{{
-            errorRegister
-          }}</span>
+          <CustomError v-if="errorRegister" :error="errorRegister" />
           <DynamicForm
             :schema="formRegister"
             :validation-schema="registerValidationSchema"
@@ -35,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import CustomError from '@/components/generic/CustomError.vue'
 import DynamicForm from '@/components/generic/DynamicForm.vue'
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
