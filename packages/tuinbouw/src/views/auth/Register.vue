@@ -102,8 +102,8 @@ const handleRegister = async (values: GenericObject) => {
     await addClient({
       createClientInput: {
         uid: userData.uid,
-        firstname: values.firstName,
-        lastname: values.lastName,
+        firstname: values.firstName.toLowerCase(),
+        lastname: values.lastName.toLowerCase(),
         email: values.email,
         // Add the user's locale language to the database
         locale: locale.value,

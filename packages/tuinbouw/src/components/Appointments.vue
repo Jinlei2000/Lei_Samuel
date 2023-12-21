@@ -300,6 +300,7 @@ const variables = ref<VariablesProps>({
     field: 'createdAt',
     direction: ORDER_DIRECTION.DESC,
   },
+  searchString: '',
 })
 const loading = ref<{
   update: boolean

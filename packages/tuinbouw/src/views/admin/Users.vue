@@ -301,6 +301,7 @@ const variables = ref<VariablesProps>({
     field: 'createdAt',
     direction: ORDER_DIRECTION.DESC,
   },
+  searchString: '',
 })
 const visible = ref<{
   detail: boolean

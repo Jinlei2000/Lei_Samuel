@@ -32,21 +32,7 @@ export class AppointmentsService {
   async findAll(
     filters?: Array<string>,
     order?: OrderByInput,
-  ): Promise<Appointment[]> {
-    // filter and order appointments
-    const whereQuery = filterAppointments(filters)
-    const orderQuery = orderAppointments(order)
-
-    return this.appointmentRepository.find({
-      where: whereQuery,
-      order: orderQuery,
-    })
-  }
-
-  async findAllByUserId(
-    userId: string,
-    filters?: Array<string>,
-    order?: OrderByInput,
+    searchString?: string,
   ): Promise<Appointment[]> {
     // filter and order appointments
     const whereQuery = filterAppointments(filters)
@@ -55,6 +41,30 @@ export class AppointmentsService {
     return this.appointmentRepository.find({
       where: {
         ...whereQuery,
+        // search by user fullname
+        // @ts-ignore
+        'user.fullname': { $regex: searchString, $options: 'i' },
+      },
+      order: orderQuery,
+    })
+  }
+
+  async findAllByUserId(
+    userId: string,
+    filters?: Array<string>,
+    order?: OrderByInput,
+    searchString?: string,
+  ): Promise<Appointment[]> {
+    // filter and order appointments
+    const whereQuery = filterAppointments(filters)
+    const orderQuery = orderAppointments(order)
+
+    return this.appointmentRepository.find({
+      where: {
+        ...whereQuery,
+        // search by user fullname
+        // @ts-ignore
+        'user.fullname': { $regex: searchString, $options: 'i' },
         // @ts-ignore
         'user.id': new ObjectId(userId),
       },

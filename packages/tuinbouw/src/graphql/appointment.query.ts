@@ -5,8 +5,14 @@ export const GET_ALL_APPOINTMENT_BY_USERID = gql`
     $userId: String!
     $filters: [String!]
     $order: OrderByInput
+    $searchString: String
   ) {
-    appointmentsByUserId(userId: $userId, filters: $filters, order: $order) {
+    appointmentsByUserId(
+      userId: $userId
+      filters: $filters
+      order: $order
+      searchString: $searchString
+    ) {
       id
       user {
         id
@@ -59,8 +65,16 @@ export const GET_ALL_APPOINTMENT_AVAILABLE_BY_DATE = gql`
 `
 
 export const GET_ALL_APPOINTMENT = gql`
-  query appointments($filters: [String!], $order: OrderByInput) {
-    appointments(filters: $filters, order: $order) {
+  query appointments(
+    $filters: [String!]
+    $order: OrderByInput
+    $searchString: String
+  ) {
+    appointments(
+      filters: $filters
+      order: $order
+      searchString: $searchString
+    ) {
       id
       user {
         id
