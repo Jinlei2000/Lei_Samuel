@@ -1,5 +1,5 @@
 <template>
-  <main class="m-auto mt-12 flex max-w-7xl flex-col gap-3">
+  <main class="m-auto mt-12 flex w-full max-w-7xl flex-col gap-3">
     <!-- Week selection -->
     <section class="flex w-full grid-cols-3 flex-col gap-3 md:grid md:gap-0">
       <h1 class="col-start-1 text-2xl">{{ $t('calendar.title') }}</h1>

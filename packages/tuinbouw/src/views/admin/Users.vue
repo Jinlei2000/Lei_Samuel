@@ -1,6 +1,6 @@
 <template>
   <section
-    class="m-auto mt-12 flex max-w-7xl flex-col items-center justify-center gap-5"
+    class="m-auto mt-12 flex w-full max-w-7xl flex-col items-center justify-center gap-5"
   >
     <div class="mb-4 flex w-full flex-col gap-3">
       <!-- Filters + Searchbar -->
