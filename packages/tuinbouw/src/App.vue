@@ -22,10 +22,10 @@
       <X :class="slotProps.class" />
     </template>
   </Toast>
-  <div class="mx-4 text-black">
+  <div class="mx-4 flex min-h-screen flex-col text-black">
     <Appheader />
     <RouterView />
-    <AppFooter class="mt-48" />
+    <AppFooter class="mt-auto" />
   </div>
 </template>
 
