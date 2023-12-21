@@ -1,7 +1,7 @@
 <template>
   <main v-if="user" class="m-auto my-12 flex w-full max-w-xl flex-col gap-6">
     <!-- Primary user info -->
-    <section class="flex w-full flex-col items-center gap-6">
+    <section class="flex flex-col items-center gap-6">
       <div class="relative">
         <!-- Profile picture -->
         <Avatar
@@ -201,7 +201,7 @@
   </main>
 
   <!-- Skeleton -->
-  <div v-else class="m-auto my-12 flex max-w-xl flex-col gap-6">
+  <div v-else class="m-auto my-12 flex w-full max-w-xl flex-col gap-6">
     <section class="flex w-full flex-col items-center gap-6">
       <div class="h-24 w-24 animate-pulse rounded-full bg-neutral-200"></div>
       <div class="flex flex-col items-center gap-2">
