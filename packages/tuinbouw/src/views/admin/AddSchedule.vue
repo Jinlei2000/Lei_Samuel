@@ -9,7 +9,7 @@
 
   <main
     v-else
-    class="m-auto mb-6 mt-12 flex max-w-7xl flex-col items-start justify-center gap-3"
+    class="m-auto mb-6 mt-12 flex w-full max-w-7xl flex-col items-start justify-center gap-3"
   >
     <!-- Title -->
     <h1 class="mt-3 text-2xl">{{ $t('add.schedule.title') }}</h1>

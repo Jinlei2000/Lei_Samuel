@@ -1,6 +1,6 @@
 <template>
   <div class="m-auto mt-12 flex w-full max-w-xl flex-col gap-3 md:mt-24">
-    <h1 class="text-xl">
+    <h1 class="text-xl capitalize">
       {{ $t('dashboard.client.welcome') }} {{ customUser!.firstname }}
     </h1>
     <RouterLink to="/client/add-appointment">

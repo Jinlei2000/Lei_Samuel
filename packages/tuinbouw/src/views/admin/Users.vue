@@ -136,7 +136,7 @@
         </div>
         <div class="flex items-center gap-3">
           <Phone class="h-5 w-5" />
-          <p v-if="selectedUser.telephone" class="text-gray-600">
+          <p v-if="selectedUser.telephone">
             {{ selectedUser.telephone }}
           </p>
           <p v-else class="text-gray-600">{{ $t('users.unknown') }}</p>
