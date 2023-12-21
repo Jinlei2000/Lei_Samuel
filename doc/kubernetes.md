@@ -1,6 +1,6 @@
 # Kubernetes
 
-## Azure Kubernetes Service (AKS)
+## Azure Kubernetes Service (AKS) & Netlify
 
 Make a new resource group & create a new AKS cluster
 
@@ -18,16 +18,12 @@ Switch to the namespace
 kubectl config set-context --current --namespace=tuinbouw
 ```
 
+First go to docker-compose-production.yml and change the image names to your own docker hub account
+
 Push the images to the Docker Hub
 
 ```bash
-docker tag api-tuinbouw-production-api jinlei2000/api-tuinbouw-production-api
-docker tag api-tuinbouw-production-tuinbouw jinlei2000/api-tuinbouw-production-tuinbouw
-```
-
-```bash	
-docker push jinlei2000/api-tuinbouw-production-api
-docker push jinlei2000/api-tuinbouw-production-tuinbouw
+docker compose -f .\infrastructure\docker-compose-production.yml push
 ```
 
 First add a firebase-admin credentials file to the cluster
@@ -82,25 +78,7 @@ data:
   GOOGLE_APPLICATION_CREDENTIALS: /app/google-credentials/credentials.json
 ```
 
-```yaml
-# configmap-tuinbouw.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tuinbouw-configmap
-  namespace: tuinbouw
-data:
-  VITE_apiKey: # firebase api key
-  VITE_authDomain: # firebase auth domain
-  VITE_projectId: # firebase project id
-  VITE_storageBucket: # firebase storage bucket
-  VITE_messagingSenderId: # firebase messaging sender id
-  VITE_appId: # firebase app id
-  VITE_BACKEND_URL: # external ip of the api service
-  VITE_TOMTOM_API_KEY: # tomtom api key
-  VITE_OPENWEATHER_apiKey: # openweather api key
-  VITE_LOGROCKET_ID: # logrocket id
-```
+
 
 
 

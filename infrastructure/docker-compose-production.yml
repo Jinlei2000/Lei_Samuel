@@ -10,10 +10,11 @@ services:
     environment:
       MONGO_INITDB_DATABASE: api
     volumes:
-      - dbvolumetuinbouwproduction:/data/db # TODO: change later name
+      - dbvolumetuinbouwproduction:/data/db 
       
 
   api:
+    image: jinlei2000/api-tuinbouw-production-api
     build:
       context: ../.
       dockerfile: packages/api/Dockerfile
@@ -29,6 +30,7 @@ services:
 
 
   tuinbouw:
+    image: jinlei2000/api-tuinbouw-production-tuinbouw
     build:
       context: ../.
       dockerfile: packages/tuinbouw/Dockerfile

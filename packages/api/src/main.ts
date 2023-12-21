@@ -17,7 +17,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
 
   // port of backend application
-  await app.listen(3001)
+  // await app.listen(3001)
+  await app.listen(process.env.PORT || 3001)
   console.log(`Application is running on: ${await app.getUrl()}`)
   console.log(`GraphQL is running on: ${await app.getUrl()}/graphql`)
 }

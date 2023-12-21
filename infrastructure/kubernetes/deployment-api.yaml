@@ -18,7 +18,7 @@ spec:
         - name: api
           image: jinlei2000/api-tuinbouw-production-api
           ports:
-            - containerPort: 3001
+            - containerPort: 80
           envFrom:
             - configMapRef:
                 name: api-configmap
