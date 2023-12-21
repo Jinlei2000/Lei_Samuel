@@ -174,6 +174,23 @@ Go to Azure Cloud Shell and run the following commands:
 kubectl rollout restart deployment api
 ```
 
+### Seed the api 
+
+Go to Azure Cloud Shell and run the following commands:
+
+```bash
+kubectl get pods
+```
+
+```bash
+kubectl exec -it api-<pod-id> -- sh
+```
+
+```bash
+npx nestjs-command seed:reset
+npx nestjs-command seed
+```
+
 
 
 
