@@ -502,7 +502,7 @@ const handleSendMailToEmployee = async (user: CustomUser) => {
     await sendMailToEmployee({
       userId: user.id,
     })
-    showToast('success', 'toast.success', `users.toast.email ${user.email}`)
+    showToast('success', 'toast.success', `users.toast.email`)
   } catch (error) {
     // console.log(error)
     LogRocket.captureException(error as Error)
