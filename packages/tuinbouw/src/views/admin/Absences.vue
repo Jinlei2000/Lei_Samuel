@@ -77,14 +77,25 @@
     }"
   >
     <!-- Show Detail -->
-    <div>
-      <h2 class="mb-2 text-xl font-semibold">
-        user id:
-        {{ selectedAbsence?.user?.id }}
-      </h2>
-      <p class="text-gray-600">
-        {{ selectedAbsence?.description }}
-      </p>
+    <div v-if="selectedAbsence">
+      <div class="mb-3 flex flex-col gap-3">
+        <div>
+          <h2 class="text-xl font-semibold">
+            {{ formatAbsenceDate(selectedAbsence.startDate) }}
+          </h2>
+          <p class="text-gray-900">
+            {{ selectedAbsence.totalDays }} {{ $t('profile.absences.days') }}
+          </p>
+        </div>
+        <div>
+          <h3 class="text-sm">
+            {{ $t('profile.modal.detail.absence.description') }}
+          </h3>
+          <p>
+            {{ selectedAbsence.description }}
+          </p>
+        </div>
+      </div>
       <!-- Delete button -->
       <CustomButton
         name="absences.modal.detail.button.delete"

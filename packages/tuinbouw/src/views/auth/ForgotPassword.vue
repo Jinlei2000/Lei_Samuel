@@ -6,7 +6,7 @@
       <div class="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0">
         <div class="space-y-4 p-6 sm:p-8">
           <h1
-            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
+            class="text-primary-green text-xl font-bold leading-tight tracking-tight md:text-2xl"
           >
             {{ $t('auth.forgotpwd.title') }}
           </h1>
@@ -17,11 +17,11 @@
             :handle-form="handleForgotPwd"
             :loading="loading"
           />
-          <p class="text-sm font-light text-gray-500">
+          <p class="text-sm font-light text-gray-900">
             {{ $t('auth.forgotpwd.login.text') }}
             <RouterLink
               to="/auth/login"
-              class="text-primary-600 font-medium hover:underline"
+              class="hover:text-primary-orange font-medium underline"
             >
               {{ $t('auth.forgotpwd.login.link') }}
             </RouterLink>

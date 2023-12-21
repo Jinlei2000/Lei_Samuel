@@ -6,7 +6,7 @@
       <div class="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0">
         <div class="space-y-4 p-6 sm:p-8">
           <h1
-            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
+            class="text-primary-green text-xl font-bold leading-tight tracking-tight md:text-2xl"
           >
             {{ $t('auth.login.title') }}
           </h1>
@@ -21,17 +21,17 @@
             <div class="flex items-center justify-end">
               <RouterLink
                 to="/auth/forgot-password"
-                class="text-primary-600 text-sm font-medium underline hover:underline"
+                class="text-primary-600 hover:text-primary-orange text-sm font-medium underline"
               >
                 {{ $t('auth.login.forgotPassword') }}
               </RouterLink>
             </div>
             <div class="my-3 border-t border-gray-300" />
-            <p class="text-sm font-light text-gray-500">
+            <p class="text-sm font-light text-gray-900">
               {{ $t('auth.login.register.text') }}
               <RouterLink
                 to="/auth/register"
-                class="text-primary-600 font-medium hover:underline"
+                class="hover:text-primary-orange font-medium underline"
               >
                 {{ $t('auth.login.register.link') }}
               </RouterLink>

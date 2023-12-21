@@ -116,17 +116,69 @@
   >
     <!-- Show Detail -->
     <div v-if="!isEditing">
-      <header class="mb-2">
-        <h2 class="mb-2 text-xl font-semibold">
-          {{ selectedUser.fullname }}
-        </h2>
-        <p class="text-gray-600">
-          {{ selectedUser.email }}
-        </p>
-        <p class="text-gray-600">
-          {{ selectedUser.telephone }}
-        </p>
-      </header>
+      <div class="mb-2 flex flex-col gap-6">
+        <div class="flex items-center gap-4">
+          <Avatar
+            :user="selectedUser"
+            class="h-14 w-14 overflow-hidden rounded-full"
+          />
+          <div>
+            <h2 class="text-xl font-semibold capitalize">
+              {{ selectedUser.fullname }}
+            </h2>
+            <p class="text-gray-600">
+              {{ selectedUser.email }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <Phone class="h-5 w-5" />
+          <p v-if="selectedUser.telephone" class="text-gray-600">
+            {{ selectedUser.telephone }}
+          </p>
+          <p v-else class="text-gray-600">{{ $t('users.unknown') }}</p>
+        </div>
+        <div
+          v-if="selectedUser.locations.length > 0"
+          class="flex flex-col gap-3"
+        >
+          <div
+            v-for="location in selectedUser.locations"
+            :key="location.id"
+            class="flex items-center justify-between overflow-hidden rounded-2xl bg-gray-200 text-left"
+          >
+            <div class="flex w-2/3 flex-col gap-2 py-3 pl-6 sm:w-1/2">
+              <!-- location or nothing -->
+              <h3 class="text-lg">{{ location.title }}</h3>
+              <div>
+                <p class="opacity-70">
+                  {{ location.address.split(',')[0] }}
+                </p>
+                <p class="opacity-70">{{ location.address.split(',')[1] }}</p>
+              </div>
+            </div>
+            <div
+              class="h-28 w-1/3 overflow-auto rounded-3xl rounded-t-none rounded-bl-none sm:w-1/2"
+            >
+              <Map class="h-full w-full" :locations="[location]" />
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class="flex items-center justify-center rounded-2xl bg-gray-200 p-6"
+        >
+          <p class="text-gray-900">
+            {{ $t('users.modal.detail.no.location') }}
+          </p>
+        </div>
+        <div v-if="selectedUser.role == 'EMPLOYEE'" class="mb-3">
+          <p>
+            {{ $t('users.modal.detail.absences') }}:
+            {{ selectedUser.absentCount }}
+          </p>
+        </div>
+      </div>
 
       <div class="mb-2 flex flex-col gap-2">
         <!-- Upgrade to Admin -->
@@ -211,6 +263,7 @@ import Filter from '@/components/generic/Filter.vue'
 import NoResult from '@/components/generic/NoResult.vue'
 import Search from '@/components/generic/Search.vue'
 import Sort from '@/components/generic/Sort.vue'
+import Map from '@/components/Map.vue'
 import useCustomToast from '@/composables/useCustomToast'
 import { SEND_MAIL_TO_EMPLOYEE } from '@/graphql/mail.token.mutation'
 import {
@@ -234,7 +287,7 @@ import {
 } from '@/validation/schema'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import LogRocket from 'logrocket'
-import { PlusCircle } from 'lucide-vue-next'
+import { Phone, PlusCircle } from 'lucide-vue-next'
 import type { ComputedRef } from 'vue'
 import { computed, ref, watchEffect } from 'vue'
 
