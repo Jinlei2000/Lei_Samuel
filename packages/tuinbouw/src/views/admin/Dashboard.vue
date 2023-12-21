@@ -172,9 +172,12 @@
                 <p class="line-clamp-2">{{ appointment.description }}</p>
               </div>
 
-              <p class="text-xs text-gray-900">
-                {{ appointment.location.address }}
-              </p>
+              <div class="flex w-full items-center justify-between">
+                <p class="text-xs text-gray-900">
+                  {{ appointment.location.address }}
+                </p>
+                <p class="text-xs">€{{ appointment.price }}</p>
+              </div>
             </div>
             <div
               class="h-auto w-1/3 overflow-auto rounded-3xl rounded-t-none rounded-bl-none"
