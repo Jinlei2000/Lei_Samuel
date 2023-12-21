@@ -29,7 +29,7 @@
   </section>
 
   <!-- Skeleton -->
-  <section v-if="loading.data" class="m-auto flex max-w-7xl flex-col gap-3">
+  <section v-if="loading.data" class="mx-auto flex max-w-7xl flex-col gap-3">
     <div
       v-for="i in 10"
       :key="i"
@@ -39,7 +39,7 @@
 
   <!-- Users -->
   <section v-else-if="users && users.length > 0">
-    <div class="m-auto mb-4 flex max-w-7xl flex-col gap-3">
+    <div class="mx-auto mb-4 flex max-w-7xl flex-col gap-3">
       <!-- Add Employee -->
       <button
         class="border-primary-green text-primary-green flex h-14 w-full items-center justify-center rounded-2xl border-[1px]"
@@ -301,7 +301,6 @@ const variables = ref<VariablesProps>({
     field: 'createdAt',
     direction: ORDER_DIRECTION.DESC,
   },
-  searchString: '',
 })
 const visible = ref<{
   detail: boolean
