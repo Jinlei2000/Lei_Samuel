@@ -168,7 +168,7 @@ MAIL_USER=
 MAIL_PASSWORD=
 MAIL_FROM=noreply@noreply.com
 
-URL_FRONTEND=http://localhost:8081 #CORS origin External port of the Tuinbouw service
+URL_FRONTEND=http://localhost:5173 #CORS origin External port of the Tuinbouw service
 DB_HOST=localhost
 DB_PORT=27027
 DB_NAME=api
