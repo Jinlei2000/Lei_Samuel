@@ -206,9 +206,11 @@ Open your docker desktop and run the following command in the root folder of the
 docker-compose up --build
 ```
 
-### Running the application in Azure Kubernetes Service
+### Running the application in Azure Kubernetes Service (AKS) & Netlify
 
-Here more information about how to deploy the application in Azure Kubernetes Service.
+The api & database are deployed in Azure Kubernetes Service (AKS) and the frontend is deployed in Netlify.
+
+Here more information about how to deploy the application in Azure Kubernetes Service (AKS) & Netlify.
 
 [Link](doc\kubernetes.md)
 

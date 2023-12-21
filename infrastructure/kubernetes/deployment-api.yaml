@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: jinlei2000/api-tuinbouw-production-api
+          image: jinlei2000/api-tuinbouw-production-api # Replace with your own image
           ports:
             - containerPort: 80
           envFrom:
