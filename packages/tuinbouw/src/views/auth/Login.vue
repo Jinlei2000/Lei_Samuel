@@ -31,7 +31,7 @@
               {{ $t('auth.login.register.text') }}
               <RouterLink
                 to="/auth/register"
-                class="hover:text-primary-orange font-medium text-gray-900 underline"
+                class="hover:text-primary-orange font-medium underline"
               >
                 {{ $t('auth.login.register.link') }}
               </RouterLink>
