@@ -19,6 +19,7 @@ export const GET_ALL_SCHEDULES = gql`
         }
         description
         type
+        price
       }
       employees {
         id
