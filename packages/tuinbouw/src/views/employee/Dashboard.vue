@@ -1,6 +1,6 @@
 <template>
   <main
-    class="mx-auto mt-12 flex max-w-7xl flex-col items-center justify-center"
+    class="mx-auto mt-12 flex w-full max-w-7xl flex-col items-center justify-center"
   >
     <div
       class="w-full grid-cols-2 flex-col gap-3 sm:grid md:grid-cols-3 lg:grid-cols-4"

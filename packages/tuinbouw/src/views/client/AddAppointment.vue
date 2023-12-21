@@ -1,5 +1,5 @@
 <template>
-  <main class="m-auto max-w-7xl">
+  <main class="m-auto w-full max-w-7xl">
     <!-- Title -->
     <div class="mb-3 mt-6 flex items-center gap-4 md:mt-12">
       <h1 class="text-2xl">{{ $t('add.appointment.title') }}</h1>
