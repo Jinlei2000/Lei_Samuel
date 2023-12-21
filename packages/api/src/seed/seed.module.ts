@@ -28,6 +28,7 @@ import { AuthenticationModule } from 'src/authentication/authentication.module'
 export class SeedModule {
   async seedE2ETestData() {
     console.log('🌱 Seeding E2E test data for frontend (playwright)')
+    await this.seedCommand.deleteFirebaseUsers()
     await this.seedCommand.seedFirebaseUsers()
     await this.seedCommand.seedMaterials()
     await this.seedCommand.seedUsers()

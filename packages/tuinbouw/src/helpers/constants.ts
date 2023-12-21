@@ -65,24 +65,24 @@ export const FILTER_OPTIONS_MATERIALS = [
 
 export const SORT_OPTIONS_USERS = [
   {
-    label: 'Date Created',
+    label: 'schedules.sort.date.created',
     value: 'createdAt',
   },
   {
-    label: 'Name',
+    label: 'schedules.sort.name',
     value: 'fullname',
   },
 ]
 
 export const FILTER_OPTIONS_USERS = [
   {
-    title: 'Role',
+    title: 'schedules.filter.role',
     name: 'role',
     type: 'checkbox',
     options: [
-      { label: 'Admin', value: 'A' },
-      { label: 'Employee', value: 'E' },
-      { label: 'Client', value: 'C' },
+      { label: 'schedules.filter.role.option.admin', value: 'A' },
+      { label: 'schedules.filter.role.option.employee', value: 'E' },
+      { label: 'schedules.filter.role.option.client', value: 'C' },
     ],
   },
 ]
