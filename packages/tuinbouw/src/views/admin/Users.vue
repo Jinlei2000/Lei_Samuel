@@ -2,7 +2,6 @@
   <section
     class="mx-auto mt-12 flex w-full max-w-7xl flex-col items-center justify-center gap-5"
   >
-    <p>{{ loading.data }}</p>
     <div class="mb-4 flex w-full flex-col gap-3">
       <!-- Filters + Searchbar -->
       <section
