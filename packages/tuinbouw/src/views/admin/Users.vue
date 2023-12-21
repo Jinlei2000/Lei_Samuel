@@ -29,7 +29,10 @@
   </section>
 
   <!-- Skeleton -->
-  <section v-if="loading.data" class="mx-auto flex max-w-7xl flex-col gap-3">
+  <section
+    v-if="loading.data"
+    class="mx-auto flex w-full max-w-7xl flex-col gap-3"
+  >
     <div
       v-for="i in 10"
       :key="i"
