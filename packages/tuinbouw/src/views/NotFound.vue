@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-white dark:bg-gray-900">
+  <main class="bg-white dark:bg-gray-900">
     <div class="container mx-auto flex min-h-screen items-center px-6 py-12">
       <div class="mx-auto flex max-w-sm flex-col items-center text-center">
         <img
@@ -24,5 +24,5 @@
         </div>
       </div>
     </div>
-  </section>
+  </main>
 </template>
