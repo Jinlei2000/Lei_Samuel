@@ -17,7 +17,7 @@ npx jest materials/materials.service.spec
 
 ## Backend e2e tests
 
-### Absences 
+### Absences & Materials
 
 ```bash
 npm run test:e2e -w api
